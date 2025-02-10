@@ -7,6 +7,18 @@
 
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/css/feed/board.css" />
 
+<script type="text/javascript">
+	
+	$(document).ready(function() {
+		
+		$("button.write-button").click(function() {
+			alert("dd");
+		});
+	});
+	
+
+</script>
+
     <div id="container">
 
 

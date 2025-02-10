@@ -1,11 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	String ctxPath = request.getContextPath();
+%>  
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <%-- Optional JavaScript --%>
+  	<script type="text/javascript" src="<%=ctxPath%>/js/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="<%=ctxPath%>/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js" ></script>
     <style type="text/tailwindcss">
       @theme {
         --color-clifford: #da373d;
