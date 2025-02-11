@@ -6,4 +6,10 @@
 <!-- ==== 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
 <mapper namespace="board">
 
+	<!-- 파일첨부가 없는 글쓰기 -->
+	<insert id="add" parameterType="HashMap">
+		insert into tbl_board(board_no, fk_member_id, board_content, board_visibility, board_comment_allowed, board_register_date, board_parent_no, board_group_no, board_depth, board_is_delete)
+		values(seq_board_no.nextVal, #{fk_member_id}, #{board_content}, #{board_visibility}, default, default, default, seq_board_no.currVal, default, default)
+	</insert>
+
 </mapper>

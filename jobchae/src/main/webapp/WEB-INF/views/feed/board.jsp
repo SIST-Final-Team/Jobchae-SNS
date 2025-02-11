@@ -21,6 +21,14 @@
         modal.style.display = "none";
         
         $("button.write-button").click(function() {
+        	// 모달을 열 때 공개 범위를 전체공개로 초기화
+            var visibilityStatus = document.getElementById("visibilityStatus");
+            var boardVisibilityInput = $("input[name='board_visibility']");
+            
+         	// 공개 범위 초기화: 전체공개
+            visibilityStatus.textContent = "전체공개";
+            boardVisibilityInput.val("1"); // 전체공개를 1로 설정
+            
             modal.style.display = "block";
         });
         
@@ -47,17 +55,26 @@
             placeholder: '나누고 싶은 생각이 있으세요?' 
         });
 		
+     	// Quill 에디터 내용이 변경될 때마다 <input> 값 업데이트
+        quill.on('text-change', function() {
+            var boardContent = quill.root.innerHTML;  // HTML 내용
+            $("input[name='board_content']").val(boardContent);  // HTML을 그대로 입력 필드에 설정
+        });
+     
         
 		/////////////////////////////////////////////////////////////////////////////////////////
 		
 		// 공개범위 바꾸기 (전체공개/친구공개)
 		$("button#modal-profile-info").click(function() {
 			var visibilityStatus = document.getElementById("visibilityStatus");
-		    
+			var boardVisibilityInput = $("input[name='board_visibility']");
+			
 		    if (visibilityStatus.textContent === "전체공개") {
 		        visibilityStatus.textContent = "친구공개";
+		        boardVisibilityInput.val("2");
 		    } else {
 		        visibilityStatus.textContent = "전체공개";
+		        boardVisibilityInput.val("1");
 		    }
 		});
 		
@@ -65,12 +82,15 @@
 
 		// "업데이트" 버튼
 		$("button#write-update").click(function() {
-			alert("클릭");
+			alert("글이 성공적으로 업데이트 되었습니다.");
+			
+			const frm = document.addFrm;
+	      	frm.method = "post";
+	      	frm.action = "<%= ctxPath%>/board/add";
+	      	frm.submit();
 		});
 		
-		
 	});
-    
 
 </script>
 
@@ -194,11 +214,18 @@
 							<button type="button" id="write-update">업데이트</button>					
 						</div>
 						
+						<form name="addFrm">
+				            <input type="text" name="fk_member_id" value="user001" />
+				            <input type="text" name="board_content" value="" />
+				            <input type="text" name="board_visibility" value="" />
+			            </form>
+			            
 			        </div>
                     
                 </div> <!-- content-bottom -->
 
             </div> <!-- modal-content -->
+            
             
         </div> <!-- modal -->
 
