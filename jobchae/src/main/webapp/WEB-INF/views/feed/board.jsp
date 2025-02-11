@@ -15,7 +15,8 @@
 <script type="text/javascript">
     
     $(document).ready(function() {
-        
+        	
+    	// Modal 
         const modal = document.getElementById("writeModal");
         modal.style.display = "none";
         
@@ -25,32 +26,54 @@
         
         $("span#closeModalButton").click(function() {
             modal.style.display = "none";
+            quill.setText('');
         });
 
-        // 모달 창 외부를 클릭하면 모달이 닫히도록 처리
         $(window).click(function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
+                quill.setText('');
             }
         });
         
-        // Quill 에디터 초기화
-        var quill = new Quill('.ql-editor', {
+  		/////////////////////////////////////////////////////////////////////////////////////////
+        
+     	// Quill 에디터
+        var quill = new Quill('.editor-container', { 
             theme: 'snow',
             modules: {
-                toolbar: false // 툴바를 비활성화하여 텍스트만 입력 가능
-            }
+                toolbar: false
+            },
+            placeholder: '나누고 싶은 생각이 있으세요?' 
         });
-    });
+		
+        
+		/////////////////////////////////////////////////////////////////////////////////////////
+		
+		// 공개범위 바꾸기 (전체공개/친구공개)
+		$("button#modal-profile-info").click(function() {
+			var visibilityStatus = document.getElementById("visibilityStatus");
+		    
+		    if (visibilityStatus.textContent === "전체공개") {
+		        visibilityStatus.textContent = "친구공개";
+		    } else {
+		        visibilityStatus.textContent = "전체공개";
+		    }
+		});
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
+
+		// "업데이트" 버튼
+		$("button#write-update").click(function() {
+			alert("클릭");
+		});
+		
+		
+	});
+    
+
 </script>
 
-<style>
-    /* Quill 에디터의 보더 선 없애기 */
-    .ql-editor {
-        border: none;
-        box-shadow: none;
-    }
-</style>
 
 <div id="container">
     <div id="inner-container">
@@ -125,40 +148,58 @@
             </div>
         </div>
         
+        
+        <!-- Modal -->
         <div id="writeModal" class="modal">
 
             <div class="modal-content">
             
                 <div class="content-top">
-                    <button type="button">
-                        <div>
+                    <button type="button" class="modal-profile-info" id="modal-profile-info">
+                        <div class="modal-profile-img">
                             <img class="modal-profile" src="<%= ctxPath%>/images/feed/profile.jpg">	<!-- DB에서 가져오기 -->
                         </div>
-                        <div>
-                            <h3>박채은</h3> <!-- DB에서 가져오기 -->
+                        <div class="modal-name">
+                            <h3 class="modal-profile-name">박채은 </h3> 	<!-- DB에서 가져오기 -->
+                            <span id="visibilityStatus">전체공개</span>
                         </div>
+
                     </button>
                     
+					                    
                     <span class="close" id="closeModalButton">&times;</span>
                 </div> <!-- modal-content -->
                 
                 <div class="content-bottom">
-                    <h2>모달 창 내용</h2>
                     <!-- Quill 에디터 적용 부분 -->
                     <div class="editor-container">
-                        <div>
-                            <div class="editor-content ql-container">
-                                <div class="ql-editor" data-gramm="false" contenteditable="true" data-placeholder="나누고 싶은 생각이 있으세요?" aria-placeholder="나누고 싶은 생각이 있으세요?" aria-label="콘텐츠 제작용 텍스트 에디터" role="textbox" aria-multiline="true" aria-describedby="ember549-text-editor-placeholder" data-test-ql-editor-contenteditable="true">
-                                    <p></p>
-                                </div>
-                                <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
-                            </div>
-                        </div>
-                    </div>
+					    <div>
+					        <div class="editor-content ql-container">
+					            <div class="ql-editor" data-placeholder="글을 작성하세요...">
+					                <p></p>
+					            </div>
+					            <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
+					        </div>
+					    </div>
+					</div>
+                    
+                    <div class="ql-category">
+                    
+	                    <div>
+	                    	<img class="modal-img" src="<%= ctxPath%>/images/feed/feed-image.png"> 
+                    		<img class="modal-img" src="<%= ctxPath%>/images/feed/feed-video.png"> 
+	                    </div>
+						
+						<div>
+							<button type="button" id="write-update">업데이트</button>					
+						</div>
+						
+			        </div>
+                    
                 </div> <!-- content-bottom -->
-                
-            </div> <!-- modal-content -->
 
+            </div> <!-- modal-content -->
+            
         </div> <!-- modal -->
 
     </div> <!-- inner-container -->
