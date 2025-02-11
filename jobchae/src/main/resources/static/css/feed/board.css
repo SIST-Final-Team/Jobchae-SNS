@@ -28,7 +28,6 @@ div#blank {
 
 div#feed {
     width: 75%;
-    background-color: lightgray;
 }
 
 /* ----- 프로필 부분쓰 ----- */
@@ -41,8 +40,8 @@ div#profile {
 
 div.myprofile {
     height: 60%;
-    border: solid 1px black;
-    border-radius: 20px;
+    border: solid 1px #888;
+    border-radius: 10px;
     background-color: whitesmoke;
 }
 
@@ -70,7 +69,7 @@ div.myprofile-info {
 
 div.follow {
     height: 20%;
-    border: solid 1px black;
+    border: solid 1px #888;
 }
 
 img#myprofile-image {
@@ -82,8 +81,8 @@ img#myprofile-image {
 div.writeFeed {
     height: 200px;
     background-color: whitesmoke;
-    border-radius: 20px;
-    border: solid 1px black;
+    border-radius: 10px;
+    border: solid 1px #888;
 }
 
 div.feed-wirte {
@@ -96,8 +95,8 @@ div.feed-wirte {
 }
 
 img.feed-profile {
-    width: 60px;  
-    height: 60px; 
+    width: 55px;  
+    height: 55px; 
     border-radius: 50%;
 }
 
@@ -121,23 +120,22 @@ span.write-span {
 
 strong {
     font-size: 14px;
-    
+    color: #888;
 }
 
-
-div.feed-category {
+.feed-category {
     display: flex;
     justify-content: center;
     margin-top: 35px;
     gap: 200px;
 }
 
-div.feed-image {
+.feed-image {
     display: flex;
     align-items: center;
 }
 
-div.feed-video {
+.feed-video {
     display: flex;
     align-items: center;
 }
@@ -151,7 +149,108 @@ span.category-name {
     margin-left: 10px;
 }
 
+.feed-divider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
 
+.divider-line {
+    flex-grow: 1;
+    border: none;
+    height: 1px;
+    background-color: #888;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.sort-options {
+    position: relative;
+    font-size: 14px;
+    color: #555;
+}
+
+.dropbtn {
+    background-color: white;
+    color: #333;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.dropdown {
+    width: 100px;
+    display: inline-block;
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 100px;
+    max-width: 100px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 8px 12px;
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
+/* ----- 피드 글 나오는 부분 ----- */
+
+.feed-post {
+	height: auto;
+	min-height: 200px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    border: solid 1px #888;	
+    margin-bottom: 20px;
+}
+
+.feed-header {
+	display: flex;	
+	padding-right: 10px;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+.feed-post-name {
+	font-weight: bold;
+	margin-left: 10px;
+	margin-top: 5px;
+}
+
+.more-options {
+	margin-left: auto;	
+	cursor: pointer;
+}
+
+.more-options-img {
+	width: 40px;
+	height: 40px;
+	margin-top: -10px;
+}
 
 /* ----- Modal ----- */
 div.modal {
@@ -165,7 +264,7 @@ div.modal {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-div.modal-content {
+.modal-content {
     background-color: white;
     padding: 20px;
     width: 700px;
@@ -186,7 +285,7 @@ div.modal-content {
 
 .modal-profile-info:hover {
     background-color: #f0f0f0; 
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 .modal-profile-img {
@@ -218,7 +317,7 @@ div.modal-content {
 	padding-left: 16px;	
 }
 
-div.content-bottom {
+.content-bottom {
 	margin-top: 30px;
 	flex-grow: 1;
     display: flex;

@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%
     String ctxPath = request.getContextPath();
 %>    
@@ -90,6 +93,15 @@
 	      	frm.submit();
 		});
 		
+		/////////////////////////////////////////////////////////////////////////////////////////
+	
+		// 정렬방식
+		$(".dropdown-content a").click(function() {
+	        var selectedValue = $(this).text();  
+	        $(".dropbtn").text(selectedValue + " ▼");  
+	    });
+		
+		
 	});
 
 </script>
@@ -115,7 +127,7 @@
 
                     <div class="myprofile-info">
                         <div id="myprofile-name">
-                            <h3>박채은</h3>     <!-- DB에서 가져오기 -->
+                            <h3>${membervo.member_name}</h3>     <!-- DB에서 가져오기 -->
                         </div>
                     </div>
                 </div>
@@ -151,8 +163,6 @@
                     </div>
                 </div>
                 
-
-
                 <!-- 글 작성 카테고리 ??? -->
                 <div class="feed-category">
                     <div class="feed-image">
@@ -165,8 +175,36 @@
                     </div>
                 </div>
 
-            </div>
-        </div>
+            </div> <!-- div#writeFeed 끝-->
+            
+		    <div class="feed-divider">
+			    <hr class="divider-line">
+			    <div class="sort-options">
+			        정렬 방식:
+			        <div class="dropdown">
+			            <button class="dropbtn">최신순 ▼</button>
+			            <div class="dropdown-content">
+			                <a href="#" data-value="latest">최신순</a>
+			                <a href="#" data-value="likes">좋아요순</a>
+			            </div>
+			        </div>
+			    </div>
+			</div>	<!-- div.feed-divider 끝 -->
+	
+			<!-- 여기에 피드 동적으로 div 생성하기 -->
+            <c:forEach var="board" items="${boardvo}">
+		        <div class="feed-post">
+		        	<div class="feed-header">
+		        		<img class="feed-profile" src="<%= ctxPath%>/images/feed/profile.jpg"> 
+		        		<p class="feed-post-name">${board.member_name}</p> 
+		        		<button class="more-options"><img class="more-options-img" src="<%= ctxPath%>/images/feed/more.png" /></button>
+		        	</div>
+		            <p>${board.board_content}</p>
+		            <!-- 여기에 추가적인 board 데이터를 출력할 수 있음 -->
+		        </div>
+		    </c:forEach>
+		    
+        </div>	<!-- div#feed 끝-->
         
         
         <!-- Modal -->
@@ -188,7 +226,7 @@
                     
 					                    
                     <span class="close" id="closeModalButton">&times;</span>
-                </div> <!-- modal-content -->
+                </div> <!-- div.modal-content 끝 -->
                 
                 <div class="content-bottom">
                     <!-- Quill 에디터 적용 부분 -->
@@ -215,22 +253,22 @@
 						</div>
 						
 						<form name="addFrm">
-				            <input type="text" name="fk_member_id" value="user001" />
-				            <input type="text" name="board_content" value="" />
-				            <input type="text" name="board_visibility" value="" />
+				            <input type="hidden" name="fk_member_id" value="user001" /> 	<!-- session으로 가져오기 -->
+				            <input type="hidden" name="board_content" value="" />
+				            <input type="hidden" name="board_visibility" value="" />
 			            </form>
 			            
 			        </div>
                     
-                </div> <!-- content-bottom -->
+                </div> <!-- div.content-bottom 끝 -->
 
-            </div> <!-- modal-content -->
+            </div> <!-- div.modal-content 끝 -->
             
             
-        </div> <!-- modal -->
+        </div> <!-- div.modal 끝 -->
 
-    </div> <!-- inner-container -->
+    </div> <!-- div#inner-container 끝 -->
 
-</div> <!-- container -->
+</div> <!-- div#container 끝 -->
 </body>
 </html>
