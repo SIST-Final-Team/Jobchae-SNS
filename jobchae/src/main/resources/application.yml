@@ -44,7 +44,7 @@ logging: #로그 지정
     #com.zaxxer.hikari: TRACE 
 
 server:
-  port: 9090
+  port: 80
   servlet:
     context-path: /jobchae # context-path 를 /jobchae 로 설정
     encoding:
