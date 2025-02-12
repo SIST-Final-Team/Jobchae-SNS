@@ -69,4 +69,15 @@ public class BoardController {
 		return mav;
 	}
 	
+	
+	// 글 삭제
+	@PostMapping("delete")
+	public ModelAndView delete(@RequestParam String board_no, ModelAndView mav) {
+		
+		int n = service.delete(board_no);
+		
+		mav.setViewName("redirect:/board/feed");
+		return mav;
+	}
+	
 }

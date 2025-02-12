@@ -101,7 +101,69 @@
 	        $(".dropbtn").text(selectedValue + " ▼");  
 	    });
 		
+	    $(".dropbtn").click(function (e) {
+	        e.stopPropagation(); 
+	        $(".dropdown-content").toggle();
+	    });
 		
+	    $(document).click(function () {
+	        $(".dropdown-content").hide();
+	    });
+	
+	    
+		/////////////////////////////////////////////////////////////////////////////////////////
+	 	
+		// 글 옵션
+	    $(".more-options").click(function (e) {
+	        e.stopPropagation(); 
+	        let dropdown = $(this).siblings(".options-dropdown");
+	        $(".options-dropdown").not(dropdown).hide(); 
+	        dropdown.toggle(); 
+	    });
+
+	    $(document).click(function () {
+	        $(".options-dropdown").hide();
+	    });
+
+	    // 글 삭제
+	    $(".delete-post").click(function () {
+	    	
+	    	const board_no = $(this).attr("value");
+	        //alert("글 삭제 (board_no: " + board_no + ")");
+
+	        const confirmDelete = confirm("글을 삭제하시겠습니까?");
+		    if (!confirmDelete) {
+		        return; 
+		    }
+		    
+			$.ajax({
+				url: '${pageContext.request.contextPath}/board/delete',
+				type: 'post',
+				data: {"board_no": board_no},
+				success: function(response) {
+		            alert("글이 삭제되었습니다.");
+		            location.reload(); 
+		        },
+		        error: function(request, status, error){
+					alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+	    });
+
+	 	// 게시글 허용범위
+	    $(".set-board-range").click(function () {
+	    	let board_no = $(this).attr("value");
+	        alert("게시글 허용범위 (board_no: " + board_no + ")");
+	    });
+	    
+	    // 댓글 허용범위
+	    $(".set-comment-range").click(function () {
+	    	let board_no = $(this).attr("value");
+	        alert("댓글 허용범위 (board_no: " + board_no + ")");
+	        // 설정 팝업
+	    });
+	 	
 	});
 
 </script>
@@ -196,15 +258,30 @@
 		        <div class="feed-post">
 		        	<div class="feed-header">
 		        		<img class="feed-profile" src="<%= ctxPath%>/images/feed/profile.jpg"> 
-		        		<p class="feed-post-name">${board.member_name}</p> 
+		        		<p class="feed-post-name">${board.member_name}${memvervo.member_id}</p> 
 		        		<button class="more-options"><img class="more-options-img" src="<%= ctxPath%>/images/feed/more.png" /></button>
-		        	</div>
+		        		<!-- 옵션 드롭다운 메뉴 -->
+			            <div class="options-dropdown">
+			                <ul>
+			                    <c:choose>
+						            <c:when test="${membervo.member_id == board.fk_member_id}">
+						                <li class="delete-post" value="${board.board_no}">글 삭제</li>
+						                <li class="set-board-range" value="${board.board_no}">게시글 허용범위</li>
+						                <li class="set-comment-range" value="${board.board_no}">댓글 허용범위</li>
+						            </c:when>
+						            <c:otherwise>
+						                <li class="interest-none" value="${board.board_no}">관심없음</li>
+						            </c:otherwise>
+						        </c:choose>
+			                </ul>
+			            </div> <!-- div.options-dropdown 끝 -->
+		        	</div> <!-- div.feed-header 끝 -->
 		            <p>${board.board_content}</p>
 		            <!-- 여기에 추가적인 board 데이터를 출력할 수 있음 -->
-		        </div>
+		        </div> <!-- div.feed-post 끝 -->
 		    </c:forEach>
 		    
-        </div>	<!-- div#feed 끝-->
+        </div>	<!-- div#feed 끝 -->
         
         
         <!-- Modal -->

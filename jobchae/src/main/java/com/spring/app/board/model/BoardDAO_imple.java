@@ -39,5 +39,12 @@ public class BoardDAO_imple implements BoardDAO {
 		return boardList;
 	}
 
+	// 글 삭제
+	@Override
+	public int delete(String board_no) {
+		int n = sqlsession.delete("board.delete", board_no);
+		return n;
+	}
+
 	
 }

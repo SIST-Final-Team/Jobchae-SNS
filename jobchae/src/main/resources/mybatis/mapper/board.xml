@@ -24,9 +24,14 @@
 		select b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name
 		from tbl_board b
 		join tbl_member m on b.fk_member_id = m.member_id
-		where b.fk_member_id = #{login_userid}
+		where b.board_is_delete = 0
 		order by b.board_no desc
 	</select>
 
-
+	<!-- 글 삭제 -->
+	<update id="delete" parameterType="String">
+		update tbl_board set board_is_delete = 1
+		where board_no = #{board_no}
+	</update>	
+	
 </mapper>

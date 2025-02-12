@@ -37,6 +37,13 @@ public class BoardService_imple implements BoardService {
 		List<BoardVO> boardList = dao.getAllBoards(login_userid);
 		return boardList;
 	}
+	
+	// 글 삭제
+	@Override
+	public int delete(String board_no) {
+		int n = dao.delete(board_no);
+		return n;
+	}
 
 	
 }

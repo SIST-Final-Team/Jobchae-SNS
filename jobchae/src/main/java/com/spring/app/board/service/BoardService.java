@@ -17,5 +17,8 @@ public interface BoardService {
 	// 피드 조회하기
 	List<BoardVO> getAllBoards(String login_userid);
 
+	// 글 삭제
+	int delete(String board_no);
+
 
 }
