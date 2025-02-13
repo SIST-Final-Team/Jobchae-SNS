@@ -46,5 +46,12 @@ public class BoardDAO_imple implements BoardDAO {
 		return n;
 	}
 
+	// 글 수정
+	@Override
+	public BoardVO editSearch(String board_no) {
+		BoardVO boardvo = sqlsession.selectOne("board.editSearch", board_no);
+		return boardvo;
+	}
+
 	
 }

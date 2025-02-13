@@ -20,5 +20,8 @@ public interface BoardService {
 	// 글 삭제
 	int delete(String board_no);
 
+	// 글 수정
+	BoardVO editSearch(String board_no);
+
 
 }

@@ -364,7 +364,7 @@ div.modal {
 }
 
 #visibilityStatus {
-	padding-left: 20px;	
+	padding-left: 18px;	
 }
 
 .modal-profile-name {
@@ -453,3 +453,59 @@ img.modal-img {
 #write-update:hover {
     background-color: #357ABD; 
 }
+
+.reactions-menu {
+    display: none;
+    position: absolute;
+    z-index: 999;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 40px;
+    width: 350px;
+    height: 60px;
+}
+
+.reactions-menu__reaction {
+	margin-top: 6px;
+    opacity: 0; 
+    transform: translateY(10px); 
+    animation: fadeInUp 0.1s ease-out forwards; 
+}
+
+.reactions-menu__reaction:nth-child(1) {
+    animation-delay: 0.05s; 
+}
+.reactions-menu__reaction:nth-child(2) {
+    animation-delay: 0.1s;
+}
+.reactions-menu__reaction:nth-child(3) {
+    animation-delay: 0.15s;
+}
+.reactions-menu__reaction:nth-child(4) {
+    animation-delay: 0.2s;
+}
+.reactions-menu__reaction:nth-child(5) {
+    animation-delay: 0.25s;
+}
+.reactions-menu__reaction:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.button-board-action:hover + .reactions-menu,
+.reactions-menu:hover {
+    display: block;
+}
+
+.reactions-menu__reaction:hover img {
+    transform: scale(1.7); 
+    transition: transform 0.3s ease-in-out; 
+}
+
+

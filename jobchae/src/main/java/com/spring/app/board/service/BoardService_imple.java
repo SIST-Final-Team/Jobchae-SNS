@@ -45,5 +45,13 @@ public class BoardService_imple implements BoardService {
 		return n;
 	}
 
+	@Override
+	public BoardVO editSearch(String board_no) {
+		BoardVO boardvo = dao.editSearch(board_no);
+		return boardvo;
+	}
+
+
+
 	
 }

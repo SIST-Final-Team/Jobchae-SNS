@@ -187,9 +187,95 @@
 <script type="text/javascript">
     
     $(document).ready(function() {
-        	
+        
+    	$(".options-dropdown").hide();
+    	
 		/////////////////////////////////////////////////////////////////////////////////////////
-	 	
+		// Modal 
+        const modal = document.getElementById("writeModal");
+        modal.style.display = "none";
+        
+        $("button.write-button").click(function() {
+        	// 모달을 열 때 공개 범위를 전체공개로 초기화
+            var visibilityStatus = document.getElementById("visibilityStatus");
+            var boardVisibilityInput = $("input[name='board_visibility']");
+            
+         	// 공개 범위 초기화: 전체공개
+            visibilityStatus.textContent = "전체공개";
+            boardVisibilityInput.val("1"); 
+            
+            modal.style.display = "block";
+        });
+        
+        $("span#closeModalButton").click(function() {
+            modal.style.display = "none";
+            quill.setText('');
+        });
+
+        $(window).click(function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                quill.setText('');
+            }
+        });
+        
+        
+		/////////////////////////////////////////////////////////////////////////////////////////
+     	// Quill 에디터
+        var quill = new Quill('.editor-container', { 
+            theme: 'snow',
+            modules: {
+                toolbar: false
+            },
+            placeholder: '나누고 싶은 생각이 있으세요?' 
+        });
+		
+        quill.root.innerHTML = '';
+        
+     	// Quill 에디터 내용이 변경될 때마다 <input> 값 업데이트
+        quill.on('text-change', function() {
+            var boardContent = quill.root.innerHTML;  // HTML 내용
+            $("input[name='board_content']").val(boardContent);  // HTML을 그대로 입력 필드에 설정
+        });
+     	
+		/////////////////////////////////////////////////////////////////////////////////////////
+		// 공개범위 바꾸기 (전체공개/친구공개)
+		$("button#modal-profile-info").click(function() {
+			var visibilityStatus = document.getElementById("visibilityStatus");
+			var boardVisibilityInput = $("input[name='board_visibility']");
+			
+		    if (visibilityStatus.textContent === "전체공개") {
+		        visibilityStatus.textContent = "친구공개";
+		        boardVisibilityInput.val("2");
+		    } else {
+		        visibilityStatus.textContent = "전체공개";
+		        boardVisibilityInput.val("1");
+		    }
+		});
+        
+        
+		/////////////////////////////////////////////////////////////////////////////////////////
+		// "업데이트" 버튼
+		$("button#write-update").click(function() {
+			const boardContent = quill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
+			//alert(boardContent);
+
+			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
+		        alert("내용을 입력해주세요.");
+		        quill.setText('');
+		        return;
+		    }
+			else {
+				alert("글이 성공적으로 업데이트 되었습니다.");
+				
+				const frm = document.addFrm;
+		      	frm.method = "post";
+		      	frm.action = "<%= ctxPath%>/board/add";
+		      	frm.submit();
+			}
+		});
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
     	// 글 옵션
 	    $(".more-options").click(function (e) {
 	        e.stopPropagation(); 
@@ -202,9 +288,9 @@
 	        $(".options-dropdown").hide();
 	    });
 	    
+		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 글 삭제
 	    $(".delete-post").click(function () {
-	    	
 	    	const board_no = $(this).attr("value");
 	        //alert("글 삭제 (board_no: " + board_no + ")");
 
@@ -216,22 +302,26 @@
 			$.ajax({
 				url: '${pageContext.request.contextPath}/board/delete',
 				type: 'post',
+				dataType: 'json',
 				data: {"board_no": board_no},
 				success: function(response) {
 		            alert("글이 삭제되었습니다.");
 		            location.reload(); 
 		        },
 		        error: function(request, status, error){
-					alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
 			 	}
 			});
 	    });
 	 	
-	 	// 글 수정
+		// 글 수정
 	    $(".edit-post").click(function () {
-	    	let board_no = $(this).attr("value");
-	        alert("게시글 수정 (board_no: " + board_no + ")");
+	        const board_no = $(this).attr("value");
+	        const boardContent = $("input[name='board_content']").val();
+
+	        alert("Board content:", boardContent);
 	    });
+
 	 
 	 	// 게시글 허용범위
 	    $(".set-board-range").click(function () {
@@ -245,8 +335,24 @@
 	        alert("댓글 허용범위 (board_no: " + board_no + ")");
 	        // 설정 팝업
 	    });
-	 	
-	 	
+	    
+	    
+		/////////////////////////////////////////////////////////////////////////////////////////
+	 	// 정렬방식
+		$(".dropdown-content a").click(function() {
+	        var selectedValue = $(this).text();  
+	        $(".dropbtn").text(selectedValue + " ▼");  
+	    });
+		
+	    $(".dropbtn").click(function (e) {
+	        e.stopPropagation(); 
+	        $(".dropdown-content").toggle();
+	    });
+		
+	    $(document).click(function () {
+	        $(".dropdown-content").hide();
+	    });
+
 	});
 
 </script>
@@ -286,7 +392,7 @@
 	                            <span>
 	                                <span>
 	                                    <span class="write-span">
-	                                        <strong><!---->업데이트 쓰기<!----></strong>
+	                                        <strong>업데이트 쓰기</strong>
 	                                    </span>
 	                                </span>  
 	                            </span>
@@ -320,7 +426,19 @@
                 </div>
 			</div>
 			
-			
+			<div class="feed-divider">
+			    <hr class="divider-line">
+			    <div class="sort-options">
+			        정렬 방식:
+			        <div class="dropdown">
+			            <button class="dropbtn">최신순 ▼</button>
+			            <div class="dropdown-content">
+			                <a href="#" data-value="latest">최신순</a>
+			                <a href="#" data-value="likes">좋아요순</a>
+			            </div>
+			        </div>
+			    </div>
+			</div>	<!-- div.feed-divider 끝 -->
 			
             <div id="update" class="border-board">
                 <!-- 게시물 동적으로 생성 -->
@@ -346,21 +464,15 @@
 	                            <span>1년</span>
 	                        </div>
 	                        <div style="position: relative;">
-	                            <button type="button" class="follow-button">
-	                            	<c:choose>
-	                            		<c:when test="${membervo.member_id != board.fk_member_id}">
-	                            			<i class="fa-solid fa-plus"></i>&nbsp;팔로우
-	                            		</c:when>
-	                            		<c:otherwise>
-	                            		</c:otherwise>
-	                            	</c:choose>
-                            	</button>
-	                            <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
-	                            
-	                            <!--  <button class="more-options"><img class="more-options-img" src="<%= ctxPath%>/images/feed/more.png" /></button>-->
-	                            <svg class="more-options" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M3.25 8C3.25 8.69 2.69 9.25 2 9.25C1.31 9.25 0.75 8.69 0.75 8C0.75 7.31 1.31 6.75 2 6.75C2.69 6.75 3.25 7.31 3.25 8ZM14 6.75C13.31 6.75 12.75 7.31 12.75 8C12.75 8.69 13.31 9.25 14 9.25C14.69 9.25 15.25 8.69 15.25 8C15.25 7.31 14.69 6.75 14 6.75ZM8 6.75C7.31 6.75 6.75 7.31 6.75 8C6.75 8.69 7.31 9.25 8 9.25C8.69 9.25 9.25 8.69 9.25 8C9.25 7.31 8.69 6.75 8 6.75Z" fill="currentColor"></path>
-							  	</svg>
+	                        	<c:choose>
+	                        		<c:when test="${membervo.member_id != board.fk_member_id}">
+			                            <button type="button" class="follow-button">
+                            				<i class="fa-solid fa-plus"></i>&nbsp;팔로우
+		                            	</button>
+	                            	</c:when>
+                            	</c:choose>
+	                            <button type="button" class="more-options"><i class="fa-solid fa-ellipsis"></i></button>
+	                            <input type="hidden" class="board-content" value="${board.board_content}" data-board-content="${board.board_content}" />
 				        		<!-- 옵션 드롭다운 메뉴 -->
 					            <div class="options-dropdown">
 					                <ul>
@@ -384,7 +496,7 @@
 	                    <div>
 	                        <p>${board.board_content}</p>
 	                    </div>
-	                    <!-- 사진 또는 동영상 등 첨부파일 -->
+	                    <!-- 사진 또는 동영상 등 첨부파일 
 	                    <div class="px-0">
 	                        <div class="file-image">
 	                            <button type="button"><img src="<%= ctxPath%>/images/4.png"/></button>
@@ -397,7 +509,7 @@
 	                                </span>
 	                            </button>
 	                        </div>
-	                    </div>
+	                    </div>-->
 	                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
 	                    <div>
 	                        <ul class="flex gap-4 text-gray-600">
@@ -435,6 +547,32 @@
 	                                    <i class="fa-regular fa-thumbs-up"></i>
 	                                    <span>추천</span>
 	                                </button>
+	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" style="">
+									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
+									      	<!-- <span class="reactions-menu__reaction-description">추천</span>-->
+									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8fz8rainn3wh49ad6ef9gotj1" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
+									    </button>
+									    <button aria-label="반응: 축하" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
+								      		<!--<span class="reactions-menu__reaction-description">축하</span>-->
+									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/1mbfgcprj3z93pjntukfqbr8y" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
+									    </button>
+									    <button aria-label="반응: 응원" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
+									      	<!--<span class="reactions-menu__reaction-description">응원</span>-->
+									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cv29x2jo14dbflduuli6de6bf" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
+									    </button>
+									    <button aria-label="반응: 마음에 쏙듬" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
+									      	<!--<span class="reactions-menu__reaction-description">마음에 쏙듬</span>-->
+									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6f5qp9agugsqw1swegjxj86me" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
+									    </button>
+									    <button aria-label="반응: 통찰력" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
+								      		<!--<span class="reactions-menu__reaction-description">통찰력</span>-->
+									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/9ry9ng73p660hsehml9i440b2" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
+									    </button>
+									    <button aria-label="반응: 웃음" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
+									      	<!--<span class="reactions-menu__reaction-description">웃음</span>-->
+									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/qye2jwjc8dw20nuv6diudrsi" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
+									    </button>
+								    </span>
 	                            </li>
 	                            <li>
 	                                <button type="button" class="button-board-action">
@@ -460,8 +598,60 @@
                	</c:forEach>
            	</div>
        	</div>
+               
                 
-         
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- Modal -->
+        <div id="writeModal" class="modal">
+            <div class="modal-content">
+                <div class="content-top">
+                    <button type="button" class="modal-profile-info" id="modal-profile-info">
+                        <div class="modal-profile-img">
+                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                        </div>
+                        <div class="modal-name">
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
+                            <span id="visibilityStatus">전체공개</span>
+                        </div>
+                    </button>
+                    <span class="close" id="closeModalButton">&times;</span>
+                </div> <!-- div.modal-content 끝 -->
+                <div class="content-bottom">
+                    <!-- Quill 에디터 적용 부분 -->
+                    <div class="editor-container">
+					    <div>
+					        <div class="editor-content ql-container">
+					            <div class="ql-editor" data-placeholder="글을 작성하세요...">
+					                <p></p>
+					            </div>
+					            <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
+					        </div>
+					    </div>
+					</div>
+                    <div class="ql-category">
+	                    <div>
+	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image">
+							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
+							</svg>
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video">
+								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
+							</svg>
+	                    </div>
+						<div>
+							<button type="button" id="write-update">업데이트</button>					
+						</div>
+						<form name="addFrm">
+				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	<!-- session으로 가져오기 -->
+				            <input type="hidden" name="board_content" value="" />
+				            <input type="hidden" name="board_visibility" value="" />
+			            </form>
+			        </div>
+                </div> <!-- div.content-bottom 끝 -->
+            </div> <!-- div.modal-content 끝 -->
+        </div> <!-- div.modal 끝 -->
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        
+        
         <!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
             <div class="border-list sticky top-20 space-y-2 text-center relative bg-white">

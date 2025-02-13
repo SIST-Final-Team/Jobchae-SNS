@@ -36,4 +36,11 @@
 		where board_no = #{board_no}
 	</update>	
 	
+	<!-- 글 수정할 글 조회 -->
+	<select id="editSearch" resultType="BoardVO" parameterType="String">
+		select board_no, fk_member_id, board_content, board_visibility, board_comment_allowed, board_register_date, board_parent_no, board_group_no, board_depth, board_is_delete
+		from tbl_board
+		where board_no = #{board_no}
+	</select>
+	
 </mapper>

@@ -80,4 +80,17 @@ public class BoardController {
 		return mav;
 	}
 	
+	// 글 수정
+	@PostMapping("editSearch")
+	public ModelAndView editSearch(@RequestParam String board_no, ModelAndView mav) {
+		
+		BoardVO boardvo = service.editSearch(board_no);
+		
+		System.out.println("dd" + boardvo.getBoard_content());
+		mav.addObject("board_content", boardvo.getBoard_content());
+		
+		mav.setViewName("redirect:/board/feed");
+		return mav;
+	}
+	
 }
