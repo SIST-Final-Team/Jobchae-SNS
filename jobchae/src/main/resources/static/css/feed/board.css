@@ -101,8 +101,8 @@ img.feed-profile {
 }
 
 button.write-button {
-    width: 700px;
-    height: 60px;
+    width: 420px;
+    height: 50px;
     flex-grow: 1;
     text-align: left;
     border: 1px solid gray;
@@ -259,8 +259,8 @@ span.category-name {
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     width: 150px;
-    left: 96.5%;
-    top: calc(50% - 20px);
+	left: 125px;
+	top: 25px;
     z-index: 10;
 }
 

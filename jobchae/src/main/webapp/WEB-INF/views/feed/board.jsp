@@ -23,10 +23,10 @@
             @apply text-[1.35rem] font-bold;
         }
         .border-normal {
-            @apply border-1 border-gray-300 rounded-lg;
+            @apply border-1 border-gray-300 rounded-lg bg-white;
         }
         .border-search-board {
-            @apply border-1 border-gray-300 rounded-lg;
+            @apply border-1 border-gray-300 rounded-lg bg-white;
 
             &>div:not(:last-child) {
                 @apply border-b-4 border-gray-200 space-y-2;
@@ -48,7 +48,27 @@
             @apply space-y-4;
 
             &>div {
-                @apply border-1 border-gray-300 rounded-lg space-y-2;
+                @apply border-1 border-gray-300 rounded-lg space-y-2 bg-white;
+            }
+
+            &>div {
+                @apply pt-4;
+                @apply pb-2;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+		.border-write {
+            @apply space-y-4;
+
+            &>div {
+                @apply border-1 border-gray-300 rounded-lg space-y-2 bg-white;
             }
 
             &>div {
@@ -177,128 +197,32 @@
         .button-board-action {
             @apply w-full h-10 rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
         }
+
+		.button-board-attach {
+            @apply w-full h-10 rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        }
+
 </style>
     
 <script type="text/javascript">
     
     $(document).ready(function() {
         	
-    	// Modal 
-        const modal = document.getElementById("writeModal");
-        modal.style.display = "none";
-        
-        $("button.write-button").click(function() {
-        	// 모달을 열 때 공개 범위를 전체공개로 초기화
-            var visibilityStatus = document.getElementById("visibilityStatus");
-            var boardVisibilityInput = $("input[name='board_visibility']");
-            
-         	// 공개 범위 초기화: 전체공개
-            visibilityStatus.textContent = "전체공개";
-            boardVisibilityInput.val("1"); // 전체공개를 1로 설정
-            
-            modal.style.display = "block";
-        });
-        
-        $("span#closeModalButton").click(function() {
-            modal.style.display = "none";
-            quill.setText('');
-        });
-
-        $(window).click(function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                quill.setText('');
-            }
-        });
-        
-  		/////////////////////////////////////////////////////////////////////////////////////////
-        
-     	// Quill 에디터
-        var quill = new Quill('.editor-container', { 
-            theme: 'snow',
-            modules: {
-                toolbar: false
-            },
-            placeholder: '나누고 싶은 생각이 있으세요?' 
-        });
-		
-     	// Quill 에디터 내용이 변경될 때마다 <input> 값 업데이트
-        quill.on('text-change', function() {
-            var boardContent = quill.root.innerHTML;  // HTML 내용
-            $("input[name='board_content']").val(boardContent);  // HTML을 그대로 입력 필드에 설정
-        });
-     
-        
-		/////////////////////////////////////////////////////////////////////////////////////////
-		
-		// 공개범위 바꾸기 (전체공개/친구공개)
-		$("button#modal-profile-info").click(function() {
-			var visibilityStatus = document.getElementById("visibilityStatus");
-			var boardVisibilityInput = $("input[name='board_visibility']");
-			
-		    if (visibilityStatus.textContent === "전체공개") {
-		        visibilityStatus.textContent = "친구공개";
-		        boardVisibilityInput.val("2");
-		    } else {
-		        visibilityStatus.textContent = "전체공개";
-		        boardVisibilityInput.val("1");
-		    }
-		});
-		
-		/////////////////////////////////////////////////////////////////////////////////////////
-
-		// "업데이트" 버튼
-		$("button#write-update").click(function() {
-			const boardContent = quill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
-			//alert(boardContent);
-
-			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
-		        alert("내용을 입력해주세요.");
-		        return;
-		    }
-			else {
-				alert("글이 성공적으로 업데이트 되었습니다.");
-				
-				const frm = document.addFrm;
-		      	frm.method = "post";
-		      	frm.action = "<%= ctxPath%>/board/add";
-		      	frm.submit();
-			}
-		});
-		
-		/////////////////////////////////////////////////////////////////////////////////////////
-	
-		// 정렬방식
-		$(".dropdown-content a").click(function() {
-	        var selectedValue = $(this).text();  
-	        $(".dropbtn").text(selectedValue + " ▼");  
-	    });
-		
-	    $(".dropbtn").click(function (e) {
-	        e.stopPropagation(); 
-	        $(".dropdown-content").toggle();
-	    });
-		
-	    $(document).click(function () {
-	        $(".dropdown-content").hide();
-	    });
-	
-	    
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	
-		// 글 옵션
+    	// 글 옵션
 	    $(".more-options").click(function (e) {
 	        e.stopPropagation(); 
 	        let dropdown = $(this).siblings(".options-dropdown");
 	        $(".options-dropdown").not(dropdown).hide(); 
 	        dropdown.toggle(); 
 	    });
-
+		
 	    $(document).click(function () {
 	        $(".options-dropdown").hide();
 	    });
-
-	    // 글 삭제
+	    
+	 	// 글 삭제
 	    $(".delete-post").click(function () {
 	    	
 	    	const board_no = $(this).attr("value");
@@ -321,9 +245,8 @@
 					alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
 			 	}
 			});
-			
 	    });
-
+	 	
 	 	// 글 수정
 	    $(".edit-post").click(function () {
 	    	let board_no = $(this).attr("value");
@@ -343,6 +266,7 @@
 	        // 설정 팝업
 	    });
 	 	
+	 	
 	});
 
 </script>
@@ -350,6 +274,7 @@
 
 <div class="container m-auto grid grid-cols-14 gap-6 xl:max-w-[1140px]">
 
+		
         <!-- 좌측 네비게이션 -->
         <div class="left-side col-span-3 hidden md:block h-full relative">
             <div class="border-normal sticky top-20">
@@ -363,297 +288,200 @@
             </div>
         </div>
 
+        
         <!-- 중앙 본문 -->
         <div class="center col-span-14 md:col-span-7 space-y-2 m-5">
-            <div id="update" class="border-board">
-                <!-- 게시물 -->
-                <div>
-                    <!-- 멤버 프로필 -->
+
+			<div id="write" class="border-write">
+			
+				<div>
+                    <!-- 멤버 프로필 -->                                                              
                     <div class="board-member-profile">
                         <div>
                             <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></a>
                         </div>
                         <div class="flex-1">
-                            <a href="#">
-                                <span>CMC Global Company Limited.</span>
-                                <span>팔로워 26,549명</span>
-                            </a>
-                            <span>1년</span>
-                        </div>
-                        <div>
-                            <button type="button" class="follow-button"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>
-                            <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
-                        </div>
-                    </div>
-                    <!-- 글 내용 -->
-                    <div>
-                        <p>
-                            On February 10, 2025, representatives from CMC Corp attended a meeting with the government regarding tasks and solutions for private enterprises to accelerate and contribute to the country's rapid and sustainable development in the new era.
-                        </p>
-                    </div>
-                    <!-- 사진 또는 동영상 등 첨부파일 -->
-                    <div class="px-0">
-                        <div class="file-image">
-                            <button type="button"><img src="<%= ctxPath%>/images/4.png"/></button>
-                            <button type="button"><img src="<%= ctxPath%>/images/6.png"/></button>
-                            <button type="button"><img src="<%= ctxPath%>/images/7.png"/></button>
-                            <button type="button" class="more-image"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/>
-                                <span class="flex items-center">
-                                    <span><i class="fa-solid fa-plus"></i></span>
-                                    <span class="text-4xl">3</span>
-                                </span>
-                            </button>
+                        	<!-- 글 작성 -->
+	                        <button class="write-button">                   
+	                            <span>
+	                                <span>
+	                                    <span class="write-span">
+	                                        <strong><!---->업데이트 쓰기<!----></strong>
+	                                    </span>
+	                                </span>  
+	                            </span>
+	                        </button>
                         </div>
                     </div>
-                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
-                    <div>
-                        <ul class="flex gap-4 text-gray-600">
-                            <li class="flex-1">
-                                <button type="button" class="button-underline">
-                                    <div class="reaction-images">
-                                        <img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
-                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-                                    </div>
-                                    <span id="reactionCount">120</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-underline">
-                                    <span>댓글&nbsp;</span>
-                                    <span id="commentCount">1,205</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-underline">
-                                    <span>퍼감&nbsp;</span>
-                                    <span id="commentCount">4</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+
 
                     <hr class="border-gray-300 mx-4">
                     <!-- 추천 댓글 퍼가기 등 버튼 -->
                     <div class="py-0">
-                        <ul class="grid grid-cols-4 gap-4 text-center">
+                        <ul class="grid grid-cols-2 gap-4 text-center">
                             <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-thumbs-up"></i>
-                                    <span>추천</span>
+                                <button type="button" class="button-board-attach flex justify-center items-center space-x-2">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image">
+									  <path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
+									</svg>
+                                    <span>사진</span>
                                 </button>
                             </li>
                             <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-comment"></i>
-                                    <span>댓글</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-solid fa-retweet"></i>
-                                    <span>퍼가기</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-paper-plane"></i>
-                                    <span>보내기</span>
+                                <button type="button" class="button-board-attach flex justify-center items-center space-x-2">
+	                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video">
+									  <path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
+									</svg>
+                                    <span>동영상</span>
                                 </button>
                             </li>
                         </ul>
                     </div>
                 </div>
-
-                <div>
-                    <div class="board-member-profile px-4">
-                        <div>
-                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></a>
-                        </div>
-                        <div class="flex-1">
-                            <a href="#">
-                                <span>CMC Global Company Limited.</span>
-                                <span>팔로워 26,549명</span>
-                            </a>
-                            <span>1년</span>
-                        </div>
-                        <div>
-                            <button type="button" class="follow-button"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>
-                            <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
-                        </div>
-                    </div>
-                    <div>
-                        <p>
-                            On February 10, 2025, representatives from CMC Corp attended a meeting with the government regarding tasks and solutions for private enterprises to accelerate and contribute to the country's rapid and sustainable development in the new era.
-                        </p>
-                    </div>
-                    <div class="px-0">
-                        <div class="file-image">
-                            <button type="button"><img src="<%= ctxPath%>/images/4.png"/></button>
-                            <button type="button"><img src="<%= ctxPath%>/images/6.png"/></button>
-                            <button type="button"><img src="<%= ctxPath%>/images/7.png"/></button>
-                            <button type="button" class="more-image"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/>
-                                <span class="flex items-center">
-                                    <span><i class="fa-solid fa-plus"></i></span>
-                                    <span class="text-4xl">3</span>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
-                    <div>
-                        <ul class="flex gap-4 text-gray-600">
-                            <li class="flex-1">
-                                <button type="button" class="button-underline">
-                                    <div class="reaction-images">
-                                        <img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
-                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-                                    </div>
-                                    <span id="reactionCount">120</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-underline">
-                                    <span>댓글&nbsp;</span>
-                                    <span id="commentCount">1,205</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-underline">
-                                    <span>퍼감&nbsp;</span>
-                                    <span id="commentCount">4</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <hr class="border-gray-300 mx-4">
-                    <!-- 추천 댓글 퍼가기 등 버튼 -->
-                    <div class="py-0">
-                        <ul class="grid grid-cols-4 gap-4 text-center">
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-thumbs-up"></i>
-                                    <span>추천</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-comment"></i>
-                                    <span>댓글</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-solid fa-retweet"></i>
-                                    <span>퍼가기</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-paper-plane"></i>
-                                    <span>보내기</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="board-member-profile px-4">
-                        <div>
-                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></a>
-                        </div>
-                        <div class="flex-1">
-                            <a href="#">
-                                <span>CMC Global Company Limited.</span>
-                                <span>팔로워 26,549명</span>
-                            </a>
-                            <span>1년</span>
-                        </div>
-                        <div>
-                            <button type="button" class="follow-button"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>
-                            <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
-                        </div>
-                    </div>
-                    <div>
-                        <p>
-                            On February 10, 2025, representatives from CMC Corp attended a meeting with the government regarding tasks and solutions for private enterprises to accelerate and contribute to the country's rapid and sustainable development in the new era.
-                        </p>
-                    </div>
-                    <div class="px-0">
-                        <div class="file-image">
-                            <button type="button"><img src="<%= ctxPath%>/images/4.png"/></button>
-                            <button type="button"><img src="<%= ctxPath%>/images/6.png"/></button>
-                            <button type="button"><img src="<%= ctxPath%>/images/7.png"/></button>
-                        </div>
-                    </div>
-                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
-                    <div>
-                        <ul class="flex gap-4 text-gray-600">
-                            <li class="flex-1">
-                                <button type="button" class="button-underline">
-                                    <div class="reaction-images">
-                                        <img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
-                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-                                    </div>
-                                    <span id="reactionCount">120</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-underline">
-                                    <span>댓글&nbsp;</span>
-                                    <span id="commentCount">1,205</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-underline">
-                                    <span>퍼감&nbsp;</span>
-                                    <span id="commentCount">4</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <hr class="border-gray-300 mx-4">
-                    <!-- 추천 댓글 퍼가기 등 버튼 -->
-                    <div class="py-0">
-                        <ul class="grid grid-cols-4 gap-4 text-center">
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-thumbs-up"></i>
-                                    <span>추천</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-comment"></i>
-                                    <span>댓글</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-solid fa-retweet"></i>
-                                    <span>퍼가기</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button type="button" class="button-board-action">
-                                    <i class="fa-regular fa-paper-plane"></i>
-                                    <span>보내기</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+			</div>
+			
+			
+			
+            <div id="update" class="border-board">
+                <!-- 게시물 동적으로 생성 -->
+                <c:forEach var="board" items="${boardvo}">
+                	<div>
+	                    <!-- 멤버 프로필 -->                                                              
+	                    <div class="board-member-profile">
+	                        <div>
+	                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></a>
+	                        </div>
+	                        <div class="flex-1">
+	                            <a href="#">
+	                                <c:choose>
+					        			<c:when test="${membervo.member_id == board.fk_member_id}">
+					        				<p class="feed-post-name">${board.member_name} · 나</p> 
+					        			</c:when>
+					        			<c:otherwise>
+					        				<p class="feed-post-name">${board.member_name}</p> 
+					        			</c:otherwise>
+					        		</c:choose>
+	                                <span>팔로워 26,549명</span>
+	                            </a>
+	                            <span>1년</span>
+	                        </div>
+	                        <div style="position: relative;">
+	                            <button type="button" class="follow-button">
+	                            	<c:choose>
+	                            		<c:when test="${membervo.member_id != board.fk_member_id}">
+	                            			<i class="fa-solid fa-plus"></i>&nbsp;팔로우
+	                            		</c:when>
+	                            		<c:otherwise>
+	                            		</c:otherwise>
+	                            	</c:choose>
+                            	</button>
+	                            <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
+	                            
+	                            <button class="more-options"><img class="more-options-img" src="<%= ctxPath%>/images/feed/more.png" /></button>
+				        		<!-- 옵션 드롭다운 메뉴 -->
+					            <div class="options-dropdown">
+					                <ul>
+					                    <c:choose>
+								            <c:when test="${membervo.member_id == board.fk_member_id}">
+								                <li class="delete-post" value="${board.board_no}">글 삭제</li>
+								            	<li class="edit-post" value="${board.board_no}">글 수정</li>
+								                <li class="set-board-range" value="${board.board_no}">게시글 허용범위</li>
+								                <li class="set-comment-range" value="${board.board_no}">댓글 허용범위</li>
+								            </c:when>
+								            <c:otherwise>
+								            	<li class="bookmark-post" value="${board.board_no}">북마크</li>
+								                <li class="interest-none" value="${board.board_no}">관심없음</li>
+								            </c:otherwise>
+								        </c:choose>
+					                </ul>
+					            </div> <!-- div.options-dropdown 끝 -->
+	                        </div>
+	                    </div>
+	                    <!-- 글 내용 -->
+	                    <div>
+	                        <p>${board.board_content}</p>
+	                    </div>
+	                    <!-- 사진 또는 동영상 등 첨부파일 -->
+	                    <div class="px-0">
+	                        <div class="file-image">
+	                            <button type="button"><img src="<%= ctxPath%>/images/4.png"/></button>
+	                            <button type="button"><img src="<%= ctxPath%>/images/6.png"/></button>
+	                            <button type="button"><img src="<%= ctxPath%>/images/7.png"/></button>
+	                            <button type="button" class="more-image"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/>
+	                                <span class="flex items-center">
+	                                    <span><i class="fa-solid fa-plus"></i></span>
+	                                    <span class="text-4xl">3</span>
+	                                </span>
+	                            </button>
+	                        </div>
+	                    </div>
+	                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
+	                    <div>
+	                        <ul class="flex gap-4 text-gray-600">
+	                            <li class="flex-1">
+	                                <button type="button" class="button-underline">
+	                                    <div class="reaction-images">
+	                                        <img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
+	                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
+	                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
+	                                    </div>
+	                                    <span id="reactionCount">120</span>
+	                                </button>
+	                            </li>
+	                            <li>
+	                                <button type="button" class="button-underline">
+	                                    <span>댓글&nbsp;</span>
+	                                    <span id="commentCount">1,205</span>
+	                                </button>
+	                            </li>
+	                            <li>
+	                                <button type="button" class="button-underline">
+	                                    <span>퍼감&nbsp;</span>
+	                                    <span id="commentCount">4</span>
+	                                </button>
+	                            </li>
+	                        </ul>
+	                    </div>
+	
+	                    <hr class="border-gray-300 mx-4">
+	                    <!-- 추천 댓글 퍼가기 등 버튼 -->
+	                    <div class="py-0">
+	                        <ul class="grid grid-cols-4 gap-4 text-center">
+	                            <li>
+	                                <button type="button" class="button-board-action">
+	                                    <i class="fa-regular fa-thumbs-up"></i>
+	                                    <span>추천</span>
+	                                </button>
+	                            </li>
+	                            <li>
+	                                <button type="button" class="button-board-action">
+	                                    <i class="fa-regular fa-comment"></i>
+	                                    <span>댓글</span>
+	                                </button>
+	                            </li>
+	                            <li>
+	                                <button type="button" class="button-board-action">
+	                                    <i class="fa-solid fa-retweet"></i>
+	                                    <span>퍼가기</span>
+	                                </button>
+	                            </li>
+	                            <li>
+	                                <button type="button" class="button-board-action">
+	                                    <i class="fa-regular fa-paper-plane"></i>
+	                                    <span>보내기</span>
+	                                </button>
+	                            </li>
+	                        </ul>
+	                    </div>
+	                </div>
+               	</c:forEach>
+           	</div>
+       	</div>
+                
+         
         <!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
-            <div class="border-list sticky top-20 space-y-2 text-center relative">
+            <div class="border-list sticky top-20 space-y-2 text-center relative bg-white">
                 <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
                     <span class="pl-1.5 font-bold">광고</span>
                     <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
