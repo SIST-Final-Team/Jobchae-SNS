@@ -64,26 +64,6 @@
                 @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
             }
         }
-		.border-write {
-            @apply space-y-4;
-
-            &>div {
-                @apply border-1 border-gray-300 rounded-lg space-y-2 bg-white;
-            }
-
-            &>div {
-                @apply pt-4;
-                @apply pb-2;
-            }
-            
-            &>div>*:not(.px-0) {
-                @apply px-4;
-            }
-
-            .button-more {
-                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
-            }
-        }
         .nav-selected {
             @apply relative before:inline-block before:absolute before:w-0.5 before:h-10 before:bg-green-800 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
         }
@@ -292,7 +272,7 @@
         <!-- 중앙 본문 -->
         <div class="center col-span-14 md:col-span-7 space-y-2 m-5">
 
-			<div id="write" class="border-write">
+			<div id="write" class="border-board">
 			
 				<div>
                     <!-- 멤버 프로필 -->                                                              
@@ -377,7 +357,10 @@
                             	</button>
 	                            <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
 	                            
-	                            <button class="more-options"><img class="more-options-img" src="<%= ctxPath%>/images/feed/more.png" /></button>
+	                            <!--  <button class="more-options"><img class="more-options-img" src="<%= ctxPath%>/images/feed/more.png" /></button>-->
+	                            <svg class="more-options" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M3.25 8C3.25 8.69 2.69 9.25 2 9.25C1.31 9.25 0.75 8.69 0.75 8C0.75 7.31 1.31 6.75 2 6.75C2.69 6.75 3.25 7.31 3.25 8ZM14 6.75C13.31 6.75 12.75 7.31 12.75 8C12.75 8.69 13.31 9.25 14 9.25C14.69 9.25 15.25 8.69 15.25 8C15.25 7.31 14.69 6.75 14 6.75ZM8 6.75C7.31 6.75 6.75 7.31 6.75 8C6.75 8.69 7.31 9.25 8 9.25C8.69 9.25 9.25 8.69 9.25 8C9.25 7.31 8.69 6.75 8 6.75Z" fill="currentColor"></path>
+							  	</svg>
 				        		<!-- 옵션 드롭다운 메뉴 -->
 					            <div class="options-dropdown">
 					                <ul>
