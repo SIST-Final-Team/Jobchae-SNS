@@ -209,4 +209,4 @@
         </div>
       </div>
     </nav>
-    <div id="clickBlackout" class="w-screen h-screen fixed z-100"></div>
+    <div id="clickBlackout" class="w-screen h-screen fixed z-100" style="display:none"></div>

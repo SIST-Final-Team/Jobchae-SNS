@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (className.indexOf("hidden") != -1) {
       SearchResultBox.classList.toggle("hidden");
       clickBlackout.classList.toggle("searchBoxShadow");
+	  clickBlackout.style.display="block";
       searchBoxInput.classList.toggle("searchBoxActive");
       SearchResultBox.classList.toggle("searchBoxResultActive");
     }
@@ -138,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ) {
       SearchResultBox.classList.toggle("hidden");
       clickBlackout.classList.toggle("searchBoxShadow");
+	  clickBlackout.style.display="none";
       searchBoxInput.classList.toggle("searchBoxActive");
       SearchResultBox.classList.toggle("searchBoxResultActive");
       searchBoxReturn();
