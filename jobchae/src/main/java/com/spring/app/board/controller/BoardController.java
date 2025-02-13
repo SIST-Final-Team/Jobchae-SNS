@@ -42,7 +42,7 @@ public class BoardController {
 		// 로그인된 사용자의 정보 얻어오기
 		MemberVO membervo = service.getUserInfo(login_userid);
 		
-		// 피드 조회하기 (본인이 작성한 글)
+		// 피드 조회하기
 		List<BoardVO> boardvo = service.getAllBoards(login_userid);
 		
 		mav.addObject("boardvo", boardvo);

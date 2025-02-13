@@ -85,12 +85,21 @@
 
 		// "업데이트" 버튼
 		$("button#write-update").click(function() {
-			alert("글이 성공적으로 업데이트 되었습니다.");
-			
-			const frm = document.addFrm;
-	      	frm.method = "post";
-	      	frm.action = "<%= ctxPath%>/board/add";
-	      	frm.submit();
+			const boardContent = quill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
+			//alert(boardContent);
+
+			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
+		        alert("내용을 입력해주세요.");
+		        return;
+		    }
+			else {
+				alert("글이 성공적으로 업데이트 되었습니다.");
+				
+				const frm = document.addFrm;
+		      	frm.method = "post";
+		      	frm.action = "<%= ctxPath%>/board/add";
+		      	frm.submit();
+			}
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -265,6 +274,7 @@
 			                <ul>
 			                    <c:choose>
 						            <c:when test="${membervo.member_id == board.fk_member_id}">
+						            	<li class="edit-post" value="${board.board_no}">글 수정</li>
 						                <li class="delete-post" value="${board.board_no}">글 삭제</li>
 						                <li class="set-board-range" value="${board.board_no}">게시글 허용범위</li>
 						                <li class="set-comment-range" value="${board.board_no}">댓글 허용범위</li>
@@ -330,7 +340,7 @@
 						</div>
 						
 						<form name="addFrm">
-				            <input type="hidden" name="fk_member_id" value="user001" /> 	<!-- session으로 가져오기 -->
+				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	<!-- session으로 가져오기 -->
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
 			            </form>
