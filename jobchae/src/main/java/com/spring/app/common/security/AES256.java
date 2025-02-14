@@ -1,4 +1,4 @@
-package com.spring.app.common;
+package com.spring.app.common.security;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -11,10 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-
-//=== #43. 양방향 암호화 알고리즘인 AES256 암호화를 지원하는 클래스 생성하기 
-//    (기본생성자가 없으므로 @Component 를 쓰면 오류가 발생한다.
-//	  그래서 com.spring.app.config.AES256_Configuration 클래스에서 빈으로 생성해준다.) ==== 
 /**
  * 양방향 암호화 알고리즘인 AES256 암호화를 지원하는 클래스
  */
@@ -27,7 +23,6 @@ public class AES256 {
      * @param key 암호화/복호화를 위한 키값
      * @throws UnsupportedEncodingException 키값의 길이가 16미만일 경우 발생
      */
-    // 이거 기본생성자가 아닌 그냥 생성자다! 그래서 @Component 를 쓸 수 없다
     public AES256(String key) throws UnsupportedEncodingException {
         this.iv = key.substring(0, 16);
         byte[] keyBytes = new byte[16]; 
