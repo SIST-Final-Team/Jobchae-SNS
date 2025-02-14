@@ -192,29 +192,29 @@
     	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// Modal 
-        const modal = document.getElementById("writeModal");
+        const writeModal = document.getElementById("writeModal");
+        const editModal = document.getElementById("editModal");
         modal.style.display = "none";
         
         $("button.write-button").click(function() {
-        	// 모달을 열 때 공개 범위를 전체공개로 초기화
-            var visibilityStatus = document.getElementById("visibilityStatus");
+
+        	var visibilityStatus = document.getElementById("visibilityStatus");
             var boardVisibilityInput = $("input[name='board_visibility']");
             
-         	// 공개 범위 초기화: 전체공개
             visibilityStatus.textContent = "전체공개";
             boardVisibilityInput.val("1"); 
             
-            modal.style.display = "block";
+            writeModal.style.display = "block";
         });
         
         $("span#closeModalButton").click(function() {
-            modal.style.display = "none";
+        	writeModal.style.display = "none";
             quill.setText('');
         });
 
         $(window).click(function(event) {
             if (event.target == modal) {
-                modal.style.display = "none";
+            	writeModal.style.display = "none";
                 quill.setText('');
             }
         });
@@ -232,10 +232,9 @@
 		
         quill.root.innerHTML = '';
         
-     	// Quill 에디터 내용이 변경될 때마다 <input> 값 업데이트
         quill.on('text-change', function() {
-            var boardContent = quill.root.innerHTML;  // HTML 내용
-            $("input[name='board_content']").val(boardContent);  // HTML을 그대로 입력 필드에 설정
+            var boardContent = quill.root.innerHTML;  
+            $("input[name='board_content']").val(boardContent);  
         });
      	
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -317,21 +316,29 @@
 		    }
 	    });
 	 	
-		// 글 수정
+		/////////////////////////////////////////////////////////////////////////////////////////
+	 	// 글 수정
 	    $(".edit-post").click(function () {
 	        const board_no = $(this).attr("value");
-	        const boardContent = $("input[name='board_content']").val();
-
-	        alert("Board content:", boardContent);
+	        const board_content = $(this).closest('.board-member-profile').find(".board-content").val();
+	        
+	        //alert("글 수정 (board_no: " + board_no + ")");
+	        //alert("board_content : " + board_content);  
+	        
+	        quill.root.innerHTML = board_content;
+	        editModal.style.display = "block";
 	    });
 
-	 
+	 	
+		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 게시글 허용범위
 	    $(".set-board-range").click(function () {
 	    	let board_no = $(this).attr("value");
 	        alert("게시글 허용범위 (board_no: " + board_no + ")");
 	    });
 	    
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
 	    // 댓글 허용범위
 	    $(".set-comment-range").click(function () {
 	    	let board_no = $(this).attr("value");
@@ -537,7 +544,7 @@
 		                            	</button>
 	                            	</c:when>
                             	</c:choose>
-	                            <button type="button" class="more-options"><i class="fa-solid fa-ellipsis"></i></button>
+	                            <button type="button" class="more-options"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
 	                            <input type="hidden" class="board-content" value="${board.board_content}" data-board-content="${board.board_content}" />
 				        		<!-- 옵션 드롭다운 메뉴 -->
 					            <div class="options-dropdown">
@@ -667,8 +674,68 @@
                
                 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
-        <!-- Modal -->
+        <!-- 글 작성 Modal -->
         <div id="writeModal" class="modal">
+            <div class="modal-content">
+                <div class="content-top">
+                    <button type="button" class="modal-profile-info" id="modal-profile-info">
+                        <div class="modal-profile-img">
+                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                        </div>
+                        <div class="modal-name">
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
+                            <span id="visibilityStatus">전체공개</span>
+                        </div>
+                    </button>
+                    <span class="close" id="closeModalButton">&times;</span>
+                </div> <!-- div.modal-content 끝 -->
+                <div class="content-bottom">
+                    <!-- Quill 에디터 적용 부분 -->
+                    <div class="editor-container">
+					    <div>
+					        <div class="editor-content ql-container">
+					            <div class="ql-editor" data-placeholder="글을 작성하세요...">
+					                <p></p>
+					            </div>
+					            <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
+					        </div>
+					    </div>
+					</div>
+					
+				    <!-- 이미지 미리보기 표시 영역 -->
+		            <div id="image-preview-container" style="">
+		                <div id="image-preview-list"></div> <!-- 첨부된 이미지 목록 -->
+		            </div>
+					
+                    <div class="ql-category">
+	                    <div>
+	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
+							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
+							</svg>
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
+								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
+							</svg>
+	                    </div>
+						<div>
+							<button type="button" id="write-update">수정하기</button>					
+						</div>
+						<form name="addFrm" enctype="multipart/form-data">
+				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
+				            <input type="hidden" name="board_content" value="" />
+				            <input type="hidden" name="board_visibility" value="" />
+				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
+				            <input type="file" name="board_video" id="file-video" style="display:none;" />
+			            </form>
+			        </div> <!-- div.ql-category 끝 -->
+                </div> <!-- div.content-bottom 끝 -->
+            </div> <!-- div.modal-content 끝 -->
+        </div> <!-- div.modal 끝 -->
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        
+        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 글 수정 Modal -->
+        <div id="editModal" class="modal">
             <div class="modal-content">
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info">
@@ -712,7 +779,7 @@
 						<div>
 							<button type="button" id="write-update">업데이트</button>					
 						</div>
-						<form name="addFrm" enctype="multipart/form-data">
+						<form name="editFrm" enctype="multipart/form-data">
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
@@ -724,6 +791,7 @@
             </div> <!-- div.modal-content 끝 -->
         </div> <!-- div.modal 끝 -->
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        
         
         
 		<!-- 우측 광고 -->
