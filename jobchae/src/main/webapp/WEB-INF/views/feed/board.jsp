@@ -297,21 +297,24 @@
 	        const confirmDelete = confirm("글을 삭제하시겠습니까?");
 		    if (!confirmDelete) {
 		        return; 
-		    }
+		    } else {
 		    
-			$.ajax({
-				url: '${pageContext.request.contextPath}/board/delete',
-				type: 'post',
-				dataType: 'json',
-				data: {"board_no": board_no},
-				success: function(response) {
-		            alert("글이 삭제되었습니다.");
-		            location.reload(); 
-		        },
-		        error: function(request, status, error){
-					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-			 	}
-			});
+				$.ajax({
+					url: '${pageContext.request.contextPath}/board/deleteBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"board_no": board_no},
+					success: function(json) {
+						if(json.n == 1) {
+							alert("글이 성공적으로 삭제되었습니다.");
+							location.reload();
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+		    }
 	    });
 	 	
 		// 글 수정
@@ -353,8 +356,71 @@
 	        $(".dropdown-content").hide();
 	    });
 
+	    
+		/////////////////////////////////////////////////////////////////////////////////////////
+		// 추천기능
+		$("button.reactions-menu__reaction-index").click(function() {
+			
+			const reaction_target_no = $(this).closest(".reactions-menu").data("value");
+			//alert(board_no)
+			
+			const reaction_status = $(this).val();
+			//alert($(this).val());
+	        
+			$.ajax({
+				url: '${pageContext.request.contextPath}/board/reactionSelect',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_member_id": fk_member_id,
+					   "reaction_target_no": reaction_target_no},
+				success: function(response) {
+		            location.reload(); 
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			/*
+			$.ajax({
+				url: '${pageContext.request.contextPath}/board/reactionBoard',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no,
+					   "reaction_status": reaction_status},
+				success: function(response) {
+		            alert("반응 추가 완료");
+		            location.reload(); 
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});*/
+		});
+		
 	});
 
+    
+ 	// 이미지 미리보기 및 목록에 추가하는 함수
+    function previewImage(event) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+
+        const fileNameElement = document.createElement("span");
+        fileNameElement.textContent = file.name; 
+        fileNameElement.style.display = "block"; 
+
+        const previewItem = document.createElement("div");
+        previewItem.style.marginBottom = "5px"; 
+        previewItem.appendChild(fileNameElement);
+
+        const previewList = document.getElementById("image-preview-list");
+        previewList.appendChild(previewItem);
+
+        document.getElementById("image-preview-container").style.display = "block";
+    }
+
+ 	
 </script>
 
 
@@ -547,29 +613,29 @@
 	                                    <i class="fa-regular fa-thumbs-up"></i>
 	                                    <span>추천</span>
 	                                </button>
-	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" style="">
-									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
-									      	<!-- <span class="reactions-menu__reaction-description">추천</span>-->
+	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${board.board_no}" style="">
+									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" value="1" tabindex="-1" type="button">
+									      	<span class="reactions-menu__reaction-description">추천</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8fz8rainn3wh49ad6ef9gotj1" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
 									    </button>
-									    <button aria-label="반응: 축하" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
-								      		<!--<span class="reactions-menu__reaction-description">축하</span>-->
+									    <button aria-label="반응: 축하" class="reactions-menu__reaction-index reactions-menu__reaction" value="2" tabindex="-1" type="button">
+								      		<span class="reactions-menu__reaction-description">축하</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/1mbfgcprj3z93pjntukfqbr8y" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
 									    </button>
-									    <button aria-label="반응: 응원" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
-									      	<!--<span class="reactions-menu__reaction-description">응원</span>-->
+									    <button aria-label="반응: 응원" class="reactions-menu__reaction-index reactions-menu__reaction" value="3" tabindex="-1" type="button">
+									      	<span class="reactions-menu__reaction-description">응원</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cv29x2jo14dbflduuli6de6bf" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
 									    </button>
-									    <button aria-label="반응: 마음에 쏙듬" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
-									      	<!--<span class="reactions-menu__reaction-description">마음에 쏙듬</span>-->
+									    <button aria-label="반응: 마음에 쏙듬" class="reactions-menu__reaction-index reactions-menu__reaction" value="4" tabindex="-1" type="button">
+									      	<span class="reactions-menu__reaction-description">마음에 쏙듬</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6f5qp9agugsqw1swegjxj86me" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
 									    </button>
-									    <button aria-label="반응: 통찰력" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
-								      		<!--<span class="reactions-menu__reaction-description">통찰력</span>-->
+									    <button aria-label="반응: 통찰력" class="reactions-menu__reaction-index reactions-menu__reaction" value="5" tabindex="-1" type="button">
+								      		<span class="reactions-menu__reaction-description">통찰력</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/9ry9ng73p660hsehml9i440b2" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
 									    </button>
-									    <button aria-label="반응: 웃음" class="reactions-menu__reaction-index reactions-menu__reaction" tabindex="-1" type="button">
-									      	<!--<span class="reactions-menu__reaction-description">웃음</span>-->
+									    <button aria-label="반응: 웃음" class="reactions-menu__reaction-index reactions-menu__reaction" value="6" tabindex="-1" type="button">
+									      	<span class="reactions-menu__reaction-description">웃음</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/qye2jwjc8dw20nuv6diudrsi" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
 									    </button>
 								    </span>
@@ -628,31 +694,39 @@
 					        </div>
 					    </div>
 					</div>
+					
+				    <!-- 이미지 미리보기 표시 영역 -->
+		            <div id="image-preview-container" style="">
+		                <div id="image-preview-list"></div> <!-- 첨부된 이미지 목록 -->
+		            </div>
+					
                     <div class="ql-category">
 	                    <div>
-	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image">
+	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
 							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
 							</svg>
-                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video">
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
 								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
 							</svg>
 	                    </div>
 						<div>
 							<button type="button" id="write-update">업데이트</button>					
 						</div>
-						<form name="addFrm">
-				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	<!-- session으로 가져오기 -->
+						<form name="addFrm" enctype="multipart/form-data">
+				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
+				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
+				            <input type="file" name="board_video" id="file-video" style="display:none;" />
 			            </form>
-			        </div>
+			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
             </div> <!-- div.modal-content 끝 -->
         </div> <!-- div.modal 끝 -->
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
         
-        <!-- 우측 광고 -->
+		<!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
             <div class="border-list sticky top-20 space-y-2 text-center relative bg-white">
                 <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
@@ -670,7 +744,8 @@
                     <button type="button" class="button-orange">팔로우</button>
                 </div>
             </div>
-        </div>
+        </div> 
+        
     </div>
 </body>
 </html>

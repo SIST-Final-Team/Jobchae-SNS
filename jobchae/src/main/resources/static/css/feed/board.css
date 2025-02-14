@@ -325,7 +325,7 @@ div.modal {
     background-color: white;
     padding: 20px;
     width: 700px;
-    height: 600px;
+    height: 700px;
     border-radius: 10px;
     position: absolute;  
     top: 50%;
@@ -333,6 +333,15 @@ div.modal {
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
+}
+
+.editor-container {
+	border: solid 1px green;
+}
+#image-preview-container {
+    border: solid 1px red;
+    height: 200px;
+    overflow-y: auto; 
 }
 
 .modal-profile-info {
@@ -506,6 +515,9 @@ img.modal-img {
 .reactions-menu__reaction:hover img {
     transform: scale(1.7); 
     transition: transform 0.3s ease-in-out; 
+    cursor: pointer;
 }
 
-
+#image-medium, #video-medium {
+	cursor: pointer;
+}

@@ -40,8 +40,8 @@ public class BoardService_imple implements BoardService {
 	
 	// 글 삭제
 	@Override
-	public int delete(String board_no) {
-		int n = dao.delete(board_no);
+	public int deleteBoard(Map<String, String> paraMap) {
+		int n = dao.deleteBoard(paraMap);
 		return n;
 	}
 
@@ -49,6 +49,13 @@ public class BoardService_imple implements BoardService {
 	public BoardVO editSearch(String board_no) {
 		BoardVO boardvo = dao.editSearch(board_no);
 		return boardvo;
+	}
+
+	// 게시물 반응
+	@Override
+	public int reactionBoard(Map<String, String> paraMap) {
+		int n = dao.reactionBoard(paraMap);
+		return n;
 	}
 
 

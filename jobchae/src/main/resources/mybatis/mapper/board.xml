@@ -31,9 +31,9 @@
 	</select>
 
 	<!-- 글 삭제 -->
-	<update id="delete" parameterType="String">
+	<update id="deleteBoard" parameterType="HashMap">
 		update tbl_board set board_is_delete = 1
-		where board_no = #{board_no}
+		where fk_member_id = #{fk_member_id} and board_no = #{board_no}
 	</update>	
 	
 	<!-- 글 수정할 글 조회 -->
@@ -42,5 +42,10 @@
 		from tbl_board
 		where board_no = #{board_no}
 	</select>
+	
+	<insert id="reactionBoard" parameterType="HashMap">
+		insert into tbl_reaction(reaction_no, fk_member_id, reaction_target_no, reaction_target_type, reaction_status, reaction_register_date)
+		values(seq_reaction_no.nextVal, #{fk_member_id}, #{reaction_target_no}, 'board', #{reaction_status}, default)
+	</insert>
 	
 </mapper>

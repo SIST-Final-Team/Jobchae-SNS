@@ -18,10 +18,12 @@ public interface BoardService {
 	List<BoardVO> getAllBoards(String login_userid);
 
 	// 글 삭제
-	int delete(String board_no);
+	int deleteBoard(Map<String, String> paraMap);
 
 	// 글 수정
 	BoardVO editSearch(String board_no);
 
+	// 게시물 반응
+	int reactionBoard(Map<String, String> paraMap);
 
 }

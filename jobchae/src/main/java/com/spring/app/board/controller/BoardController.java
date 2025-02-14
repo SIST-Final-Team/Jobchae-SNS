@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.board.domain.BoardVO;
@@ -71,13 +72,30 @@ public class BoardController {
 	
 	
 	// 글 삭제
-	@PostMapping("delete")
-	public ModelAndView delete(@RequestParam String board_no, ModelAndView mav) {
+	@PostMapping("deleteBoard")
+	@ResponseBody
+	public Map<String, Integer> deleteBoard(HttpServletRequest request, @RequestParam String board_no, ModelAndView mav) {
 		
-		int n = service.delete(board_no);
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		String fk_member_id = loginuser.getMember_id();
 		
-		mav.setViewName("redirect:/board/feed");
-		return mav;
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("board_no", board_no);
+		
+		int n = service.deleteBoard(paraMap);
+		
+		if (n != 1) {
+			mav.addObject("message", "삭제 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("msg");
+		}
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		
+		return map; 
 	}
 	
 	// 글 수정
@@ -93,4 +111,23 @@ public class BoardController {
 		return mav;
 	}
 	
+	// 게시물 반응
+	@PostMapping("reactionBoard")
+	public ModelAndView reactionBoard(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status, ModelAndView mav) {
+
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		String fk_member_id = loginuser.getMember_id();
+
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("reaction_target_no", reaction_target_no);
+		paraMap.put("reaction_status", reaction_status);
+
+		int n = service.reactionBoard(paraMap);
+
+		mav.setViewName("redirect:/board/feed");
+		return mav;
+	}
+
 }

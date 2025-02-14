@@ -41,8 +41,8 @@ public class BoardDAO_imple implements BoardDAO {
 
 	// 글 삭제
 	@Override
-	public int delete(String board_no) {
-		int n = sqlsession.delete("board.delete", board_no);
+	public int deleteBoard(Map<String, String> paraMap) {
+		int n = sqlsession.delete("board.deleteBoard", paraMap);
 		return n;
 	}
 
@@ -51,6 +51,13 @@ public class BoardDAO_imple implements BoardDAO {
 	public BoardVO editSearch(String board_no) {
 		BoardVO boardvo = sqlsession.selectOne("board.editSearch", board_no);
 		return boardvo;
+	}
+
+	// 게시물 반응
+	@Override
+	public int reactionBoard(Map<String, String> paraMap) {
+		int n = sqlsession.insert("board.reactionBoard", paraMap);
+		return n;
 	}
 
 	
