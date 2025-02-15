@@ -191,10 +191,11 @@
     	$(".options-dropdown").hide();
     	
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// Modal 
+		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
-        modal.style.display = "none";
+        writeModal.style.display = "none";
+        editModal.style.display = "none";
         
         $("button.write-button").click(function() {
 
@@ -209,36 +210,50 @@
         
         $("span#closeModalButton").click(function() {
         	writeModal.style.display = "none";
-            quill.setText('');
+        	writeQuill.setText('');
         });
 
-        $(window).click(function(event) {
-            if (event.target == modal) {
+        $(window).click(function(e) {
+            if (e.target == writeModal) {
             	writeModal.style.display = "none";
-                quill.setText('');
+            	writeQuill.setText('');
             }
         });
         
         
 		/////////////////////////////////////////////////////////////////////////////////////////
      	// Quill 에디터
-        var quill = new Quill('.editor-container', { 
+     	
+     	// 글 작성 Quill 에디터
+        var writeQuill = new Quill('#writeModal .editor-container', { 
             theme: 'snow',
             modules: {
                 toolbar: false
             },
             placeholder: '나누고 싶은 생각이 있으세요?' 
         });
-		
-        quill.root.innerHTML = '';
-        
-        quill.on('text-change', function() {
-            var boardContent = quill.root.innerHTML;  
+        writeQuill.root.innerHTML = '';
+        writeQuill.on('text-change', function() {
+            var boardContent = writeQuill.root.innerHTML;  
             $("input[name='board_content']").val(boardContent);  
         });
      	
+     	// 글 수정 Quill 에디터
+        var editQuill = new Quill('#editModal .editor-container', { 
+            theme: 'snow',
+            modules: {
+                toolbar: false
+            },
+            placeholder: '나누고 싶은 생각이 있으세요?' 
+        });
+        editQuill.on('text-change', function() {
+            var boardContent = editQuill.root.innerHTML;  
+            $("input[name='board_content']").val(boardContent);  
+        });
+        
+        
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 공개범위 바꾸기 (전체공개/친구공개)
+		// 공개범위 바꾸기 (전체공개/친구공개) - 글 작성
 		$("button#modal-profile-info").click(function() {
 			var visibilityStatus = document.getElementById("visibilityStatus");
 			var boardVisibilityInput = $("input[name='board_visibility']");
@@ -251,17 +266,30 @@
 		        boardVisibilityInput.val("1");
 		    }
 		});
-        
-        
+
+		// 공개범위 바꾸기 (전체공개/친구공개) - 글 수정
+		$("button#modal-profile-info2").click(function() {
+			var visibilityStatus = document.getElementById("visibilityStatus2");
+			var boardVisibilityInput = $("input[name='board_visibility']");
+			
+		    if (visibilityStatus.textContent === "전체공개") {
+		        visibilityStatus.textContent = "친구공개";
+		        boardVisibilityInput.val("2");
+		    } else {
+		        visibilityStatus.textContent = "전체공개";
+		        boardVisibilityInput.val("1");
+		    }
+		});
+		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// "업데이트" 버튼
+		// 글 작성
 		$("button#write-update").click(function() {
-			const boardContent = quill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
+			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
 
 			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
 		        alert("내용을 입력해주세요.");
-		        quill.setText('');
+		        writeQuill.setText('');
 		        return;
 		    }
 			else {
@@ -318,18 +346,65 @@
 	 	
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 글 수정
+		let board_content = "";
 	    $(".edit-post").click(function () {
 	        const board_no = $(this).attr("value");
-	        const board_content = $(this).closest('.board-member-profile').find(".board-content").val();
+	        const visibilityOrigin = $(".board-visibility-origin").val();
+	        board_content = $(this).closest('.board-member-profile').find(".board-content").val();
 	        
+	        $("input[name='board_no']").val(board_no);
+	        
+	        const visibilityStatus = document.getElementById("visibilityStatus2");
+	        const boardVisibilityInput = $("input[name='board_visibility']");
+            
+            if (visibilityOrigin === "1") {
+                visibilityStatus.textContent = "전체공개";  
+            } else if (visibilityOrigin === "2") {
+                visibilityStatus.textContent = "친구공개";  
+            }
+            
+            boardVisibilityInput.val(visibilityOrigin); 
+            
 	        //alert("글 수정 (board_no: " + board_no + ")");
+            //alert("board-visibility-origin 값: " + visibilityOrigin);
 	        //alert("board_content : " + board_content);  
 	        
-	        quill.root.innerHTML = board_content;
+	        editQuill.root.innerHTML = board_content; 
 	        editModal.style.display = "block";
 	    });
+		
+	    $("span#closeModalButton").click(function() {
+	    	editModal.style.display = "none";
+	    	editQuill.setText('');
+        });
 
+        $(window).click(function(e) {
+            if (e.target == editModal) {
+            	editModal.style.display = "none";
+            	editQuill.setText('');
+            }
+        });
 	 	
+        $("button#edit-update").click(function() {
+			const boardContent = editQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
+			//alert(boardContent);
+
+			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
+		        alert("내용을 입력해주세요.");
+		        editQuill.root.innerHTML = board_content;
+		        return;
+		    }
+			else {
+				alert("글이 성공적으로 수정되었습니다.");
+				
+				const frm = document.editFrm;
+		      	frm.method = "post";
+		      	frm.action = "<%= ctxPath%>/board/editBoard";
+		      	frm.submit();
+			}
+		});
+        
+        
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 게시글 허용범위
 	    $(".set-board-range").click(function () {
@@ -546,6 +621,8 @@
                             	</c:choose>
 	                            <button type="button" class="more-options"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
 	                            <input type="hidden" class="board-content" value="${board.board_content}" data-board-content="${board.board_content}" />
+	                            <input type="hidden" class="board-visibility-origin" value="${board.board_visibility}" data-board-content="${board.board_visibility}" />
+	                            
 				        		<!-- 옵션 드롭다운 메뉴 -->
 					            <div class="options-dropdown">
 					                <ul>
@@ -717,7 +794,7 @@
 							</svg>
 	                    </div>
 						<div>
-							<button type="button" id="write-update">수정하기</button>					
+							<button type="button" id="write-update">업데이트</button>					
 						</div>
 						<form name="addFrm" enctype="multipart/form-data">
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
@@ -738,13 +815,13 @@
         <div id="editModal" class="modal">
             <div class="modal-content">
                 <div class="content-top">
-                    <button type="button" class="modal-profile-info" id="modal-profile-info">
+                    <button type="button" class="modal-profile-info" id="modal-profile-info2">
                         <div class="modal-profile-img">
                             <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
                         </div>
                         <div class="modal-name">
                             <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
-                            <span id="visibilityStatus">전체공개</span>
+                            <span id="visibilityStatus2">전체공개</span>
                         </div>
                     </button>
                     <span class="close" id="closeModalButton">&times;</span>
@@ -777,12 +854,13 @@
 							</svg>
 	                    </div>
 						<div>
-							<button type="button" id="write-update">업데이트</button>					
+							<button type="button" id="edit-update">수정하기</button>					
 						</div>
 						<form name="editFrm" enctype="multipart/form-data">
-				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
+				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 
+				            <input type="hidden" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
-				            <input type="hidden" name="board_visibility" value="" />
+				            <input type="hiddn" name="board_visibility" value="" />
 				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
 				            <input type="file" name="board_video" id="file-video" style="display:none;" />
 			            </form>

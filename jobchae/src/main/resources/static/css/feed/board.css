@@ -335,9 +335,6 @@ div.modal {
     flex-direction: column;
 }
 
-.editor-container {
-	border: solid 1px green;
-}
 #image-preview-container {
     border: solid 1px red;
     height: 200px;
@@ -446,7 +443,7 @@ img.modal-img {
     cursor: pointer;
 }
 
-#write-update {
+#write-update, #edit-update {
 	margin-left: 544px;
     background-color: #4A90E2; 
     color: white; 

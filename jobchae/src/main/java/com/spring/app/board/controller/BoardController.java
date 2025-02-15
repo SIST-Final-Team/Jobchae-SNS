@@ -99,13 +99,24 @@ public class BoardController {
 	}
 	
 	// 글 수정
-	@PostMapping("editSearch")
-	public ModelAndView editSearch(@RequestParam String board_no, ModelAndView mav) {
+	@PostMapping("editBoard")
+	public ModelAndView editBoard(@RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, ModelAndView mav) {
 		
-		BoardVO boardvo = service.editSearch(board_no);
+		System.out.println("editBoard 와졌음");
 		
-		System.out.println("dd" + boardvo.getBoard_content());
-		mav.addObject("board_content", boardvo.getBoard_content());
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("board_no", board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("board_content", board_content);
+		paraMap.put("board_visibility", board_visibility);
+		
+		int n = service.editBoard(paraMap);
+		
+		if (n != 1) {
+			mav.addObject("message", "수정 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("msg");
+		}
 		
 		mav.setViewName("redirect:/board/feed");
 		return mav;

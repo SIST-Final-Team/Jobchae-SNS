@@ -45,10 +45,11 @@ public class BoardService_imple implements BoardService {
 		return n;
 	}
 
+	// 글 수정
 	@Override
-	public BoardVO editSearch(String board_no) {
-		BoardVO boardvo = dao.editSearch(board_no);
-		return boardvo;
+	public int editBoard(Map<String, String> paraMap) {
+		int n = dao.editBoard(paraMap);
+		return n;
 	}
 
 	// 게시물 반응
@@ -57,6 +58,8 @@ public class BoardService_imple implements BoardService {
 		int n = dao.reactionBoard(paraMap);
 		return n;
 	}
+
+	
 
 
 

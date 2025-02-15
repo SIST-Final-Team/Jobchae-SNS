@@ -48,9 +48,9 @@ public class BoardDAO_imple implements BoardDAO {
 
 	// 글 수정
 	@Override
-	public BoardVO editSearch(String board_no) {
-		BoardVO boardvo = sqlsession.selectOne("board.editSearch", board_no);
-		return boardvo;
+	public int editBoard(Map<String, String> paraMap) {
+		int n = sqlsession.update("board.editBoard", paraMap);
+		return n;
 	}
 
 	// 게시물 반응

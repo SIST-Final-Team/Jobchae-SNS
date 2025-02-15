@@ -21,9 +21,10 @@ public interface BoardService {
 	int deleteBoard(Map<String, String> paraMap);
 
 	// 글 수정
-	BoardVO editSearch(String board_no);
+	int editBoard(Map<String, String> paraMap);
 
 	// 게시물 반응
 	int reactionBoard(Map<String, String> paraMap);
+
 
 }
