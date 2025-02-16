@@ -406,22 +406,56 @@
         
         
 		/////////////////////////////////////////////////////////////////////////////////////////
-	 	// 게시글 허용범위
+	 	// 게시글, 댓글 허용범위
 	    $(".set-board-range").click(function () {
-	    	let board_no = $(this).attr("value");
-	        alert("게시글 허용범위 (board_no: " + board_no + ")");
+	    	const board_no = $(this).attr("value");
+	    	const visibilityOrigin = $(this).closest('.board-member-profile').find(".board-visibility-origin").val();
+	        //alert("게시글 허용범위 (board_no: " + board_no + ")");
+	        //alert("게시글 허용범위 (visibilityOrigin: " + visibilityOrigin + ")");
+	        
+	    	$("input[name='board_no']").val(board_no);
+	    	$("input[name='rangeModal_board_visibility']").val(visibilityOrigin);
+	    	
+	    	$("input[name='board_visibility']").each(function () {
+	            $(this).prop("checked", $(this).val() === visibilityOrigin);
+	        });
+	    	
+	    	$("#rangeModal").show();
 	    });
-	    
+
+		$("#rangeModal input[name='board_visibility']").change(function () {
+		    const selectedValue = $(this).val();
+		    $("input[name='rangeModal_board_visibility']").val(selectedValue);
+		});
+	 
+		$("button#saveRange").click(function() {
+			const board_no = $("input[name='board_no']").val();
+		    const board_visibility = $("input[name='board_visibility']:checked").val();
+			//alert(board_no + " " + board_visibility);
+			
+		    $.ajax({
+				url: '${pageContext.request.contextPath}/board/updateBoardVisibility',
+				type: 'post',
+				dataType: 'json',
+				data: {"board_no": board_no,
+					   "board_visibility": board_visibility},
+				success: function(json) {
+					if(json.n == 1) {
+						alert("게시글 설정이 변경되었습니다.");
+						location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+		    
+		});
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
-	    // 댓글 허용범위
-	    $(".set-comment-range").click(function () {
-	    	let board_no = $(this).attr("value");
-	        alert("댓글 허용범위 (board_no: " + board_no + ")");
-	        // 설정 팝업
-	    });
-	    
-	    
+		$(".close").click(function () {
+		    $("#rangeModal").hide();
+		});
+		
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
@@ -479,6 +513,10 @@
 			 	}
 			});*/
 		});
+		
+		
+		
+
 		
 	});
 
@@ -630,8 +668,7 @@
 								            <c:when test="${membervo.member_id == board.fk_member_id}">
 								                <li class="delete-post" value="${board.board_no}">글 삭제</li>
 								            	<li class="edit-post" value="${board.board_no}">글 수정</li>
-								                <li class="set-board-range" value="${board.board_no}">게시글 허용범위</li>
-								                <li class="set-comment-range" value="${board.board_no}">댓글 허용범위</li>
+								                <li class="set-board-range" value="${board.board_no}">허용범위</li>
 								            </c:when>
 								            <c:otherwise>
 								            	<li class="bookmark-post" value="${board.board_no}">북마크</li>
@@ -870,6 +907,39 @@
         </div> <!-- div.modal 끝 -->
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
+        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 허용범위 Modal -->
+		<div id="rangeModal" class="modal" style="display: none;">
+		    <div class="modal-content">
+		        <span class="close">&times;</span>
+		        <h2>게시글 허용범위 설정</h2>
+		        
+		        <input type="text" name="board_no" value="">
+		        <input type="hidden" name="rangeModal_board_visibility" value="">
+		        
+		        <label>
+		            <input type="radio" name="board_visibility" value="1"> 전체공개
+		        </label>
+		        <label>
+		            <input type="radio" name="board_visibility" value="2"> 친구공개
+		        </label>
+		        
+		        
+		        <h2>댓글 허용범위 설정</h2>
+		        
+		        <label>
+		            <input type="radio" name="comment_visibility" value="1"> 전체공개
+		        </label>
+		        <label>
+		            <input type="radio" name="comment_visibility" value="2"> 친구공개
+		        </label>
+		        
+		        <button id="saveRange">저장</button>
+		    </div>
+		</div>
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+		        
         
         
 		<!-- 우측 광고 -->

@@ -26,6 +26,9 @@ public interface BoardDAO {
 	// 게시물 반응
 	int reactionBoard(Map<String, String> paraMap);
 
+	// 글 허용범위
+	int updateBoardVisibility(Map<String, String> paraMap);
+
 
 
 }

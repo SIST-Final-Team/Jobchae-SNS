@@ -102,8 +102,6 @@ public class BoardController {
 	@PostMapping("editBoard")
 	public ModelAndView editBoard(@RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, ModelAndView mav) {
 		
-		System.out.println("editBoard 와졌음");
-		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("board_no", board_no);
 		paraMap.put("fk_member_id", fk_member_id);
@@ -122,6 +120,34 @@ public class BoardController {
 		return mav;
 	}
 	
+	// 글 허용범위
+	@PostMapping("updateBoardVisibility")
+	@ResponseBody
+	public Map<String, Integer> updateBoardVisibility(HttpServletRequest request, @RequestParam String board_no, @RequestParam String board_visibility, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		String fk_member_id = loginuser.getMember_id();
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("board_no", board_no);
+		paraMap.put("board_visibility", board_visibility);
+		
+		int n = service.updateBoardVisibility(paraMap);
+		
+		if (n != 1) {
+			mav.addObject("message", "게시글 설정 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("msg");
+		}
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		
+		return map; 
+	}
+		
 	// 게시물 반응
 	@PostMapping("reactionBoard")
 	public ModelAndView reactionBoard(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status, ModelAndView mav) {

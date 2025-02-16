@@ -60,5 +60,12 @@ public class BoardDAO_imple implements BoardDAO {
 		return n;
 	}
 
+	// 글 허용범위
+	@Override
+	public int updateBoardVisibility(Map<String, String> paraMap) {
+		int n = sqlsession.update("board.updateBoardVisibility", paraMap);
+		return n;
+	}
+
 	
 }

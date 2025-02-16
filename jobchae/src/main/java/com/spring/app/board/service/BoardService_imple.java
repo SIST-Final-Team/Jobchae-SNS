@@ -59,6 +59,13 @@ public class BoardService_imple implements BoardService {
 		return n;
 	}
 
+	// 글 허용범위
+	@Override
+	public int updateBoardVisibility(Map<String, String> paraMap) {
+		int n = dao.updateBoardVisibility(paraMap);
+		return n;
+	}
+
 	
 
 
