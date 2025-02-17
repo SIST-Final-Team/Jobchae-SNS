@@ -123,7 +123,7 @@ public class BoardController {
 	// 글 허용범위
 	@PostMapping("updateBoardVisibility")
 	@ResponseBody
-	public Map<String, Integer> updateBoardVisibility(HttpServletRequest request, @RequestParam String board_no, @RequestParam String board_visibility, ModelAndView mav) {
+	public Map<String, Integer> updateBoardVisibility(HttpServletRequest request, @RequestParam String board_no, @RequestParam String board_visibility, @RequestParam String board_comment_allowed, ModelAndView mav) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
@@ -133,6 +133,7 @@ public class BoardController {
 		paraMap.put("fk_member_id", fk_member_id);
 		paraMap.put("board_no", board_no);
 		paraMap.put("board_visibility", board_visibility);
+		paraMap.put("board_comment_allowed", board_comment_allowed);
 		
 		int n = service.updateBoardVisibility(paraMap);
 		

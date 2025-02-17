@@ -410,14 +410,20 @@
 	    $(".set-board-range").click(function () {
 	    	const board_no = $(this).attr("value");
 	    	const visibilityOrigin = $(this).closest('.board-member-profile').find(".board-visibility-origin").val();
+	    	const board_comment_allowed_origin = $(this).closest('.board-member-profile').find(".board-comment-allowed-origin").val();
 	        //alert("게시글 허용범위 (board_no: " + board_no + ")");
 	        //alert("게시글 허용범위 (visibilityOrigin: " + visibilityOrigin + ")");
-	        
+	
 	    	$("input[name='board_no']").val(board_no);
 	    	$("input[name='rangeModal_board_visibility']").val(visibilityOrigin);
+	    	$("input[name='rangeModal_board_comment-allowed']").val(board_comment_allowed_origin);
 	    	
 	    	$("input[name='board_visibility']").each(function () {
 	            $(this).prop("checked", $(this).val() === visibilityOrigin);
+	        });
+	    	
+	    	$("input[name='comment_visibility']").each(function () {
+	            $(this).prop("checked", $(this).val() === board_comment_allowed_origin);
 	        });
 	    	
 	    	$("#rangeModal").show();
@@ -428,17 +434,24 @@
 		    $("input[name='rangeModal_board_visibility']").val(selectedValue);
 		});
 	 
+		$("#rangeModal input[name='comment_visibility']").change(function () {
+		    const selectedValue = $(this).val();
+		    $("input[name='rangeModal_board_comment-allowed']").val(selectedValue);
+		});
+		
 		$("button#saveRange").click(function() {
 			const board_no = $("input[name='board_no']").val();
 		    const board_visibility = $("input[name='board_visibility']:checked").val();
-			//alert(board_no + " " + board_visibility);
+		    const board_comment_allowed = $("input[name='comment_visibility']:checked").val();
+			//alert(board_no + " " + board_visibility + " " + board_comment_allowed);
 			
 		    $.ajax({
 				url: '${pageContext.request.contextPath}/board/updateBoardVisibility',
 				type: 'post',
 				dataType: 'json',
 				data: {"board_no": board_no,
-					   "board_visibility": board_visibility},
+					   "board_visibility": board_visibility,
+					   "board_comment_allowed": board_comment_allowed},
 				success: function(json) {
 					if(json.n == 1) {
 						alert("게시글 설정이 변경되었습니다.");
@@ -653,13 +666,14 @@
 	                        	<c:choose>
 	                        		<c:when test="${membervo.member_id != board.fk_member_id}">
 			                            <button type="button" class="follow-button">
-                            				<i class="fa-solid fa-plus"></i>&nbsp;팔로우
+                            				<!--  <i class="fa-solid fa-plus"></i>&nbsp;팔로우-->
 		                            	</button>
 	                            	</c:when>
                             	</c:choose>
 	                            <button type="button" class="more-options"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
 	                            <input type="hidden" class="board-content" value="${board.board_content}" data-board-content="${board.board_content}" />
 	                            <input type="hidden" class="board-visibility-origin" value="${board.board_visibility}" data-board-content="${board.board_visibility}" />
+	                            <input type="hidden" class="board-comment-allowed-origin" value="${board.board_comment_allowed}" data-board-content="${board.board_comment_allowed}" />
 	                            
 				        		<!-- 옵션 드롭다운 메뉴 -->
 					            <div class="options-dropdown">
@@ -897,7 +911,7 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 
 				            <input type="hidden" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
-				            <input type="hiddn" name="board_visibility" value="" />
+				            <input type="hidden" name="board_visibility" value="" />
 				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
 				            <input type="file" name="board_video" id="file-video" style="display:none;" />
 			            </form>
@@ -915,8 +929,9 @@
 		        <span class="close">&times;</span>
 		        <h2>게시글 허용범위 설정</h2>
 		        
-		        <input type="text" name="board_no" value="">
+		        <input type="hidden" name="board_no" value="">
 		        <input type="hidden" name="rangeModal_board_visibility" value="">
+		        <input type="hidden" name="rangeModal_board_comment-allowed" value="">
 		        
 		        <label>
 		            <input type="radio" name="board_visibility" value="1"> 전체공개
@@ -929,10 +944,13 @@
 		        <h2>댓글 허용범위 설정</h2>
 		        
 		        <label>
-		            <input type="radio" name="comment_visibility" value="1"> 전체공개
+		            <input type="radio" name="comment_visibility" value="1"> 모두
 		        </label>
 		        <label>
-		            <input type="radio" name="comment_visibility" value="2"> 친구공개
+		            <input type="radio" name="comment_visibility" value="2"> 친구만
+		        </label>
+		        <label>
+		            <input type="radio" name="comment_visibility" value="3"> 비허용
 		        </label>
 		        
 		        <button id="saveRange">저장</button>
