@@ -191,6 +191,14 @@
     	$(".options-dropdown").hide();
     	
 		/////////////////////////////////////////////////////////////////////////////////////////
+    	// 로그인한 사용자가 각 피드에 어떠한 반응을 했는지 select
+
+    	
+    	
+    	/////////////////////////////////////////////////////////////////////////////////////////
+
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
@@ -327,7 +335,7 @@
 		    } else {
 		    
 				$.ajax({
-					url: '${pageContext.request.contextPath}/board/deleteBoard',
+					url: '${pageContext.request.contextPath}/api/board/deleteBoard',
 					type: 'post',
 					dataType: 'json',
 					data: {"board_no": board_no},
@@ -446,7 +454,7 @@
 			//alert(board_no + " " + board_visibility + " " + board_comment_allowed);
 			
 		    $.ajax({
-				url: '${pageContext.request.contextPath}/board/updateBoardVisibility',
+				url: '${pageContext.request.contextPath}/api/board/updateBoardVisibility',
 				type: 'post',
 				dataType: 'json',
 				data: {"board_no": board_no,
@@ -491,11 +499,11 @@
 		$("button.reactions-menu__reaction-index").click(function() {
 			
 			const reaction_target_no = $(this).closest(".reactions-menu").data("value");
-			//alert(board_no)
-			
 			const reaction_status = $(this).val();
+			alert(reaction_target_no + " " + $(this).val())
 			//alert($(this).val());
 	        
+			/*
 			$.ajax({
 				url: '${pageContext.request.contextPath}/board/reactionSelect',
 				type: 'post',
@@ -509,27 +517,25 @@
 					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
 			 	}
 			});
+			*/
 			
-			/*
 			$.ajax({
-				url: '${pageContext.request.contextPath}/board/reactionBoard',
+				url: '${pageContext.request.contextPath}/api/board/reactionBoard',
 				type: 'post',
 				dataType: 'json',
 				data: {"reaction_target_no": reaction_target_no,
 					   "reaction_status": reaction_status},
-				success: function(response) {
-		            alert("반응 추가 완료");
-		            location.reload(); 
+				success: function(json) {
+					if(json.n == 1) {
+					 	alert("반응 추가 완료");
+			            location.reload(); 
+					}
 		        },
 		        error: function(request, status, error){
 					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
 			 	}
-			});*/
+			});
 		});
-		
-		
-		
-
 		
 	});
 
@@ -642,6 +648,22 @@
             <div id="update" class="border-board">
                 <!-- 게시물 동적으로 생성 -->
                 <c:forEach var="board" items="${boardvo}">
+                	
+                	
+                	<!--
+                	<c:forEach var="reaction" items="${reactionvo}">
+	                	<c:if test="${board.board_no == reaction.reaction_target_no}">
+				            <span>${reaction.reaction_status}</span>
+				        </c:if>
+				        
+				        <c:if test="${board.board_no != reaction.reaction_target_no}">
+				            <span>추천</span>
+				        </c:if>
+				        
+                	</c:forEach>
+                	-->
+                	
+                	
                 	<div>
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
@@ -744,6 +766,7 @@
 	                    <div class="py-0">
 	                        <ul class="grid grid-cols-4 gap-4 text-center">
 	                            <li>
+	                            	<input type="hidden" name="" value="dd"/>
 	                                <button type="button" class="button-board-action">
 	                                    <i class="fa-regular fa-thumbs-up"></i>
 	                                    <span>추천</span>

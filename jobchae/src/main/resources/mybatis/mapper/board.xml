@@ -14,7 +14,7 @@
 
 	<!-- 로그인된 사용자의 정보 얻어오기 -->
 	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
-		select member_id, fk_region_no, fk_member_career_no, fk_member_education_no, member_name, member_birth, member_email, member_tel, member_profile, member_background_img, member_hire_status
+		select member_id, member_name
 		from tbl_member
 		where member_id = #{login_userid}
 	</select>
@@ -52,4 +52,12 @@
 		update tbl_board set board_visibility = #{board_visibility}, board_comment_allowed = #{board_comment_allowed}
 		where fk_member_id = #{fk_member_id} and board_no = #{board_no}
 	</update>
+	
+	<!-- 반응 조회하기 -->
+	<select id="getAllReaction" resultType="ReactionVO" parameterType="String">
+		select reaction_no, fk_member_id, reaction_target_no, reaction_target_type, reaction_status, reaction_register_date
+		from tbl_reaction
+		where fk_member_id = #{login_userid}
+	</select>
+	
 </mapper>

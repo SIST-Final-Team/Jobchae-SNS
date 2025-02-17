@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.reaction.domain.ReactionVO;
 
 @Repository
 public class BoardDAO_imple implements BoardDAO {
@@ -65,6 +66,13 @@ public class BoardDAO_imple implements BoardDAO {
 	public int updateBoardVisibility(Map<String, String> paraMap) {
 		int n = sqlsession.update("board.updateBoardVisibility", paraMap);
 		return n;
+	}
+
+	// 반응 조회하기
+	@Override
+	public List<ReactionVO> getAllReaction(String login_userid) {
+		List<ReactionVO> reactionList = sqlsession.selectList("board.getAllReaction", login_userid);
+		return reactionList;
 	}
 
 	

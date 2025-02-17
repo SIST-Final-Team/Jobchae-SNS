@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.reaction.domain.ReactionVO;
 
 public interface BoardDAO {
 
@@ -28,6 +29,10 @@ public interface BoardDAO {
 
 	// 글 허용범위
 	int updateBoardVisibility(Map<String, String> paraMap);
+
+	// 반응 조회하기
+	List<ReactionVO> getAllReaction(String login_userid);
+
 
 
 

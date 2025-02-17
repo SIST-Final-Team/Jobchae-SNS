@@ -10,6 +10,7 @@
 		<typeAlias type="com.spring.app.board.domain.BoardVO" alias="BoardVO"/>
 		<!--<typeAlias type="com.spring.app.board.domain.CommentVO" alias="CommentVO"/>-->
 
+		<typeAlias type="com.spring.app.reaction.domain.ReactionVO" alias="ReactionVO"/>
 	</typeAliases>
 
 </configuration>

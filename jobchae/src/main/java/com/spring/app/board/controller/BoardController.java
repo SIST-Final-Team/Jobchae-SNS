@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.reaction.domain.ReactionVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,8 +47,13 @@ public class BoardController {
 		// 피드 조회하기
 		List<BoardVO> boardvo = service.getAllBoards(login_userid);
 		
+		// 반응 조회하기
+		//List<ReactionVO> reactionvo = service.getAllReaction(login_userid);
+		//System.out.println(reactionvo.get(0).getReaction_target_no());
+		
 		mav.addObject("boardvo", boardvo);
 		mav.addObject("membervo", membervo);
+		//mav.addObject("reactionvo", reactionvo);
 		mav.setViewName("feed/board");
 		
 		return mav;
@@ -66,37 +72,16 @@ public class BoardController {
 		int n = service.add(paraMap);
 		//System.out.println("n ~~~~~" + n);
 		
-		mav.setViewName("redirect:/board/feed");	// feed 화면으로 새로고침
-		return mav;
-	}
-	
-	
-	// 글 삭제
-	@PostMapping("deleteBoard")
-	@ResponseBody
-	public Map<String, Integer> deleteBoard(HttpServletRequest request, @RequestParam String board_no, ModelAndView mav) {
-		
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
-		String fk_member_id = loginuser.getMember_id();
-		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("fk_member_id", fk_member_id);
-		paraMap.put("board_no", board_no);
-		
-		int n = service.deleteBoard(paraMap);
-		
 		if (n != 1) {
-			mav.addObject("message", "삭제 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("message", "업데이트 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
 			mav.addObject("loc", "javascript:history.back()");
 			mav.setViewName("msg");
 		}
 		
-		Map<String, Integer> map = new HashMap<>();
-		map.put("n", n);
-		
-		return map; 
+		mav.setViewName("redirect:/board/feed");	// feed 화면으로 새로고침
+		return mav;
 	}
+	
 	
 	// 글 수정
 	@PostMapping("editBoard")
@@ -119,53 +104,7 @@ public class BoardController {
 		mav.setViewName("redirect:/board/feed");
 		return mav;
 	}
-	
-	// 글 허용범위
-	@PostMapping("updateBoardVisibility")
-	@ResponseBody
-	public Map<String, Integer> updateBoardVisibility(HttpServletRequest request, @RequestParam String board_no, @RequestParam String board_visibility, @RequestParam String board_comment_allowed, ModelAndView mav) {
-		
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
-		String fk_member_id = loginuser.getMember_id();
-		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("fk_member_id", fk_member_id);
-		paraMap.put("board_no", board_no);
-		paraMap.put("board_visibility", board_visibility);
-		paraMap.put("board_comment_allowed", board_comment_allowed);
-		
-		int n = service.updateBoardVisibility(paraMap);
-		
-		if (n != 1) {
-			mav.addObject("message", "게시글 설정 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-			mav.addObject("loc", "javascript:history.back()");
-			mav.setViewName("msg");
-		}
-		
-		Map<String, Integer> map = new HashMap<>();
-		map.put("n", n);
-		
-		return map; 
-	}
-		
-	// 게시물 반응
-	@PostMapping("reactionBoard")
-	public ModelAndView reactionBoard(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status, ModelAndView mav) {
 
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
-		String fk_member_id = loginuser.getMember_id();
 
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("fk_member_id", fk_member_id);
-		paraMap.put("reaction_target_no", reaction_target_no);
-		paraMap.put("reaction_status", reaction_status);
-
-		int n = service.reactionBoard(paraMap);
-
-		mav.setViewName("redirect:/board/feed");
-		return mav;
-	}
 
 }
