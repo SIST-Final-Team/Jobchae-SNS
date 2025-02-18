@@ -111,7 +111,7 @@ button.write-button {
 }
 
 button.write-button:hover {
-    background-color: #d3d3d3;  /* 색 나중에 수정하기 */
+    background-color: #d3d3d3;  
 }
 
 span.write-span {
@@ -325,7 +325,7 @@ div.modal {
     background-color: white;
     padding: 20px;
     width: 700px;
-    height: 700px;
+    height: 750px;
     border-radius: 10px;
     position: absolute;  
     top: 50%;
@@ -333,12 +333,6 @@ div.modal {
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-}
-
-#image-preview-container {
-    border: solid 1px red;
-    height: 200px;
-    overflow-y: auto; 
 }
 
 .modal-profile-info {
@@ -413,7 +407,7 @@ span.close:focus {
     border: none;
     box-shadow: none;
     padding: 0; 
-    max-height: 300px;
+    max-height: 250px;
     min-height: 150px;
     overflow: auto;
 	flex-grow: 1;
@@ -517,4 +511,98 @@ img.modal-img {
 
 #image-medium, #video-medium, #sticky-note-medium {
 	cursor: pointer;
+}
+
+/* 허용범위 Modal */
+
+
+#rangeModal > .modal-content {
+	background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+    width: 90%;
+    animation: fadeIn 0.3s ease;
+}
+
+#rangeModal > .close {
+    float: right;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.option-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.option-card:hover {
+	background: #f0f0f0;
+}
+
+.option-card input {
+    display: none;
+}
+
+.option-content {
+    margin-left: 12px;
+}
+
+.option-card input:checked + .option-content {
+    color: #0A66C2; 
+    font-weight: bold;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+#saveRange {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#write-update:hover, #edit-update:hover, #saveRange:hover {
+    background: #084B99;
+}
+
+
+
+
+
+#image-preview-container {
+    display: flex; 
+    justify-content: space-between; 
+    gap: 8px; 
+    margin-bottom: 100px;
+}
+
+.preview-box {
+    flex: 1;
+    height: 200px; 
+    background: #f0f0f0; 
+    border-radius: 8px; 
 }

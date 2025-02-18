@@ -194,8 +194,10 @@
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
+        const rangeModal = document.getElementById("rangeModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
+        rangeModal.style.display = "none";
         
         $("button.write-button").click(function() {
 
@@ -469,6 +471,11 @@
 		    $("#rangeModal").hide();
 		});
 		
+		$(window).click(function(e) {
+            if (e.target == rangeModal) {
+            	rangeModal.style.display = "none";
+            }
+        });
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 정렬방식
@@ -870,7 +877,7 @@
                             <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
                         </div>
                         <div class="modal-name">
-                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
                             <span id="visibilityStatus">전체공개</span>
                         </div>
                     </button>
@@ -895,10 +902,16 @@
 				    <!-- 이미지 미리보기 표시 영역
 		            <div id="image-preview-container" style="">
 		                <div id="image-preview-list"></div> 
-		            </div> -->
+		            </div> 
 					
 					<!-- 이미지 미리보기 표시 영역 -->
-
+					
+					<div id="image-preview-container" style="">
+						<div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
+					    <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
+					    <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
+		            </div> 
+					
 					
 					<!-- ################################################################################### -->		
 					
@@ -997,38 +1010,64 @@
         
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         <!-- 허용범위 Modal -->
-		<div id="rangeModal" class="modal" style="display: none;">
+		<div id="rangeModal" class="modal">
 		    <div class="modal-content">
-		        <span class="close">&times;</span>
-		        <h2>게시글 허용범위 설정</h2>
-		        
+		        <span class="close" id="closeRangeModal">&times;</span>
+		        <h1 style="font-weight: bold;">게시글 허용범위 설정</h1>
+		
 		        <input type="hidden" name="board_no" value="">
 		        <input type="hidden" name="rangeModal_board_visibility" value="">
 		        <input type="hidden" name="rangeModal_board_comment-allowed" value="">
-		        
-		        <label>
-		            <input type="radio" name="board_visibility" value="1"> 전체공개
-		        </label>
-		        <label>
-		            <input type="radio" name="board_visibility" value="2"> 친구공개
-		        </label>
-		        
-		        
-		        <h2>댓글 허용범위 설정</h2>
-		        
-		        <label>
-		            <input type="radio" name="comment_visibility" value="1"> 모두
-		        </label>
-		        <label>
-		            <input type="radio" name="comment_visibility" value="2"> 친구만
-		        </label>
-		        <label>
-		            <input type="radio" name="comment_visibility" value="3"> 비허용
-		        </label>
-		        
-		        <button id="saveRange">저장</button>
+		
+		        <div class="option-group">
+		            <label class="option-card">
+		                <input type="radio" name="board_visibility" value="1">
+		                <div class="option-content">
+		                    <strong>🌐 전체공개</strong>
+		                    <p>모든 사람이 볼 수 있어요.</p>
+		                </div>
+		            </label>
+		            <label class="option-card">
+		                <input type="radio" name="board_visibility" value="2">
+		                <div class="option-content">
+		                    <strong>👥 친구공개</strong>
+		                    <p>내 친구만 볼 수 있어요.</p>
+		                </div>
+		            </label>
+		        </div>
+		
+		        <hr class="divider">
+		
+		        <h1 style="font-weight: bold;">댓글 허용범위 설정</h1>
+		
+		        <div class="option-group">
+		            <label class="option-card">
+		                <input type="radio" name="comment_visibility" value="1">
+		                <div class="option-content">
+		                    <strong>💬 모두</strong>
+		                    <p>누구나 댓글을 작성할 수 있어요.</p>
+		                </div>
+		            </label>
+		            <label class="option-card">
+		                <input type="radio" name="comment_visibility" value="2">
+		                <div class="option-content">
+		                    <strong>🧑‍🤝‍🧑 친구만</strong>
+		                    <p>내 친구만 댓글을 작성할 수 있어요.</p>
+		                </div>
+		            </label>
+		            <label class="option-card">
+		                <input type="radio" name="comment_visibility" value="3">
+		                <div class="option-content">
+		                    <strong>🚫 비허용</strong>
+		                    <p>댓글을 허용하지 않아요.</p>
+		                </div>
+		            </label>
+		        </div>
+		
+		        <button type="button" id="saveRange" class="save-btn">저장</button>
 		    </div>
 		</div>
+
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 		        
         

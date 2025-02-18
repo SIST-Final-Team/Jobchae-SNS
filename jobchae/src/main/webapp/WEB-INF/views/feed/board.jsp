@@ -570,8 +570,28 @@
 			});
 		});
 		
-	});
 
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
+		// Modal 이미지 미리보기
+		let currentX = 0;
+
+		$("button#prevBtn").click(function() {
+			currentX += 208;
+			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+		});
+		
+		
+		$("button#nextBtn").click(function() {
+			currentX -= 208;
+			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+		});
+
+	
+	
+	});
+ 	
+    
     
  	// 이미지 미리보기 및 목록에 추가하는 함수
     function previewImage(event) {
@@ -592,10 +612,6 @@
         document.getElementById("image-preview-container").style.display = "block";
     }
 
- 	
-
- 	
- 	
 </script>
 
 
@@ -877,7 +893,7 @@
                             <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
                         </div>
                         <div class="modal-name">
-                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
                             <span id="visibilityStatus">전체공개</span>
                         </div>
                     </button>
@@ -905,7 +921,26 @@
 		            </div> 
 					
 					<!-- 이미지 미리보기 표시 영역 -->
+					
+					
+					<div id="carousel-container">
+					    <button id="prevBtn" class="carousel-btn">〈</button>
+					
+					    <div id="image-preview-container">
+					        <div class="carousel-track">
+					            <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
+					            <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
+					            <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
+					            <div class="preview-box"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/></div>
+					            <div class="preview-box"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/></div>
+					            <div class="preview-box"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/></div>
+					        </div>
+					    </div>
+					
+					    <button id="nextBtn" class="carousel-btn">〉</button>
+					</div>
 
+					
 					
 					<!-- ################################################################################### -->		
 					
