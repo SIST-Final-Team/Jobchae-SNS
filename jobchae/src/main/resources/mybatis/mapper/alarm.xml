@@ -4,8 +4,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="alarm">
+	<!--알람 입력-->
 	<insert id="insertAlarm" parameterType="MemberVO">
 		insert into tbl_notification (notification_no, fk_member_id, notification_type, notification_register_date ,notification_is_read)
-		values (1000, '#{login_userid}', 1, sysdate, 0);
+		values (seq_notification_no.nextval, #{member_id}, 1, sysdate, 0)
 	</insert>
+	
+	<!--알람 시퀀스 조회-->
+	<select id="selectAlarmSeq">
+		select seq_notification_no.nextval from dual;
+	</select>
+	
+	<!--알람 삭제-->
+	<delete id="deleteAlarm" parameterType="AlarmVO">
+		update tbl_notification where notification_no = #{notification_no} and fk_member_id = 'user001'
+	</delete>
+	
+	<!--알림 조회-->
+	<select id="selectAmarmVO" parameterType="MemberVO" resultType="AlarmVO">
+		select * from tbl_notification
+		where fk_member_id = '#{member_id}' and notification_is_read != -1
+	</select>
+	
 </mapper>
