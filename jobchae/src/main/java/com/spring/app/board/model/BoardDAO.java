@@ -33,6 +33,15 @@ public interface BoardDAO {
 	// 반응 조회하기
 	List<ReactionVO> getAllReaction(String login_userid);
 
+	// 게시물 반응 삭제
+	int deleteReactionBoard(Map<String, String> paraMap);
+
+	// 게시물 반응 조회
+	ReactionVO selectReaction(Map<String, String> paraMap);
+
+	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
+	int updateReactionBoard(Map<String, String> paraMap);
+
 
 
 

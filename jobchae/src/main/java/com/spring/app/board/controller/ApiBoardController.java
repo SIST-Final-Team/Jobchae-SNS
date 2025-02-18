@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.board.service.BoardService;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.reaction.domain.ReactionVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -84,6 +85,7 @@ public class ApiBoardController {
 	
 	// 게시물 반응
 	@PostMapping("reactionBoard")
+	@ResponseBody
 	public Map<String, Integer> reactionBoard(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status, ModelAndView mav) {
 	
 		HttpSession session = request.getSession();
@@ -95,10 +97,56 @@ public class ApiBoardController {
 		paraMap.put("reaction_target_no", reaction_target_no);
 		paraMap.put("reaction_status", reaction_status);
 	
-		int n = service.reactionBoard(paraMap);
+		ReactionVO reactionvo = service.selectReaction(paraMap);
+		if (reactionvo != null) {	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
+			
+			int n = service.updateReactionBoard(paraMap);
+			
+			if (n != 1) {
+				mav.addObject("message", "추천 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+				mav.addObject("loc", "javascript:history.back()");
+				mav.setViewName("msg");
+			}
+			
+			Map<String, Integer> map = new HashMap<>();
+			map.put("n", n);
+			
+			return map; 
+		} else {
+			
+			int n = service.reactionBoard(paraMap);
+			
+			if (n != 1) {
+				mav.addObject("message", "추천 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+				mav.addObject("loc", "javascript:history.back()");
+				mav.setViewName("msg");
+			}
+			
+			Map<String, Integer> map = new HashMap<>();
+			map.put("n", n);
+			
+			return map; 
+		}
+		
+	}
+	
+	// 게시물 반응 삭제
+	@PostMapping("deleteReactionBoard")
+	@ResponseBody
+	public Map<String, Integer> deleteReactionBoard(HttpServletRequest request, @RequestParam String reaction_target_no, ModelAndView mav) {
+	
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		String fk_member_id = loginuser.getMember_id();
+	
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("reaction_target_no", reaction_target_no);
+	
+		int n = service.deleteReactionBoard(paraMap);
 	
 		if (n != 1) {
-			mav.addObject("message", "추천 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("message", "추천 삭제 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
 			mav.addObject("loc", "javascript:history.back()");
 			mav.setViewName("msg");
 		}

@@ -75,5 +75,26 @@ public class BoardDAO_imple implements BoardDAO {
 		return reactionList;
 	}
 
+	// 게시물 반응 삭제
+	@Override
+	public int deleteReactionBoard(Map<String, String> paraMap) {
+		int n = sqlsession.delete("board.deleteReactionBoard", paraMap);
+		return n;
+	}
+
+	// 게시물 반응 조회
+	@Override
+	public ReactionVO selectReaction(Map<String, String> paraMap) {
+		ReactionVO reactionvo = sqlsession.selectOne("board.selectReaction", paraMap);
+		return reactionvo;
+	}
+
+	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
+	@Override
+	public int updateReactionBoard(Map<String, String> paraMap) {
+		int n = sqlsession.update("board.updateReactionBoard", paraMap);
+		return n;
+	}
+
 	
 }

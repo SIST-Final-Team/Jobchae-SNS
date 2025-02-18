@@ -191,14 +191,6 @@
     	$(".options-dropdown").hide();
     	
 		/////////////////////////////////////////////////////////////////////////////////////////
-    	// 로그인한 사용자가 각 피드에 어떠한 반응을 했는지 select
-
-    	
-    	
-    	/////////////////////////////////////////////////////////////////////////////////////////
-
-		
-		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
@@ -477,6 +469,7 @@
 		    $("#rangeModal").hide();
 		});
 		
+		
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
@@ -496,28 +489,62 @@
 	    
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 추천기능
+		$("button.button-board-action-reaction").click(function() {
+			const reaction_target_no = $(this).val();
+			let reaction_status = null;
+			//alert(reaction_target_no);
+			
+			
+			// 반응이 있을 때
+		    $(this).find("span").each(function() {
+		        const reactionstatus = $(this).data("value");
+		        if (reactionstatus) {
+		        	reaction_status = $(this).data("value");
+		        }
+		    });
+		    //alert(reaction_status);
+		    
+		    if (reaction_status == null) {
+		    	$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/reactionBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"reaction_target_no": reaction_target_no,
+						   "reaction_status": 1},
+					success: function(json) {
+						if(json.n == 1) {
+						 	location.reload();
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+		    } else {
+		    	$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/deleteReactionBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"reaction_target_no": reaction_target_no},
+					success: function(json) {
+						if(json.n == 1) {
+						 	location.reload();
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+		    }
+		   
+		});
+		
+		
 		$("button.reactions-menu__reaction-index").click(function() {
 			
 			const reaction_target_no = $(this).closest(".reactions-menu").data("value");
 			const reaction_status = $(this).val();
-			alert(reaction_target_no + " " + $(this).val())
-			//alert($(this).val());
-	        
-			/*
-			$.ajax({
-				url: '${pageContext.request.contextPath}/board/reactionSelect',
-				type: 'post',
-				dataType: 'json',
-				data: {"fk_member_id": fk_member_id,
-					   "reaction_target_no": reaction_target_no},
-				success: function(response) {
-		            location.reload(); 
-		        },
-		        error: function(request, status, error){
-					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-			 	}
-			});
-			*/
+			//alert(reaction_target_no + " " + reaction_status);
 			
 			$.ajax({
 				url: '${pageContext.request.contextPath}/api/board/reactionBoard',
@@ -527,8 +554,7 @@
 					   "reaction_status": reaction_status},
 				success: function(json) {
 					if(json.n == 1) {
-					 	alert("반응 추가 완료");
-			            location.reload(); 
+					 	location.reload();
 					}
 		        },
 		        error: function(request, status, error){
@@ -647,22 +673,7 @@
 			
             <div id="update" class="border-board">
                 <!-- 게시물 동적으로 생성 -->
-                <c:forEach var="board" items="${boardvo}">
-                	
-                	
-                	<!--
-                	<c:forEach var="reaction" items="${reactionvo}">
-	                	<c:if test="${board.board_no == reaction.reaction_target_no}">
-				            <span>${reaction.reaction_status}</span>
-				        </c:if>
-				        
-				        <c:if test="${board.board_no != reaction.reaction_target_no}">
-				            <span>추천</span>
-				        </c:if>
-				        
-                	</c:forEach>
-                	-->
-                	
+                <c:forEach var="board" items="${boardvo}">              
                 	
                 	<div>
 	                    <!-- 멤버 프로필 -->                                                              
@@ -767,9 +778,32 @@
 	                        <ul class="grid grid-cols-4 gap-4 text-center">
 	                            <li>
 	                            	<input type="hidden" name="" value="dd"/>
-	                                <button type="button" class="button-board-action">
+	                                <button type="button" class="button-board-action button-board-action-reaction" value="${board.board_no}">
 	                                    <i class="fa-regular fa-thumbs-up"></i>
-	                                    <span>추천</span>
+	                                    
+	                                    <c:set var="matched" value="false" />
+	                                    
+	                                    <!-- 반응 있을 때 -->
+								        <c:forEach var="reaction" items="${reactionvo}">
+								            <c:if test="${board.board_no == reaction.reaction_target_no}">
+								                <c:choose>
+								                    <c:when test="${reaction.reaction_status == 1}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8ekq8gho1ruaf8i7f86vd1ftt" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="1" style="color: #0A66C2;">추천</span></c:when>
+								                    <c:when test="${reaction.reaction_status == 2}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/b1dl5jk88euc7e9ri50xy5qo8" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="2" style="color: #44712E;">축하</span></c:when>
+								                    <c:when test="${reaction.reaction_status == 3}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/3wqhxqtk2l554o70ur3kessf1" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="3" style="color: #715E86;">응원</span></c:when>
+								                    <c:when test="${reaction.reaction_status == 4}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cpho5fghnpme8epox8rdcds22" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="4" style="color: #B24020;">마음에 쏙듬</span></c:when>
+								                    <c:when test="${reaction.reaction_status == 5}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/lhxmwiwoag9qepsh4nc28zus" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="5" style="color: #915907;">통찰력</span></c:when>
+								                    <c:when test="${reaction.reaction_status == 6}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/41j9d0423ck1snej32brbuuwg" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="6" style="color: #1A707E;">웃음</span></c:when>
+								                    <c:otherwise>기타</c:otherwise>
+								                </c:choose>
+								                <c:set var="matched" value="true" />
+								            </c:if>
+								        </c:forEach>
+								        
+								        <!-- 반응 없을 때 -->
+								        <c:if test="${!matched}">
+								            <span>추천</span>	
+								        </c:if>
+								        
 	                                </button>
 	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${board.board_no}" style="">
 									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" value="1" tabindex="-1" type="button">

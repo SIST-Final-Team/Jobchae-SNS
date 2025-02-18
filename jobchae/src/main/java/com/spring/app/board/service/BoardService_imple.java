@@ -74,6 +74,27 @@ public class BoardService_imple implements BoardService {
 		return reactionList;
 	}
 
+	// 게시물 반응 삭제
+	@Override
+	public int deleteReactionBoard(Map<String, String> paraMap) {
+		int n = dao.deleteReactionBoard(paraMap);
+		return n;
+	}
+
+	// 게시물 반응 조회
+	@Override
+	public ReactionVO selectReaction(Map<String, String> paraMap) {
+		ReactionVO reactionvo = dao.selectReaction(paraMap);
+		return reactionvo;
+	}
+
+	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
+	@Override
+	public int updateReactionBoard(Map<String, String> paraMap) {
+		int n = dao.updateReactionBoard(paraMap);
+		return n;
+	}
+
 
 	
 

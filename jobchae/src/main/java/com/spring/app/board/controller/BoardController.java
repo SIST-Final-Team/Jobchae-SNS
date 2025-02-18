@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.board.domain.BoardVO;
@@ -48,12 +47,12 @@ public class BoardController {
 		List<BoardVO> boardvo = service.getAllBoards(login_userid);
 		
 		// 반응 조회하기
-		//List<ReactionVO> reactionvo = service.getAllReaction(login_userid);
+		List<ReactionVO> reactionvo = service.getAllReaction(login_userid);
 		//System.out.println(reactionvo.get(0).getReaction_target_no());
 		
 		mav.addObject("boardvo", boardvo);
 		mav.addObject("membervo", membervo);
-		//mav.addObject("reactionvo", reactionvo);
+		mav.addObject("reactionvo", reactionvo);
 		mav.setViewName("feed/board");
 		
 		return mav;
