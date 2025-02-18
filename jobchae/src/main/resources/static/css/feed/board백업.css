@@ -339,7 +339,6 @@ div.modal {
     border: solid 1px red;
     height: 200px;
     overflow-y: auto; 
-    margin-bottom: 100px;
 }
 
 .modal-profile-info {
@@ -518,81 +517,4 @@ img.modal-img {
 
 #image-medium, #video-medium, #sticky-note-medium {
 	cursor: pointer;
-}
-
-/* 허용범위 Modal */
-
-
-#rangeModal > .modal-content {
-	background: white;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    max-width: 500px;
-    width: 90%;
-    animation: fadeIn 0.3s ease;
-}
-
-#rangeModal > .close {
-    float: right;
-    font-size: 32px;
-    cursor: pointer;
-}
-
-.option-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin: 20px 0;
-}
-
-.option-card {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.option-card:hover {
-	background: #f0f0f0;
-}
-
-.option-card input {
-    display: none;
-}
-
-.option-content {
-    margin-left: 12px;
-}
-
-.option-card input:checked + .option-content {
-    color: #0A66C2; 
-    font-weight: bold;
-}
-
-.divider {
-    border: none;
-    border-top: 1px solid #ddd;
-    margin: 20px 0;
-}
-
-#saveRange {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background: #4A90E2;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-
-#write-update:hover, #edit-update:hover, #saveRange:hover {
-    background: #084B99;
 }
