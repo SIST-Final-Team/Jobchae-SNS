@@ -1,5 +1,11 @@
 package com.spring.app.member.service;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.servlet.ModelAndView;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface MemberService {
 
@@ -19,6 +25,15 @@ public interface MemberService {
 
 	// 이메일 중복확인 및 인증메일 발송
 	boolean emailCheck(String member_email);
+
+	// 지역 검색 시 자동 완성 해주는 메소드 
+	List<Map<String, String>> regionSearchShow(String member_region);
+
+	// 정확한 지역명을 검색한 후 찾아주는 메소드
+	Map<String, String> regionKeyWordSearch(String member_region);
+
+	// 로그인하는 메소드
+	ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap);
 
 	
 	

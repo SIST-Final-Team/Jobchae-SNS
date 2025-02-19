@@ -6,28 +6,26 @@ import java.util.Date;
 
 public class MemberVO {
 
-//	  member_id VARCHAR2(20) NOT NULL, /* 회원 아이디 */
-//    fk_region_no NUMBER, /* 지역 일련번호 */
-//    fk_member_career_no NUMBER, /* 현재 경력 */
-//    fk_member_education_no NUMBER, /* 현재 학력 */
-//    member_passwd VARCHAR2(200) NOT NULL, /* 비밀번호 */
-//    member_name NVARCHAR2(100) NOT NULL, /* 성명 */
-//    member_birth DATE NOT NULL, /* 생년월일 */
-//    member_email VARCHAR2(200) NOT NULL, /* 이메일 */
-//    member_tel VARCHAR2(200) NOT NULL, /* 전화번호 */
-//    member_register_date DATE DEFAULT sysdate NOT NULL, /* 가입일자 ,기본은 SYSDATE*/
-//    member_passwdupdate_date DATE, /* 비밀번호 변경일자,NULL 이면 가입일자를 참조 */
-//    member_status NUMBER(1) DEFAULT 1 NOT NULL, /* 가입상태 ,default 1,  정상: 1, 탈퇴: 2, 정지:3*/
-//    member_is_company NUMBER(1) DEFAULT 0 NOT NULL, /* 기업 여부 ,기본값 0 0:개인 1: 기업*/
-//    member_idle NUMBER(1) DEFAULT 0 NOT NULL, /* 휴면상태 ,기본값 0, 0: 정상 1: 휴면*/
-//    member_profile NVARCHAR2(200), /* 프로필 사진 */
-//    member_background_img NVARCHAR2(200), /* 프로필 배경 사진 */
-//    member_hire_status NUMBER(1), /* 고용상태 , 이직/구직중 : 1, 채용중 : 2, 프리랜서 활동중 : 3*/
+//	  member_id VARCHAR2(20) NOT NULL, 						/* 회원 아이디 */
+//	  fk_region_no NUMBER, 									/* 지역 일련번호 */
+//	  fk_member_career_no NUMBER, 							/* 현재 경력 */
+//	  fk_member_education_no NUMBER, 						/* 현재 학력 */
+//	  member_passwd VARCHAR2(200) NOT NULL, 				/* 비밀번호 */
+//	  member_name NVARCHAR2(100) NOT NULL, 					/* 성명 */
+//	  member_birth DATE NOT NULL, 							/* 생년월일 */
+//	  member_email VARCHAR2(200) NOT NULL, 					/* 이메일 */
+//	  member_tel VARCHAR2(200) NOT NULL, 					/* 전화번호 */
+//	  member_register_date DATE DEFAULT sysdate NOT NULL, 	/* 가입일자 ,기본은 SYSDATE*/
+//	  member_passwdupdate_date DATE, 						/* 비밀번호 변경일자,NULL 이면 가입일자를 참조 */
+//	  member_status NUMBER(1) DEFAULT 1 NOT NULL, 			/* 가입상태 ,default 1,  정상: 1, 탈퇴: 2, 정지:3*/
+//	  member_is_company NUMBER(1) DEFAULT 0 NOT NULL, 		/* 기업 여부 ,기본값 0 0:개인 1: 기업*/
+//	  member_idle NUMBER(1) DEFAULT 0 NOT NULL, 			/* 휴면상태 ,기본값 0, 0: 정상 1: 휴면*/
+//	  member_profile NVARCHAR2(200), 						/* 프로필 사진 */
+//	  member_background_img NVARCHAR2(200), 				/* 프로필 배경 사진 */
+//	  member_hire_status NUMBER(1), 						/* 고용상태 , 이직/구직중 : 1, 채용중 : 2, 프리랜서 활동중 : 3*/
 	
 	String member_id; 					/* 회원 아이디 */
 	String fk_region_no; 				/* 지역 일련번호 */
-	String fk_member_career_no ; 		/* 현재 경력 */
-	String fk_member_education_no; 		/* 현재 학력 */
 	String member_passwd; 				/* 비밀번호 */
 	String member_name; 				/* 성명 */
 	String member_birth; 				/* 생년월일 */
@@ -37,7 +35,7 @@ public class MemberVO {
 	String member_passwdupdate_date; 	/* 비밀번호 변경일자,NULL 이면 가입일자를 참조 */
 	String member_status; 				/* 가입상태 ,default 1,  정상: 1, 탈퇴: 2, 정지:3 */
 	String member_is_company; 			/* 기업 여부 ,기본값 0 0:개인 1: 기업 */
-	String member_idle; 				/* 휴면상태 ,기본값 0, 0: 정상 1: 휴면 (마지막으로 로그인 한 날짜시간이 현재시각으로 부터 1년이 지났으면 휴면으로 지정) */
+	String member_idle; 				/* 휴면상태 ,기본값 0, 0: 정상, 1: 휴면 (마지막으로 로그인 한 날짜시간이 현재시각으로 부터 1년이 지났으면 휴면으로 지정) */
 	String member_profile; 				/* 프로필 사진 */
 	String member_background_img; 		/* 프로필 배경 사진 */
 	String member_hire_status; 			/* 고용상태 , 이직/구직중 : 1, 채용중 : 2, 프리랜서 활동중 : 3 */
@@ -49,9 +47,14 @@ public class MemberVO {
 		// select 용. 지금으로 부터 마지막으로 로그인한지가 몇개월인지 알려주는 개월수(12개월 동안 로그인을 안 했을 경우 해당 로그인 계정을 비활성화 시키려고 함)
 
 	
-	// === 먼저 답변글쓰기는 일반회원은 불가하고 직원(관리파트)들만 답변글쓰기가 가능하도록 하기 위해서
-	// 먼저 오라클에서 tbl_member 테이블에 gradelevel 이라는 컬럼을 추가해야 한다.
-	private int gradelevel; // 등급레벨
+	//////////////////////////////////////////////
+	/// join 해서 가져온 변수
+	String fk_job_no; 				// 직종 일련번호 
+	String fk_school_no;			// 학교 일련번호
+	String fk_major_no;				// 전공 일련번호
+	String member_education_degree;	// 학위
+	
+	
 	
 	
 	//////////////////////////////////////////////////////////////
@@ -105,21 +108,7 @@ public class MemberVO {
 		this.fk_region_no = fk_region_no;
 	}
 
-	public String getFk_member_career_no() {
-		return fk_member_career_no;
-	}
-
-	public void setFk_member_career_no(String fk_member_career_no) {
-		this.fk_member_career_no = fk_member_career_no;
-	}
-
-	public String getFk_member_education_no() {
-		return fk_member_education_no;
-	}
-
-	public void setFk_member_education_no(String fk_member_education_no) {
-		this.fk_member_education_no = fk_member_education_no;
-	}
+	
 
 	public String getMember_passwd() {
 		return member_passwd;
@@ -229,13 +218,7 @@ public class MemberVO {
 		this.requirePwdChange = requirePwdChange;
 	}
 
-	public int getGradelevel() {
-		return gradelevel;
-	}
-
-	public void setGradelevel(int gradelevel) {
-		this.gradelevel = gradelevel;
-	}
+	
 
 	////////////////////////////////////////////////
 

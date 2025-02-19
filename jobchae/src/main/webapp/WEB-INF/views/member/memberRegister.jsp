@@ -64,7 +64,7 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
 
         <h4>회원가입</h4>
 
-        <form name="registerFrm">
+        <form name="registerFrm" enctype="multipart/form-data">
 
             <div class="row justify-content-center">
 
@@ -174,9 +174,18 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
                 <%-- 지역 --%>
                 <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">지역&nbsp;<span class="star">*</span></div>
                 <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">
-                    <input type="text" name="member_region" id="member_region" size="40" maxlength="200" placeholder="지역"
-                        class="underline requiredInfo" /><br>
+                
+                <div class="col-lg-5 col-md-7">  
+                	<input type="text" name="member_region" id="member_region" size="40" maxlength="200" class="requiredInfo underline"
+                        placeholder="지역" />
+                    <input type="hidden" name="member_region_no" id="member_region_no" />
+                </div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
+                	<%-- === 검색어 입력시 자동글 완성하기 1 --%>
+					<div id="displayList" style="border:solid 1px gray; border-top:0px; height:100px; 
+						margin-top:-1px; margin-bottom:5px; overflow:auto;">
+  					</div>
                 </div>
                 <div class="w-100"></div>
                 <div id="regionerror" class="col-lg-5 col-md-7 error"></div>
@@ -338,7 +347,22 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
                 <div class="w-100"></div>
                 <div style="margin-bottom: 10%;"></div>
 
+
+
+
+
+
+			<%-- row 끝 --%>
             </div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
         </form>
 
