@@ -697,11 +697,11 @@ function ajax_search() {
                 let v_html = ``;
 
                 $.each(json, function (index, item) {
-                    const word = item.word;
+                    const word = item.region_name;
                     // word.toLowerCase()은 word 를 모두 소문자로 변경하는 것이다.
 
                     // 검색된 태그 안에 no 넣어주기
-                    no_result = `<input type="hidden" name="no_result" value="${item.no}" />`;
+                    no_result = `<input type="hidden" name="no_result" value="${item.region_no}" />`;
 
                     const idx = word.toLowerCase().indexOf($("input[name='member_region']").val().toLowerCase());
 

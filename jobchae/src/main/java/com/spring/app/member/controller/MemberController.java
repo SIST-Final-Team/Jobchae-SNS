@@ -59,7 +59,8 @@ public class MemberController {
 	
 	// 회원가입 
 	@PostMapping("emailCheckOk_memberRegister")
-	public MemberVO memberRegister(HttpServletRequest request, HttpServletResponse response, MemberVO membervo,
+	public MemberVO memberRegister(HttpServletRequest request, HttpServletResponse response, 
+									MemberVO membervo,
 								   MultipartHttpServletRequest mrequest) {
 		// 파일은 mrequest 로, membervo 는 회원정보 받아준다.
 		
@@ -166,8 +167,8 @@ public class MemberController {
 		if (regionList != null) {
 			for (Map<String, String> regionMap : regionList) {
 				Map<String, String> map = new HashMap<>();
-				map.put("no", regionMap.get("REGION_NO")); 
-				map.put("word", regionMap.get("REGION_NAME")); // REGION_NO, REGION_NAME
+				map.put("region_no", regionMap.get("REGION_NO")); 
+				map.put("region_name", regionMap.get("REGION_NAME")); // REGION_NO, REGION_NAME
 				mapList.add(map);
 			} // end of for...
 		}
