@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.model.BoardDAO;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
 
@@ -24,7 +25,14 @@ public class BoardService_imple implements BoardService {
 		int n = dao.add(paraMap);
 		return n;
 	}
-
+	
+	// 파일첨부가 있는 글쓰기
+	@Override
+	public int addWithFile(Map<String, String> paraMap2) {
+		int n = dao.addWithFile(paraMap2);
+		return n;
+	}
+	
 	// 로그인된 사용자의 정보 얻어오기
 	@Override
 	public MemberVO getUserInfo(String login_userid) {
@@ -94,6 +102,15 @@ public class BoardService_imple implements BoardService {
 		int n = dao.updateReactionBoard(paraMap);
 		return n;
 	}
+
+	// 각 피드별 파일 존재여부 검사
+	@Override
+	public List<FileVO> getFiles(String board_no) {
+		List<FileVO> filevoList = dao.getFiles(board_no);
+		return filevoList;
+	}
+
+	
 
 
 	

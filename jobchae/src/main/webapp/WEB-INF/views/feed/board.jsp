@@ -187,7 +187,8 @@
 <script type="text/javascript">
     
 	let currentX = 0;
-
+	let uploadedFiles = [];
+	
     $(document).ready(function() {
         
     	$(".options-dropdown").hide();
@@ -304,8 +305,10 @@
 		        return;
 		    }
 			else {
-				alert("글이 성공적으로 업데이트 되었습니다.");
+				const files = document.getElementById("file-image").files;
+				console.log("업로드된 파일들: ", files);
 				
+				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
 		      	frm.action = "<%= ctxPath%>/board/add";
@@ -631,11 +634,14 @@
 	                    previewBox.remove();
 	                    togglePrevButton();
 	                    updateCarouselPosition();
+	                    uploadedFiles = uploadedFiles.filter(fileObj => fileObj.name !== file.name || fileObj.size !== file.size);
 	                });
 	                
 	                previewBox.appendChild(img);
 	                previewBox.appendChild(closeButton); 
 	                track.appendChild(previewBox);
+	                
+	                uploadedFiles.push({name: file.name, size: file.size});
 	                
 	                togglePrevButton();
 	                updateCarouselPosition();
@@ -679,7 +685,6 @@
 	    }
 
 	}
-
 
 </script>
 
@@ -838,6 +843,41 @@
 	                            </button>
 	                        </div>
 	                    </div>
+	                    -->
+	                    
+	                    
+	                    <div class="px-0">
+						    <div class="file-image">
+						    	<!-- 5장 미만 -->
+						        <c:if test="${not empty board.fileList and board.fileList.size() < 5}">
+					                <c:forEach var="file" items="${board.fileList}">
+					                    <button type="button"><img src="<%= ctxPath%>/resources/files/${file.file_name}"/></button>
+					                </c:forEach>
+						        </c:if>
+						        
+						        <!-- 5장 이상 -->
+						        <c:if test="${not empty board.fileList and board.fileList.size() >= 5}">
+					                <c:forEach var="file" items="${board.fileList}" varStatus="status">
+					                    <c:if test="${status.index < 3}">
+						                    <button type="button"><img src="<%= ctxPath%>/resources/files/${file.file_name}"/></button>
+						                </c:if>
+						                <c:if test="${status.index > 3}">
+						                    <button type="button" class="more-image"><img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+				                                <span class="flex items-center">
+				                                    <span><i class="fa-solid fa-plus"></i></span>
+				                                    <span class="text-4xl">${board.fileList.size() - 3}</span>
+				                                </span>
+				                            </button>
+						                </c:if>
+					                </c:forEach>
+					                
+					                
+						        </c:if>         
+						    </div>
+						</div>
+	                    
+	                    
+	                    
 	                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
 	                    <div>
 	                        <ul class="flex gap-4 text-gray-600">
@@ -1015,9 +1055,9 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="board_image" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" />
-				            <input type="file" name="board_video" id="file-video" style="display:none;" accept="video/*" />
-				            <input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" />
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" multiple/>
+				            <!--<input type="file" name="board_video" id="file-video" style="display:none;" accept="video/*" />  -->
+				            <!--<input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" />-->
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
