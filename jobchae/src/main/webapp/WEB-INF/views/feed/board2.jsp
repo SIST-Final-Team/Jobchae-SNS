@@ -186,6 +186,8 @@
     
 <script type="text/javascript">
     
+	let currentX = 0;
+
     $(document).ready(function() {
         
     	$(".options-dropdown").hide();
@@ -198,6 +200,11 @@
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
+        
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
         
         $("button.write-button").click(function() {
 
@@ -213,12 +220,14 @@
         $("span#closeModalButton").click(function() {
         	writeModal.style.display = "none";
         	writeQuill.setText('');
+        	$(".carousel-track").empty();
         });
 
         $(window).click(function(e) {
             if (e.target == writeModal) {
             	writeModal.style.display = "none";
             	writeQuill.setText('');
+            	$(".carousel-track").empty();
             }
         });
         
@@ -570,32 +579,108 @@
 			});
 		});
 		
+
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
+		// Modal 이미지 미리보기
+		$("button#prevBtn").click(function() {
+			if (currentX < 0) {
+				currentX += 208;
+				$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+			}
+		});
+		
+		$("button#nextBtn").click(function() {
+			currentX -= 208;
+			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+		});
+
+	
 	});
-
     
- 	// 이미지 미리보기 및 목록에 추가하는 함수
-    function previewImage(event) {
-        const fileInput = event.target;
-        const file = fileInput.files[0];
+    // 이미지 미리보기
+	function previewImage(event) {
+    	
+	    const files = event.target.files;
+	    const track = document.querySelector(".carousel-track");
+	    
+	    if (!track) {
+	        console.error("미리보기 요소를 찾을 수 없습니다.");
+	        return;
+	    }
+	
+	    Array.from(files).forEach((file, index) => {
+	
+	        if (file.type.startsWith("image/")) {
+	            const reader = new FileReader();
+	
+	            reader.onload = function (e) {
+	
+	                const previewBox = document.createElement("div");
+	                previewBox.className = "preview-box";
+	
+	                const img = document.createElement("img");
+	                img.src = e.target.result;
+	                img.alt = file.name;
+	                
+	                const closeButton = document.createElement("div");
+	                closeButton.className = "close-btn";
+	                closeButton.innerText = "×";
+	                
+	                closeButton.addEventListener("click", () => {
+	                    previewBox.remove();
+	                    togglePrevButton();
+	                    updateCarouselPosition();
+	                });
+	                
+	                previewBox.appendChild(img);
+	                previewBox.appendChild(closeButton); 
+	                track.appendChild(previewBox);
+	                
+	                togglePrevButton();
+	                updateCarouselPosition();
+	            };
+	
+	            reader.onerror = function () {
+	                console.error("파일 읽기 오류 발생");
+	            };
+	
+	            reader.readAsDataURL(file);
+	        } else {
+	            alert("이미지 파일만 업로드할 수 있습니다.");
+	        }
+	    });
+	    
+	    function togglePrevButton() {
+	        const previewCount = track.querySelectorAll(".preview-box").length;
+	        
+	        if (previewCount === 0) {
+	            prevBtn.style.display = "none";  
+	            nextBtn.style.display = "none";  
+	        } 
+	        else if (previewCount < 4) {
+	        	prevBtn.style.display = "block";
+	        	nextBtn.style.display = "none";
+	        } else {
+	        	prevBtn.style.display = "block";
+	        	nextBtn.style.display = "block";
+	        }
+	        
+	    }
+	    
+	    function updateCarouselPosition() {
+	        const previewCount = track.querySelectorAll(".preview-box").length;
 
-        const fileNameElement = document.createElement("span");
-        fileNameElement.textContent = file.name; 
-        fileNameElement.style.display = "block"; 
+	        if (previewCount > 3) {
+	            currentX = parseInt($(track).css("transform").split(',')[4]) || 0;
+	            currentX = currentX - 208; 
+	            $(track).css("transform", "translateX(" + currentX + "px)");
+	        }
+	    }
 
-        const previewItem = document.createElement("div");
-        previewItem.style.marginBottom = "5px"; 
-        previewItem.appendChild(fileNameElement);
+	}
 
-        const previewList = document.getElementById("image-preview-list");
-        previewList.appendChild(previewItem);
 
-        document.getElementById("image-preview-container").style.display = "block";
-    }
-
- 	
-
- 	
- 	
 </script>
 
 
@@ -896,24 +981,19 @@
 					    </div>
 					</div>
 
+					
+					<!-- 이미지 미리보기 영역 -->
+					<div id="carousel-container">
+					    <button id="prevBtn" class="carousel-btn">〈</button>
+					
+					    <div id="image-preview-container">
+					        <div class="carousel-track">
+					        </div>
+					    </div>
+					
+					    <button id="nextBtn" class="carousel-btn">〉</button>
+					</div>
 
-					<!-- ################################################################################### -->		
-					
-				    <!-- 이미지 미리보기 표시 영역
-		            <div id="image-preview-container" style="">
-		                <div id="image-preview-list"></div> 
-		            </div> 
-					
-					<!-- 이미지 미리보기 표시 영역 -->
-					
-					<div id="image-preview-container" style="">
-						<div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
-					    <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
-					    <div class="preview-box"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" /></div>
-		            </div> 
-					
-					
-					<!-- ################################################################################### -->		
 					
 			
                     <div class="ql-category">
