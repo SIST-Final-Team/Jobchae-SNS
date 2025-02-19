@@ -6,4 +6,34 @@
 <!-- ==== 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
 <mapper namespace="board">
 
+	<!-- 파일첨부가 없는 글쓰기 -->
+	<insert id="add" parameterType="HashMap">
+		insert into tbl_board(board_no, fk_member_id, board_content, board_visibility, board_comment_allowed, board_register_date, board_parent_no, board_group_no, board_depth, board_is_delete)
+		values(seq_board_no.nextVal, #{fk_member_id}, #{board_content}, #{board_visibility}, default, default, default, seq_board_no.currVal, default, default)
+	</insert>
+
+	<!-- 로그인된 사용자의 정보 얻어오기 -->
+	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
+		select member_id, fk_region_no, fk_member_career_no, fk_member_education_no, member_name, member_birth, member_email, member_tel, member_profile, member_background_img, member_hire_status
+		from tbl_member
+		where member_id = #{login_userid}
+	</select>
+	
+	<!-- 피드 조회하기 -->
+	<select id="getAllBoards" resultType="BoardVO" parameterType="String">
+		select b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name
+		from tbl_board b
+		join tbl_member m on b.fk_member_id = m.member_id
+		left join tbl_follow f on m.member_id = f.following_id
+		where b.board_is_delete = 0
+		AND (f.follower_id = #{login_userid} OR b.fk_member_id = #{login_userid})
+		order by b.board_no desc
+	</select>
+
+	<!-- 글 삭제 -->
+	<update id="delete" parameterType="String">
+		update tbl_board set board_is_delete = 1
+		where board_no = #{board_no}
+	</update>	
+	
 </mapper>
