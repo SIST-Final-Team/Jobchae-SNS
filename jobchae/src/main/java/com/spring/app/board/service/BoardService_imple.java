@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.model.BoardDAO;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.reaction.domain.ReactionVO;
 
 @Service
 public class BoardService_imple implements BoardService {
@@ -23,7 +25,14 @@ public class BoardService_imple implements BoardService {
 		int n = dao.add(paraMap);
 		return n;
 	}
-
+	
+	// 파일첨부가 있는 글쓰기
+	@Override
+	public int addWithFile(Map<String, String> paraMap2) {
+		int n = dao.addWithFile(paraMap2);
+		return n;
+	}
+	
 	// 로그인된 사용자의 정보 얻어오기
 	@Override
 	public MemberVO getUserInfo(String login_userid) {
@@ -40,10 +49,73 @@ public class BoardService_imple implements BoardService {
 	
 	// 글 삭제
 	@Override
-	public int delete(String board_no) {
-		int n = dao.delete(board_no);
+	public int deleteBoard(Map<String, String> paraMap) {
+		int n = dao.deleteBoard(paraMap);
 		return n;
 	}
+
+	// 글 수정
+	@Override
+	public int editBoard(Map<String, String> paraMap) {
+		int n = dao.editBoard(paraMap);
+		return n;
+	}
+
+	// 게시물 반응
+	@Override
+	public int reactionBoard(Map<String, String> paraMap) {
+		int n = dao.reactionBoard(paraMap);
+		return n;
+	}
+
+	// 글 허용범위
+	@Override
+	public int updateBoardVisibility(Map<String, String> paraMap) {
+		int n = dao.updateBoardVisibility(paraMap);
+		return n;
+	}
+
+	// 반응 조회하기
+	@Override
+	public List<ReactionVO> getAllReaction(String login_userid) {
+		List<ReactionVO> reactionList = dao.getAllReaction(login_userid);
+		return reactionList;
+	}
+
+	// 게시물 반응 삭제
+	@Override
+	public int deleteReactionBoard(Map<String, String> paraMap) {
+		int n = dao.deleteReactionBoard(paraMap);
+		return n;
+	}
+
+	// 게시물 반응 조회
+	@Override
+	public ReactionVO selectReaction(Map<String, String> paraMap) {
+		ReactionVO reactionvo = dao.selectReaction(paraMap);
+		return reactionvo;
+	}
+
+	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
+	@Override
+	public int updateReactionBoard(Map<String, String> paraMap) {
+		int n = dao.updateReactionBoard(paraMap);
+		return n;
+	}
+
+	// 각 피드별 파일 존재여부 검사
+	@Override
+	public List<FileVO> getFiles(String board_no) {
+		List<FileVO> filevoList = dao.getFiles(board_no);
+		return filevoList;
+	}
+
+	
+
+
+	
+
+
 
 	
 }
