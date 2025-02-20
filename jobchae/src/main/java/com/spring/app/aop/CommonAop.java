@@ -76,6 +76,50 @@ public class CommonAop {
 
 		}
 	}
+	
+	
+	
+	
+	
+	// 이메일 인증 받았는지 확인하는 AOP
+	@Pointcut("execution(public * com.spring.app..*Controller.emailCheckOk_*(..))")
+	// 접근제한자 : public
+	// return 타입 : 맘대로
+	// com.spring.app 패키지 아래 어떤 패키지든
+	// Controller로 끝나는 클래스
+	// 메소드명 : requiredLogin_으로 시작
+	// 파라미터 : 있거나 없거나 상관 없음
+	public void emailCheckOk() {}
+	
+	// === Before Advice(공통관심사, 보조업무)를 구현한다. === //
+		@Before("emailCheckOk()")
+		public void emailCheck(JoinPoint joinpoint) { // 이메일 체크 유무 검사하는 메소드 작성하기
+			// JoinPoint joinpoint 는 포인트컷 되어진 주업무의 메소드이다.
+
+			// 이메일 체크 유무를 확인하기 위해서는 request 를 통해 session 을 얻어와야 한다.
+			HttpServletRequest request = (HttpServletRequest) joinpoint.getArgs()[0]; // 주업무 메소드의 첫번째 파라미터를 얻어오는 것이다.
+			HttpServletResponse response = (HttpServletResponse) joinpoint.getArgs()[1]; // 주업무 메소드의 두번째 파라미터를 얻어오는 것이다.
+
+			HttpSession session = request.getSession();
+
+			if((boolean)session.getAttribute("emailCheckOk") != true) { // 이메일 인증이 true 값이 아니라면
+				String message = "email 인증을 받지 않으면 안됩니다!";
+				String loc = request.getContextPath() + "/board/feed"; // 메인페이지로
+
+				request.setAttribute("message", message);
+				request.setAttribute("loc", loc);
+
+				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/common/msg.jsp");
+				
+		        try {
+					dispatcher.forward(request, response);
+				} catch (ServletException | IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}//end of public void emailCheck(JoinPoint joinpoint) {}...
+	
 
 	// ===== After Advice(보조업무) 만들기 ====== //
 
@@ -88,3 +132,19 @@ public class CommonAop {
 	}
 	// ===== Around Advice(보조업무) 만들기 ====== //
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

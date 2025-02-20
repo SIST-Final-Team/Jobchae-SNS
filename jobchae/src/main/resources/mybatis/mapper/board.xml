@@ -4,17 +4,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- ==== 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
-<mapper namespace="board">
+<mapper namespace="com.spring.app.board.model.BoardDAO">
 
 	<!-- 파일첨부가 없는 글쓰기 -->
-	<insert id="add" parameterType="HashMap">
+	<insert id="add" parameterType="HashMap" >
+		<selectKey keyProperty="board_no" resultType="String" order="AFTER">
+        	select seq_board_no.currVal from dual
+    	</selectKey>
 		insert into tbl_board(board_no, fk_member_id, board_content, board_visibility, board_comment_allowed, board_register_date, board_parent_no, board_group_no, board_depth, board_is_delete)
 		values(seq_board_no.nextVal, #{fk_member_id}, #{board_content}, #{board_visibility}, default, default, default, seq_board_no.currVal, default, default)
 	</insert>
-
+	
+	<!-- 파일첨부가 있는 글쓰기 -->
+	<insert id="addWithFile" parameterType="HashMap" >
+		insert into tbl_file(file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date)
+		values(seq_file_no.nextVal, #{file_target_no}, 'board', #{file_name}, #{file_original_name}, #{file_size}, default)
+	</insert>
+	
 	<!-- 로그인된 사용자의 정보 얻어오기 -->
 	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
-		select member_id, fk_region_no, fk_member_career_no, fk_member_education_no, member_name, member_birth, member_email, member_tel, member_profile, member_background_img, member_hire_status
+		select member_id, member_name
 		from tbl_member
 		where member_id = #{login_userid}
 	</select>
@@ -30,10 +39,62 @@
 		order by b.board_no desc
 	</select>
 
+	<!-- 각 피드별 파일 존재여부 검사 -->
+	<select id="getFiles" resultType="FileVO" parameterType="String">
+		select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+		from tbl_file
+		where file_target_no = #{board_no}
+	</select>
+
+
 	<!-- 글 삭제 -->
-	<update id="delete" parameterType="String">
+	<update id="deleteBoard" parameterType="HashMap">
 		update tbl_board set board_is_delete = 1
-		where board_no = #{board_no}
+		where fk_member_id = #{fk_member_id} and board_no = #{board_no}
 	</update>	
+	
+	<!-- 글 수정 -->
+	<update id="editBoard" parameterType="HashMap">
+		update tbl_board set board_content = #{board_content}, board_visibility = #{board_visibility}
+		where board_no = #{board_no} and fk_member_id = #{fk_member_id}	
+	</update>
+	
+	<!-- 게시물 반응 -->
+	<insert id="reactionBoard" parameterType="HashMap">
+		insert into tbl_reaction(reaction_no, fk_member_id, reaction_target_no, reaction_target_type, reaction_status, reaction_register_date)
+		values(seq_reaction_no.nextVal, #{fk_member_id}, #{reaction_target_no}, 'board', #{reaction_status}, default)
+	</insert>
+	
+	<!-- 게시물 반응 삭제 -->
+	<delete id="deleteReactionBoard" parameterType="HashMap">
+		delete from tbl_reaction
+		where fk_member_id = #{fk_member_id} and reaction_target_no = #{reaction_target_no}
+	</delete>	
+	
+	<!-- 게시물 반응 조회 -->
+	<select id="selectReaction" resultType="ReactionVO" parameterType="ReactionVO">
+		select reaction_no, fk_member_id, reaction_target_no, reaction_target_type, reaction_status, reaction_register_date
+		from tbl_reaction
+		where fk_member_id = #{fk_member_id} and reaction_target_no = #{reaction_target_no}
+	</select>
+	
+	<!-- 이미 반응 누른 경우, 유니크키 때문에 update 처리 -->
+	<update id="updateReactionBoard" parameterType="HashMap">
+		update tbl_reaction set reaction_status = #{reaction_status}
+		where fk_member_id = #{fk_member_id} and reaction_target_no = #{reaction_target_no}
+	</update>
+	
+	<!-- 글 허용범위 -->
+	<update id="updateBoardVisibility" parameterType="HashMap">
+		update tbl_board set board_visibility = #{board_visibility}, board_comment_allowed = #{board_comment_allowed}
+		where fk_member_id = #{fk_member_id} and board_no = #{board_no}
+	</update>
+	
+	<!-- 반응 조회하기 -->
+	<select id="getAllReaction" resultType="ReactionVO" parameterType="String">
+		select reaction_no, fk_member_id, reaction_target_no, reaction_target_type, reaction_status, reaction_register_date
+		from tbl_reaction
+		where fk_member_id = #{login_userid}
+	</select>
 	
 </mapper>

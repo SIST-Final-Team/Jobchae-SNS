@@ -4,6 +4,190 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- ==== 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
-<mapper namespace="member">
+<mapper namespace="com.spring.app.member.model.MemberDAO">
+	
+	<!-- === 이준영 시작 === -->
+	
+	<!-- 아이디 중복체크 -->
+	<select id="idDuplicateCheck" parameterType="String" resultType="String">
+		SELECT MEMBER_ID
+		FROM TBL_MEMBER
+		WHERE MEMBER_ID = #{member_id}
+	</select>
+	
+	
+	
+	<!-- 이메일 중복체크 -->
+	<select id="emailCheck" parameterType="String" resultType="String">
+		select member_email
+		from tbl_member
+		where member_email = #{member_email}
+	</select>
+	
+	
+	<!-- 지역 검색 자동 완성 -->
+	<resultMap type="HashMap" id="regionMap">
+		<result property="REGION_NO" column="REGION_NO" javaType="String" />
+		<result property="REGION_NAME" column="REGION_NAME" javaType="String" />
+	</resultMap>
+	<select id="regionSearchShow" parameterType="String" resultMap="regionMap">
+		SELECT REGION_NO, REGION_NAME
+		FROM TBL_REGION
+		WHERE REGION_NAME LIKE '%' || #{member_region} || '%'
+	</select>
+	
+	
+	
+	
+	<!-- 정확한 지역명을 검색한 후 찾아주는 메소드 -->
+	<resultMap type="HashMap" id="search_regionMap">
+		<result property="no" column="REGION_NO" javaType="String" />
+		<result property="word" column="REGION_NAME" javaType="String" />
+	</resultMap>
+	<select id="regionKeyWordSearch" parameterType="String" resultMap="search_regionMap">
+		SELECT REGION_NO, REGION_NAME
+		FROM TBL_REGION
+		WHERE REGION_NAME = #{member_region}
+	</select>
+	
+	
+	
+	
+	
+	<!-- 로그인 처리하기, 스케줄러 완성되면 조인문을 삭제하자. -->
+	<select id="getLoginMember" parameterType="HashMap" resultType="MemberVO">	
+		SELECT NVL(lastlogingap, TRUNC(MONTHS_BETWEEN(SYSDATE, MEMBER_REGISTER_DATE))) AS lastlogingap, -- 로그인 간격
+       		   passwdchangegap,             -- 비밀번호 변경 간격
+       		   MEMBER_ID,                   -- 회원 아이디
+       		   M.FK_REGION_NO,              -- 지역 일련번호
+       		   MEMBER_PASSWD,               -- 비밀번호
+       		   MEMBER_NAME,                 -- 성명
+       		   MEMBER_BIRTH,                -- 생년월일
+       		   MEMBER_EMAIL,                -- 이메일
+       		   MEMBER_TEL,                  -- 전화번호
+       		   MEMBER_REGISTER_DATE,        -- 가입일자 ,기본은 SYSDATE
+       		   MEMBER_PASSWDUPDATE_DATE,    -- 비밀번호 변경일자,NULL 이면 가입일자를 참조
+       		   MEMBER_STATUS,               -- 가입상태 ,default 1,  정상: 1, 탈퇴: 2, 정지:3
+       		   MEMBER_IS_COMPANY,           -- 기업 여부 ,기본값 0 0:개인 1: 기업
+       		   MEMBER_IDLE,                 -- 휴면상태 ,기본값 0, 0: 정상 1: 휴면 (마지막으로 로그인 한 날짜시간이 현재시각으로 부터 1년이 지났으면 휴면으로 지정)
+       		   MEMBER_PROFILE,              -- 프로필 사진
+       		   MEMBER_BACKGROUND_IMG,       -- 프로필 배경 사진
+       		   MEMBER_HIRE_STATUS,          -- 고용상태 , 이직/구직중 : 1, 채용중 : 2, 프리랜서 활동중 : 3
+       		   fk_job_no,                   -- 직종 일련번호 
+       		   fk_school_no,                -- 학교 일련번호
+       		   fk_major_no,                 -- 전공 일련번호
+       		   member_education_degree      -- 학위
+		FROM 
+    		(SELECT MEMBER_ID,                  
+            		FK_REGION_NO,               
+            		MEMBER_PASSWD,              
+            		MEMBER_NAME,                
+            		MEMBER_BIRTH,               
+            		MEMBER_EMAIL,               
+            		MEMBER_TEL,                 
+            		MEMBER_REGISTER_DATE,       
+            		MEMBER_PASSWDUPDATE_DATE,   
+            		MEMBER_STATUS,              
+            		MEMBER_IS_COMPANY,          
+            		MEMBER_IDLE,                
+            		MEMBER_PROFILE,             
+            		MEMBER_BACKGROUND_IMG,      
+            		MEMBER_HIRE_STATUS,         
+            		TRUNC(months_between(SYSDATE, MEMBER_PASSWDUPDATE_DATE)) AS passwdchangegap
+     		 FROM TBL_MEMBER
+     		 WHERE MEMBER_STATUS = 1 AND MEMBER_ID = 'user001' AND MEMBER_PASSWD = 'password123') M
+	   CROSS JOIN (
+    				SELECT TRUNC(MONTHS_BETWEEN(SYSDATE, MAX(LOGIN_DATE)) ) AS lastlogingap
+    				FROM TBL_LOGIN 
+    				WHERE FK_MEMBER_ID = 'user001') H
+	   LEFT JOIN TBL_REGION R
+	   ON M.FK_REGION_NO = R.REGION_NO
+	   LEFT JOIN TBL_MEMBER_CAREER C 		-- 회원 경력
+	   ON M.MEMBER_ID = C.FK_MEMBER_ID
+	   LEFT JOIN TBL_MEMBER_EDUCATION E  	-- 회원 학력력
+	   ON M.MEMBER_ID = E.FK_MEMBER_ID
+	</select>
+	
+	
+	
+	
+	<!--  로그인 기록 추가 -->
+	<insert id="insert_tbl_login" parameterType="HashMap">
+		INSERT INTO TBL_LOGIN(LOGIN_NO, FK_MEMBER_ID, LOGIN_CLIENT_IP)
+		VALUES(SEQ_LOGIN_NO.NEXTVAL, #{member_id}, #{clientip})
+	</insert>
+	
+	<!-- === 이준영 끝 === -->
+	
+	
 
+
+
+
+	<!-- === 김규빈 시작 === -->
+
+<!-- 	<resultMap type="HashMap" id="memberCareerMap"> -->
+<!-- 		<result column="" property="" javaType="String"/> -->
+<!-- 	</resultMap> -->
+<!-- 	<select id="selectMemberCareer" resultMap="memberCareerMap"> -->
+	
+<!-- 	</select> -->
+
+	<!-- 회원 경력 등록 -->
+	<insert id="insertMemberCareer" parameterType="HashMap">
+		insert into tbl_member_career(member_career_no, fk_member_id, fk_region_no, fk_job_no, member_career_is_current
+		          , member_career_company, member_career_type, member_career_startdate, member_career_enddate, member_career_explain)
+		values(seq_member_career_no.nextval, #{fk_member_id}, #{fk_region_no}, #{fk_job_no}, #{member_career_is_current}
+		     , #{member_career_company}, #{member_career_type}, to_date(#{member_career_startdate}, 'yyyy-mm'), to_date(#{member_career_enddate}, 'yyyy-mm'), #{member_career_explain})
+	</insert>
+	
+	<!-- 회원 경력 수정 -->
+	<update id="updateMmemberCareer" parameterType="HashMap">
+		update tbl_member_career set fk_region_no = #{fk_region_no}, fk_job_no = #{fk_job_no}, member_career_is_current = #{member_career_is_current}
+		          , member_career_company = #{member_career_company}, member_career_type = #{member_career_type}
+		          , member_career_startdate = to_date(#{member_career_startdate}, 'yyyy-mm')
+		          , member_career_enddate = to_date(#{member_career_enddate}, 'yyyy-mm'), member_career_explain = #{member_career_explain}
+		where member_career_no = #{member_career_no} and fk_member_id = #{fk_member_id}
+	</update>
+	
+	<!-- 회원 경력 삭제 -->
+	<delete id="deleteMemberCareer" parameterType="HashMap">
+		delete from tbl_member_career
+		where member_career_no = #{member_career_no} and fk_member_id = #{fk_member_id}
+	</delete>
+	
+	<!-- 자동완성을 위한 직종 목록 조회 및 검색 -->
+	<resultMap type="HashMap" id="jobMap">
+		<result column="job_no" property="job_no" javaType="String"/>
+		<result column="job_name" property="job_name" javaType="String"/>
+	</resultMap>
+	<select id="getJobListForAutocomplete" parameterType="HashMap" resultMap="jobMap">
+		select job_no, job_name
+		from tbl_job
+		where job_name like '%' || #{job_name} || '%' and rownum &lt;= to_number(#{size})
+	</select>
+	
+	<!-- 자동완성을 위한 회사 목록 조회 및 검색 -->
+	<resultMap type="HashMap" id="companyMap">
+		<result column="company_no" property="company_no" javaType="String"/>
+		<result column="company_name" property="company_name" javaType="String"/>
+	</resultMap>
+	<select id="getCompanyListForAutocomplete" parameterType="HashMap" resultMap="companyMap">
+		select company_no, company_name
+		from tbl_company
+		where company_name like '%'|| #{company_name} || '%' and rownum &lt;= to_number(#{size})
+	</select>
+	
+	<!-- 자동완성을 위한 전공 목록 조회 및 검색 -->
+	<resultMap type="HashMap" id="majorMap">
+		<result column="major_no" property="major_no" javaType="String"/>
+		<result column="major_name" property="major_name" javaType="String"/>
+	</resultMap>
+	<select id="getMajorListForAutocomplete" parameterType="HashMap" resultMap="majorMap">
+		select major_no, major_name
+		from tbl_major
+		where major_name like '%'|| #{major_name} || '%' and rownum &lt;= to_number(#{size})
+	</select>
+	
+	<!-- === 김규빈 끝 === -->
 </mapper>
