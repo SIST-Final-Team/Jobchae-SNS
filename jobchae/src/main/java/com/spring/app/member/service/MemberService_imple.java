@@ -89,18 +89,7 @@ public class MemberService_imple implements MemberService {
 
 
 
-	
-	// 정확한 지역명을 검색한 후 찾아주는 메소드
-	@Override
-	public Map<String, String> regionKeyWordSearch(String member_region) {
-		
-		Map<String, String> regionMap = dao.regionKeyWordSearch(member_region);
-		
-		return regionMap;
-		
-	}//end of public Map<String, String> regionKeyWordSearch(String member_region) {}...
-	
-	
+
 	
 	
 	

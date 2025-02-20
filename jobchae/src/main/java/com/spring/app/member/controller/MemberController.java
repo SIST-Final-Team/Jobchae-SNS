@@ -57,11 +57,12 @@ public class MemberController {
 	
 	
 	
+	
 	// 회원가입 
 	@PostMapping("emailCheckOk_memberRegister")
-	public MemberVO memberRegister(HttpServletRequest request, HttpServletResponse response, 
-									MemberVO membervo,
-								   MultipartHttpServletRequest mrequest) {
+	public Map<String, String> memberRegister(HttpServletRequest request, HttpServletResponse response, 
+									 		  @RequestParam Map<String, String> registerMap,
+									 		  MultipartHttpServletRequest mrequest) {
 		// 파일은 mrequest 로, membervo 는 회원정보 받아준다.
 		
 		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
@@ -73,7 +74,7 @@ public class MemberController {
 		
 		
 		
-		return membervo;
+		return registerMap;
 		
 	}//end of public ModelAndView postMethodName(ModelAndView mav, MemberVO membervo) {}...
 	
@@ -157,7 +158,7 @@ public class MemberController {
 	// 지역 검색 시 자동 완성 해주는 메소드
 	@GetMapping("region/search")
 	@ResponseBody
-	public List<Map<String, String>> regionSearch(@RequestParam String member_region) {
+	public List<Map<String, String>> regionSearch(@RequestParam String region_name) {
 		// 입력한 검색어 찾기
 		List<Map<String, String>> regionList = service.regionSearchShow(member_region); 
 
@@ -181,29 +182,7 @@ public class MemberController {
 	
 	
 	
-	
-	// 정확한 지역명을 검색한 후 찾아주는 메소드
-	@GetMapping("regionKeyWordSearch")
-	@ResponseBody
-	public Map<String, String> regionKeyWordSearch(@RequestParam String member_region) {
-		
-		 Map<String, String> regionMap = service.regionKeyWordSearch(member_region);
-		
-//		System.out.println("번호 => "+regionMap.get("no"));
-//		System.out.println("검색어 => "+regionMap.get("word"));
-		
-		if (regionMap == null) {
-			regionMap = new HashMap<>(); // []
-			regionMap.put("isNull", "1"); // 확인용 정크값, js 에서 걸러주는 역할
-		}
-		
-		return regionMap;
-		
-	}//end of public Map<String, String> getMethodName(@RequestParam String member_region) {}...
-	
-	
-	
-	
+
 	
 	
 	// === 로그인 페이지 켜는 메소드

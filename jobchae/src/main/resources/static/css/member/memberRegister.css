@@ -100,11 +100,23 @@ img#idcheck, img#zipcodeSearch {
 
 
 
-input#agree_checkbox {
+input#agree_checkbox,
+input#member_career_is_current_checkbox {
     zoom: 2;
 }
 
 
+
+select#member_career_startdate,
+select#member_career_enddate {
+    margin: 0 auto;
+    
+}
+
+
+.searchWords {
+    background-color: #ccc;
+}
 
 
 

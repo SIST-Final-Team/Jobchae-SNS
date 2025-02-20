@@ -40,22 +40,7 @@
 	</select>
 	
 	
-	
-	
-	<!-- 정확한 지역명을 검색한 후 찾아주는 메소드 -->
-	<resultMap type="HashMap" id="search_regionMap">
-		<result property="no" column="REGION_NO" javaType="String" />
-		<result property="word" column="REGION_NAME" javaType="String" />
-	</resultMap>
-	<select id="regionKeyWordSearch" parameterType="String" resultMap="search_regionMap">
-		SELECT REGION_NO, REGION_NAME
-		FROM TBL_REGION
-		WHERE REGION_NAME = #{member_region}
-	</select>
-	
-	
-	
-	
+
 	
 	<!-- 로그인 처리하기, 스케줄러 완성되면 조인문을 삭제하자. -->
 	<select id="getLoginMember" parameterType="HashMap" resultType="MemberVO">	

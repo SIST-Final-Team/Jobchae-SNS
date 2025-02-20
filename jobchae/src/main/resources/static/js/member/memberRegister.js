@@ -11,9 +11,14 @@ let b_email_auth_click = false; // 인증버튼 클릭했는지 여부
 
 let is_email_auth = false; // 인증번호를 인증 받았는지 여부
 
+
+
+let region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
+
 // 컨텍스트 패스
 const contextPath = sessionStorage.getItem("contextpath");
 
+// const region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
 
 $(document).ready(function () {
 
@@ -507,35 +512,104 @@ $(document).ready(function () {
     // 지역 자동검색
     $("div#displayList").hide(); // 먼저 검색구역 숨기기 
 
+
+
+
+
     // 지역 검색어 입력 시
     $("input[name='member_region']").keyup(function (e) {
 
         // 변경될 때마다 $("input[name='member_region_no']").val(); 값을 초기화 해준다.
         $("input[name='member_region_no']").val("");
 
+        // input 에서 한글입력키를 쓰면 무조건 229 가 된다.
+        // 결론부터 말씀드리자면, input에서 한글자판 사용시 IME에서 메시지를 가로채기 때문에 keyCode가 229를 가리키는 것이었습니다.
+        if(e.keyCode == 229) {
+            return;
+        }
+
         const wordLength = $(this).val().trim().length; // 검색어에서 공백을 제외한 길이
 
         if (wordLength == 0) {
             $("div#displayList").hide();
             // 검색어가 공백이거나 검색어 입력후 백스페이스키를 눌러서 검색어를 모두 지우면 검색된 내용이 안 나오도록 해야 한다.
-        } else {
+        } else if (e.keyCode != 13 ) {
             ajax_search(); // 지역 검색
+            // console.log("region_search_arr => ", JSON.stringify(region_search_arr));
+        } else if (e.keyCode == 13 && $("input[name='member_region_no']").val() == "" && $(this).val() != "") {
 
+            region_search_arr.forEach(item => {
+                if ($(this).val() == item.region_name) { // 검색 목록에 정확하게 들어맞으면
+                    $("div#regionerror").html("").hide();
+                    $("input[name='member_region_no']").val(item.region_no);
+                    $("div#displayList").hide(); // 검색창 감추기
+                    console.log("히든 인풋 region_no => ", $("input[name='member_region_no']").val());
+                    return;
+
+                } else {
+                    $("div#regionerror").html(`목록에 있는 지역만 입력해주십시오!`).css({ "color": "red" }).show();
+                    $("div#displayList").hide(); // 검색창 감추기
+                    return;
+                }
+            });
         }//end of if else (wordLength == 0) {}...
 
-        // 문장 입력 후 엔터를 선택 시 값 넣어주기
-        if (e.keyCode == 13) { // 엔터
-            // console.log("검색되는 인풋값 => " ,$("input[name='member_region']").val());
 
-            ajax_search_keyWord();
-        }//
+        // 방향키 위아래로 해서 검색어 입력
+        switch(e.keyCode) {
+            case 38:
+                $("li.result").each(function (index, elmt) {
+                    $(this).val() = elmt.text().addClass('');;
+                    
+                });
+                break;
+            case 2:
+                // case 2
+                break;
+            default:
+                // default code
+
+        };//end of switch...
+        
+        
+
+
+
+
+
+
+
+
+
+
 
 
     });//end of $("input[name='member_region']").keyup(function (e) {}...
 
 
+
+    // 이거 체인지 이벤트 상위호환이다. 엔터 막는 용
+    $("input[name='member_region']").on("input", function (e) {
+        
+        
+
+
+
+
+
+
+
+
+    });//end of 
+
+
+
+
+
+
+
     // 검색어 입력시 자동글 완성하기
-    $(document).on("click", "span.result", function (e) {
+    $(document).on("click", "li.result", function (e) {
 
         const word = $(e.target).text();
         const no = $(e.target).children("input[name='no_result']").val();
@@ -547,16 +621,17 @@ $(document).ready(function () {
 
     });//end of $(document).on("click", "span.result", function(e) {}...
 
+    // no_result = `<input type="hidden" name="no_result" value="${item.region_no}" />`;
+
+    // const idx = word.toLowerCase().indexOf($("input[name='member_region']").val().toLowerCase());
+
+    // const len = $("input[name='member_region']").val().length;
+
+    // result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
+
+    // v_html += `<li style='cursor:pointer;' class='result'>${result}${no_result}</li>`;
 
 
-    // // 지역 검색 시 히든 input 태그 안에 번호가 없다면 예외처리
-    // $(document).on("keyup", "input[name='member_region']", function(e) {
-
-    //     if(e.keyCode == 13) { // 엔터
-    //        // 에이젝스 실행
-    //     }//
-
-    // });//    
 
 
 
@@ -677,27 +752,31 @@ function goRegister() {
 
 
 
-
+// let region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
 function ajax_search() {
 
     // 지역 검색어 입력 ajax
     $.ajax({
-        url: `${contextPath}/member/regionSearch`,
+        url: `${contextPath}/member/region/search`,
         type: "get",
         data: {
             "member_region": $("input[name='member_region']").val()
         },
         dataType: "json",
         success: function (json) {
-            console.log(JSON.stringify(json));
-
-            // === #93 검색어 입력시 자동글 완성하기
+            // console.log(JSON.stringify(json));
+            region_search_arr = json;
+            console.log("region_search_arr => ", JSON.stringify(region_search_arr));
+            
+            // === 검색어 입력시 자동글 완성하기
             if (json.length > 0) {
                 // 검색된 데이터가 있는 경우
-                let v_html = ``;
+                let v_html = `<ul style="list-style:none; padding: 0; margin-left: 0;">`;
 
                 $.each(json, function (index, item) {
                     const word = item.region_name;
+                    const no = item.region_no;
+
                     // word.toLowerCase()은 word 를 모두 소문자로 변경하는 것이다.
 
                     // 검색된 태그 안에 no 넣어주기
@@ -709,14 +788,16 @@ function ajax_search() {
 
                     result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
 
-                    v_html += `<span style='cursor:pointer;' class='result'>${result}${no_result}</span><br>`;
+                    v_html += `<li style='cursor:pointer;' class='result'>${result}${no_result}</li>`;
 
                 });// end of $.each(json, function(index, item) {})-------------------
+
+                v_html += `</ul>`
 
                 $("div#displayList").html(v_html).show(); // 보여줘라
 
             } else {
-                $("div#displayList").hide();
+                $("div#displayList").html("검색된 값이 없습니다.").show();
             }//end of if (json.length > 0) {}...
 
         },
@@ -733,37 +814,7 @@ function ajax_search() {
 
 
 
-// 키워드 바로 엔터시 예외처리 함수
-function ajax_search_keyWord() {
 
-    // 지역 검색어 직접 입력 ajax
-    $.ajax({
-        url: `${contextPath}/member/regionKeyWordSearch`,
-        type: "get",
-        data: {
-            "member_region": $("input[name='member_region']").val()
-        },
-        dataType: "json",
-        success: function (json) {
-            console.log(JSON.stringify(json));
-
-            // === 검색어 입력시 직접 검색된 값 넣어주기
-            if (json.word != null) { // null 대신 넣었다.
-                $("div#regionerror").html("").hide();
-                $("input[name='member_region_no']").val(json.no);
-                $("div#displayList").hide(); // 검색창 감추기
-
-            } else {
-                $("div#regionerror").html(`목록에 있는 지역만 입력해주십시오!`).css({ "color": "red" }).show();
-            }//end of if (json.length > 0) {}...
-
-        },
-        error: function (request, status, error) {
-            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-        }
-    });
-
-}//end of function ajax_search_keyWord() {}...
 
 
 

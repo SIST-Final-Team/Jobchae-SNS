@@ -176,9 +176,9 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
                 <div class="w-100"></div>
                 
                 <div class="col-lg-5 col-md-7">  
-                	<input type="text" name="member_region" id="member_region" size="40" maxlength="200" class="requiredInfo underline"
+                	<input type="text" name="region_name" id="region_name" size="40" maxlength="200" class="requiredInfo underline"
                         placeholder="지역" />
-                    <input type="hidden" name="member_region_no" id="member_region_no" />
+                    <input type="hidden" name="fk_region_no" id="fk_region_no" />
                 </div>
                 <div class="w-100"></div>
                 <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
@@ -340,9 +340,9 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
 
                 <div style="margin: 5% 0 5% 0;"></div>
 
-                <%-- 가입, 취소 버튼 --%>
+                <%-- 경력, 학력 입력 창 열기 버튼 --%>
                 <div class="col-lg-5 col-md-7">
-                    <input type="button" class="btnstyle" value="가입하기" onclick="goRegister()" />
+                    <input type="button" class="btnstyle" value="다음" />
                 </div>
                 <div class="w-100"></div>
                 <div style="margin-bottom: 10%;"></div>
@@ -356,7 +356,163 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
             </div>
             
             
+            	
+         
+            <%-- 회원 경력, 학력 입력 --%>
+            <div class="row justify-content-center" id="career_menu">
             
+<!-- 			member_career_no NUMBER NOT NULL, /* 회원 경력 일련번호 */ -->
+<!-- 		    fk_member_id VARCHAR2(20) NOT NULL, /* 회원 아이디 */ -->
+<!-- 	    	fk_region_no NUMBER NOT NULL, /* 지역 일련번호 */ -->
+<!-- 	    	fk_job_no NUMBER NOT NULL, /* 직종 일련번호 */ -->
+<!-- 	    	member_career_is_current NUMBER(1) DEFAULT 0 NOT NULL, /* 현재 재직여부 */ -->
+<!-- 	    	member_career_company NVARCHAR2(50) NOT NULL, /* 회사/단체 */ -->
+<!-- 	    	member_career_type NUMBER(1), /* 고용형태 */ -->
+<!-- 	    	member_career_startdate DATE, /* 시작일 */ -->
+<!-- 	    	member_career_enddate DATE, /* 종료일 */ -->
+<!-- 	    	member_career_explain NVARCHAR2(2000), /* 설명 */ -->
+
+<!-- 			    CONSTRAINT PK_tbl_m_career_no PRIMARY KEY(member_career_no), -->
+<!-- 			    CONSTRAINT FK_tbl_m_career_fk_member_id FOREIGN KEY(fk_member_id) REFERENCES tbl_member(member_id), -->
+<!-- 			    CONSTRAINT FK_tbl_m_career_fk_region_no FOREIGN KEY(fk_region_no) REFERENCES tbl_region(region_no), -->
+<!-- 			    CONSTRAINT FK_tbl_m_career_fk_job_no FOREIGN KEY(fk_job_no) REFERENCES tbl_job(job_no), -->
+<!-- 			    CONSTRAINT CK_tbl_m_career_type CHECK(member_career_type BETWEEN 1 AND 8) -->
+<!-- 			    1:정규직, 2:시간제, 3:자영업/개인사업, 4:프리랜서, 5:계약직, 6:인턴, 7:수습생, 8:시즌 -->
+            
+            	<h4>현재 재직 정보</h4>
+            	<div class="w-100"></div>
+            
+            	<%-- 학생 여부 확인 버튼 --%>
+                <div class="col-lg-5 col-md-7">
+                    <input type="button" class="btnstyle" value="학생이신가요?" />
+                </div>
+                <div class="w-100"></div>
+                <div style="margin-bottom: 10%;"></div>
+            
+            
+            	<%-- 근무지 지역 --%>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">근무지 지역&nbsp;<span class="star">*</span></div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7">  
+                	<input type="text" name="career_region" id="career_region" size="40" maxlength="200" class="requiredInfo underline"
+                        placeholder="근무지 지역" />
+                    <input type="hidden" name="fk_region_no" id="fk_region_no" />
+                </div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
+                	<%-- === 검색어 입력시 자동글 완성하기 1 --%>
+					<div id="displayList2" style="border:solid 1px gray; border-top:0px; height:100px; 
+						margin-top:-1px; margin-bottom:5px; overflow:auto;">
+  					</div>
+                </div>
+                <div class="w-100"></div>
+                <div id="career_regionerror" class="col-lg-5 col-md-7 error"></div>
+                <div class="w-100"></div>
+                
+                
+                <%-- 직종 --%>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">직종&nbsp;<span class="star">*</span></div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7">  
+                	<input type="text" name="career_job" id="career_job" size="40" maxlength="100" class="requiredInfo underline"
+                        placeholder="직종" />
+                    <input type="hidden" name="fk_job_no" id="fk_job_no" />
+                </div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
+                	<%-- === 검색어 입력시 자동글 완성하기 1 --%>
+					<div id="displayList3" style="border:solid 1px gray; border-top:0px; height:100px; 
+						margin-top:-1px; margin-bottom:5px; overflow:auto;">
+  					</div>
+                </div>
+                <div class="w-100"></div>
+                <div id="joberror" class="col-lg-5 col-md-7 error"></div>
+                <div class="w-100"></div>
+                
+<!-- 	    	member_career_company NVARCHAR2(50) NOT NULL, /* 회사/단체 */ -->
+				<%-- 회사 --%>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">회사&nbsp;<span class="star">*</span></div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7">  
+                	<input type="text" name="member_career_company" id="member_career_company" size="40" maxlength="50" class="requiredInfo underline"
+                        placeholder="회사" />
+                </div>
+                <div class="w-100"></div>
+                
+                <div style="margin: 0 0 3% 0;"></div>
+                
+                
+                
+                <!-- member_career_type NUMBER(1), 
+                     1:정규직, 2:시간제, 3:자영업/개인사업, 4:프리랜서, 5:계약직, 6:인턴, 7:수습생, 8:시즌 -->
+                <%-- 고용형태 --%>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">고용형태</div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
+                	<select name="member_career_type" style="height: 26px;">
+						<option value="">고용형태 선택</option>
+						<option value="1">정규직</option>
+						<option value="2">시간제</option>
+						<option value="3">자영업/개인사업</option>
+						<option value="4">프리랜서</option>
+						<option value="5">계약직</option>
+						<option value="6">인턴</option>
+						<option value="7">수습생</option>
+						<option value="8">시즌</option>
+					</select> 
+                </div>
+                <div class="w-100"></div>
+                
+                <!-- member_career_startdate DATE, /* 시작일 */ -->
+                
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">종료일</div>
+                <div class="w-100"></div>
+                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
+                	<input type="hidden" name="member_career_enddate"/>
+                		<div class="" style="display: flex;">
+                			<select id="member_career_career_year" class="" disabled>
+                                <option value="0">연도</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                            <select id="member_career_career_month" class="" disabled>
+                                <option value="0">월</option>
+                                <option value="1">1월</option>
+                                <option value="2">2월</option>
+                                <option value="3">3월</option>
+                                <option value="4">4월</option>
+                                <option value="5">5월</option>
+                                <option value="6">6월</option>
+                                <option value="7">7월</option>
+                                <option value="8">8월</option>
+                                <option value="9">9월</option>
+                                <option value="10">10월</option>
+                                <option value="11">11월</option>
+                                <option value="12">12월</option>
+                            </select>
+                        </div>
+                </div>
+                <div class="w-100"></div>
+                
+                
+                
+                
+
+
+<!-- 	    	member_career_explain NVARCHAR2(2000), /* 설명 */ -->
+                
+                
+                
+                
+                
+                
+                
+            
+            </div>
+            
+            
+
             
             
             
