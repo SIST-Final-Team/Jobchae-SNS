@@ -18,7 +18,7 @@ public interface MemberDAO {
 	String emailCheck(String member_email);
 
 	// 지역 검색 시 자동 완성 해주는 메소드
-	List<Map<String, String>> regionSearchShow(String member_region);
+	List<Map<String, String>> regionSearchShow(String region_name);
 
 	// 입력한 아이디와 비밀번호로 회원 정보 가져오는 메소드
 	MemberVO getLoginMember(Map<String, String> paraMap);

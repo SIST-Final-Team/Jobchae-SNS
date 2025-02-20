@@ -76,7 +76,7 @@ public class MemberService_imple implements MemberService {
 	
 	// 지역 검색 시 자동 완성 해주는 메소드
 	@Override
-	public List<Map<String, String>> regionSearchShow(String member_region) {
+	public List<Map<String, String>> regionSearchShow(String region_name) {
 
 		List<Map<String, String>> regionList = dao.regionSearchShow(member_region); 
 		

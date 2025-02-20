@@ -160,7 +160,7 @@ public class MemberController {
 	@ResponseBody
 	public List<Map<String, String>> regionSearch(@RequestParam String region_name) {
 		// 입력한 검색어 찾기
-		List<Map<String, String>> regionList = service.regionSearchShow(member_region); 
+		List<Map<String, String>> regionList = service.regionSearchShow(region_name); 
 
 		// 담을 맵 선언
 		List<Map<String, String>> mapList = new ArrayList<>();

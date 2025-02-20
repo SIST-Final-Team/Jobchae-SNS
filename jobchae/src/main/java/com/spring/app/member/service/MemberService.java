@@ -27,10 +27,7 @@ public interface MemberService {
 	boolean emailCheck(String member_email);
 
 	// 지역 검색 시 자동 완성 해주는 메소드 
-	List<Map<String, String>> regionSearchShow(String member_region);
-
-	// 정확한 지역명을 검색한 후 찾아주는 메소드
-	Map<String, String> regionKeyWordSearch(String member_region);
+	List<Map<String, String>> regionSearchShow(String region_name);
 
 	// 로그인하는 메소드
 	ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap);

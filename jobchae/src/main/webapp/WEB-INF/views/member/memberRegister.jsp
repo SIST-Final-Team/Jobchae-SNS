@@ -396,7 +396,8 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
                 <div class="col-lg-5 col-md-7">  
                 	<input type="text" name="career_region" id="career_region" size="40" maxlength="200" class="requiredInfo underline"
                         placeholder="근무지 지역" />
-                    <input type="hidden" name="fk_region_no" id="fk_region_no" />
+                    <input type="hidden" name="career_fk_region_no" id="career_fk_region_no" />
+                    <%-- 백엔드에서 fk_region_no 로 제대로 넣어주자 --%>
                 </div>
                 <div class="w-100"></div>
                 <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">

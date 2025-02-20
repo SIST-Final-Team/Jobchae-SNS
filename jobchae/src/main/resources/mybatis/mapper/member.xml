@@ -36,7 +36,7 @@
 	<select id="regionSearchShow" parameterType="String" resultMap="regionMap">
 		SELECT REGION_NO, REGION_NAME
 		FROM TBL_REGION
-		WHERE REGION_NAME LIKE '%' || #{member_region} || '%'
+		WHERE REGION_NAME LIKE '%' || #{region_name} || '%'
 	</select>
 	
 	

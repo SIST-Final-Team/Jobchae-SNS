@@ -517,10 +517,10 @@ $(document).ready(function () {
 
 
     // 지역 검색어 입력 시
-    $("input[name='member_region']").keyup(function (e) {
+    $("input[name='region_name']").keyup(function (e) {
 
-        // 변경될 때마다 $("input[name='member_region_no']").val(); 값을 초기화 해준다.
-        $("input[name='member_region_no']").val("");
+        // 변경될 때마다 $("input[name='fk_region_no']").val(); 값을 초기화 해준다.
+        $("input[name='fk_region_no']").val("");
 
         // input 에서 한글입력키를 쓰면 무조건 229 가 된다.
         // 결론부터 말씀드리자면, input에서 한글자판 사용시 IME에서 메시지를 가로채기 때문에 keyCode가 229를 가리키는 것이었습니다.
@@ -536,14 +536,14 @@ $(document).ready(function () {
         } else if (e.keyCode != 13 ) {
             ajax_search(); // 지역 검색
             // console.log("region_search_arr => ", JSON.stringify(region_search_arr));
-        } else if (e.keyCode == 13 && $("input[name='member_region_no']").val() == "" && $(this).val() != "") {
+        } else if (e.keyCode == 13 && $("input[name='fk_region_no']").val() == "" && $(this).val() != "") {
 
             region_search_arr.forEach(item => {
                 if ($(this).val() == item.region_name) { // 검색 목록에 정확하게 들어맞으면
                     $("div#regionerror").html("").hide();
-                    $("input[name='member_region_no']").val(item.region_no);
+                    $("input[name='fk_region_no']").val(item.region_no);
                     $("div#displayList").hide(); // 검색창 감추기
-                    console.log("히든 인풋 region_no => ", $("input[name='member_region_no']").val());
+                    console.log("히든 인풋 region_no => ", $("input[name='fk_region_no']").val());
                     return;
 
                 } else {
@@ -559,7 +559,8 @@ $(document).ready(function () {
         switch(e.keyCode) {
             case 38:
                 $("li.result").each(function (index, elmt) {
-                    $(this).val() = elmt.text().addClass('');;
+                    elmt.removeClass('" class/classes that you want to remove "');
+                    $(this).val() = elmt.text().addClass('searchWords');
                     
                 });
                 break;
@@ -584,23 +585,14 @@ $(document).ready(function () {
 
 
 
-    });//end of $("input[name='member_region']").keyup(function (e) {}...
+    });//end of $("input[name='region_name']").keyup(function (e) {}...
 
 
 
-    // 이거 체인지 이벤트 상위호환이다. 엔터 막는 용
-    $("input[name='member_region']").on("input", function (e) {
-        
-        
+    // // 이거 체인지 이벤트 상위호환이다. 엔터 막는 용
+    // $("input[name='region_name']").on("input", function (e) {
 
-
-
-
-
-
-
-
-    });//end of 
+    // });//end of 
 
 
 
@@ -614,18 +606,18 @@ $(document).ready(function () {
         const word = $(e.target).text();
         const no = $(e.target).children("input[name='no_result']").val();
         // $("input[name='no_result']").val();
-        $("input[name='member_region']").val(word); // 텍스트 박스에 검색된 결과의 문자열을 입력해준다.
-        $("input[name='member_region_no']").val(no);
+        $("input[name='region_name']").val(word); // 텍스트 박스에 검색된 결과의 문자열을 입력해준다.
+        $("input[name='fk_region_no']").val(no);
         $("div#displayList").hide();
-        // console.log("히든 인풋태그 번호 => ", $("input[name='member_region_no']").val());
+        // console.log("히든 인풋태그 번호 => ", $("input[name='fk_region_no']").val());
 
     });//end of $(document).on("click", "span.result", function(e) {}...
 
     // no_result = `<input type="hidden" name="no_result" value="${item.region_no}" />`;
 
-    // const idx = word.toLowerCase().indexOf($("input[name='member_region']").val().toLowerCase());
+    // const idx = word.toLowerCase().indexOf($("input[name='region_name']").val().toLowerCase());
 
-    // const len = $("input[name='member_region']").val().length;
+    // const len = $("input[name='region_name']").val().length;
 
     // result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
 
@@ -694,9 +686,9 @@ function goRegister() {
 
     // // *** 지역에 값을 입력했는지 검사하기 시작 *** //
     // arr_addressInfo.push($("input#postcode").val());
-    const member_region = $("input#member_region").val().trim();
+    const region_name = $("input#region_name").val().trim();
 
-    if (member_region == "") {
+    if (region_name == "") {
         alert("우편번호 및 주소를 입력하셔야 합니다.");
         return;
     }
@@ -760,7 +752,7 @@ function ajax_search() {
         url: `${contextPath}/member/region/search`,
         type: "get",
         data: {
-            "member_region": $("input[name='member_region']").val()
+            "region_name": $("input[name='region_name']").val()
         },
         dataType: "json",
         success: function (json) {
@@ -782,9 +774,9 @@ function ajax_search() {
                     // 검색된 태그 안에 no 넣어주기
                     no_result = `<input type="hidden" name="no_result" value="${item.region_no}" />`;
 
-                    const idx = word.toLowerCase().indexOf($("input[name='member_region']").val().toLowerCase());
+                    const idx = word.toLowerCase().indexOf($("input[name='region_name']").val().toLowerCase());
 
-                    const len = $("input[name='member_region']").val().length;
+                    const len = $("input[name='region_name']").val().length;
 
                     result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
 
