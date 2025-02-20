@@ -155,7 +155,7 @@ public class MemberController {
 	
 	
 	// 지역 검색 시 자동 완성 해주는 메소드
-	@GetMapping("regionSearch")
+	@GetMapping("region/search")
 	@ResponseBody
 	public List<Map<String, String>> regionSearch(@RequestParam String member_region) {
 		// 입력한 검색어 찾기
