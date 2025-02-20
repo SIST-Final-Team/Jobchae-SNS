@@ -24,30 +24,46 @@ public class ApiAlarmController {
 	@GetMapping("updateAlarmRead/{notification_no}")
 	@ResponseBody
 	public String updateAlarmRead(@PathVariable String notification_no){
-		
+		//TODO
 		return "updateAlarmRead";
 	}
 	
 //	알람 입력 메서드
-	@GetMapping("insertAlarm/{notification_no}")
+	@GetMapping("insertAlarm")
 	@ResponseBody
-	public int insertAlarm(@PathVariable String notification_no){
-		
+	public int insertAlarm(){
+		//TODO 부분 완성
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
 		
-		int result = alarmService.insertAlarm(user001);
+//		int result = alarmService.insertAlarm(user001);
 		
-		return result;
+		return 0;
 	}
 	
 //	알람 삭제 메서드
 	@GetMapping("deleteAlarm/{notification_no}")
 	@ResponseBody
 	public int deleteAlarm(@PathVariable String notification_no){
-		
+		//TODO 미완성
 		
 		return 1;
 	}
+	
+//	알림 조회 메서드
+	@GetMapping("selectAlarmList")
+	@ResponseBody
+	public String selectAlarmList() {
+		//TODO 미완성
+		return "";
+	}
+	
+//	시퀀스 조회 메서드
+//	@GetMapping("seq")
+//	@ResponseBody
+//	public int selectAlarmSeq() {
+//		int seq = alarmService.selectSeq();
+//		return seq;
+//	}
 	
 }

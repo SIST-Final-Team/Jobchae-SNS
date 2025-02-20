@@ -3,27 +3,35 @@
 <!-- ==== mapper 기본설정 ==== -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="alarm">
+<mapper namespace="com.spring.app.alarm.model.AlarmMapper">
 	<!--알람 입력-->
-	<insert id="insertAlarm" parameterType="MemberVO">
-		insert into tbl_notification (notification_no, fk_member_id, notification_type, notification_register_date ,notification_is_read)
-		values (seq_notification_no.nextval, #{member_id}, 1, sysdate, 0)
+	<insert id="insertAlarm" parameterType="HashMap">
+		<selectKey keyProperty="alarm.notification_no" resultType="Long" order="BEFORE">
+			select seq_notification_no.nextval from dual 
+		</selectKey>
+			insert into tbl_notification (notification_no, fk_member_id, notification_type, notification_register_date ,notification_is_read)
+			values (#{alarm.notification_no}, #{member.member_id}, 1, sysdate, 0)
 	</insert>
 	
 	<!--알람 시퀀스 조회-->
-	<select id="selectAlarmSeq">
-		select seq_notification_no.nextval from dual;
-	</select>
+<!--	<select id="selectAlarmSeq" resultType="int">-->
+<!--		select seq_notification_no.nextval from dual-->
+<!--	</select>-->
 	
 	<!--알람 삭제-->
-	<delete id="deleteAlarm" parameterType="AlarmVO">
-		update tbl_notification where notification_no = #{notification_no} and fk_member_id = 'user001'
+	<delete id="deleteAlarm">
+		update tbl_notification set  NOTIFICATION_IS_READ = -1 where notification_no = #{seqNum} and fk_member_id = #{member}
 	</delete>
 	
 	<!--알림 조회-->
-	<select id="selectAmarmVO" parameterType="MemberVO" resultType="AlarmVO">
+	<select id="selectAlarmList" resultType="AlarmVO">
 		select * from tbl_notification
-		where fk_member_id = '#{member_id}' and notification_is_read != -1
+		where fk_member_id = #{member_id} and notification_is_read != -1
 	</select>
+	
+	<!--알람 읽음 처리-->
+	<delete id="updateAlarmRead">
+		update tbl_notification set  NOTIFICATION_IS_READ = 1 where notification_no = #{seqNum} and fk_member_id = #{member}
+	</delete>
 	
 </mapper>
