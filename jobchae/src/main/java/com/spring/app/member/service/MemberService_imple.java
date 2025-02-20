@@ -78,7 +78,7 @@ public class MemberService_imple implements MemberService {
 	@Override
 	public List<Map<String, String>> regionSearchShow(String region_name) {
 
-		List<Map<String, String>> regionList = dao.regionSearchShow(member_region); 
+		List<Map<String, String>> regionList = dao.regionSearchShow(region_name); 
 		
 		return regionList;
 		
