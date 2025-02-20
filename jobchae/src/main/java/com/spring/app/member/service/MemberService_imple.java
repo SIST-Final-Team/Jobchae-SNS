@@ -31,7 +31,7 @@ public class MemberService_imple implements MemberService {
 	private AES256 aes;
 	
 	
-	
+	// === 이준영 시작 === //
 	
 	// 아이디 중복체크
 	@Override
@@ -195,11 +195,66 @@ public class MemberService_imple implements MemberService {
 		return mav;
 	
 	}// end of public ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {}...
+
+	// === 이준영 끝 === //
 	
 	
 	
+
+	// === 김규빈 시작 === //
 	
+	// 회원 경력 등록
+	@Override
+	public int addMemberCareer(Map<String, String> paraMap) {
+		return dao.insertMemberCareer(paraMap);
+	}
 	
+	// 회원 경력 수정
+	@Override
+	public int updateMemberCareer(Map<String, String> paraMap) {
+		return dao.updateMemberCareer(paraMap);
+	}
+
+	// 회원 경력 삭제
+	@Override
+	public int deleteMemberCareer(Map<String, String> paraMap) {
+		return dao.deleteMemberCareer(paraMap);
+	}
+
+	// 직종 목록 조회 및 검색
+	@Override
+	public List<Map<String, String>> getJobListForAutocomplete(Map<String, String> paraMap) {
+		
+		if(paraMap.get("size") == null || paraMap.get("sizePerPage").isBlank()) {
+			paraMap.put("size", "8");
+		}
+		
+		return dao.getJobListForAutocomplete(paraMap);
+	}
+
+	// 자동완성을 위한 회사 목록 조회 및 검색
+	@Override
+	public List<Map<String, String>> getCompanyListForAutocomplete(Map<String, String> paraMap) {
+
+		if(paraMap.get("size") == null || paraMap.get("sizePerPage").isBlank()) {
+			paraMap.put("size", "8");
+		}
+		
+		return dao.getCompanyListForAutocomplete(paraMap);
+	}
+
+	// 자동완성을 위한 전공 목록 조회 및 검색
+	@Override
+	public List<Map<String, String>> getMajorListForAutocomplete(Map<String, String> paraMap) {
+
+		if(paraMap.get("size") == null || paraMap.get("sizePerPage").isBlank()) {
+			paraMap.put("size", "8");
+		}
+		
+		return dao.getMajorListForAutocomplete(paraMap);
+	}
+	
+	// === 김규빈 끝 === //
 }//end of class..
 
 

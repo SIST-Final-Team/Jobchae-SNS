@@ -1,5 +1,11 @@
 package com.spring.app.board.domain;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.spring.app.file.domain.FileVO;
+
 public class BoardVO {
 
 	private String board_no; 				/* 게시물 일련번호 */
@@ -14,10 +20,15 @@ public class BoardVO {
 	private String board_is_delete; 		/* 삭제여부 */
 
 	
+	
+	
+	private MultipartFile attach;			/* form 태그에서 type="file" 인 파일을 받아서 저장되는 필드 (jsp에서 name='attach') */
+	
 	///////////////////////////////////////////////////////////
 	// select용
 	private String member_id;
 	private String member_name;	
+	private List<FileVO> fileList;
 	
 	public String getMember_id() {
 		return member_id;
@@ -33,6 +44,13 @@ public class BoardVO {
 
 	public void setMember_name(String member_name) {
 		this.member_name = member_name;
+	}
+	public List<FileVO> getFileList() {
+		return fileList;
+	}
+
+	public void setFileList(List<FileVO> fileList) {
+		this.fileList = fileList;
 	}
 	///////////////////////////////////////////////////////////
 
@@ -116,6 +134,14 @@ public class BoardVO {
 
 	public void setBoard_is_delete(String board_is_delete) {
 		this.board_is_delete = board_is_delete;
+	}
+	
+	public MultipartFile getAttach() {
+		return attach;
+	}
+
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
 	}
 
 }
