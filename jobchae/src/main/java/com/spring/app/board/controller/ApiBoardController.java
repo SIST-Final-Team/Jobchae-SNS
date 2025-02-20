@@ -39,6 +39,7 @@ public class ApiBoardController {
 		paraMap.put("board_no", board_no);
 		
 		int n = service.deleteBoard(paraMap);
+		//int n2 = service.deleteFile(paraMap);
 		
 		if (n != 1) {
 			mav.addObject("message", "삭제 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");

@@ -24,6 +24,9 @@ public interface BoardService {
 
 	// 글 삭제
 	int deleteBoard(Map<String, String> paraMap);
+	
+	// 글 삭제시 파일도 같이 삭제
+	int deleteFile(Map<String, String> paraMap);
 
 	// 글 수정
 	int editBoard(Map<String, String> paraMap);
@@ -48,6 +51,7 @@ public interface BoardService {
 	
 	// 각 피드별 파일 존재여부 검사
 	List<FileVO> getFiles(String board_no);
+
 
 
 }

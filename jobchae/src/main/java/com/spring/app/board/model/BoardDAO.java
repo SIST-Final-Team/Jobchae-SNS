@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.file.domain.FileVO;
@@ -27,6 +28,9 @@ public interface BoardDAO {
 
 	// 글 삭제
 	int deleteBoard(Map<String, String> paraMap);
+	
+	// 글 삭제시 파일도 같이 삭제
+	int deleteFile(Map<String, String> paraMap);
 
 	// 글 수정
 	int editBoard(Map<String, String> paraMap);
@@ -51,5 +55,6 @@ public interface BoardDAO {
 	
 	// 각 피드별 파일 존재여부 검사
 	List<FileVO> getFiles(String board_no);
+
 
 }

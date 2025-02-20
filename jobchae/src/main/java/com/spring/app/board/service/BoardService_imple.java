@@ -1,6 +1,5 @@
 package com.spring.app.board.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +52,14 @@ public class BoardService_imple implements BoardService {
 		int n = dao.deleteBoard(paraMap);
 		return n;
 	}
-
+	
+	// 글 삭제시 파일도 같이 삭제
+	@Override
+	public int deleteFile(Map<String, String> paraMap) {
+		int n = dao.deleteFile(paraMap);
+		return n;
+	}
+	
 	// 글 수정
 	@Override
 	public int editBoard(Map<String, String> paraMap) {
@@ -109,6 +115,8 @@ public class BoardService_imple implements BoardService {
 		List<FileVO> filevoList = dao.getFiles(board_no);
 		return filevoList;
 	}
+
+	
 
 	
 

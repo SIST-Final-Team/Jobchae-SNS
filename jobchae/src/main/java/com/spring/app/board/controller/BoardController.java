@@ -44,7 +44,7 @@ public class BoardController {
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
 		MemberVO loginuser = new MemberVO();
-		loginuser.setMember_id("user001");
+		loginuser.setMember_id("user002");
 		session.setAttribute("loginuser", loginuser);
 		String login_userid = loginuser.getMember_id();
 		// 임시로 세션값 저장해주기. 끝
@@ -53,23 +53,23 @@ public class BoardController {
 		MemberVO membervo = service.getUserInfo(login_userid);
 		
 		// 피드 조회하기
-		List<BoardVO> boardvo = service.getAllBoards(login_userid);
+		List<BoardVO> boardvoList = service.getAllBoards(login_userid);
 		
 		// 피드 순회하면서 첨부파일 있는 피드 조회
-		for (BoardVO board : boardvo) {
-			String board_no = board.getBoard_no();
+		for (BoardVO boardvo : boardvoList) {
+			String board_no = boardvo.getBoard_no();
 	        List<FileVO> filevoList = service.getFiles(board_no);
-	        board.setFileList(filevoList); 
+	        boardvo.setFileList(filevoList); 
 	        
-	        System.out.println(board_no + " : " + board.getFileList().size());
+	        //System.out.println(board_no + " : " + boardvo.getFileList().size());
 		}
 		
 		// 반응 조회하기
-		List<ReactionVO> reactionvo = service.getAllReaction(login_userid);
+		List<ReactionVO> reactionvoList = service.getAllReaction(login_userid);
 		
-		mav.addObject("boardvo", boardvo);
+		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);
-		mav.addObject("reactionvo", reactionvo);
+		mav.addObject("reactionvoList", reactionvoList);
 		
 		mav.setViewName("feed/board");
 		
