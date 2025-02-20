@@ -255,8 +255,22 @@ public class MemberController {
 	
 	
 	
-	
-	
+	// =========================== 김규빈 =========================== //
+	@GetMapping("profile")
+	public ModelAndView profile(ModelAndView mav) {
+		
+		mav.setViewName("/member/profile");
+		
+		return mav;
+	}// end of public ModelAndView profile(ModelAndView mav)----------
+
+	@GetMapping("profile/more")
+	public ModelAndView profileMore(ModelAndView mav) {
+		
+		mav.setViewName("/member/profileMore");
+		
+		return mav;
+	}// end of public ModelAndView profileMore(ModelAndView mav)------
 	
 	
 	

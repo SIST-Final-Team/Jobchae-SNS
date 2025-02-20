@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>jobchae</name>
-	<description>Myspring project for Spring Boot</description>
+	<description>Jobchae project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
