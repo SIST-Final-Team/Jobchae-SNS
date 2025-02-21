@@ -67,7 +67,7 @@ public class BoardController {
 	        String following_id = boardvo.getFk_member_id();
 	        int followerCount = service.getFollowerCount(following_id);
 	        boardvo.setCountFollow(String.valueOf(followerCount)); 
-	        System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
+	        //System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
 		}
 		
 		// 반응 조회하기
