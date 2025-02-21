@@ -114,5 +114,12 @@
 		group by reaction_target_no
 	</select>
 	
+	<!-- 팔로워 수 구하기 -->
+	<select id="getFollowerCount" parameterType="String">
+		select count(*) as follower_count
+		from tbl_follow
+		where following_id = #{following_id}
+	</select>
+	
 	
 </mapper>

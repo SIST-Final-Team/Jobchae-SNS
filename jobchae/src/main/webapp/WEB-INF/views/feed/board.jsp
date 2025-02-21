@@ -809,7 +809,7 @@
 					        				<p class="feed-post-name">${boardvo.member_name}</p> 
 					        			</c:otherwise>
 					        		</c:choose>
-	                                <span>팔로워 26,549명</span>
+	                                <span>팔로워 ${boardvo.countFollow}명</span>
 	                            </a>
 	                            <span>1년</span>
 	                        </div>

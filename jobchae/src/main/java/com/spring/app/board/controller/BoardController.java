@@ -44,7 +44,7 @@ public class BoardController {
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
 		MemberVO loginuser = new MemberVO();
-		loginuser.setMember_id("user002");
+		loginuser.setMember_id("user001");
 		session.setAttribute("loginuser", loginuser);
 		String login_userid = loginuser.getMember_id();
 		// 임시로 세션값 저장해주기. 끝
@@ -62,6 +62,12 @@ public class BoardController {
 	        List<FileVO> filevoList = service.getFiles(board_no);
 	        boardvo.setFileList(filevoList); 
 	        //System.out.println(board_no + " : " + boardvo.getFileList().size());
+	        
+	        // 팔로워 수 구하기
+	        String following_id = boardvo.getFk_member_id();
+	        int followerCount = service.getFollowerCount(following_id);
+	        boardvo.setCountFollow(String.valueOf(followerCount)); 
+	        System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
 		}
 		
 		// 반응 조회하기
@@ -69,14 +75,12 @@ public class BoardController {
 		
 		// 피드별 반응 개수 조회하기
 		List<Map<String, String>> reactionCountList = service.getReactionCount();
-
 		
-		for (Map<String, String> map : reactionCountList) {
-		    String reactionTargetNo = (String) map.get("reaction_target_no"); 
-		    String reactionCount = (String) map.get("reaction_count"); 
-
+		//for (Map<String, String> map : reactionCountList) {
+		    //String reactionTargetNo = (String) map.get("reaction_target_no"); 
+		    //String reactionCount = (String) map.get("reaction_count"); 
 		    //System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
-		}
+		//}
 		
 		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);

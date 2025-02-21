@@ -123,6 +123,13 @@ public class BoardService_imple implements BoardService {
 		return reactionCountList;
 	}
 
+	// 팔로워 수 구하기
+	@Override
+	public int getFollowerCount(String following_id) {
+		int n = dao.getFollowerCount(following_id);
+		return n;
+	}
+
 	
 
 	

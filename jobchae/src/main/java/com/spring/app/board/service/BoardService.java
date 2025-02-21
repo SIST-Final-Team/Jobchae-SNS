@@ -55,6 +55,9 @@ public interface BoardService {
 	// 피드별 반응 개수 조회하기
 	List<Map<String, String>> getReactionCount();
 
+	// 팔로워 수 구하기
+	int getFollowerCount(String following_id);
+
 
 
 }
