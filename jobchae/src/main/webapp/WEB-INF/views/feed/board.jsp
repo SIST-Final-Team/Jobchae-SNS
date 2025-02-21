@@ -3,7 +3,7 @@
     
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%
     String ctxPath = request.getContextPath();
@@ -907,12 +907,18 @@
 	                        <ul class="flex gap-4 text-gray-600">
 	                            <li class="flex-1">
 	                                <button type="button" class="button-underline">
-	                                    <div class="reaction-images">
-	                                        <img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
-	                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-	                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-	                                    </div>
-	                                    <span id="reactionCount">120</span>
+                                    	<c:forEach var="reactionCount" items="${reactionCountList}">
+	                                		<c:if test="${reactionCount.reaction_count > 0 and boardvo.board_no == reactionCount.reaction_target_no}">
+		                                		<div class="reaction-images">
+													<img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
+			                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
+			                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
+		                                        </div>
+		                                        <span id="reactionCount">
+													${reactionCount.reaction_count}
+			                                    </span>
+	                                		</c:if>
+								        </c:forEach>
 	                                </button>
 	                            </li>
 	                            <li>

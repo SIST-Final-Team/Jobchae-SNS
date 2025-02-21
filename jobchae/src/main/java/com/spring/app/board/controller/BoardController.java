@@ -55,21 +55,33 @@ public class BoardController {
 		// 피드 조회하기
 		List<BoardVO> boardvoList = service.getAllBoards(login_userid);
 		
+		
 		// 피드 순회하면서 첨부파일 있는 피드 조회
 		for (BoardVO boardvo : boardvoList) {
 			String board_no = boardvo.getBoard_no();
 	        List<FileVO> filevoList = service.getFiles(board_no);
 	        boardvo.setFileList(filevoList); 
-	        
 	        //System.out.println(board_no + " : " + boardvo.getFileList().size());
 		}
 		
 		// 반응 조회하기
 		List<ReactionVO> reactionvoList = service.getAllReaction(login_userid);
 		
+		// 피드별 반응 개수 조회하기
+		List<Map<String, String>> reactionCountList = service.getReactionCount();
+
+		
+		for (Map<String, String> map : reactionCountList) {
+		    String reactionTargetNo = (String) map.get("reaction_target_no"); 
+		    String reactionCount = (String) map.get("reaction_count"); 
+
+		    //System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
+		}
+		
 		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);
 		mav.addObject("reactionvoList", reactionvoList);
+		mav.addObject("reactionCountList", reactionCountList);
 		
 		mav.setViewName("feed/board");
 		

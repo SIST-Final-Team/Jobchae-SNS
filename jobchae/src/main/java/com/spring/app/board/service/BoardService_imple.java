@@ -116,6 +116,13 @@ public class BoardService_imple implements BoardService {
 		return filevoList;
 	}
 
+	// 피드별 반응 개수 조회하기
+	@Override
+	public List<Map<String, String>> getReactionCount() {
+		List<Map<String, String>> reactionCountList = dao.getReactionCount();
+		return reactionCountList;
+	}
+
 	
 
 	

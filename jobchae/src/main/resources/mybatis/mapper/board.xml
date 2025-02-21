@@ -102,4 +102,17 @@
 		where fk_member_id = #{login_userid}
 	</select>
 	
+	<!-- 피드별 반응 개수 조회하기 -->
+	<resultMap type="HashMap" id="reactionCountMap" >
+	    <result column="reaction_target_no" property="reaction_target_no" 	javaType="String" />
+	    <result column="reaction_count" 	property="reaction_count" 		javaType="String" />
+	</resultMap>
+	
+	<select id="getReactionCount" resultMap="reactionCountMap">
+		select reaction_target_no, count(*) as reaction_count
+		from tbl_reaction
+		group by reaction_target_no
+	</select>
+	
+	
 </mapper>
