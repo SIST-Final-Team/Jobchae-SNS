@@ -624,9 +624,6 @@
 			});
 		});
 		
-		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
-		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
-
 		$("span#reactionCount").click(function() {
 			const reaction_target_no = $(this).attr("value");
 			$("input[name='reaction_target_no']").val(reaction_target_no);
@@ -657,7 +654,7 @@
 				data: {"reaction_target_no": reaction_target_no,
 					   "reaction_status" : "7"},
 				success: function(json) {
-					console.log(json.membervo);
+					//console.log(json.membervo);
 					$(".reaction-list").empty();
 					
 					json.membervo.forEach(function(member) {
@@ -713,7 +710,7 @@
 					data: {"reaction_target_no": reaction_target_no,
 						   "reaction_status" : reaction_status},
 					success: function(json) {
-						console.log(json.membervo);
+						//console.log(json.membervo);
 						$(".reaction-list").empty();
 						
 						json.membervo.forEach(function(member) {
@@ -729,9 +726,6 @@
 	          
 	        });
         });
-		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
-		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
-		
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// Modal 이미지 미리보기
@@ -1416,11 +1410,11 @@
 						<span id="reaction-praise"></span>
 					</button>
 					<button value="3">
-						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-empathy"></span>
 					</button>
 					<button value="4">
-						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-appreciation"></span>
 					</button>
 					<button value="5">

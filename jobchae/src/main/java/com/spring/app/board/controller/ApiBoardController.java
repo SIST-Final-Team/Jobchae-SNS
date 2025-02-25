@@ -1,8 +1,10 @@
 package com.spring.app.board.controller;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -168,6 +170,18 @@ public class ApiBoardController {
 		Map<String, String> reactionCounts = service.getReactionCounts(reaction_target_no);
 		//System.out.println("Reaction Counts: " + reactionCounts);
 		
+		// Map.Entry를 기준으로 내림차순 정렬
+	    Map<String, String> sortedReactionCounts = reactionCounts.entrySet()
+	        .stream()
+	        .filter(entry -> !entry.getKey().equals("7"))
+	        .sorted((entry1, entry2) -> Integer.parseInt(entry2.getValue()) - Integer.parseInt(entry1.getValue()))
+	        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+	    // 콘솔에 출력
+	    sortedReactionCounts.forEach((key, value) -> 
+	        System.out.println("Reaction Type: " + key + ", Count: " + value)
+	    );
+	    
 		return reactionCounts;
 	}
 	

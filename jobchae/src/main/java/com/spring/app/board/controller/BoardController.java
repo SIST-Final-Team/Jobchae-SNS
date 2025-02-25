@@ -18,9 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
 import com.spring.app.common.FileManager;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
-import com.spring.app.file.domain.FileVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,7 +43,7 @@ public class BoardController {
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
 		MemberVO loginuser = new MemberVO();
-		loginuser.setMember_id("user001");
+		loginuser.setMember_id("user003");
 		session.setAttribute("loginuser", loginuser);
 		String login_userid = loginuser.getMember_id();
 		// 임시로 세션값 저장해주기. 끝
@@ -71,6 +71,10 @@ public class BoardController {
 	        int followerCount = service.getFollowerCount(following_id);
 	        boardvo.setCountFollow(String.valueOf(followerCount)); 
 	        //System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
+	        
+	        // 반응 많은 순 상위 1~3개 추출하기
+	        //List<String> reactionCounts = service.getReactionCountsByBoard(board_no);
+	        //System.out.println("board_no Reaction Counts: " + reactionCounts);
 		}
 		
 		// 반응 조회하기
@@ -84,6 +88,10 @@ public class BoardController {
 		    //String reactionCount = (String) map.get("reaction_count"); 
 		    //System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
 		//}
+		
+		
+		
+		
 		
 		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);
