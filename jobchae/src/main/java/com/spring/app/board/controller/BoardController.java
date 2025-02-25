@@ -1,7 +1,6 @@
 package com.spring.app.board.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class BoardController {
 	
 	// 피드 조회하기
 	@GetMapping("feed")
-	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam(value = "sort", defaultValue = "latest") String sort) {
 		
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
@@ -53,7 +52,11 @@ public class BoardController {
 		MemberVO membervo = service.getUserInfo(login_userid);
 		
 		// 피드 조회하기
-		List<BoardVO> boardvoList = service.getAllBoards(login_userid);
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("login_userid", login_userid);
+		paraMap.put("sort", sort);
+		List<BoardVO> boardvoList = service.getAllBoards(paraMap);
+		//System.out.println("sort " + sort);
 		
 		
 		// 피드 순회하면서 첨부파일 있는 피드 조회

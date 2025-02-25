@@ -24,7 +24,7 @@ public interface BoardDAO {
 	MemberVO getUserInfo(String login_userid);
 
 	// 피드 조회하기
-	List<BoardVO> getAllBoards(String login_userid);
+	List<BoardVO> getAllBoards(Map<String, String> paraMap);
 
 	// 글 삭제
 	int deleteBoard(Map<String, String> paraMap);
@@ -61,6 +61,12 @@ public interface BoardDAO {
 
 	// 팔로워 수 구하기
 	int getFollowerCount(String following_id);
+
+	// 게시물 반응 개수 조회하기
+	Map<String, String> getReactionCounts(String reaction_target_no);
+
+	// 게시물 반응별 유저 조회하기
+	List<MemberVO> getReactionMembers(Map<String, String> paraMap);
 
 
 }

@@ -200,14 +200,26 @@
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
         const rangeModal = document.getElementById("rangeModal");
+        const reactionModal = document.getElementById("reactionModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
+        reactionModal.style.display = "none";
+        
+        
         
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
         prevBtn.style.display = "none";
         nextBtn.style.display = "none";
+        
+        const prevBtn2 = document.getElementById("prevBtn2");
+        const nextBtn2 = document.getElementById("nextBtn2");
+        prevBtn2.style.display = "none";
+        nextBtn2.style.display = "none";
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         $("button.write-button").click(function() {
 
@@ -496,6 +508,34 @@
 		$(".dropdown-content a").click(function() {
 	        var selectedValue = $(this).text();  
 	        $(".dropbtn").text(selectedValue + " ▼");  
+	        
+	        if (selectedValue == "최신순") {
+	        	$.ajax({
+					url: '${pageContext.request.contextPath}/board/feed',
+					type: 'get',
+					dataType: 'html',
+					data: {"sort": "latest"},
+					success: function(response) {
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	        } else {
+	        	$.ajax({
+					url: '${pageContext.request.contextPath}/board/feed',
+					type: 'get',
+					dataType: 'html',
+					data: {"sort": "likes"},
+					success: function(response) {
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	        }
+	        
+	        
 	    });
 		
 	    $(".dropbtn").click(function (e) {
@@ -584,7 +624,114 @@
 			});
 		});
 		
+		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
+		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
 
+		$("span#reactionCount").click(function() {
+			const reaction_target_no = $(this).attr("value");
+			$("input[name='reaction_target_no']").val(reaction_target_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/getReactionCounts',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no},
+				success: function(json) {
+					$("#reaction-all").text(json["7"]);
+					$("#reaction-like").text(json["1"]);
+					$("#reaction-praise").text(json["2"]);
+					$("#reaction-empathy").text(json["3"]);
+					$("#reaction-appreciation").text(json["4"]);
+					$("#reaction-interest").text(json["5"]);
+					$("#reaction-entertainment").text(json["6"]);
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/getReactionMembers',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no,
+					   "reaction_status" : "7"},
+				success: function(json) {
+					console.log(json.membervo);
+					$(".reaction-list").empty();
+					
+					json.membervo.forEach(function(member) {
+						let member_name = member.member_name;
+						var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+		        		$(".reaction-list").append(html);
+					});
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			reactionModal.style.display = "block";
+			const firstButton = document.querySelector(".reaction-tabs button");
+		    firstButton.classList.add("active");
+		});
+		
+		$("span#closeModalButton").click(function() {
+			reactionModal.style.display = "none";
+			const activeButton = document.querySelector(".reaction-tabs .active");
+            if (activeButton) {
+                activeButton.classList.remove("active");
+            }
+        });
+		
+		$(window).click(function(e) {
+            if (e.target == reactionModal) {
+            	reactionModal.style.display = "none";
+            	const activeButton = document.querySelector(".reaction-tabs .active");
+                if (activeButton) {
+                    activeButton.classList.remove("active");
+                }
+            }
+        });
+		
+		
+		const buttons = document.querySelectorAll(".reaction-tabs button");
+
+        buttons.forEach((button) => {
+	        button.addEventListener("click", function () {
+	          document.querySelector(".reaction-tabs .active")?.classList.remove("active");
+	          this.classList.add("active");
+	          
+	          const reaction_target_no = $("input[name='reaction_target_no']").val();
+	          const reaction_status = this.value;
+	          //alert(reaction_status + " " + reaction_target_no);
+	          
+	          $.ajax({
+					url: '${pageContext.request.contextPath}/api/board/getReactionMembers',
+					type: 'post',
+					dataType: 'json',
+					data: {"reaction_target_no": reaction_target_no,
+						   "reaction_status" : reaction_status},
+					success: function(json) {
+						console.log(json.membervo);
+						$(".reaction-list").empty();
+						
+						json.membervo.forEach(function(member) {
+							let member_name = member.member_name;
+							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+			        		$(".reaction-list").append(html);
+						});
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	          
+	        });
+        });
+		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
+		// 여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야여기야		
+		
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// Modal 이미지 미리보기
@@ -801,8 +948,8 @@
 			        <div class="dropdown">
 			            <button class="dropbtn">최신순 ▼</button>
 			            <div class="dropdown-content">
-			                <a href="#" data-value="latest">최신순</a>
-			                <a href="#" data-value="likes">좋아요순</a>
+			                <a data-value="latest">최신순</a>
+			                <a data-value="likes">좋아요순</a>
 			            </div>
 			        </div>
 			    </div>
@@ -933,7 +1080,7 @@
 			                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
 			                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
 		                                        </div>
-		                                        <span id="reactionCount">
+		                                        <span id="reactionCount" value="${boardvo.board_no}">
 													${reactionCount.reaction_count}
 			                                    </span>
 	                                		</c:if>
@@ -1143,10 +1290,17 @@
 					    </div>
 					</div>
 					
-				    <!-- 이미지 미리보기 표시 영역 -->
-		            <div id="image-preview-container" style="">
-		                <div id="image-preview-list"></div> <!-- 첨부된 이미지 목록 -->
-		            </div>
+				    <!-- 이미지 미리보기 영역 -->
+					<div id="carousel-container2">
+					    <button id="prevBtn2" class="carousel-btn">〈</button>
+					
+					    <div id="image-preview-container2">
+					        <div class="carousel-track">
+					        </div>
+					    </div>
+					
+					    <button id="nextBtn2" class="carousel-btn">〉</button>
+					</div>
 					
                     <div class="ql-category">
 	                    <div>
@@ -1238,7 +1392,52 @@
 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 		        
-        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 반응 Modal -->
+		<div id="reactionModal" class="modal">
+    		<div class="reactionmodal-content">
+			
+				<!-- 모달 헤더 -->
+				<div class="reactionmodal-header">
+					<h2>반응</h2>
+					<input type="hidden" name="reaction_target_no" value="">
+					<span class="close" id="closeModalButton">&times;</span>
+				</div>
+	
+				<!-- 반응 카테고리 -->
+				<div class="reaction-tabs">
+					<button class="active" value="7">전체 <span id="reaction-all"></span></button>
+					<button value="1">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-like"></span>
+					</button>
+					<button value="2">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-praise"></span>
+					</button>
+					<button value="3">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-empathy"></span>
+					</button>
+					<button value="4">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-appreciation"></span>
+					</button>
+					<button value="5">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6gz02r6oxefigck4ye888wosd" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-interest"></span>
+					</button>
+					<button value="6">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6namow3mrvcg3dyuevtpfwjm0" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-entertainment"></span>
+					</button>
+				</div>
+
+				<!-- 반응 목록 -->
+				<div class="reaction-list"></div>
+			</div>
+	  	</div>
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
 		<!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">

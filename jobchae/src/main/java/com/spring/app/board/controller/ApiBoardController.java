@@ -1,6 +1,7 @@
 package com.spring.app.board.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,4 +158,43 @@ public class ApiBoardController {
 		
 		return map; 
 	}
+	
+	
+	// 게시물 반응 개수 조회하기
+	@PostMapping("getReactionCounts")
+	@ResponseBody
+	public Map<String, String> getReactionCounts(HttpServletRequest request, @RequestParam String reaction_target_no) {
+		
+		Map<String, String> reactionCounts = service.getReactionCounts(reaction_target_no);
+		//System.out.println("Reaction Counts: " + reactionCounts);
+		
+		return reactionCounts;
+	}
+	
+	// 게시물 반응별 유저 조회하기
+	@PostMapping("getReactionMembers")
+	@ResponseBody
+	public Map<String, Object> getReactionMembers(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status) {
+		
+		//System.out.println("reaction_target_no: " + reaction_target_no);
+		//System.out.println("reaction_status: " + reaction_status);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("reaction_target_no", reaction_target_no);
+		paraMap.put("reaction_status", reaction_status);
+		
+		List<MemberVO> reaction_membervoList = service.getReactionMembers(paraMap);
+		/*
+		for (MemberVO member : reaction_membervoList) {
+		    System.out.println("Member ID: " + member.getMember_id());
+		    System.out.println("Member Name: " + member.getMember_name());
+		    System.out.println("-------------------------------");
+		}
+		*/
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("membervo", reaction_membervoList);
+		return map;
+	}
+		
 }

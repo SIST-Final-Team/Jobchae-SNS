@@ -41,8 +41,8 @@ public class BoardService_imple implements BoardService {
 	
 	// 피드 조회하기
 	@Override
-	public List<BoardVO> getAllBoards(String login_userid) {
-		List<BoardVO> boardList = dao.getAllBoards(login_userid);
+	public List<BoardVO> getAllBoards(Map<String, String> paraMap) {
+		List<BoardVO> boardList = dao.getAllBoards(paraMap);
 		return boardList;
 	}
 	
@@ -128,6 +128,19 @@ public class BoardService_imple implements BoardService {
 	public int getFollowerCount(String following_id) {
 		int n = dao.getFollowerCount(following_id);
 		return n;
+	}
+
+	// 게시물 반응 개수 조회하기
+	@Override
+	public Map<String, String> getReactionCounts(String reaction_target_no) {
+		return dao.getReactionCounts(reaction_target_no);
+	}
+
+	// 게시물 반응별 유저 조회하기
+	@Override
+	public List<MemberVO> getReactionMembers(Map<String, String> paraMap) {
+		List<MemberVO> reaction_membervoList = dao.getReactionMembers(paraMap);
+		return reaction_membervoList;
 	}
 
 	
