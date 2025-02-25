@@ -15,16 +15,11 @@ import com.spring.app.member.domain.MemberVO;
 @Service
 public class AlarmService_imple implements AlarmService{
 
-	
+	@Autowired
 	AlarmDAO alarmDAO;
-	
+	@Autowired
 	AlarmMapper alarmMapper;
 	
-	
-	public AlarmService_imple(AlarmDAO alarmDAO, AlarmMapper alarmMapper) {
-		this.alarmDAO = alarmDAO;
-		this.alarmMapper = alarmMapper;
-	}
 	
 //	알람 삽입
 	@Override

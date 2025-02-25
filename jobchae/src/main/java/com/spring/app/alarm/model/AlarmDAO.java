@@ -1,9 +1,10 @@
 package com.spring.app.alarm.model;
 
-import com.spring.app.member.domain.MemberVO;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface AlarmDAO {
+import com.spring.app.alarm.domain.AlarmVO;
 
-	
+
+public interface AlarmDAO extends MongoRepository<AlarmVO, String>{
 
 }

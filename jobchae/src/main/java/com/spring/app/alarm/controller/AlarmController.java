@@ -9,15 +9,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-@RequestMapping(value="alarm/*")
+@RequestMapping("/alarm")
 public class AlarmController {
 
 	
 	
-	@GetMapping("/alarm/{member_id}")
+	@GetMapping("{member_id}")
 	public String selectAlarm(@PathVariable String member_id){
 		
 		return "Alarm/alarm";
+	}
+	
+	@GetMapping("test/{member_id}")
+	public String alarmTest(@PathVariable String member_id){
+		
+		return "Alarm/alarmtest";
+	}
+	
+	@GetMapping("test2/{member_id}")
+	public String realTimeAlarmTest(@PathVariable String member_id){
+		
+		return "Alarm/realtimealarmtest";
 	}
 	
 	
