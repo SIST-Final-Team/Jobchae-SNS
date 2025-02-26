@@ -8,13 +8,16 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
 
@@ -211,4 +214,55 @@ public class ApiBoardController {
 		return map;
 	}
 		
+	
+	// 게시글 정렬
+	@GetMapping("feed")
+	@ResponseBody
+	public Map<String, Object> feed(HttpServletRequest request, @RequestParam String sort) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		String login_userid = loginuser.getMember_id();
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("login_userid", login_userid);
+		paraMap.put("sort", sort);
+		List<BoardVO> boardvoList = service.getAllBoards(paraMap);
+		
+		//for (BoardVO boardvo : boardvoList) {
+		    //System.out.println("Board No: " + boardvo.getBoard_register_date());
+		//}
+		//System.out.println();
+		
+		
+		// 피드 순회하면서 첨부파일 있는 피드 조회
+		for (BoardVO boardvo : boardvoList) {
+			String board_no = boardvo.getBoard_no();
+	        List<FileVO> filevoList = service.getFiles(board_no);
+	        boardvo.setFileList(filevoList); 
+	        //System.out.println(board_no + " : " + boardvo.getFileList().size());
+	        
+	        // 팔로워 수 구하기
+	        String following_id = boardvo.getFk_member_id();
+	        int followerCount = service.getFollowerCount(following_id);
+	        boardvo.setCountFollow(String.valueOf(followerCount)); 
+	        //System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
+	        
+	        // 반응 많은 순 상위 1~3개 추출하기
+	        //List<String> reactionCounts = service.getReactionCountsByBoard(board_no);
+	        //System.out.println("board_no Reaction Counts: " + reactionCounts);
+		}
+		
+		MemberVO membervo = service.getUserInfo(login_userid);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("boardvoList", boardvoList);
+		map.put("membervo", membervo);
+		return map;
+		
+	}
+	
+	
+	
+	
 }

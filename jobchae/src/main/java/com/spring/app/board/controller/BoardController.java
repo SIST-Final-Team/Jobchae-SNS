@@ -38,12 +38,12 @@ public class BoardController {
 	
 	// 피드 조회하기
 	@GetMapping("feed")
-	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam(value = "sort", defaultValue = "latest") String sort) {
+	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam(required = false) String sort) {
 		
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
 		MemberVO loginuser = new MemberVO();
-		loginuser.setMember_id("user003");
+		loginuser.setMember_id("user001");
 		session.setAttribute("loginuser", loginuser);
 		String login_userid = loginuser.getMember_id();
 		// 임시로 세션값 저장해주기. 끝
@@ -51,13 +51,16 @@ public class BoardController {
 		// 로그인된 사용자의 정보 얻어오기
 		MemberVO membervo = service.getUserInfo(login_userid);
 		
+		if (sort == null || sort.isEmpty()) {
+			sort = "latest"; // 기본값을 최신순으로 설정
+		}
+		//System.out.println("sort " + sort);
+		
 		// 피드 조회하기
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("login_userid", login_userid);
 		paraMap.put("sort", sort);
 		List<BoardVO> boardvoList = service.getAllBoards(paraMap);
-		//System.out.println("sort " + sort);
-		
 		
 		// 피드 순회하면서 첨부파일 있는 피드 조회
 		for (BoardVO boardvo : boardvoList) {
@@ -88,10 +91,6 @@ public class BoardController {
 		    //String reactionCount = (String) map.get("reaction_count"); 
 		    //System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
 		//}
-		
-		
-		
-		
 		
 		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);

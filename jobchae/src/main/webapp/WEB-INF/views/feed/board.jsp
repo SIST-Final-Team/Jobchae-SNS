@@ -502,38 +502,125 @@
             	rangeModal.style.display = "none";
             }
         });
+
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////// 
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
 	        var selectedValue = $(this).text();  
 	        $(".dropbtn").text(selectedValue + " ▼");  
 	        
-	        if (selectedValue == "최신순") {
-	        	$.ajax({
-					url: '${pageContext.request.contextPath}/board/feed',
-					type: 'get',
-					dataType: 'html',
-					data: {"sort": "latest"},
-					success: function(response) {
-			        },
-			        error: function(request, status, error){
-						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-				 	}
-				});
-	        } else {
-	        	$.ajax({
-					url: '${pageContext.request.contextPath}/board/feed',
-					type: 'get',
-					dataType: 'html',
-					data: {"sort": "likes"},
-					success: function(response) {
-			        },
-			        error: function(request, status, error){
-						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-				 	}
-				});
-	        }
+	        var sortValue = (selectedValue === "최신순") ? "latest" : "likes";
+	        
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/api/board/feed',
+	            type: 'get',
+	            dataType: 'json',
+	            data: {"sort": sortValue},
+	            success: function(response) {
+	                // 성공했을 때 처리할 내용
+	                console.log('boardvoList:', response.boardvoList);
+	                console.log('membervo:', response.membervo);
+	                
+	                let updateContainer = $('#update');
+	                updateContainer.empty();
+	                
+	                let membervo_member_id = response.membervo.member_id;
+	                
+	                response.boardvoList.forEach(function(board) {
+	                	let board_member_id = board.member_id;
+	                	let board_member_name = board.member_name;
+	                	let board_register_date = board.board_register_date;
+	                	let board_countFollow = board.countFollow;
+	                	let board_content = board.board_content;
+	                	let board_visibility = board.board_visibility;
+	                	let board_comment_allowed = board.board_comment_allowed;
+	                	let board_no = board.board_no;
+	                	console.log(board_comment_allowed);
+	                	
+	                	
+	                    var html = "<div><div class='board-member-profile'><div><a href='#'><img src='<%= ctxPath%>/images/쉐보레전면.jpg' style='border-radius: 50%;'/></a></div><div class='flex-1'><a href='#'>"; 
+	                    
+	                    if (membervo_member_id == board_member_id) {
+	                    	html += "<p class='feed-post-name'>" + board_member_name + " · 나 " + "</p>";
+	                    } else {
+	                    	html += "<p class='feed-post-name'>" + board_member_name + "</p>";
+	                    }
+	                    html += board_member_id + "<span>팔로워 " + board_countFollow + "명</span></a><span class='time' data-time='" + board_register_date + "'></span></div>";
+	                    
+	                    html += "<div style='position: relative;'>"
+                    	if (membervo_member_id != board_member_id) {
+	                    	html += "<button type='button' class='follow-button'></button>";
+	                    } 
+	                    html += "<button type='button' class='more-options'>...</button>";
+	                    html += "<input type='hidden' class='board-content' value='" + board_content + "' data-board-content='" + board_content + "' />";
+	                    html += "<input type='hidden' class='board-visibility-origin' value='" + board_visibility + "' data-board-content='" + board_visibility + "' />";
+	                    html += "<input type='hidden' class='board-comment-allowed-origin' value='" + board_comment_allowed + "' data-board-content='" + board_comment_allowed + "' />";
+	                    
+	                    html += "<div class='options-dropdown'><ul>";
+	                    if (membervo_member_id == board_member_id) {
+	                    	html += "<li class='delete-post' value='" + board_no + "'>글 삭제</li>";
+	                    	html += "<li class='edit-post' value='" + board_no + "'>글 수정</li>";
+	                    	html += "<li class='set-board-range' value='" + board_no + "'>허용범위</li>";
+	                    } else {
+	                    	html += "<li class='bookmark-post' value='" + board_no + "'>북마크</li>";
+	                    	html += "<li class='interest-none' value='" + board_no + "'>관심없음</li>";
+	                    }
+	                    html += "</ul></div></div></div>";
+	                    
+	                    html += "<div><p>" + board_content + "</p></div>";
+	                    
+	                 	// 여기
+						html += "<div class='px-0'><div class='file-image'></div></div>";
+	                 	
+	                 	
+	                 	
+	                 	
+	                    html += "</div>";
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    updateContainer.append(html); 
+	                });
+	                
+	                
+	             	// timeAgo 함수 적용
+	                $(".time").each(function () {
+	                    const timeString = $(this).attr("data-time");
+	                    $(this).text(timeAgo(timeString));
+	                });
+	                
+	             	// 글 옵션
+	        	    $(".more-options").click(function (e) {
+	        	        e.stopPropagation(); 
+	        	        let dropdown = $(this).siblings(".options-dropdown");
+	        	        $(".options-dropdown").not(dropdown).hide(); 
+	        	        dropdown.toggle(); 
+	        	    });
+	        		
+	        	    $(document).click(function () {
+	        	        $(".options-dropdown").hide();
+	        	    });
+	        	    
+	        	    
+	        	    
+	        	    
+	            },
+	            error: function(request, status, error) {
+	                console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);x
+	            }
+	        });
 	        
 	        
 	    });
@@ -714,7 +801,7 @@
 						$(".reaction-list").empty();
 						
 						json.membervo.forEach(function(member) {
-							let member_name = member.member_name;
+							let member_name = member.member_name; //여기
 							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 			        		$(".reaction-list").append(html);
 						});
@@ -1178,7 +1265,7 @@
 	                    </div>
 	                </div>
                	</c:forEach>
-           	</div>
+           	</div> <!-- div#update 끝 -->
        	</div>
                
                 
