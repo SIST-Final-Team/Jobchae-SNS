@@ -19,7 +19,7 @@ public class AlarmController {
 		
 		return "Alarm/alarm";
 	}
-	
+
 	@GetMapping("test/{member_id}")
 	public String alarmTest(@PathVariable String member_id){
 		
