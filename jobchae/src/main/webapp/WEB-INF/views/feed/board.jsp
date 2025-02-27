@@ -1061,6 +1061,7 @@
 	                        <ul class="flex gap-4 text-gray-600">
 	                            <li class="flex-1">
 	                                <button type="button" class="button-underline">
+	                                
                                     	<c:forEach var="reactionCount" items="${reactionCountList}">
 	                                		<c:if test="${reactionCount.reaction_count > 0 and boardvo.board_no == reactionCount.reaction_target_no}">
 		                                		<div class="reaction-images">
@@ -1073,6 +1074,7 @@
 			                                    </span>
 	                                		</c:if>
 								        </c:forEach>
+								        
 	                                </button>
 	                            </li>
 	                            <li>
@@ -1091,6 +1093,7 @@
 	                    </div>
 	
 	                    <hr class="border-gray-300 mx-4">
+	                    
 	                    <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    <div class="py-0">
 	                        <ul class="grid grid-cols-4 gap-4 text-center">
