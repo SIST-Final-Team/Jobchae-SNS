@@ -334,9 +334,35 @@
 			}
 		});
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
     	// 글 옵션
 	    $(".more-options").click(function (e) {
+	    	const fk_member_id = document.getElementById("loginuserID").value;
+	    	const board_fk_member_id = $(this).siblings(".board-fk_member_id").val();
+	    	const bookmark_target_no = $(this).attr("value");
+	    	
+	    	//console.log("fk_member_id " + fk_member_id)
+	    	//console.log("board_fk_member_id " + board_fk_member_id)
+	    	
+	    	if (fk_member_id != board_fk_member_id) {
+	    		$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/selectBookmarkBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_member_id": fk_member_id,
+						   "bookmark_target_no": bookmark_target_no},
+					success: function(json) {
+
+					
+					
+					
+					},
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	    	}
+	    	
 	        e.stopPropagation(); 
 	        let dropdown = $(this).siblings(".options-dropdown");
 	        $(".options-dropdown").not(dropdown).hide(); 
@@ -497,7 +523,7 @@
 		    
 		});
 		
-		$(".close").click(function () {
+		$(".close").click(function() {
 		    $("#rangeModal").hide();
 		});
 		
@@ -506,9 +532,33 @@
             	rangeModal.style.display = "none";
             }
         });
-
 		
 		///////////////////////////////////////////////////////////////////////////////////////// 여기
+		// 북마크
+		$(".bookmark-post").click(function() {
+			const fk_member_id = document.getElementById("loginuserID").value;
+			const bookmark_target_no = $(this).attr("value");
+			//alert(fk_member_id + " " + bookmark_target_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/addBookmarkBoard',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_member_id": fk_member_id,
+					   "bookmark_target_no": bookmark_target_no},
+				success: function(json) {
+					if(json.n == 1) {
+					 	location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+		});
+		
+		
+		///////////////////////////////////////////////////////////////////////////////////////// 
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
 	        var selectedValue = $(this).text();  
@@ -881,7 +931,9 @@
         
         <!-- 중앙 본문 -->
         <div class="center col-span-14 md:col-span-7 space-y-2 m-5">
-
+			
+			<input type="hidden" id="loginuserID" value="${membervo.member_id}">
+			
 			<div id="write" class="border-board">
 			
 				<div>
@@ -974,8 +1026,9 @@
                             				<!--  <i class="fa-solid fa-plus"></i>&nbsp;팔로우-->
 		                            	</button>
 	                            	</c:when>
-                            	</c:choose>
-	                            <button type="button" class="more-options"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
+                            	</c:choose> <!-- ㅇㅇ -->
+	                            <button type="button" class="more-options" value="${boardvo.board_no}"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
+	                            <input type="hidden" class="board-fk_member_id" value="${boardvo.fk_member_id}" data-board-content="${boardvo.fk_member_id}" />
 	                            <input type="hidden" class="board-content" value="${boardvo.board_content}" data-board-content="${boardvo.board_content}" />
 	                            <input type="hidden" class="board-visibility-origin" value="${boardvo.board_visibility}" data-board-content="${boardvo.board_visibility}" />
 	                            <input type="hidden" class="board-comment-allowed-origin" value="${boardvo.board_comment_allowed}" data-board-content="${boardvo.board_comment_allowed}" />

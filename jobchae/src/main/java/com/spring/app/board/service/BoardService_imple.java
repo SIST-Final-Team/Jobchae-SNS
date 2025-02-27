@@ -143,6 +143,13 @@ public class BoardService_imple implements BoardService {
 		return reaction_membervoList;
 	}
 
+	// 북마크 추가하기
+	@Override
+	public int addBookmarkBoard(Map<String, String> paraMap) {
+		int n = dao.addBookmarkBoard(paraMap);
+		return n;
+	}
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//@Override
 	//public List<String> getReactionCountsByBoard(String board_no) {

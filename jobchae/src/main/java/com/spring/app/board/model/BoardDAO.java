@@ -67,6 +67,9 @@ public interface BoardDAO {
 
 	// 게시물 반응별 유저 조회하기
 	List<MemberVO> getReactionMembers(Map<String, String> paraMap);
+	
+	// 북마크 추가하기
+	int addBookmarkBoard(Map<String, String> paraMap);
 
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);

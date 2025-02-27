@@ -185,6 +185,10 @@
 	</select>	
 	
 	
-	
+	<!-- 게시글 북마크 추가하기 -->
+	<insert id="addBookmarkBoard" parameterType="HashMap">
+		insert into tbl_bookmark(bookmark_no, fk_member_id, bookmark_target_no, bookmark_target_type, bookmark_register_date)
+		values(seq_bookmark_no.nextVal, #{fk_member_id}, #{bookmark_target_no}, 'board', default)
+	</insert>
 	
 </mapper>
