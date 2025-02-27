@@ -190,6 +190,10 @@
     
 	let currentX = 0;
 	let uploadedFiles = [];
+	let boardList = $(".feed-item");
+	
+	console.log(boardList);
+	
 	
     $(document).ready(function() {
         
@@ -504,126 +508,29 @@
         });
 
 		
-		///////////////////////////////////////////////////////////////////////////////////////// 
+		///////////////////////////////////////////////////////////////////////////////////////// 여기
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
 	        var selectedValue = $(this).text();  
 	        $(".dropbtn").text(selectedValue + " ▼");  
 	        
-	        var sortValue = (selectedValue === "최신순") ? "latest" : "likes";
-	        
-	        $.ajax({
-	            url: '${pageContext.request.contextPath}/api/board/feed',
-	            type: 'get',
-	            dataType: 'json',
-	            data: {"sort": sortValue},
-	            success: function(response) {
-	                // 성공했을 때 처리할 내용
-	                console.log('boardvoList:', response.boardvoList);
-	                console.log('membervo:', response.membervo);
-	                
-	                let updateContainer = $('#update');
-	                updateContainer.empty();
-	                
-	                let membervo_member_id = response.membervo.member_id;
-	                
-	                response.boardvoList.forEach(function(board) {
-	                	let board_member_id = board.member_id;
-	                	let board_member_name = board.member_name;
-	                	let board_register_date = board.board_register_date;
-	                	let board_countFollow = board.countFollow;
-	                	let board_content = board.board_content;
-	                	let board_visibility = board.board_visibility;
-	                	let board_comment_allowed = board.board_comment_allowed;
-	                	let board_no = board.board_no;
-	                	console.log(board_comment_allowed);
-	                	
-	                	
-	                    var html = "<div><div class='board-member-profile'><div><a href='#'><img src='<%= ctxPath%>/images/쉐보레전면.jpg' style='border-radius: 50%;'/></a></div><div class='flex-1'><a href='#'>"; 
-	                    
-	                    if (membervo_member_id == board_member_id) {
-	                    	html += "<p class='feed-post-name'>" + board_member_name + " · 나 " + "</p>";
-	                    } else {
-	                    	html += "<p class='feed-post-name'>" + board_member_name + "</p>";
-	                    }
-	                    html += board_member_id + "<span>팔로워 " + board_countFollow + "명</span></a><span class='time' data-time='" + board_register_date + "'></span></div>";
-	                    
-	                    html += "<div style='position: relative;'>"
-                    	if (membervo_member_id != board_member_id) {
-	                    	html += "<button type='button' class='follow-button'></button>";
-	                    } 
-	                    html += "<button type='button' class='more-options'>...</button>";
-	                    html += "<input type='hidden' class='board-content' value='" + board_content + "' data-board-content='" + board_content + "' />";
-	                    html += "<input type='hidden' class='board-visibility-origin' value='" + board_visibility + "' data-board-content='" + board_visibility + "' />";
-	                    html += "<input type='hidden' class='board-comment-allowed-origin' value='" + board_comment_allowed + "' data-board-content='" + board_comment_allowed + "' />";
-	                    
-	                    html += "<div class='options-dropdown'><ul>";
-	                    if (membervo_member_id == board_member_id) {
-	                    	html += "<li class='delete-post' value='" + board_no + "'>글 삭제</li>";
-	                    	html += "<li class='edit-post' value='" + board_no + "'>글 수정</li>";
-	                    	html += "<li class='set-board-range' value='" + board_no + "'>허용범위</li>";
-	                    } else {
-	                    	html += "<li class='bookmark-post' value='" + board_no + "'>북마크</li>";
-	                    	html += "<li class='interest-none' value='" + board_no + "'>관심없음</li>";
-	                    }
-	                    html += "</ul></div></div></div>";
-	                    
-	                    html += "<div><p>" + board_content + "</p></div>";
-	                    
-	                 	// 여기
-						html += "<div class='px-0'><div class='file-image'></div></div>";
-	                 	
-	                 	
-	                 	
-	                 	
-	                    html += "</div>";
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    
-	                    updateContainer.append(html); 
-	                });
-	                
-	                
-	             	// timeAgo 함수 적용
-	                $(".time").each(function () {
-	                    const timeString = $(this).attr("data-time");
-	                    $(this).text(timeAgo(timeString));
-	                });
-	                
-	             	// 글 옵션
-	        	    $(".more-options").click(function (e) {
-	        	        e.stopPropagation(); 
-	        	        let dropdown = $(this).siblings(".options-dropdown");
-	        	        $(".options-dropdown").not(dropdown).hide(); 
-	        	        dropdown.toggle(); 
-	        	    });
-	        		
-	        	    $(document).click(function () {
-	        	        $(".options-dropdown").hide();
-	        	    });
-	        	    
-	        	    
-	        	    
-	        	    
-	            },
-	            error: function(request, status, error) {
-	                console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);x
-	            }
-	        });
-	        
-	        
-	    });
+	        if (selectedValue == "최신순") {
+				location.reload();
+        	} else {
+        	    const reactionCounts = document.querySelectorAll('#reactionCount');
+
+        	    const reactionData = Array.from(reactionCounts).map(span => {
+        	        const reactionCount = span.textContent.trim();
+        	        return {
+        	            board_no: span.getAttribute('value'),
+        	            reaction_count: reactionCount === '' || reactionCount === null ? 0 : reactionCount
+        	        };
+        	    });
+
+        	    reactionData.sort((a, b) => b.reaction_count - a.reaction_count);
+        	    console.log(reactionData);
+        	}
+        });
 		
 	    $(".dropbtn").click(function (e) {
 	        e.stopPropagation(); 
@@ -1190,31 +1097,34 @@
 	                            <li>
 	                            	<input type="hidden" name="" value="dd"/>
 	                                <button type="button" class="button-board-action button-board-action-reaction" value="${boardvo.board_no}">
-	                                    <i class="fa-regular fa-thumbs-up"></i>
-	                                    
-	                                    <c:set var="matched" value="false" />
-	                                    
-	                                    <!-- 반응 있을 때 -->
-								        <c:forEach var="reactionvo" items="${reactionvoList}">
-								            <c:if test="${boardvo.board_no == reactionvo.reaction_target_no}">
-								                <c:choose>
-								                    <c:when test="${reactionvo.reaction_status == 1}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8ekq8gho1ruaf8i7f86vd1ftt" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="1" style="color: #0A66C2; ">추천</span></c:when>
-								                    <c:when test="${reactionvo.reaction_status == 2}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/b1dl5jk88euc7e9ri50xy5qo8" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="2" style="color: #44712E;">축하</span></c:when>
-								                    <c:when test="${reactionvo.reaction_status == 3}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/3wqhxqtk2l554o70ur3kessf1" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="3" style="color: #715E86;">응원</span></c:when>
-								                    <c:when test="${reactionvo.reaction_status == 4}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cpho5fghnpme8epox8rdcds22" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="4" style="color: #B24020;">마음에 쏙듬</span></c:when>
-								                    <c:when test="${reactionvo.reaction_status == 5}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/lhxmwiwoag9qepsh4nc28zus" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="5" style="color: #915907;">통찰력</span></c:when>
-								                    <c:when test="${reactionvo.reaction_status == 6}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/41j9d0423ck1snej32brbuuwg" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="6" style="color: #1A707E;">웃음</span></c:when>
-								                    <c:otherwise>기타</c:otherwise>
-								                </c:choose>
-								                <c:set var="matched" value="true" />
-								            </c:if>
-								        </c:forEach>
-								        
-								        <!-- 반응 없을 때 -->
-								        <c:if test="${!matched}">
-								            <span>추천</span>	
-								        </c:if>
-								        
+	                                	<div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+		                                    <i class="fa-regular fa-thumbs-up"></i>
+		                                    <c:set var="matched" value="false" />
+		                                    
+		                                    <!-- 반응 있을 때 -->
+									        <c:forEach var="reactionvo" items="${reactionvoList}">
+									            <c:if test="${boardvo.board_no == reactionvo.reaction_target_no}">
+									                <c:choose>
+									                    <c:when test="${reactionvo.reaction_status == 1}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8ekq8gho1ruaf8i7f86vd1ftt" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="1" style="color: #0A66C2; ">추천</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 2}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/b1dl5jk88euc7e9ri50xy5qo8" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="2" style="color: #44712E;">축하</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 3}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/3wqhxqtk2l554o70ur3kessf1" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="3" style="color: #715E86;">응원</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 4}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cpho5fghnpme8epox8rdcds22" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="4" style="color: #B24020;">마음에 쏙듬</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 5}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/lhxmwiwoag9qepsh4nc28zus" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="5" style="color: #915907;">통찰력</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 6}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/41j9d0423ck1snej32brbuuwg" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="6" style="color: #1A707E;">웃음</span></c:when>
+									                    <c:otherwise>기타</c:otherwise>
+									                </c:choose>
+									                <c:set var="matched" value="true" />
+									            </c:if>
+									        </c:forEach>
+									        
+									        <!-- 반응 없을 때 -->
+									        <c:if test="${!matched}">
+								        		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" id="thumbs-up-outline-small" width="16" height="16" aria-hidden="true" role="none" data-supported-dps="16x16" fill="currentColor">
+  													<path d="M12.91 7l-2.25-2.57a8.21 8.21 0 01-1.5-2.55L9 1.37A2.08 2.08 0 007 0a2.08 2.08 0 00-2.06 2.08v1.17a5.81 5.81 0 00.31 1.89l.28.86H2.38A1.47 1.47 0 001 7.47a1.45 1.45 0 00.64 1.21 1.48 1.48 0 00-.37 2.06 1.54 1.54 0 00.62.51h.05a1.6 1.6 0 00-.19.71A1.47 1.47 0 003 13.42v.1A1.46 1.46 0 004.4 15h4.83a5.61 5.61 0 002.48-.58l1-.42H14V7zM12 12.11l-1.19.52a3.59 3.59 0 01-1.58.37H5.1a.55.55 0 01-.53-.4l-.14-.48-.49-.21a.56.56 0 01-.34-.6l.09-.56-.42-.42a.56.56 0 01-.09-.68L3.55 9l-.4-.61A.28.28 0 013.3 8h5L7.14 4.51a4.15 4.15 0 01-.2-1.26V2.08A.09.09 0 017 2a.11.11 0 01.08 0l.18.51a10 10 0 001.9 3.24l2.84 3z"></path>
+												</svg>
+												<span>추천</span>
+									        </c:if>
+								        </div>
 	                                </button>
 	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${boardvo.board_no}" style="">
 									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" value="1" tabindex="-1" type="button">

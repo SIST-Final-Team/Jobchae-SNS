@@ -200,14 +200,26 @@
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
         const rangeModal = document.getElementById("rangeModal");
+        const reactionModal = document.getElementById("reactionModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
+        reactionModal.style.display = "none";
+        
+        
         
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
         prevBtn.style.display = "none";
         nextBtn.style.display = "none";
+        
+        const prevBtn2 = document.getElementById("prevBtn2");
+        const nextBtn2 = document.getElementById("nextBtn2");
+        prevBtn2.style.display = "none";
+        nextBtn2.style.display = "none";
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         $("button.write-button").click(function() {
 
@@ -490,12 +502,127 @@
             	rangeModal.style.display = "none";
             }
         });
+
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////// 
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
 	        var selectedValue = $(this).text();  
 	        $(".dropbtn").text(selectedValue + " ▼");  
+	        
+	        var sortValue = (selectedValue === "최신순") ? "latest" : "likes";
+	        
+	        $.ajax({
+	            url: '${pageContext.request.contextPath}/api/board/feed',
+	            type: 'get',
+	            dataType: 'json',
+	            data: {"sort": sortValue},
+	            success: function(response) {
+	                // 성공했을 때 처리할 내용
+	                console.log('boardvoList:', response.boardvoList);
+	                console.log('membervo:', response.membervo);
+	                
+	                let updateContainer = $('#update');
+	                updateContainer.empty();
+	                
+	                let membervo_member_id = response.membervo.member_id;
+	                
+	                response.boardvoList.forEach(function(board) {
+	                	let board_member_id = board.member_id;
+	                	let board_member_name = board.member_name;
+	                	let board_register_date = board.board_register_date;
+	                	let board_countFollow = board.countFollow;
+	                	let board_content = board.board_content;
+	                	let board_visibility = board.board_visibility;
+	                	let board_comment_allowed = board.board_comment_allowed;
+	                	let board_no = board.board_no;
+	                	console.log(board_comment_allowed);
+	                	
+	                	
+	                    var html = "<div><div class='board-member-profile'><div><a href='#'><img src='<%= ctxPath%>/images/쉐보레전면.jpg' style='border-radius: 50%;'/></a></div><div class='flex-1'><a href='#'>"; 
+	                    
+	                    if (membervo_member_id == board_member_id) {
+	                    	html += "<p class='feed-post-name'>" + board_member_name + " · 나 " + "</p>";
+	                    } else {
+	                    	html += "<p class='feed-post-name'>" + board_member_name + "</p>";
+	                    }
+	                    html += board_member_id + "<span>팔로워 " + board_countFollow + "명</span></a><span class='time' data-time='" + board_register_date + "'></span></div>";
+	                    
+	                    html += "<div style='position: relative;'>"
+                    	if (membervo_member_id != board_member_id) {
+	                    	html += "<button type='button' class='follow-button'></button>";
+	                    } 
+	                    html += "<button type='button' class='more-options'>...</button>";
+	                    html += "<input type='hidden' class='board-content' value='" + board_content + "' data-board-content='" + board_content + "' />";
+	                    html += "<input type='hidden' class='board-visibility-origin' value='" + board_visibility + "' data-board-content='" + board_visibility + "' />";
+	                    html += "<input type='hidden' class='board-comment-allowed-origin' value='" + board_comment_allowed + "' data-board-content='" + board_comment_allowed + "' />";
+	                    
+	                    html += "<div class='options-dropdown'><ul>";
+	                    if (membervo_member_id == board_member_id) {
+	                    	html += "<li class='delete-post' value='" + board_no + "'>글 삭제</li>";
+	                    	html += "<li class='edit-post' value='" + board_no + "'>글 수정</li>";
+	                    	html += "<li class='set-board-range' value='" + board_no + "'>허용범위</li>";
+	                    } else {
+	                    	html += "<li class='bookmark-post' value='" + board_no + "'>북마크</li>";
+	                    	html += "<li class='interest-none' value='" + board_no + "'>관심없음</li>";
+	                    }
+	                    html += "</ul></div></div></div>";
+	                    
+	                    html += "<div><p>" + board_content + "</p></div>";
+	                    
+	                 	// 여기
+						html += "<div class='px-0'><div class='file-image'></div></div>";
+	                 	
+	                 	
+	                 	
+	                 	
+	                    html += "</div>";
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    
+	                    updateContainer.append(html); 
+	                });
+	                
+	                
+	             	// timeAgo 함수 적용
+	                $(".time").each(function () {
+	                    const timeString = $(this).attr("data-time");
+	                    $(this).text(timeAgo(timeString));
+	                });
+	                
+	             	// 글 옵션
+	        	    $(".more-options").click(function (e) {
+	        	        e.stopPropagation(); 
+	        	        let dropdown = $(this).siblings(".options-dropdown");
+	        	        $(".options-dropdown").not(dropdown).hide(); 
+	        	        dropdown.toggle(); 
+	        	    });
+	        		
+	        	    $(document).click(function () {
+	        	        $(".options-dropdown").hide();
+	        	    });
+	        	    
+	        	    
+	        	    
+	        	    
+	            },
+	            error: function(request, status, error) {
+	                console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);x
+	            }
+	        });
+	        
+	        
 	    });
 		
 	    $(".dropbtn").click(function (e) {
@@ -584,7 +711,108 @@
 			});
 		});
 		
+		$("span#reactionCount").click(function() {
+			const reaction_target_no = $(this).attr("value");
+			$("input[name='reaction_target_no']").val(reaction_target_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/getReactionCounts',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no},
+				success: function(json) {
+					$("#reaction-all").text(json["7"]);
+					$("#reaction-like").text(json["1"]);
+					$("#reaction-praise").text(json["2"]);
+					$("#reaction-empathy").text(json["3"]);
+					$("#reaction-appreciation").text(json["4"]);
+					$("#reaction-interest").text(json["5"]);
+					$("#reaction-entertainment").text(json["6"]);
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/getReactionMembers',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no,
+					   "reaction_status" : "7"},
+				success: function(json) {
+					//console.log(json.membervo);
+					$(".reaction-list").empty();
+					
+					json.membervo.forEach(function(member) {
+						let member_name = member.member_name;
+						var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+		        		$(".reaction-list").append(html);
+					});
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			reactionModal.style.display = "block";
+			const firstButton = document.querySelector(".reaction-tabs button");
+		    firstButton.classList.add("active");
+		});
+		
+		$("span#closeModalButton").click(function() {
+			reactionModal.style.display = "none";
+			const activeButton = document.querySelector(".reaction-tabs .active");
+            if (activeButton) {
+                activeButton.classList.remove("active");
+            }
+        });
+		
+		$(window).click(function(e) {
+            if (e.target == reactionModal) {
+            	reactionModal.style.display = "none";
+            	const activeButton = document.querySelector(".reaction-tabs .active");
+                if (activeButton) {
+                    activeButton.classList.remove("active");
+                }
+            }
+        });
+		
+		
+		const buttons = document.querySelectorAll(".reaction-tabs button");
 
+        buttons.forEach((button) => {
+	        button.addEventListener("click", function () {
+	          document.querySelector(".reaction-tabs .active")?.classList.remove("active");
+	          this.classList.add("active");
+	          
+	          const reaction_target_no = $("input[name='reaction_target_no']").val();
+	          const reaction_status = this.value;
+	          //alert(reaction_status + " " + reaction_target_no);
+	          
+	          $.ajax({
+					url: '${pageContext.request.contextPath}/api/board/getReactionMembers',
+					type: 'post',
+					dataType: 'json',
+					data: {"reaction_target_no": reaction_target_no,
+						   "reaction_status" : reaction_status},
+					success: function(json) {
+						//console.log(json.membervo);
+						$(".reaction-list").empty();
+						
+						json.membervo.forEach(function(member) {
+							let member_name = member.member_name; //여기
+							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+			        		$(".reaction-list").append(html);
+						});
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	          
+	        });
+        });
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// Modal 이미지 미리보기
@@ -600,6 +828,25 @@
 			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
 		});
 		
+		
+		
+		$(".time").each(function () {
+	        const timeString = $(this).attr("data-time");
+	        $(this).text(timeAgo(timeString));
+	    });
+		
+		function timeAgo(dateString) {
+	        const now = new Date();
+	        const past = new Date(dateString);
+	        const diff = Math.floor((now - past) / 1000); 
+
+	        if (diff < 60) return "방금"; 
+	        if (diff < 3600) return Math.floor(diff / 60) + "분 전"; 
+	        if (diff < 86400) return Math.floor(diff / 3600) + "시간 전";
+	        if (diff < 2592000) return Math.floor(diff / 86400) + "일 전";
+	        if (diff < 31536000) return Math.floor(diff / 2592000) + "달 전";
+	        return Math.floor(diff / 31536000) + "년 전"; 
+	    }
 		
 	
 	});
@@ -782,8 +1029,8 @@
 			        <div class="dropdown">
 			            <button class="dropbtn">최신순 ▼</button>
 			            <div class="dropdown-content">
-			                <a href="#" data-value="latest">최신순</a>
-			                <a href="#" data-value="likes">좋아요순</a>
+			                <a data-value="latest">최신순</a>
+			                <a data-value="likes">좋아요순</a>
 			            </div>
 			        </div>
 			    </div>
@@ -809,9 +1056,9 @@
 					        				<p class="feed-post-name">${boardvo.member_name}</p> 
 					        			</c:otherwise>
 					        		</c:choose>
-	                                <span>팔로워 26,549명</span>
+	                                <span>팔로워 ${boardvo.countFollow}명</span>
 	                            </a>
-	                            <span>1년</span>
+	                            <span class="time" data-time="${boardvo.board_register_date}"></span>
 	                        </div>
 	                        <div style="position: relative;">
 	                        	<c:choose>
@@ -914,7 +1161,7 @@
 			                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
 			                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
 		                                        </div>
-		                                        <span id="reactionCount">
+		                                        <span id="reactionCount" value="${boardvo.board_no}">
 													${reactionCount.reaction_count}
 			                                    </span>
 	                                		</c:if>
@@ -1018,7 +1265,7 @@
 	                    </div>
 	                </div>
                	</c:forEach>
-           	</div>
+           	</div> <!-- div#update 끝 -->
        	</div>
                
                 
@@ -1124,10 +1371,17 @@
 					    </div>
 					</div>
 					
-				    <!-- 이미지 미리보기 표시 영역 -->
-		            <div id="image-preview-container" style="">
-		                <div id="image-preview-list"></div> <!-- 첨부된 이미지 목록 -->
-		            </div>
+				    <!-- 이미지 미리보기 영역 -->
+					<div id="carousel-container2">
+					    <button id="prevBtn2" class="carousel-btn">〈</button>
+					
+					    <div id="image-preview-container2">
+					        <div class="carousel-track">
+					        </div>
+					    </div>
+					
+					    <button id="nextBtn2" class="carousel-btn">〉</button>
+					</div>
 					
                     <div class="ql-category">
 	                    <div>
@@ -1219,7 +1473,52 @@
 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 		        
-        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 반응 Modal -->
+		<div id="reactionModal" class="modal">
+    		<div class="reactionmodal-content">
+			
+				<!-- 모달 헤더 -->
+				<div class="reactionmodal-header">
+					<h2>반응</h2>
+					<input type="hidden" name="reaction_target_no" value="">
+					<span class="close" id="closeModalButton">&times;</span>
+				</div>
+	
+				<!-- 반응 카테고리 -->
+				<div class="reaction-tabs">
+					<button class="active" value="7">전체 <span id="reaction-all"></span></button>
+					<button value="1">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-like"></span>
+					</button>
+					<button value="2">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-praise"></span>
+					</button>
+					<button value="3">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-empathy"></span>
+					</button>
+					<button value="4">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-appreciation"></span>
+					</button>
+					<button value="5">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6gz02r6oxefigck4ye888wosd" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-interest"></span>
+					</button>
+					<button value="6">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6namow3mrvcg3dyuevtpfwjm0" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-entertainment"></span>
+					</button>
+				</div>
+
+				<!-- 반응 목록 -->
+				<div class="reaction-list"></div>
+			</div>
+	  	</div>
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
 		<!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
