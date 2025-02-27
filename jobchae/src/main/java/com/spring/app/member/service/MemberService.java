@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.member.domain.MemberCareerVO;
+import com.spring.app.member.domain.MemberEducationVO;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface MemberService {
@@ -30,11 +33,6 @@ public interface MemberService {
 	
 	
 	// === 김규빈 시작 === //
-
-	// 회원 경력 등록, 수정, 삭제
-	int addMemberCareer(Map<String, String> paraMap);
-	int updateMemberCareer(Map<String, String> paraMap);
-	int deleteMemberCareer(Map<String, String> paraMap);
 	
 	// 자동완성을 위한 직종 목록 조회 및 검색
 	List<Map<String, String>> getJobListForAutocomplete(Map<String, String> paraMap);
@@ -44,6 +42,35 @@ public interface MemberService {
 	
 	// 자동완성을 위한 전공 목록 조회 및 검색
 	List<Map<String, String>> getMajorListForAutocomplete(Map<String, String> paraMap);
+
+	// 자동완성을 위한 학교 목록 조회 및 검색
+	List<Map<String, String>> getSchoolListForAutocomplete(Map<String, String> params);
+
+	// 자동완성을 위한 보유기술 목록 조회 및 검색
+	List<Map<String, String>> getSkillListForAutocomplete(Map<String, String> params);
+
+	// 회원 경력 1개 조회
+	MemberCareerVO getMemberCareer(Map<String, String> paraMap);
+	
+	// 한 회원의 경력 모두 조회
+	List<MemberCareerVO> getMemberCareerListByMemberId(Map<String, String> paraMap);
+	
+	// 회원 경력 등록, 수정, 삭제
+	int addMemberCareer(MemberCareerVO memberCareerVO);
+	int updateMemberCareer(MemberCareerVO memberCareerVO);
+	int deleteMemberCareer(Map<String, String> paraMap);
+
+	// 회원 학력 1개 조회
+	MemberEducationVO getMemberEducation(Map<String, String> paraMap);
+	
+	// 한 회원의 학력 모두 조회
+	List<MemberEducationVO> getMemberEducationListByMemberId(Map<String, String> paraMap);
+
+	// 회원 학력 등록, 수정, 삭제
+	int addMemberEducation(MemberEducationVO memberEducationVO);
+	int updateMemberEducation(MemberEducationVO memberEducationVO);
+	int deleteMemberEducation(Map<String, String> paraMap);
+
 
 	// === 김규빈 끝 === //
 	

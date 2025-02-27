@@ -12,6 +12,11 @@
 
 		<typeAlias type="com.spring.app.reaction.domain.ReactionVO" alias="ReactionVO"/>
 		<typeAlias type="com.spring.app.file.domain.FileVO" alias="FileVO"/>
+		
+		
+		<typeAlias type="com.spring.app.member.domain.MemberCareerVO" alias="MemberCareerVO"/>
+		<typeAlias type="com.spring.app.member.domain.MemberEducationVO" alias="MemberEducationVO"/>
+		<typeAlias type="com.spring.app.member.domain.MemberSkillVO" alias="MemberSkillVO"/>
 	</typeAliases>
 
 </configuration>

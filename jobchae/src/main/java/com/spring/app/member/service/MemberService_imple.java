@@ -14,6 +14,8 @@ import com.spring.app.common.AES256;
 import com.spring.app.common.security.Sha256;
 import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
+import com.spring.app.member.domain.MemberCareerVO;
+import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.model.MemberDAO;
 
@@ -214,25 +216,7 @@ public class MemberService_imple implements MemberService {
 
 	// === 김규빈 시작 === //
 	
-	// 회원 경력 등록
-	@Override
-	public int addMemberCareer(Map<String, String> paraMap) {
-		return dao.insertMemberCareer(paraMap);
-	}
-	
-	// 회원 경력 수정
-	@Override
-	public int updateMemberCareer(Map<String, String> paraMap) {
-		return dao.updateMemberCareer(paraMap);
-	}
-
-	// 회원 경력 삭제
-	@Override
-	public int deleteMemberCareer(Map<String, String> paraMap) {
-		return dao.deleteMemberCareer(paraMap);
-	}
-
-	// 직종 목록 조회 및 검색
+	// 자동완성을 위한 직종 목록 조회 및 검색
 	@Override
 	public List<Map<String, String>> getJobListForAutocomplete(Map<String, String> paraMap) {
 		
@@ -264,6 +248,108 @@ public class MemberService_imple implements MemberService {
 		
 		return dao.getMajorListForAutocomplete(paraMap);
 	}
+
+	// 자동완성을 위한 직종 목록 조회 및 검색
+	@Override
+	public List<Map<String, String>> getSchoolListForAutocomplete(Map<String, String> paraMap) {
+		
+		if(paraMap.get("size") == null || paraMap.get("sizePerPage").isBlank()) {
+			paraMap.put("size", "8");
+		}
+		
+		return dao.getSchoolListForAutocomplete(paraMap);
+	}
+
+	// 자동완성을 위한 보유기술 목록 조회 및 검색
+	@Override
+	public List<Map<String, String>> getSkillListForAutocomplete(Map<String, String> paraMap) {
+		
+		if(paraMap.get("size") == null || paraMap.get("sizePerPage").isBlank()) {
+			paraMap.put("size", "8");
+		}
+		
+		return dao.getSkillListForAutocomplete(paraMap);
+	}
+
+	// 회원 경력 1개 조회
+	@Override
+	public MemberCareerVO getMemberCareer(Map<String, String> paraMap) {
+		return dao.getMemberCareer(paraMap);
+	}
+
+	// 한 회원의 경력 모두 조회
+	@Override
+	public List<MemberCareerVO> getMemberCareerListByMemberId(Map<String, String> paraMap) {
+		return dao.getMemberCareerListByMemberId(paraMap);
+	}
+	
+	// 회원 경력 등록
+	@Override
+	public int addMemberCareer(MemberCareerVO memberCareerVO) {
+		return dao.insertMemberCareer(memberCareerVO);
+	}
+	
+	// 회원 경력 수정
+	@Override
+	public int updateMemberCareer(MemberCareerVO memberCareerVO) {
+		return dao.updateMemberCareer(memberCareerVO);
+	}
+
+	// 회원 경력 삭제
+	@Override
+	public int deleteMemberCareer(Map<String, String> paraMap) {
+		return dao.deleteMemberCareer(paraMap);
+	}
+
+	// 회원 학력 1개 조회
+	@Override
+	public MemberEducationVO getMemberEducation(Map<String, String> paraMap) {
+		return dao.getMemberEducation(paraMap);
+	}
+
+	// 한 회원의 학력 모두 조회
+	@Override
+	public List<MemberEducationVO> getMemberEducationListByMemberId(Map<String, String> paraMap) {
+		return dao.getMemberEducationListByMemberId(paraMap);
+	}
+	
+	// 회원 학력 등록
+	@Override
+	public int addMemberEducation(MemberEducationVO memberEducationVO) {
+		return dao.insertMemberEducation(memberEducationVO);
+	}
+	
+	// 회원 학력 수정
+	@Override
+	public int updateMemberEducation(MemberEducationVO memberEducationVO) {
+		return dao.updateMemberEducation(memberEducationVO);
+	}
+
+	// 회원 학력 삭제
+	@Override
+	public int deleteMemberEducation(Map<String, String> paraMap) {
+		return dao.deleteMemberEducation(paraMap);
+	}
+	
+	// 회원 보유기술 등록
+//	@Override
+//	public int addMemberSkill(Map<String, String> paraMap) {
+//		return dao.insertMemberSkill(paraMap);
+//	}
+//	
+//	// 회원 보유기술 수정
+//	@Override
+//	public int updateMemberSkill(Map<String, String> paraMap) {
+//		return dao.updateMemberSkill(paraMap);
+//	}
+//
+//	// 회원 보유기술 삭제
+//	@Override
+//	public int deleteMemberSkill(Map<String, String> paraMap) {
+//		return dao.deleteMemberSkill(paraMap);
+//	}
+
+	
 	
 	// === 김규빈 끝 === //
 }//end of class..
