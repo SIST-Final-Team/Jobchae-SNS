@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.spring.app.member.service.MemberService;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
+import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -110,7 +111,7 @@ public class ApiMemberController {
 		return schoolList;
 	}
 
-	@Operation(summary = "보유기술 검색", description = "보유기술명으로 전공 검색")
+	@Operation(summary = "보유기술 검색", description = "보유기술명으로 보유기술 검색")
     @Parameter(name = "params", description = "skill_name: 보유기술명, size: 가져올 개수")
 	@GetMapping("skill/search")
 	public List<Map<String, String>> searchSkill(@RequestParam Map<String, String> params) {
@@ -165,7 +166,7 @@ public class ApiMemberController {
 	}
 
 	@Operation(summary = "회원경력 등록", description = "회원경력 등록, 로그인 후 사용 가능")
-    @Parameter(name = "paraMap", description = "회원경력 Map")
+    @Parameter(name = "memberCareerVO", description = "회원경력VO")
 	@PostMapping("member-career/add")
 	public String addMemberCareer(HttpServletRequest request, MemberCareerVO memberCareerVO) {
 		
@@ -182,7 +183,7 @@ public class ApiMemberController {
 	}
 
 	@Operation(summary = "회원경력 수정", description = "회원경력 수정, 로그인 후 사용 가능")
-    @Parameter(name = "paraMap", description = "회원경력 Map")
+    @Parameter(name = "memberCareerVO", description = "회원경력VO")
 	@PutMapping("member-career/update")
 	public String updateMemberCareer(HttpServletRequest request, MemberCareerVO memberCareerVO) {
 		
@@ -259,14 +260,13 @@ public class ApiMemberController {
 	}
 
 	@Operation(summary = "회원학력 등록", description = "회원학력 등록, 로그인 후 사용 가능")
-    @Parameter(name = "paraMap", description = "회원학력 Map")
+    @Parameter(name = "memberEducationVO", description = "회원학력VO")
 	@PostMapping("member-education/add")
 	public String addMemberEducation(HttpServletRequest request, MemberEducationVO memberEducationVO) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
-//		memberEducationVO.setFk_member_id(loginuser.getMember_id());
-		memberEducationVO.setFk_member_id("user001");
+		memberEducationVO.setFk_member_id(loginuser.getMember_id());
 
 		int n = service.addMemberEducation(memberEducationVO);
 
@@ -277,7 +277,7 @@ public class ApiMemberController {
 	}
 
 	@Operation(summary = "회원학력 수정", description = "회원학력 수정, 로그인 후 사용 가능")
-    @Parameter(name = "paraMap", description = "회원학력 Map")
+    @Parameter(name = "memberEducationVO", description = "회원학력VO")
 	@PutMapping("member-education/update")
 	public String updateMemberEducation(HttpServletRequest request, MemberEducationVO memberEducationVO) {
 		
@@ -312,6 +312,89 @@ public class ApiMemberController {
 		
 		return jsonObj.toString();
 	}
+	
+	@Operation(summary = "회원학력 1개 조회", description = "회원학력 일련번호로 회원학력 1개 조회")
+    @Parameter(name = "member_education_no", description = "회원학력 일련번호")
+	@GetMapping("member-skill")
+	public MemberSkillVO getMemberSkill(HttpServletRequest request, @RequestParam String member_skill_no) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("member_skill_no", member_skill_no);
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		if(loginuser != null) {
+			paraMap.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			paraMap.put("login_member_id", " "); // 로그인하지 않은 경우 빈 값 입력
+		}
+
+		return service.getMemberSkill(paraMap);
+	}
+
+	@Operation(summary = "한 회원의 회원학력 목록 조회", description = "회원 아이디로 회원학력 목록 조회")
+    @Parameter(name = "member_id", description = "조회할 회원 아이디, PathVariable")
+	@GetMapping("member-skill/{member_id}")
+	public List<MemberSkillVO> getMemberSkillByMemberId(HttpServletRequest request, @PathVariable String member_id) {
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("member_id", member_id);
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		if(loginuser != null) {
+			paraMap.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			paraMap.put("login_member_id", " "); // 로그인하지 않은 경우 빈 값 입력
+		}
+
+		return service.getMemberSkillListByMemberId(paraMap);
+	}
+
+	@Operation(summary = "회원보유기술 등록", description = "회원보유기술 등록, 로그인 후 사용 가능")
+    @Parameter(name = "memberSkillVO", description = "회원보유기술VO")
+	@PostMapping("member-skill/add")
+	public String addMemberSkill(HttpServletRequest request, MemberSkillVO memberSkillVO) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		memberSkillVO.setFk_member_id(loginuser.getMember_id());
+
+		int n = 0;
+		try {
+			n = service.addMemberSkill(memberSkillVO);
+		} catch (Exception e) {
+			n = -1;
+		}
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", n);
+
+		return jsonObj.toString();
+	}
+
+	@Operation(summary = "회원보유기술 삭제", description = "회원보유기술 삭제, 로그인 후 사용 가능")
+    @Parameter(name = "member_skill_no", description = "회원보유기술 일련번호")
+	@DeleteMapping("member-skill/delete")
+	public String deleteMemberSkill(HttpServletRequest request, @RequestParam String member_skill_no) {
+		Map<String, String> paraMap = new HashMap<>();
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		paraMap.put("fk_member_id", loginuser.getMember_id());
+		
+		paraMap.put("member_skill_no", member_skill_no);
+		
+		int n = service.deleteMemberSkill(paraMap);
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("result", n);
+		
+		return jsonObj.toString();
+	}
+	
 	
 	
 	

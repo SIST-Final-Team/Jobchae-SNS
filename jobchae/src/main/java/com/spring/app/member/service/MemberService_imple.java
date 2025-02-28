@@ -16,6 +16,7 @@ import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
+import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.model.MemberDAO;
 
@@ -342,24 +343,30 @@ public class MemberService_imple implements MemberService {
 	public int deleteMemberEducation(Map<String, String> paraMap) {
 		return dao.deleteMemberEducation(paraMap);
 	}
+
+	// 회원 보유기술 1개 조회
+	@Override
+	public MemberSkillVO getMemberSkill(Map<String, String> paraMap) {
+		return dao.getMemberSkill(paraMap);
+	}
+
+	// 한 회원의 보유기술 모두 조회
+	@Override
+	public List<MemberSkillVO> getMemberSkillListByMemberId(Map<String, String> paraMap) {
+		return dao.getMemberSkillListByMemberId(paraMap);
+	}
 	
 	// 회원 보유기술 등록
-//	@Override
-//	public int addMemberSkill(Map<String, String> paraMap) {
-//		return dao.insertMemberSkill(paraMap);
-//	}
-//	
-//	// 회원 보유기술 수정
-//	@Override
-//	public int updateMemberSkill(Map<String, String> paraMap) {
-//		return dao.updateMemberSkill(paraMap);
-//	}
-//
-//	// 회원 보유기술 삭제
-//	@Override
-//	public int deleteMemberSkill(Map<String, String> paraMap) {
-//		return dao.deleteMemberSkill(paraMap);
-//	}
+	@Override
+	public int addMemberSkill(MemberSkillVO memberSkillVO) {
+		return dao.insertMemberSkill(memberSkillVO);
+	}
+
+	// 회원 보유기술 삭제
+	@Override
+	public int deleteMemberSkill(Map<String, String> paraMap) {
+		return dao.deleteMemberSkill(paraMap);
+	}
 
 	
 	
