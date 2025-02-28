@@ -12,15 +12,36 @@ pageEncoding="UTF-8"%>
   <body>
     <h1>RealTimeAlarm Page</h1>
     <ul id="alarmList"></ul>
+
     <script>
-      function addAlarms(jsonData) {
+      let pageNumber = 0;
+
+      async function getAlarms() {
+        const response = await fetch(
+          `http://localhost/jobchae/api/alarm/selectAlarmList/\${pageNumber}`
+        );
+        const jsonData = await response.json();
+        console.log(jsonData);
+        const alarmList = jsonData["list"];
+        addAlarms(alarmList);
+      }
+
+      // 새 알림 객체 하나를 li로 추가하는 함수
+      function addAlarm(alarm) {
         const alarmList = document.getElementById("alarmList");
+        const li = document.createElement("li");
+        li.textContent = alarm.notificationNo; // 필요한 속성 이름 사용
+        alarmList.appendChild(li);
+      }
+
+      // 여러 알림 객체를 각각 addAlarm으로 추가
+      function addAlarms(jsonData) {
         jsonData.forEach((alarm) => {
-          const li = document.createElement("li");
-          li.textContent = alarm.message; // JSON 데이터의 'message' 속성을 사용
-          alarmList.appendChild(li);
+          addAlarm(alarm);
         });
       }
+
+      getAlarms();
     </script>
   </body>
 </html>

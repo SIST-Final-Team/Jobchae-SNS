@@ -1,6 +1,7 @@
 package com.spring.app.alarm.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,6 @@ public class AlarmController {
 	
 	@GetMapping("{member_id}")
 	public String selectAlarm(@PathVariable String member_id){
-		
 		return "Alarm/alarm";
 	}
 
@@ -31,6 +31,13 @@ public class AlarmController {
 		
 		return "Alarm/realtimealarmtest";
 	}
+
+	@GetMapping("test3")
+	public String alarmTest(){
+
+		return "header/header";
+	}
+
 	
 	
 }
