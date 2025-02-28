@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
+import com.spring.app.member.domain.MemberVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,7 +20,10 @@ public interface MemberService {
 
 	// 이메일 중복확인 및 인증메일 발송
 	boolean emailCheck(String member_email);
-
+	
+	// 회원가입
+	int memberRegister(MemberVO membervo);
+	
 	// 지역 검색 시 자동 완성 해주는 메소드 
 	List<Map<String, String>> regionSearchShow(String region_name);
 

@@ -27,8 +27,8 @@
 	
 	<!-- 지역 검색 자동 완성 -->
 	<resultMap type="HashMap" id="regionMap">
-		<result property="REGION_NO" column="REGION_NO" javaType="String" />
-		<result property="REGION_NAME" column="REGION_NAME" javaType="String" />
+		<result property="region_no" column="REGION_NO" javaType="String" />
+		<result property="region_name" column="REGION_NAME" javaType="String" />
 	</resultMap>
 	<select id="regionSearchShow" parameterType="String" resultMap="regionMap">
 		SELECT REGION_NO, REGION_NAME
@@ -37,6 +37,24 @@
 	</select>
 	
 	
+	<!-- 회원가입  여기 터짐 고쳐야함 --> 
+	<insert id="memberRegister" parameterType="MemberVO">
+		
+		INSERT INTO tbl_member(member_id, fk_region_no, member_passwd, member_name, member_birth, 
+							   	   member_email, member_tel, member_profile)
+		
+		<if test="member_profile != null">
+			VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
+			   	   #{member_email}, #{member_tel}, #{member_profile})
+		</if>
+
+		<if test="member_profile == null">
+			VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
+			   	   #{member_email}, #{member_tel}, null)
+		</if>
+	
+		
+	</insert>
 
 	
 	<!-- 로그인 처리하기, 스케줄러 완성되면 조인문을 삭제하자. -->

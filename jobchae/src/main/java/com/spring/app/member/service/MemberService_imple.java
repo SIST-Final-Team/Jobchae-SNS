@@ -33,6 +33,8 @@ public class MemberService_imple implements MemberService {
 	private AES256 aes;
 	
 	
+
+	
 	// === 이준영 시작 === //
 	
 	// 아이디 중복체크
@@ -87,6 +89,27 @@ public class MemberService_imple implements MemberService {
 	}//end of public List<String> regionSearchShow(String member_region) {}...
 
 
+	
+	
+	
+	// 회원가입
+	@Override
+	public int memberRegister(MemberVO membervo) {
+		
+		// 암호화
+		try {
+			membervo.setMember_passwd(Sha256.encrypt(membervo.getMember_passwd())); // 단방향
+			membervo.setMember_email(aes.encrypt(membervo.getMember_email())); 		// 양방향
+			membervo.setMember_tel(aes.encrypt(membervo.getMember_tel())); 			// 양방향
+
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		//
+		int n = dao.memberRegister(membervo);
+		return n;
+		
+	}//end of public int memberRegister(MemberVO membervo) {}...
 
 
 
@@ -99,7 +122,7 @@ public class MemberService_imple implements MemberService {
 	@Override
 	public ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {
 
-//		paraMap.put("member_passwd", Sha256.encrypt(paraMap.get("member_passwd"))); // 비밀번호를 암호화 시키기
+		paraMap.put("member_passwd", Sha256.encrypt(paraMap.get("member_passwd"))); // 비밀번호를 암호화 시키기
 
 		// 로그인 정보 가져오기
 		MemberVO loginuser = dao.getLoginMember(paraMap);
@@ -125,16 +148,16 @@ public class MemberService_imple implements MemberService {
 				
 			} else { // 휴면이 아닌 경우
 
-//				try {
-//					String email = aes.decrypt(loginuser.getMember_email()); // 이메일 복호화
-//					String tel = aes.decrypt(loginuser.getMember_tel()); // 휴대폰 복호화
-//
-//					loginuser.setMember_email(email);
-//					loginuser.setMember_tel(tel);
-//
-//				} catch (UnsupportedEncodingException | GeneralSecurityException e) {
-//					e.printStackTrace();
-//				} // end of try catch..
+				try {
+					String email = aes.decrypt(loginuser.getMember_email()); // 이메일 복호화
+					String tel = aes.decrypt(loginuser.getMember_tel()); // 휴대폰 복호화
+
+					loginuser.setMember_email(email);
+					loginuser.setMember_tel(tel);
+
+				} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+					e.printStackTrace();
+				} // end of try catch..
 
 				
 				if (loginuser.getPwdchangegap() >= 3) {
