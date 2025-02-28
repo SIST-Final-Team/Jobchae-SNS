@@ -5,6 +5,7 @@ public class MemberCareerVO {
 	private String fk_member_id; 				/* 회원 아이디 */
 	private String fk_region_no; 				/* 지역 일련번호 */
 	private String fk_job_no; 					/* 직종 일련번호 */
+	private String fk_company_no; 				/* 기업 페이지 일련번호 */
 	private String member_career_is_current; 	/* 현재 재직여부 */
 	private String member_career_company; 		/* 회사/단체 */
 	private String member_career_type; 			/* 고용형태 */
@@ -45,6 +46,14 @@ public class MemberCareerVO {
 
 	public void setFk_job_no(String fk_job_no) {
 		this.fk_job_no = fk_job_no;
+	}
+
+	public String getFk_company_no() {
+		return fk_company_no;
+	}
+
+	public void setFk_company_no(String fk_company_no) {
+		this.fk_company_no = fk_company_no;
 	}
 
 	public String getMember_career_is_current() {

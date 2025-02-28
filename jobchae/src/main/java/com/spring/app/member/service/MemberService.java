@@ -5,9 +5,10 @@ import java.util.Map;
 
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
-import com.spring.app.member.domain.MemberVO;
+import com.spring.app.member.domain.MemberSkillVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -71,6 +72,16 @@ public interface MemberService {
 	int addMemberEducation(MemberEducationVO memberEducationVO);
 	int updateMemberEducation(MemberEducationVO memberEducationVO);
 	int deleteMemberEducation(Map<String, String> paraMap);
+
+	// 회원 보유기술 1개 조회
+	MemberSkillVO getMemberSkill(Map<String, String> paraMap);
+	
+	// 한 회원의 보유기술 모두 조회
+	List<MemberSkillVO> getMemberSkillListByMemberId(Map<String, String> paraMap);
+
+	// 회원 보유기술 등록, 삭제
+	int addMemberSkill(MemberSkillVO memberSkillVO);
+	int deleteMemberSkill(Map<String, String> paraMap);
 
 
 	// === 김규빈 끝 === //

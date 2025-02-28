@@ -92,7 +92,7 @@
 	   ON M.MEMBER_ID = C.FK_MEMBER_ID
 	   LEFT JOIN (SELECT fk_school_no, fk_member_id
 	              FROM TBL_MEMBER_EDUCATION
-				  WHERE member_education_endate >= SYSDATE
+				  WHERE member_education_enddate >= SYSDATE
 				  ORDER BY member_education_startdate DESC) E  	 -- 회원 학력
 	   ON M.MEMBER_ID = E.FK_MEMBER_ID
 	   LEFT JOIN tbl_school S
@@ -131,11 +131,12 @@
 	
 	<!-- 자동완성을 위한 회사 목록 조회 및 검색 -->
 	<resultMap type="HashMap" id="companyMap">
-		<result column="company_no" property="company_no" javaType="String"/>
+		<result column="company_no"   property="company_no"   javaType="String"/>
 		<result column="company_name" property="company_name" javaType="String"/>
+		<result column="company_logo" property="company_logo" javaType="String"/>
 	</resultMap>
 	<select id="getCompanyListForAutocomplete" parameterType="HashMap" resultMap="companyMap">
-		select company_no, company_name
+		select company_no, company_name, company_logo
 		from tbl_company
 		where company_name like '%'|| #{company_name} || '%' and rownum &lt;= to_number(#{size})
 	</select>
@@ -153,11 +154,12 @@
 	
 	<!-- 자동완성을 위한 학교 목록 조회 및 검색 -->
 	<resultMap type="HashMap" id="schoolMap">
-		<result column="school_no" property="school_no" javaType="String"/>
+		<result column="school_no"   property="school_no"   javaType="String"/>
 		<result column="school_name" property="school_name" javaType="String"/>
+		<result column="school_logo" property="school_logo" javaType="String"/>
 	</resultMap>
 	<select id="getSchoolListForAutocomplete" parameterType="HashMap" resultMap="schoolMap">
-		select school_no, school_name
+		select school_no, school_name, school_logo
 		from tbl_school
 		where school_name like '%'|| #{school_name} || '%' and rownum &lt;= to_number(#{size})
 	</select>
@@ -177,7 +179,7 @@
 	<!-- 회원 경력 1개 조회 -->
 	<select id="getMemberCareer" parameterType="HashMap" resultType="MemberCareerVO">
 		SELECT member_career_no, mc.fk_member_id, mc.fk_region_no, r.region_name
-			 , mc.fk_job_no, j.job_name, member_career_company, member_career_type
+			 , mc.fk_job_no, j.job_name, fk_company_no, member_career_company, member_career_type
 			 , to_char(member_career_startdate, 'yyyy-mm') AS member_career_startdate
 			 , to_char(member_career_enddate, 'yyyy-mm') AS member_career_enddate
 			 , member_career_explain
@@ -195,7 +197,7 @@
 	<!-- 한 회원의 경력 모두 조회 -->
 	<select id="getMemberCareerListByMemberId" parameterType="HashMap" resultType="MemberCareerVO">
 		SELECT member_career_no, mc.fk_member_id, mc.fk_region_no, r.region_name
-			 , mc.fk_job_no, j.job_name, member_career_company, member_career_type
+			 , mc.fk_job_no, j.job_name, fk_company_no, member_career_company, member_career_type
 			 , to_char(member_career_startdate, 'yyyy-mm') AS member_career_startdate
 			 , to_char(member_career_enddate, 'yyyy-mm') AS member_career_enddate
 			 , member_career_explain
@@ -212,9 +214,11 @@
 
 	<!-- 회원 경력 등록 -->
 	<insert id="insertMemberCareer" parameterType="MemberCareerVO">
-		insert into tbl_member_career(member_career_no, fk_member_id, fk_region_no, fk_job_no, member_career_is_current
+		insert into tbl_member_career(member_career_no, fk_member_id, fk_region_no, fk_job_no, fk_company_no, member_career_is_current
 		          , member_career_company, member_career_type, member_career_startdate, member_career_enddate, member_career_explain)
 		values(seq_member_career_no.nextval, #{fk_member_id}, to_number(#{fk_region_no}), to_number(#{fk_job_no})
+			 <if test="fk_company_no != null">, to_number(#{fk_company_no})</if>
+			 <if test="fk_company_no == null">, null</if>
 			 <if test="member_career_is_current != null">, 1</if>
 			 <if test="member_career_is_current == null">, 0</if>
 		     , #{member_career_company}, to_number(#{member_career_type}), to_date(#{member_career_startdate}, 'yyyy-mm')
@@ -226,6 +230,8 @@
 	<!-- 회원 경력 수정 -->
 	<update id="updateMemberCareer" parameterType="MemberCareerVO">
 		update tbl_member_career set fk_region_no = to_number(#{fk_region_no}), fk_job_no = to_number(#{fk_job_no})
+				  <if test="fk_company_no != null">,fk_company_no = to_number(#{fk_company_no})</if>
+				  <if test="fk_company_no == null">,fk_company_no = null</if>
 			      <if test="member_career_is_current != null">, member_career_is_current = 1</if>
 			      <if test="member_career_is_current == null">, member_career_is_current = 0</if>
 		          , member_career_company = #{member_career_company}, member_career_type = to_number(#{member_career_type})
@@ -246,10 +252,10 @@
 	<!-- === 회원 학력 시작 === -->
 	<!-- 회원 학력 1개 조회 -->
 	<select id="getMemberEducation" parameterType="HashMap" resultType="MemberEducationVO">
-		select member_education_no, me.fk_member_id, fk_school_no, school_name, fk_major_no, major_name
+		select member_education_no, me.fk_member_id, fk_school_no, school_name, school_logo, fk_major_no, major_name
 			, member_education_degree
 			, to_char(member_education_startdate, 'yyyy-mm') AS member_education_startdate
-			, to_char(member_education_endate, 'yyyy-mm') AS member_education_enddate
+			, to_char(member_education_enddate, 'yyyy-mm') AS member_education_enddate
 			, member_education_grade, member_education_explain
 		from tbl_member_education me
 		JOIN tbl_member_setting ms
@@ -263,10 +269,10 @@
 	
 	<!-- 한 회원의 학력 모두 조회 -->
 	<select id="getMemberEducationListByMemberId" parameterType="HashMap" resultType="MemberEducationVO">
-		select member_education_no, me.fk_member_id, fk_school_no, school_name, fk_major_no, major_name
+		select member_education_no, me.fk_member_id, fk_school_no, school_name, school_logo, fk_major_no, major_name
 			, member_education_degree
 			, to_char(member_education_startdate, 'yyyy-mm') AS member_education_startdate
-			, to_char(member_education_endate, 'yyyy-mm') AS member_education_enddate
+			, to_char(member_education_enddate, 'yyyy-mm') AS member_education_enddate
 			, member_education_grade, member_education_explain
 		from tbl_member_education me
 		JOIN tbl_member_setting ms
@@ -275,19 +281,19 @@
 		on me.fk_school_no = s.school_no
 		join tbl_major m
 		on me.fk_major_no = m.major_no
-		WHERE mc.fk_member_id = #{member_id} AND (ms.member_setting_profile = 1 OR me.fk_member_id = #{login_member_id})
+		WHERE me.fk_member_id = #{member_id} AND (ms.member_setting_profile = 1 OR me.fk_member_id = #{login_member_id})
 	</select>
 
 	<!-- 회원 학력 등록 -->
 	<insert id="insertMemberEducation" parameterType="MemberEducationVO">
 		insert into tbl_member_education(member_education_no, fk_member_id, fk_school_no, 
 			fk_major_no, member_education_degree, member_education_startdate,
-			member_education_endate, member_education_grade,
+			member_education_enddate, member_education_grade,
 			member_education_explain)
 		values(seq_member_education_no.nextval, #{fk_member_id}, to_number(#{fk_school_no}), to_number(#{fk_major_no}),
 			to_number(#{member_education_degree}),
 			to_date(#{member_education_startdate}, 'yyyy-mm'),
-			to_date(#{member_education_endate}, 'yyyy-mm'),
+			to_date(#{member_education_enddate}, 'yyyy-mm'),
 			to_number(#{member_education_grade}), #{member_education_explain})
 	</insert>
 	
@@ -298,7 +304,7 @@
 			fk_major_no = to_number(#{fk_major_no}),
 			member_education_degree = to_number(#{member_education_degree}),
 			member_education_startdate = to_date(#{member_education_startdate}, 'yyyy-mm'),
-			member_education_endate = to_date(#{member_education_endate}, 'yyyy-mm'),
+			member_education_enddate = to_date(#{member_education_enddate}, 'yyyy-mm'),
 			member_education_grade = to_number(#{member_education_grade}),
 			member_education_explain = #{member_education_explain}
 		where member_education_no = #{member_education_no} and fk_member_id = #{fk_member_id}
@@ -310,6 +316,42 @@
 		where member_education_no = #{member_education_no} and fk_member_id = #{fk_member_id}
 	</delete>
 	<!-- === 회원 학력 끝 === -->
+	
+	<!-- === 회원 보유기술 시작 === -->
+	<!-- 회원 보유기술 1개 조회 -->
+	<select id="getMemberSkill" parameterType="HashMap" resultType="MemberSkillVO">
+		select member_skill_no, msk.fk_member_id, fk_skill_no, skill_name
+		from tbl_member_skill msk
+		join tbl_member_setting ms
+		on msk.fk_member_id = ms.fk_member_id
+		join tbl_skill sk
+		on msk.fk_skill_no = sk.skill_no
+		where member_skill_no = #{member_skill_no} AND (ms.member_setting_profile = 1 OR msk.fk_member_id = #{login_member_id})
+	</select>
+	
+	<!-- 한 회원의 보유기술 모두 조회 -->
+	<select id="getMemberSkillListByMemberId" parameterType="HashMap" resultType="MemberSkillVO">
+		select member_skill_no, msk.fk_member_id, fk_skill_no, skill_name
+		from tbl_member_skill msk
+		join tbl_member_setting ms
+		on msk.fk_member_id = ms.fk_member_id
+		join tbl_skill sk
+		on msk.fk_skill_no = sk.skill_no
+		WHERE msk.fk_member_id = #{member_id} AND (ms.member_setting_profile = 1 OR msk.fk_member_id = #{login_member_id})
+	</select>
+
+	<!-- 회원 보유기술 등록 -->
+	<insert id="insertMemberSkill" parameterType="MemberSkillVO">
+		insert into tbl_member_skill(member_skill_no, fk_member_id, fk_skill_no)
+		values(seq_member_skill_no.nextval, #{fk_member_id}, #{fk_skill_no})
+	</insert>
+	
+	<!-- 회원 보유기술 삭제 -->
+	<delete id="deleteMemberSkill" parameterType="HashMap">
+		delete from tbl_member_skill
+		where member_skill_no = #{member_skill_no} and fk_member_id = #{fk_member_id}
+	</delete>
+	<!-- === 회원 보유기술 끝 === -->
 	
 	
 	<!-- === 김규빈 끝 === -->

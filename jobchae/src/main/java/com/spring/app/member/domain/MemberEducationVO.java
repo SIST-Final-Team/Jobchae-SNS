@@ -7,11 +7,12 @@ public class MemberEducationVO {
 	private String fk_major_no; 				/* 전공 일련번호 */
 	private String member_education_degree; 	/* 학위 */
 	private String member_education_startdate; 	/* 입학일 */
-	private String member_education_endate; 	/* 졸업일 */
+	private String member_education_enddate; 	/* 졸업일 */
 	private String member_education_grade; 		/* 학점 */
 	private String member_education_explain; 	/* 설명 */
 
 	private String school_name; 				/* 학교명 */
+	private String school_logo; 				/* 학교로고 이미지 */
 	private String major_name; 					/* 전공명 */
 	
 	public String getMember_education_no() {
@@ -62,12 +63,12 @@ public class MemberEducationVO {
 		this.member_education_startdate = member_education_startdate;
 	}
 
-	public String getMember_education_endate() {
-		return member_education_endate;
+	public String getMember_education_enddate() {
+		return member_education_enddate;
 	}
 
-	public void setMember_education_endate(String member_education_endate) {
-		this.member_education_endate = member_education_endate;
+	public void setMember_education_enddate(String member_education_enddate) {
+		this.member_education_enddate = member_education_enddate;
 	}
 
 	public String getMember_education_grade() {
@@ -92,6 +93,14 @@ public class MemberEducationVO {
 
 	public void setSchool_name(String school_name) {
 		this.school_name = school_name;
+	}
+
+	public String getSchool_logo() {
+		return school_logo;
+	}
+
+	public void setSchool_logo(String school_logo) {
+		this.school_logo = school_logo;
 	}
 
 	public String getMajor_name() {
