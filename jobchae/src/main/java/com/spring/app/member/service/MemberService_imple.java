@@ -123,7 +123,7 @@ public class MemberService_imple implements MemberService {
 	@Override
 	public ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {
 
-		paraMap.put("member_passwd", Sha256.encrypt(paraMap.get("member_passwd"))); // 비밀번호를 암호화 시키기
+//		paraMap.put("member_passwd", Sha256.encrypt(paraMap.get("member_passwd"))); // 비밀번호를 암호화 시키기
 
 		// 로그인 정보 가져오기
 		MemberVO loginuser = dao.getLoginMember(paraMap);
@@ -149,16 +149,16 @@ public class MemberService_imple implements MemberService {
 				
 			} else { // 휴면이 아닌 경우
 
-				try {
-					String email = aes.decrypt(loginuser.getMember_email()); // 이메일 복호화
-					String tel = aes.decrypt(loginuser.getMember_tel()); // 휴대폰 복호화
-
-					loginuser.setMember_email(email);
-					loginuser.setMember_tel(tel);
-
-				} catch (UnsupportedEncodingException | GeneralSecurityException e) {
-					e.printStackTrace();
-				} // end of try catch..
+//				try {
+//					String email = aes.decrypt(loginuser.getMember_email()); // 이메일 복호화
+//					String tel = aes.decrypt(loginuser.getMember_tel()); // 휴대폰 복호화
+//
+//					loginuser.setMember_email(email);
+//					loginuser.setMember_tel(tel);
+//
+//				} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+//					e.printStackTrace();
+//				} // end of try catch..
 
 				
 				if (loginuser.getPwdchangegap() >= 3) {
@@ -222,6 +222,18 @@ public class MemberService_imple implements MemberService {
 	
 	}// end of public ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {}...
 
+	
+	
+	// 회원 휴면을 자동으로 지정해주는 스케줄러
+	@Override
+	public void deactivateMember_idle() {
+		
+		dao.deactivateMember_idle();
+	}//end of public void deactivateMember_idle() {}...
+	
+	
+	
+	
 	// === 이준영 끝 === //
 	
 	
@@ -367,6 +379,13 @@ public class MemberService_imple implements MemberService {
 	public int deleteMemberSkill(Map<String, String> paraMap) {
 		return dao.deleteMemberSkill(paraMap);
 	}
+
+
+
+
+
+
+	
 
 	
 	

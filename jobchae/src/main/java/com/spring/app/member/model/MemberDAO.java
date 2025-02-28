@@ -36,7 +36,8 @@ public interface MemberDAO {
 	// 로그인 기록 추가
 	void insert_tbl_login(Map<String, String> paraMap);
 	
-	
+	// 회원 휴면을 자동으로 지정해주는 스케줄러
+	void deactivateMember_idle();
 
 	// === 이준영 끝 === //
 	
@@ -112,6 +113,8 @@ public interface MemberDAO {
 	// 회원 보유기술 등록, 삭제
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
+
+	
 
 
 	// === 김규빈 끝 === //

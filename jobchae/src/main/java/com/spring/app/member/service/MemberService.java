@@ -30,7 +30,10 @@ public interface MemberService {
 
 	// 로그인하는 메소드
 	ModelAndView login(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap);
-
+	
+	// 회원 휴면을 자동으로 지정해주는 스케줄러
+	void deactivateMember_idle();
+	
 	// === 이준영 끝 === //
 	
 	
@@ -82,6 +85,9 @@ public interface MemberService {
 	// 회원 보유기술 등록, 삭제
 	int addMemberSkill(MemberSkillVO memberSkillVO);
 	int deleteMemberSkill(Map<String, String> paraMap);
+
+	
+	
 
 
 	// === 김규빈 끝 === //
