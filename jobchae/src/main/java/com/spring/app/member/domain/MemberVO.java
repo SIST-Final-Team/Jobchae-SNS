@@ -49,10 +49,8 @@ public class MemberVO {
 	
 	//////////////////////////////////////////////
 	/// join 해서 가져온 변수
-	String fk_job_no; 				// 직종 일련번호 
-	String fk_school_no;			// 학교 일련번호
-	String fk_major_no;				// 전공 일련번호
-	String member_education_degree;	// 학위
+	String member_career_company; 	// 회사명
+	String school_name;			    // 학교명
 	
 	
 	

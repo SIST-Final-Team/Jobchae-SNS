@@ -155,29 +155,6 @@ public class MemberController {
 	
 	
 	
-	// 지역 검색 시 자동 완성 해주는 메소드
-	@GetMapping("region/search")
-	@ResponseBody
-	public List<Map<String, String>> regionSearch(@RequestParam String region_name) {
-		// 입력한 검색어 찾기
-		List<Map<String, String>> regionList = service.regionSearchShow(region_name); 
-
-		// 담을 맵 선언
-		List<Map<String, String>> mapList = new ArrayList<>();
-
-		if (regionList != null) {
-			for (Map<String, String> regionMap : regionList) {
-				Map<String, String> map = new HashMap<>();
-				map.put("region_no", regionMap.get("REGION_NO")); 
-				map.put("region_name", regionMap.get("REGION_NAME")); // REGION_NO, REGION_NAME
-				mapList.add(map);
-			} // end of for...
-		}
-		
-		return mapList;
-	
-	}//end of public List<Map<String, String>> regionSearch(@RequestParam String member_region) {}...
-	
 	
 	
 	
@@ -243,13 +220,38 @@ public class MemberController {
 		return mav;
 	}// end of public ModelAndView profile(ModelAndView mav)----------
 
+	// 테스트용
 	@GetMapping("profile/more")
 	public ModelAndView profileMore(ModelAndView mav) {
 		
 		mav.setViewName("/member/profileMore");
 		
 		return mav;
-	}// end of public ModelAndView profileMore(ModelAndView mav)------
+	}// end of public ModelAndView profile(ModelAndView mav)----------
+
+	@GetMapping("profile/member-career")
+	public ModelAndView profileMemberCareer(ModelAndView mav) {
+		
+		mav.setViewName("/member/profileMemberCareer");
+		
+		return mav;
+	}// end of public ModelAndView profileMemberCareer(ModelAndView mav)------
+
+	@GetMapping("profile/member-education")
+	public ModelAndView profileMemberEducation(ModelAndView mav) {
+		
+		mav.setViewName("/member/profileMemberEducation");
+		
+		return mav;
+	}// end of public ModelAndView profileMemberEducation(ModelAndView mav)------
+
+	@GetMapping("profile/member-skill")
+	public ModelAndView profileMemberSkill(ModelAndView mav) {
+		
+		mav.setViewName("/member/profileMemberSkill");
+		
+		return mav;
+	}// end of public ModelAndView profileMemberSkill(ModelAndView mav)------
 	
 	
 	
