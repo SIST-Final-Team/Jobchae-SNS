@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Repository;
 
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
+import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 
+@Repository
 @Mapper
 public interface MemberDAO {
 
@@ -87,6 +91,25 @@ public interface MemberDAO {
 	int insertMemberEducation(MemberEducationVO memberEducationVO);
 	int updateMemberEducation(MemberEducationVO memberEducationVO);
 	int deleteMemberEducation(Map<String, String> paraMap);
+
+
+	/**
+	 * 회원 보유기술 1개 조회
+	 * @param paraMap member_skill_no: 회원 보유기술 일련번호, login_member_id: 로그인한 회원 아이디
+	 * @return
+	 */
+	MemberSkillVO getMemberSkill(Map<String, String> paraMap);
+	
+	/**
+	 * 한 회원의 보유기술 모두 조회
+	 * @param login_member_id: 로그인한 회원 아이디, member_id: 조회대상 회원 아이디
+	 * @return
+	 */
+	List<MemberSkillVO> getMemberSkillListByMemberId(Map<String, String> paraMap);
+	
+	// 회원 보유기술 등록, 삭제
+	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
+	int deleteMemberSkill(Map<String, String> paraMap);
 
 
 	// === 김규빈 끝 === //

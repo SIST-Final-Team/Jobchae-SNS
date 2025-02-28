@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -242,32 +243,40 @@ public class MemberController {
 	}// end of public ModelAndView profile(ModelAndView mav)----------
 
 	// 테스트용
-	@GetMapping("profile/more")
-	public ModelAndView profileMore(ModelAndView mav) {
+	@GetMapping("profile/more/{memberId}")
+	public ModelAndView profileMore(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
 		
 		mav.setViewName("/member/profileMore");
 		
 		return mav;
 	}// end of public ModelAndView profile(ModelAndView mav)----------
 
-	@GetMapping("profile/member-career")
-	public ModelAndView profileMemberCareer(ModelAndView mav) {
+	@GetMapping("profile/member-career/{memberId}")
+	public ModelAndView profileMemberCareer(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
 		
 		mav.setViewName("/member/profileMemberCareer");
 		
 		return mav;
 	}// end of public ModelAndView profileMemberCareer(ModelAndView mav)------
 
-	@GetMapping("profile/member-education")
-	public ModelAndView profileMemberEducation(ModelAndView mav) {
+	@GetMapping("profile/member-education/{memberId}")
+	public ModelAndView profileMemberEducation(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
 		
 		mav.setViewName("/member/profileMemberEducation");
 		
 		return mav;
 	}// end of public ModelAndView profileMemberEducation(ModelAndView mav)------
 
-	@GetMapping("profile/member-skill")
-	public ModelAndView profileMemberSkill(ModelAndView mav) {
+	@GetMapping("profile/member-skill/{memberId}")
+	public ModelAndView profileMemberSkill(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
 		
 		mav.setViewName("/member/profileMemberSkill");
 		
