@@ -135,7 +135,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
           class="h-full w-20 flex-none text-center border-r-1 border-gray-300 text-sm opacity-50 hover:opacity-100"
         >
           <img
-            src="${pageContext.request.contextPath}/images/no_profile_imagwe.png"
+            src="${pageContext.request.contextPath}/images/no_profile_image.png"
             class="h-2/5 m-auto mt-1.5 round-full"
           />나▼
         </div>

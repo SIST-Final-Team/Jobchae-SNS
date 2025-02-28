@@ -4,6 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import com.spring.app.file.domain.FileVO;
+
 public class MemberVO {
 
 //	  member_id VARCHAR2(20) NOT NULL, 						/* 회원 아이디 */
@@ -49,15 +53,69 @@ public class MemberVO {
 	
 	//////////////////////////////////////////////
 	/// join 해서 가져온 변수
-	String member_career_company; 	// 회사명
-	String school_name;			    // 학교명
+	private String member_career_company; // 회사명
+	private String school_name;			  // 학교명
 	
 	
 	
 	
 	//////////////////////////////////////////////////////////////
 
+	
+	public String getMember_career_company() {
+		return member_career_company;
+	}
 
+	public void setMember_career_company(String member_career_company) {
+		this.member_career_company = member_career_company;
+	}
+
+	public String getSchool_name() {
+		return school_name;
+	}
+
+	public void setSchool_name(String school_name) {
+		this.school_name = school_name;
+	}
+
+	// 파일을 첨부하도록 VO 수정하기
+	private MultipartFile attach_member_profile;
+	private MultipartFile attach_member_background_img;
+//		form 태그에서 type="file" 인 파일을 받아서 저장되는 필드이다. 
+//		진짜파일 ==> WAS(톰캣) 디스크에 저장됨.
+//		조심할것은 MultipartFile attach 는 오라클 데이터베이스 tbl_board 테이블의 컬럼이 아니다.  
+//		/myspring/src/main/webapp/WEB-INF/views/mycontent1/board/add.jsp 파일에서 
+//		input type="file"인 name 의 이름(attach)과 동일해야만 파일첨부가 가능해진다.
+
+//	private FileVO filevo;
+	
+	
+	
+	
+//	public FileVO getFilevo() {
+//		return filevo;
+//	}
+//
+//	public void setFilevo(FileVO filevo) {
+//		this.filevo = filevo;
+//	}
+
+
+	public MultipartFile getAttach_member_profile() {
+		return attach_member_profile;
+	}
+
+	public void setAttach_member_profile(MultipartFile attach_member_profile) {
+		this.attach_member_profile = attach_member_profile;
+	}
+
+	public MultipartFile getAttach_member_background_img() {
+		return attach_member_background_img;
+	}
+
+	public void setAttach_member_background_img(MultipartFile attach_member_background_img) {
+		this.attach_member_background_img = attach_member_background_img;
+	}
 
 	public int getPwdchangegap() {
 		return pwdchangegap;

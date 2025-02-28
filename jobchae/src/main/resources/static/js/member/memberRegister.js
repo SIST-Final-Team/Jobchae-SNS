@@ -11,14 +11,80 @@ let b_email_auth_click = false; // 인증버튼 클릭했는지 여부
 
 let is_email_auth = false; // 인증번호를 인증 받았는지 여부
 
+
+
+let region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
+
 // 컨텍스트 패스
 const contextPath = sessionStorage.getItem("contextpath");
 
+// const region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
 
 $(document).ready(function () {
 
+
+    // 사진 첨부
+    $("img#profile_img").on("click", function (e) {
+
+        $("input#file_input").click();
+
+    });//end of $("img#profile_img").on("click", function (e) {}...
+
+
+    // 파일 인풋 값이 들어갔을 때 이벤트
+    $("input#file_input").change(function (e) {
+
+        // console.log($("input#file_input").val());
+
+        const inputFile = $(e.target).get(0).files[0];
+        const preview_profile_img = $("img#profile_img"); // 미리보기 사진칸
+
+        if (inputFile) { // 파일을 업로드한 경우
+
+            // console.log("$(e.target).get(0).value!!!!! => ", $(e.target).get(0).value);
+
+            const fileType = inputFile.type; // "image/jpeg", "image/png", ...
+            console.log("fileType => ", fileType);
+            
+            const reg = /image\/(jpg|jpeg|png|webp)$/; // 확장자가 이미지인지 확인하기 위한 regex
+
+            if (!reg.test(fileType)) { // 확장자가 이미지가 아닌 경우
+                alert('이미지 파일만 업로드 가능합니다.\n .jpg .jpeg .png, .webp');
+                $(e.target).get(0).value = ""; // input 비우기
+                return;
+            }
+
+            const limitSize = 10 * 1024 * 1024; // 10mb 크기 제한을 위한 변수
+
+            const uploadSize = inputFile.size;
+
+            if (limitSize < uploadSize) { // 이미지 크기가 5mb 이상인 경우
+                alert('10MB 미만 이미지만 업로드가 가능합니다.');
+                $(e.target).get(0).value = ""; // input 비우기
+                return;
+            }
+
+            // 이미지 파일을 로드해서 미리보기에 표시
+            const fileReader = new FileReader();
+
+            fileReader.readAsDataURL(inputFile);
+            fileReader.onload = function () {
+                $(preview_profile_img).attr("src", fileReader.result);
+                // console.log("fileReader.result => ", fileReader.result);
+                $("#icon_label").hide();
+            };
+        } else { // 파일을 업로드하지 않은 경우
+            $(preview_profile_img).attr("src", `${contextPath}/images/no_profile.png`); // 미리보기 이미지 초기화
+            console.log("$(e.target).get(0).value => ", $(e.target).get(0).value);
+            $(e.target).get(0).value = ""; // 파일 value 도 초기화
+            $("#icon_label").show();
+        }// 
+
+    });//$("input#file_input").change(function (e) {}...
+
+
     // $("div.error").hide();
-    $("input#member_id").focus();
+    // $("input#member_id").focus();
 
     // $("input#name").bind("blur", function(e){ alert("name 에 있던 포커스를 잃어버렸습니다."); }); 
     // 또는
@@ -311,6 +377,8 @@ $(document).ready(function () {
             // 마지막 전화번호 4자리가 정규표현식에 맞는 경우
             $(`telerror`).html("");
             $("input#member_tel").val($("input#hp1").val() + $("input#hp2").val() + $("input#hp3").val()); // 만들어라
+            // console.log("전화번호 완성 => ", $("input#member_tel").val());
+            
         }
 
     });// 아이디가 hp3 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다. 
@@ -347,7 +415,7 @@ $(document).ready(function () {
         // === 두번째 방법 === //
         $.ajax({
             url: `${contextPath}/member/idDuplicateCheck`, //              /member/ 까진 똑같아서 제외함
-            data: { "member_id": $(`input#member_id`).val() }, // data 속성은 http://localhost:9090/MyMVC/member/idDuplicateCheck.up 로 전송해야할 데이터를 말한다.
+            data: { "member_id": $(`input#member_id`).val() }, // json 모양 파라미터(객체 아님!!)
             type: "post",  // 빼면 get 방식
             async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
             // async:false 가 동기 방식이다. 지도를 할때는 반드시 동기방식인 async:false 을 사용해야만 지도가 올바르게 나온다.
@@ -405,14 +473,12 @@ $(document).ready(function () {
         } else {
             // 데이터 베이스 검사 후 중복이 안되면 true 값을 반환, 인증메일 발송
             $.ajax({
-                url: `${contextPath}/member/emailCheck_Send`, //              /member/ 까진 똑같아서 제외함
-                data: { "member_email": $(`input#member_email`).val() }, // // data 속성은 http://localhost:9090/MyMVC/member/emailDuplicateCheck.up 로 전송해야할 데이터를 말한다.
+                url: `${contextPath}/member/emailCheck_Send`, //
+                data: { "member_email": $(`input#member_email`).val() },
                 type: "post",  // 빼면 get 방식
                 async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
                 // async:false 가 동기 방식이다. 지도를 할때는 반드시 동기방식인 async:false 을 사용해야만 지도가 올바르게 나온다.
                 dataType: "json", // Javascript Standard Object Notation.  dataType은 /MyMVC/member/idDuplicateCheck.up 로 부터 실행되어진 결과물을 받아오는 데이터타입을 말한다. 
-                // 만약에 dataType:"xml" 으로 해주면 /MyMVC/member/idDuplicateCheck.up 로 부터 받아오는 결과물은 xml 형식이어야 한다. 
-                // 만약에 dataType:"json" 으로 해주면 /MyMVC/member/idDuplicateCheck.up 로 부터 받아오는 결과물은 json 형식이어야 한다.
 
                 success: function (json) { //    
                     console.log("json => ", json);
@@ -449,14 +515,12 @@ $(document).ready(function () {
 
         } else { // true 여야 데이터 베이스에 들어감
             $.ajax({
-                url: `${contextPath}/member/emailAuth`, //              /member/ 까진 똑같아서 제외함
-                data: { "email_auth_text": $(`input#email_auth`).val() }, // data 속성은 http://localhost:9090/MyMVC/member/emailDuplicateCheck.up 로 전송해야할 데이터를 말한다.
+                url: `${contextPath}/member/emailAuth`,
+                data: { "email_auth_text": $(`input#email_auth`).val() },
                 type: "post",  // 빼면 get 방식
                 async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
                 // async:false 가 동기 방식이다. 지도를 할때는 반드시 동기방식인 async:false 을 사용해야만 지도가 올바르게 나온다.
                 dataType: "json", // Javascript Standard Object Notation.  dataType은 /MyMVC/member/idDuplicateCheck.up 로 부터 실행되어진 결과물을 받아오는 데이터타입을 말한다. 
-                // 만약에 dataType:"xml" 으로 해주면 /MyMVC/member/idDuplicateCheck.up 로 부터 받아오는 결과물은 xml 형식이어야 한다. 
-                // 만약에 dataType:"json" 으로 해주면 /MyMVC/member/idDuplicateCheck.up 로 부터 받아오는 결과물은 json 형식이어야 한다.
 
                 success: function (json) { //    
 
@@ -504,64 +568,176 @@ $(document).ready(function () {
 
 
 
+
     // 지역 자동검색
-    $("div#displayList").hide(); // 먼저 검색구역 숨기기 
+    $("div#displayList").hide(); // 먼저 검색구역 숨기기
 
+    let origin_searchWord = "";
+    let idx = -1; // 방향키 자동완성 인덱스 초기값
     // 지역 검색어 입력 시
-    $("input[name='member_region']").keyup(function (e) {
+    $("input[name='region_name']").keyup(function (e) {
 
-        // 변경될 때마다 $("input[name='member_region_no']").val(); 값을 초기화 해준다.
-        $("input[name='member_region_no']").val("");
+        // 변경될 때마다 $("input[name='fk_region_no']").val(); 값을 초기화 해준다.
+        $("input[name='fk_region_no']").val("");
+
+
+        // input 에서 한글입력키를 쓰면 무조건 229 가 된다.
+        // 결론부터 말씀드리자면, input에서 한글자판 사용시 IME에서 메시지를 가로채기 때문에 keyCode가 229를 가리키는 것이었습니다.
+        if (e.keyCode == 229) {
+            return;
+        }//
 
         const wordLength = $(this).val().trim().length; // 검색어에서 공백을 제외한 길이
 
         if (wordLength == 0) {
             $("div#displayList").hide();
+            return;
             // 검색어가 공백이거나 검색어 입력후 백스페이스키를 눌러서 검색어를 모두 지우면 검색된 내용이 안 나오도록 해야 한다.
+        }//end of if (wordLength == 0) {}...
+
+        // 방향키 위아래로 해서 검색어 입력
+        switch (e.keyCode) {
+            case 13: // 엔터입력시 유효성검사
+
+                let flag = false; // 깃발
+
+                region_search_arr.forEach((item, index, array) => {
+                    if ($(this).val() == item.region_name) { // 검색 목록에 정확하게 들어맞으면
+                        $("input[name='fk_region_no']").val(item.region_no);
+                        idx = -1; // 인덱스 초기화!
+                        flag = true;
+                        return;
+                    }
+                });
+
+                if (flag) {
+                    $("div#regionerror").html("").hide();
+                    $("div#displayList").hide(); // 검색창 감추기
+                    console.log("히든 인풋1 region_no => ", $("input[name='fk_region_no']").val());
+                    // console.log("이거는 여기 와야해서 뜬다!");
+
+                } else {
+                    $("div#regionerror").html(`목록에 있는 지역만 입력해주십시오!`).css({ "color": "red" }).show();
+                    $("div#displayList").hide(); // 검색창 감추기
+                    // console.log("이거 뜨면 목록에 어쩌구에 뜬다!");
+
+                    return;
+                }//end of if (flag) {}...
+
+                break;
+
+            case 40: // 아래키 입력시 목록 이동 선택
+
+                $("div#displayList").show(); // 검색창 보이기
+                if (region_search_arr.length != 0) { // 검색된 결과 없으면 선택 못하도록
+                    
+                    if (idx == -1) { // 
+                        origin_searchWord = $(this).val(); // 스트링에 원래 값을 넣어준다.
+                        $("li.result").eq(++idx).addClass("searchWordSelected");    // 첫번째 인덱스
+                        $(this).val(region_search_arr[idx].region_name);
+                        // $("input[name='fk_region_no']").val(region_search_arr[idx].region_no);
+                    } else {
+                        if (idx == region_search_arr.length - 1) {
+                            $("li.result").eq(idx).removeClass("searchWordSelected");    // 첫번째 인덱스
+                            idx = 0; // 인덱스 0 으로 초기화
+                            $("li.result").eq(idx).addClass("searchWordSelected");    // 첫번째 인덱스
+                            $(this).val(region_search_arr[idx].region_name);
+                            // $("input[name='fk_region_no']").val(region_search_arr[idx].region_no);
+                            console.log("region_search_arr 아래키입력 => ", region_search_arr);
+    
+                        } else {
+                            $("li.result").eq(idx).removeClass("searchWordSelected");   // 선택된 인덱스 클래스 삭제
+                            $("li.result").eq(++idx).addClass("searchWordSelected");    // 다음
+                            $(this).val(region_search_arr[idx].region_name);                // 오류나는 부분. 고치장
+                            // $("input[name='fk_region_no']").val(region_search_arr[idx].region_no);
+                        }
+                    }//
+                } else {
+                    return;
+                }//
+
+                break;
+
+            case 38: // 윗키 입력시 목록 이동 선택
+                if (idx <= 0) { // 
+                    idx = -1; // 정확하게 명시하여 초기화
+                    $("div#displayList").hide(); // 검색창 감추기
+                    $(this).val(origin_searchWord);
+                } else {
+                    $("li.result").eq(idx).removeClass("searchWordSelected");   // 선택된 인덱스 클래스 삭제
+                    $("li.result").eq(--idx).addClass("searchWordSelected");    // 이전
+                    $(this).val(region_search_arr[idx].region_name);
+                    // $("input[name='fk_region_no']").val(region_search_arr[idx].region_no);
+                    console.log("region_search_arr 윗키입력 => ", region_search_arr);
+                }
+                break;
+
+            default:
+                ajax_search() // 지역검색 검색창 보이기
+                break;
+            // default code
+
+        };//end of switch...
+
+    });//end of $("input[name='region_name']").keyup(function (e) {}...
+
+    // 검색어 바뀌면 초기화
+    $("input[name='region_name']").on("input", function (e) {
+        origin_searchWord = "";
+    });
+
+
+    // 검색어 input 블러 처리
+    $(document).on("blur", "input[name='region_name']", function (e) {
+
+        let flag = false; // 깃발
+
+        region_search_arr.forEach((item, index, array) => {
+            if ($(this).val() == item.region_name) { // 검색 목록에 정확하게 들어맞으면
+                $("input[name='fk_region_no']").val(item.region_no);
+                flag = true;
+                return;
+            }
+        });
+
+        if (flag) {
+            $("div#regionerror").html("").hide();
+            $("div#displayList").hide(); // 검색창 감추기
+            idx = -1; // 인덱스 초기화!
+            console.log("히든 인풋1 region_no => ", $("input[name='fk_region_no']").val());
+            console.log("이거는 여기 와야해서 뜬다!");
+
         } else {
-            ajax_search(); // 지역 검색
+            $("div#regionerror").html(`목록에 있는 지역만 입력해주십시오!`).css({ "color": "red" }).show();
+            $("div#displayList").hide(); // 검색창 감추기
+            idx = -1;
+            console.log("이거 뜨면 목록에 어쩌구에 뜬다!");
 
-        }//end of if else (wordLength == 0) {}...
+            return;
+        }//end of if (flag) {}...
 
-        // 문장 입력 후 엔터를 선택 시 값 넣어주기
-        if (e.keyCode == 13) { // 엔터
-            // console.log("검색되는 인풋값 => " ,$("input[name='member_region']").val());
-
-            ajax_search_keyWord();
-        }//
-
-
-    });//end of $("input[name='member_region']").keyup(function (e) {}...
+    });//end of $(document).on("blur", "input[name='region_name']", function (e) {}...
 
 
-    // 검색어 입력시 자동글 완성하기
-    $(document).on("click", "span.result", function (e) {
 
+    // // 이거 체인지 이벤트 상위호환이다. 엔터 막는 용
+    // $("input[name='region_name']").on("input", function (e) {
+
+    // });//end of 
+
+
+
+    // 검색어 클릭시 완성하기
+    $(document).on("mousedown", "li[name='result_a']", function (e) {
         const word = $(e.target).text();
         const no = $(e.target).children("input[name='no_result']").val();
         // $("input[name='no_result']").val();
-        $("input[name='member_region']").val(word); // 텍스트 박스에 검색된 결과의 문자열을 입력해준다.
-        $("input[name='member_region_no']").val(no);
+        $("input[name='region_name']").val(word); // 텍스트 박스에 검색된 결과의 문자열을 입력해준다.
+        $("input[name='fk_region_no']").val(no);
         $("div#displayList").hide();
-        // console.log("히든 인풋태그 번호 => ", $("input[name='member_region_no']").val());
+        // console.log("히든 인풋태그 번호 => ", $("input[name='fk_region_no']").val());
 
     });//end of $(document).on("click", "span.result", function(e) {}...
-
-
-
-    // // 지역 검색 시 히든 input 태그 안에 번호가 없다면 예외처리
-    // $(document).on("keyup", "input[name='member_region']", function(e) {
-
-    //     if(e.keyCode == 13) { // 엔터
-    //        // 에이젝스 실행
-    //     }//
-
-    // });//    
-
-
-
-
-
 
 
 
@@ -586,6 +762,8 @@ $(document).ready(function () {
         $("input#agree_checkbox").prop("checked", true); // 체크
 
     });//end of $("button#btn_agree").on("click", function (e) {}...
+
+    // ====================================================================================================================== //
 
 
 });// end $(document).ready(function(){})----------------------
@@ -619,9 +797,9 @@ function goRegister() {
 
     // // *** 지역에 값을 입력했는지 검사하기 시작 *** //
     // arr_addressInfo.push($("input#postcode").val());
-    const member_region = $("input#member_region").val().trim();
+    const region_name = $("input#region_name").val().trim();
 
-    if (member_region == "") {
+    if (region_name == "") {
         alert("우편번호 및 주소를 입력하셔야 합니다.");
         return;
     }
@@ -664,7 +842,7 @@ function goRegister() {
 
     // 발송 서브밋
     const frm = document.registerFrm;
-    frm.action = "/member/memberRegister";
+    frm.action = `${contextPath}/member/memberRegister`;
     frm.method = "post";
     frm.submit();
 
@@ -678,45 +856,55 @@ function goRegister() {
 
 
 
+// let region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
 function ajax_search() {
+
+    const li_id = "_a";
 
     // 지역 검색어 입력 ajax
     $.ajax({
-        url: `${contextPath}/member/regionSearch`,
+        url: `${contextPath}/api/member/region/search`,
         type: "get",
+        // async: false,
         data: {
-            "member_region": $("input[name='member_region']").val()
+            "region_name": $("input[name='region_name']").val()
         },
         dataType: "json",
         success: function (json) {
-            console.log(JSON.stringify(json));
+            // console.log(JSON.stringify(json));
+            region_search_arr = json;
+            console.log("region_search_arr => ", JSON.stringify(region_search_arr));
 
-            // === #93 검색어 입력시 자동글 완성하기
+            // === 검색어 입력시 자동글 완성하기
             if (json.length > 0) {
                 // 검색된 데이터가 있는 경우
-                let v_html = ``;
+                let v_html = `<ul style="list-style:none; padding: 0; margin-left: 0;">`;
 
                 $.each(json, function (index, item) {
                     const word = item.region_name;
+                    const no = item.region_no;
+
                     // word.toLowerCase()은 word 를 모두 소문자로 변경하는 것이다.
 
                     // 검색된 태그 안에 no 넣어주기
                     no_result = `<input type="hidden" name="no_result" value="${item.region_no}" />`;
 
-                    const idx = word.toLowerCase().indexOf($("input[name='member_region']").val().toLowerCase());
+                    const idx = word.toLowerCase().indexOf($("input[name='region_name']").val().toLowerCase());
 
-                    const len = $("input[name='member_region']").val().length;
+                    const len = $("input[name='region_name']").val().length;
 
                     result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
 
-                    v_html += `<span style='cursor:pointer;' class='result'>${result}${no_result}</span><br>`;
+                    v_html += `<li style='cursor:pointer;' name='result${li_id}' class='result'>${result}${no_result}</li>`;
 
                 });// end of $.each(json, function(index, item) {})-------------------
+
+                v_html += `</ul>`;
 
                 $("div#displayList").html(v_html).show(); // 보여줘라
 
             } else {
-                $("div#displayList").hide();
+                $("div#displayList").html("검색된 값이 없습니다.").show();
             }//end of if (json.length > 0) {}...
 
         },
@@ -726,47 +914,6 @@ function ajax_search() {
     });
 
 }//end of function ajax_search() {}...
-
-
-
-
-
-
-
-// 키워드 바로 엔터시 예외처리 함수
-function ajax_search_keyWord() {
-
-    // 지역 검색어 직접 입력 ajax
-    $.ajax({
-        url: `${contextPath}/member/regionKeyWordSearch`,
-        type: "get",
-        data: {
-            "member_region": $("input[name='member_region']").val()
-        },
-        dataType: "json",
-        success: function (json) {
-            console.log(JSON.stringify(json));
-
-            // === 검색어 입력시 직접 검색된 값 넣어주기
-            if (json.word != null) { // null 대신 넣었다.
-                $("div#regionerror").html("").hide();
-                $("input[name='member_region_no']").val(json.no);
-                $("div#displayList").hide(); // 검색창 감추기
-
-            } else {
-                $("div#regionerror").html(`목록에 있는 지역만 입력해주십시오!`).css({ "color": "red" }).show();
-            }//end of if (json.length > 0) {}...
-
-        },
-        error: function (request, status, error) {
-            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-        }
-    });
-
-}//end of function ajax_search_keyWord() {}...
-
-
-
 
 
 

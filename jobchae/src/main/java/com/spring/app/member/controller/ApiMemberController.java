@@ -46,21 +46,7 @@ public class ApiMemberController {
 	@GetMapping("region/search")
 	public List<Map<String, String>> regionSearch(@RequestParam String region_name) {
 		// 입력한 검색어 찾기
-		List<Map<String, String>> regionList = service.regionSearchShow(region_name); 
-
-		// 담을 맵 선언
-		List<Map<String, String>> mapList = new ArrayList<>();
-
-		if (regionList != null) {
-			for (Map<String, String> regionMap : regionList) {
-				Map<String, String> map = new HashMap<>();
-				map.put("region_no", regionMap.get("REGION_NO")); 
-				map.put("region_name", regionMap.get("REGION_NAME")); // REGION_NO, REGION_NAME
-				mapList.add(map);
-			} // end of for...
-		}
-		
-		return mapList;
+		return service.regionSearchShow(region_name);
 	
 	}//end of public List<Map<String, String>> regionSearch(@RequestParam String member_region) {}...
 	
