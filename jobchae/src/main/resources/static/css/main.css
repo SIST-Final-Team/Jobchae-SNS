@@ -1,2 +1,5 @@
 @import "tailwindcss";
 @import "./header/header.css";
+@import "./feed/board.css";
+@import "./feed/board2.css";
+@import "./feed/boardTail.css";
