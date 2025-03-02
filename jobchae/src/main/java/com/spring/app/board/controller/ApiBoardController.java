@@ -273,15 +273,20 @@ public class ApiBoardController {
 		paraMap.put("fk_member_id", fk_member_id);
 		paraMap.put("bookmark_target_no", bookmark_target_no);
 		boolean isBookmarked = service.selectBookmarkBoard(paraMap);
-
+		//System.out.println("isBookmarked : " + isBookmarked);
 		
 		Map<String, Integer> map = new HashMap<>();
-		//map.put("n", n);
+		
+		if (isBookmarked) {
+			map.put("status", 1);	// 이미 북마크된 상태
+		} else {
+			map.put("status", 0);
+		}
 		
 		return map; 
 	}
 	
-	// 북마크 추가하기
+	// 게시글 북마크 추가하기
 	@PostMapping("addBookmarkBoard")
 	@ResponseBody
 	public Map<String, Integer> addBookmarkBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String bookmark_target_no) {
@@ -293,6 +298,25 @@ public class ApiBoardController {
 		paraMap.put("fk_member_id", fk_member_id);
 		paraMap.put("bookmark_target_no", bookmark_target_no);
 		int n = service.addBookmarkBoard(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		
+		return map; 
+	}
+	
+	// 게시글 북마크 삭제하기
+	@PostMapping("deleteBookmarkBoard")
+	@ResponseBody
+	public Map<String, Integer> deleteBookmarkBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String bookmark_target_no) {
+
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("bookmark_target_no : " + bookmark_target_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("bookmark_target_no", bookmark_target_no);
+		int n = service.deleteBookmarkBoard(paraMap);
 		
 		Map<String, Integer> map = new HashMap<>();
 		map.put("n", n);

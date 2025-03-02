@@ -143,10 +143,24 @@ public class BoardService_imple implements BoardService {
 		return reaction_membervoList;
 	}
 
-	// 북마크 추가하기
+	// 게시글 북마크 추가하기
 	@Override
 	public int addBookmarkBoard(Map<String, String> paraMap) {
 		int n = dao.addBookmarkBoard(paraMap);
+		return n;
+	}
+
+	// 게시글 북마크 조회하기
+	@Override
+	public boolean selectBookmarkBoard(Map<String, String> paraMap) {
+		int n = dao.selectBookmarkBoard(paraMap);
+		return n > 0;
+	}
+
+	// 게시글 북마크 삭제하기
+	@Override
+	public int deleteBookmarkBoard(Map<String, String> paraMap) {
+		int n = dao.deleteBookmarkBoard(paraMap);
 		return n;
 	}
 

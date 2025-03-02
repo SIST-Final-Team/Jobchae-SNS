@@ -64,8 +64,14 @@ public interface BoardService {
 	// 게시물 반응별 유저 조회하기
 	List<MemberVO> getReactionMembers(Map<String, String> paraMap);
 
-	// 북마크 추가하기
+	// 게시글 북마크 추가하기
 	int addBookmarkBoard(Map<String, String> paraMap);
+	
+	// 게시글 북마크 조회하기
+	boolean selectBookmarkBoard(Map<String, String> paraMap);
+
+	// 게시글 북마크 삭제하기
+	int deleteBookmarkBoard(Map<String, String> paraMap);
 
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);

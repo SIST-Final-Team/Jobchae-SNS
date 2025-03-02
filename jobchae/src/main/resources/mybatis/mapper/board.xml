@@ -191,4 +191,18 @@
 		values(seq_bookmark_no.nextVal, #{fk_member_id}, #{bookmark_target_no}, 'board', default)
 	</insert>
 	
+	<!-- 게시글 북마크 조회하기 -->
+	<select id="selectBookmarkBoard" parameterType="HashMap">
+		select count(*)
+		from tbl_bookmark
+		where fk_member_id = #{fk_member_id} and bookmark_target_no = #{bookmark_target_no}
+	</select>
+	
+	<!-- 게시글 북마크 삭제하기 -->
+	<delete id="deleteBookmarkBoard" parameterType="HashMap">
+		delete from tbl_bookmark
+		where fk_member_id = #{fk_member_id} and bookmark_target_no = #{bookmark_target_no}
+	</delete>
+	
+	
 </mapper>

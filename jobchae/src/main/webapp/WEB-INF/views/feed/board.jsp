@@ -334,7 +334,7 @@
 			}
 		});
 		
-		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
+		///////////////////////////////////////////////////////////////////////////////////////// 
     	// 글 옵션
 	    $(".more-options").click(function (e) {
 	    	const fk_member_id = document.getElementById("loginuserID").value;
@@ -353,8 +353,12 @@
 						   "bookmark_target_no": bookmark_target_no},
 					success: function(json) {
 
-					
-					
+						//alert("북마크 상태: " + json.status);
+						if (json.status == 1) {
+							$("li.bookmark-post[value='" + bookmark_target_no + "']").text("북마크 해제");
+						} else {
+							$("li.bookmark-post[value='" + bookmark_target_no + "']").text("북마크");
+						}
 					
 					},
 			        error: function(request, status, error){
@@ -533,28 +537,52 @@
             }
         });
 		
-		///////////////////////////////////////////////////////////////////////////////////////// 여기
+		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
 		// 북마크
 		$(".bookmark-post").click(function() {
 			const fk_member_id = document.getElementById("loginuserID").value;
 			const bookmark_target_no = $(this).attr("value");
 			//alert(fk_member_id + " " + bookmark_target_no);
 			
-			$.ajax({
-				url: '${pageContext.request.contextPath}/api/board/addBookmarkBoard',
-				type: 'post',
-				dataType: 'json',
-				data: {"fk_member_id": fk_member_id,
-					   "bookmark_target_no": bookmark_target_no},
-				success: function(json) {
-					if(json.n == 1) {
-					 	location.reload();
-					}
-		        },
-		        error: function(request, status, error){
-					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-			 	}
-			});
+			const text = $(this).text();  
+   			//alert("클릭한 텍스트: " + text);
+   			
+   			if (text == "북마크") {
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/api/board/addBookmarkBoard',
+   					type: 'post',
+   					dataType: 'json',
+   					data: {"fk_member_id": fk_member_id,
+   						   "bookmark_target_no": bookmark_target_no},
+   					success: function(json) {
+   						if(json.n == 1) {
+   							alert("해당 게시글이 북마크에 추가되었습니다.");
+   						 	location.reload();
+   						}
+   			        },
+   			        error: function(request, status, error){
+   						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+   				 	}
+   				});
+   			} else {
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/api/board/deleteBookmarkBoard',
+   					type: 'post',
+   					dataType: 'json',
+   					data: {"fk_member_id": fk_member_id,
+   						   "bookmark_target_no": bookmark_target_no},
+   					success: function(json) {
+   						if(json.n == 1) {
+   							alert("북마크가 정상적으로 해제되었습니다.");
+   						 	location.reload();
+   						}
+   			        },
+   			        error: function(request, status, error){
+   						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+   				 	}
+   				});
+   			}
+
 		});
 		
 		
@@ -1043,7 +1071,7 @@
 								                <li class="set-board-range" value="${boardvo.board_no}">허용범위</li>
 								            </c:when>
 								            <c:otherwise>
-								            	<li class="bookmark-post" value="${boardvo.board_no}">북마크</li>
+								            	<li class="bookmark-post" value="${boardvo.board_no}"></li>
 								                <li class="interest-none" value="${boardvo.board_no}">관심없음</li>
 								            </c:otherwise>
 								        </c:choose>
