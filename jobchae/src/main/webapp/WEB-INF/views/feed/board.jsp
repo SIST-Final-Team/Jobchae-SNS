@@ -973,7 +973,7 @@
                         </div>
                         <div class="flex-1">
                         	<!-- 글 작성 -->
-	                        <button class="write-button">                   
+	                        <button class="write-button button-board-action">                   
 	                            <span>
 	                                <span>
 	                                    <span class="write-span">
@@ -1258,7 +1258,23 @@
 	                            </li>
 	                        </ul>
 	                    </div>
-	                </div>
+	                    
+	                    
+	                    <!-- 댓글창 -->
+		                <div class="comment-input-container" id="commentInputContainer">
+						    <div class="profile-image">
+						        <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /> 
+						    </div>
+						    <div class="comment-input button-board-action" >
+						        <input type="text" placeholder="댓글 남기기" id="commentInput">
+						        <div class="comment-actions" style="">
+						            <button class="emoji-button"></button>
+						            <button class="image-upload-button">️</button>
+						        </div>
+						    </div>
+						</div>
+	                </div> <!-- div.comment-input-container 끝 -->
+					  
                	</c:forEach>
            	</div> <!-- div#update 끝 -->
        	</div>
