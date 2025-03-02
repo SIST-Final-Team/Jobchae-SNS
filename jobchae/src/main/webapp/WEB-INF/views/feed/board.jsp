@@ -942,19 +942,20 @@
 
 <div class="container m-auto grid grid-cols-14 gap-6 xl:max-w-[1140px]">
 
+		<!-- 좌측 프로필 -->
+		<div class="left-side col-span-3 hidden md:block h-full relative">
+		    <div class="border-normal sticky top-20">
+		        
+		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/images/쉐보레전면.jpg'); background-size: cover; background-position: center;"></div>
+		        
+		        <div class="flex flex-col items-center p-4 -mt-10">
+		            <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
+		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
+		            <p class="text-gray-500 text-sm">팔로워 0명</p>
+		        </div>
 		
-        <!-- 좌측 네비게이션 -->
-        <div class="left-side col-span-3 hidden md:block h-full relative">
-            <div class="border-normal sticky top-20">
-                <h1 class="h1 p-4">이 페이지에는</h1>
-                <ul class="nav">
-                    <li class="nav-selected"><a href="#update">업데이트</a></li>
-                    <li><a href="#member">사람</a></li>
-                    <li><a href="#company">회사</a></li>
-                    <li><a href="#updateMore">업데이트 더보기</a></li>
-                </ul>
-            </div>
-        </div>
+		    </div>
+		</div>
 
         
         <!-- 중앙 본문 -->
