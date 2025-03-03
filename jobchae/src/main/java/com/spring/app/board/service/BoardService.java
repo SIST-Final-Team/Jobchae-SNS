@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.board.domain.BoardVO;
+import com.spring.app.comment.domain.CommentVO;
 import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
@@ -72,6 +73,15 @@ public interface BoardService {
 
 	// 게시글 북마크 삭제하기
 	int deleteBookmarkBoard(Map<String, String> paraMap);
+
+	// 댓글 등록하기
+	int addComment(Map<String, String> paraMap);
+
+	// 댓글 조회하기
+	List<CommentVO> getAllComments();
+
+	// 댓글 수 구하기
+	int getCommentCount(String board_no);
 
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);

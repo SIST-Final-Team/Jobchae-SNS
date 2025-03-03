@@ -324,4 +324,25 @@ public class ApiBoardController {
 		return map; 
 	}
 	
+	// 댓글 등록하기
+	@PostMapping("addComment")
+	@ResponseBody
+	public Map<String, Integer> addComment(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_content) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("comment_content : " + comment_content);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("comment_content", comment_content);
+		int n = service.addComment(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
 }

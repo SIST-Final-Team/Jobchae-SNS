@@ -30,7 +30,8 @@ public class BoardVO {
 	private String member_name;	
 	private List<FileVO> fileList;
 	private String countFollow;
-	
+	private String countComment;
+
 
 	public String getMember_id() {
 		return member_id;
@@ -61,6 +62,14 @@ public class BoardVO {
 
 	public void setCountFollow(String countFollow) {
 		this.countFollow = countFollow;
+	}
+	
+	public String getCountComment() {
+		return countComment;
+	}
+
+	public void setCountComment(String countComment) {
+		this.countComment = countComment;
 	}
 	///////////////////////////////////////////////////////////
 

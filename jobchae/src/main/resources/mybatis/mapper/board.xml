@@ -205,4 +205,26 @@
 	</delete>
 	
 	
+	<!-- 댓글 등록하기 -->
+	<insert id="addComment" parameterType="HashMap">
+		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
+		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, #{fk_board_no}, 0, default, default)
+	</insert>
+	
+	<!-- 댓글 조회하기 -->
+	<select id="getAllComments" resultType="CommentVO">
+		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
+		from tbl_comment c
+		join tbl_member m
+		on c.fk_member_id = m.member_id
+	</select>
+	
+	<!-- 댓글 수 구하기 -->
+	<select id="getCommentCount" parameterType="String">
+		select count(*) as comment_count
+		from tbl_comment
+		where fk_board_no = #{board_no}
+	</select>
+	
+	
 </mapper>

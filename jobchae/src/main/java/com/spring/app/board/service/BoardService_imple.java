@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.model.BoardDAO;
+import com.spring.app.comment.domain.CommentVO;
 import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
@@ -161,6 +162,27 @@ public class BoardService_imple implements BoardService {
 	@Override
 	public int deleteBookmarkBoard(Map<String, String> paraMap) {
 		int n = dao.deleteBookmarkBoard(paraMap);
+		return n;
+	}
+
+	// 댓글 등록하기
+	@Override
+	public int addComment(Map<String, String> paraMap) {
+		int n = dao.addComment(paraMap);
+		return n;
+	}
+
+	// 댓글 조회하기
+	@Override
+	public List<CommentVO> getAllComments() {
+		List<CommentVO> commentvoList = dao.getAllComments();
+		return commentvoList;
+	}
+
+	// 댓글 수 구하기
+	@Override
+	public int getCommentCount(String board_no) {
+		int n = dao.getCommentCount(board_no);
 		return n;
 	}
 

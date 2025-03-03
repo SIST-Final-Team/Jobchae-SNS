@@ -12,6 +12,9 @@
 
 		<typeAlias type="com.spring.app.reaction.domain.ReactionVO" alias="ReactionVO"/>
 		<typeAlias type="com.spring.app.file.domain.FileVO" alias="FileVO"/>
+		<typeAlias type="com.spring.app.comment.domain.CommentVO" alias="CommentVO"/>
+		
+		
 	</typeAliases>
 
 </configuration>

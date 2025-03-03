@@ -334,9 +334,39 @@
 			}
 		});
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////// 
     	// 글 옵션
 	    $(".more-options").click(function (e) {
+	    	const fk_member_id = document.getElementById("loginuserID").value;
+	    	const board_fk_member_id = $(this).siblings(".board-fk_member_id").val();
+	    	const bookmark_target_no = $(this).attr("value");
+	    	
+	    	//console.log("fk_member_id " + fk_member_id)
+	    	//console.log("board_fk_member_id " + board_fk_member_id)
+	    	
+	    	if (fk_member_id != board_fk_member_id) {
+	    		$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/selectBookmarkBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_member_id": fk_member_id,
+						   "bookmark_target_no": bookmark_target_no},
+					success: function(json) {
+
+						//alert("북마크 상태: " + json.status);
+						if (json.status == 1) {
+							$("li.bookmark-post[value='" + bookmark_target_no + "']").text("북마크 해제");
+						} else {
+							$("li.bookmark-post[value='" + bookmark_target_no + "']").text("북마크");
+						}
+					
+					},
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	    	}
+	    	
 	        e.stopPropagation(); 
 	        let dropdown = $(this).siblings(".options-dropdown");
 	        $(".options-dropdown").not(dropdown).hide(); 
@@ -507,28 +537,52 @@
             }
         });
 		
-		///////////////////////////////////////////////////////////////////////////////////////// 여기
+		///////////////////////////////////////////////////////////////////////////////////////// 
 		// 북마크
 		$(".bookmark-post").click(function() {
 			const fk_member_id = document.getElementById("loginuserID").value;
 			const bookmark_target_no = $(this).attr("value");
 			//alert(fk_member_id + " " + bookmark_target_no);
 			
-			$.ajax({
-				url: '${pageContext.request.contextPath}/api/board/addBookmarkBoard',
-				type: 'post',
-				dataType: 'json',
-				data: {"fk_member_id": fk_member_id,
-					   "bookmark_target_no": bookmark_target_no},
-				success: function(json) {
-					if(json.n == 1) {
-					 	location.reload();
-					}
-		        },
-		        error: function(request, status, error){
-					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-			 	}
-			});
+			const text = $(this).text();  
+   			//alert("클릭한 텍스트: " + text);
+   			
+   			if (text == "북마크") {
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/api/board/addBookmarkBoard',
+   					type: 'post',
+   					dataType: 'json',
+   					data: {"fk_member_id": fk_member_id,
+   						   "bookmark_target_no": bookmark_target_no},
+   					success: function(json) {
+   						if(json.n == 1) {
+   							alert("해당 게시글이 북마크에 추가되었습니다.");
+   						 	location.reload();
+   						}
+   			        },
+   			        error: function(request, status, error){
+   						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+   				 	}
+   				});
+   			} else {
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/api/board/deleteBookmarkBoard',
+   					type: 'post',
+   					dataType: 'json',
+   					data: {"fk_member_id": fk_member_id,
+   						   "bookmark_target_no": bookmark_target_no},
+   					success: function(json) {
+   						if(json.n == 1) {
+   							alert("북마크가 정상적으로 해제되었습니다.");
+   						 	location.reload();
+   						}
+   			        },
+   			        error: function(request, status, error){
+   						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+   				 	}
+   				});
+   			}
+
 		});
 		
 		
@@ -779,6 +833,46 @@
 	        return Math.floor(diff / 31536000) + "년 전"; 
 	    }
 		
+		
+		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
+		// 댓글
+		$(".button-board-action-comment").click(function() {
+			
+		});
+
+		$(".comment-submit-button").click(function() {
+			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
+			//alert("클릭" + fk_board_no);
+			
+			const fk_member_id = document.getElementById("loginuserID").value;
+			
+			const comment_content = $(this).closest('.comment-input-container').find('#commentInput').val().trim(); 
+			//alert(comment_content);
+			
+			if (comment_content == "") {
+				alert("댓글 내용을 입력해주세요.");
+				$(this).closest('.comment-input-container').find('#commentInput').val('');
+				return;
+			} else {
+				$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/addComment',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_board_no": fk_board_no,
+						   "fk_member_id": fk_member_id,
+						   "comment_content" : comment_content},
+					success: function(json) {
+						if(json.n == 1) {
+							$(this).closest('.comment-input-container').find('#commentInput').val('');
+							alert("댓글이 등록되었습니다.")
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+			}
+		});
 	
 	});
     
@@ -888,19 +982,20 @@
 
 <div class="container m-auto grid grid-cols-14 gap-6 xl:max-w-[1140px]">
 
+		<!-- 좌측 프로필 -->
+		<div class="left-side col-span-3 hidden md:block h-full relative">
+		    <div class="border-normal sticky top-20">
+		        
+		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/images/쉐보레전면.jpg'); background-size: cover; background-position: center;"></div>
+		        
+		        <div class="flex flex-col items-center p-4 -mt-10">
+		            <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
+		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
+		            <p class="text-gray-500 text-sm">팔로워 0명</p>
+		        </div>
 		
-        <!-- 좌측 네비게이션 -->
-        <div class="left-side col-span-3 hidden md:block h-full relative">
-            <div class="border-normal sticky top-20">
-                <h1 class="h1 p-4">이 페이지에는</h1>
-                <ul class="nav">
-                    <li class="nav-selected"><a href="#update">업데이트</a></li>
-                    <li><a href="#member">사람</a></li>
-                    <li><a href="#company">회사</a></li>
-                    <li><a href="#updateMore">업데이트 더보기</a></li>
-                </ul>
-            </div>
-        </div>
+		    </div>
+		</div>
 
         
         <!-- 중앙 본문 -->
@@ -918,7 +1013,7 @@
                         </div>
                         <div class="flex-1">
                         	<!-- 글 작성 -->
-	                        <button class="write-button">                   
+	                        <button class="write-button button-board-action">                   
 	                            <span>
 	                                <span>
 	                                    <span class="write-span">
@@ -1000,8 +1095,9 @@
                             				<!--  <i class="fa-solid fa-plus"></i>&nbsp;팔로우-->
 		                            	</button>
 	                            	</c:when>
-                            	</c:choose>
-	                            <button type="button" class="more-options"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
+                            	</c:choose> 
+	                            <button type="button" class="more-options" value="${boardvo.board_no}"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
+	                            <input type="hidden" class="board-fk_member_id" value="${boardvo.fk_member_id}" data-board-content="${boardvo.fk_member_id}" />
 	                            <input type="hidden" class="board-content" value="${boardvo.board_content}" data-board-content="${boardvo.board_content}" />
 	                            <input type="hidden" class="board-visibility-origin" value="${boardvo.board_visibility}" data-board-content="${boardvo.board_visibility}" />
 	                            <input type="hidden" class="board-comment-allowed-origin" value="${boardvo.board_comment_allowed}" data-board-content="${boardvo.board_comment_allowed}" />
@@ -1016,7 +1112,7 @@
 								                <li class="set-board-range" value="${boardvo.board_no}">허용범위</li>
 								            </c:when>
 								            <c:otherwise>
-								            	<li class="bookmark-post" value="${boardvo.board_no}">북마크</li>
+								            	<li class="bookmark-post" value="${boardvo.board_no}"></li>
 								                <li class="interest-none" value="${boardvo.board_no}">관심없음</li>
 								            </c:otherwise>
 								        </c:choose>
@@ -1183,7 +1279,7 @@
 								    </span>
 	                            </li>
 	                            <li>
-	                                <button type="button" class="button-board-action">
+	                                <button type="button" class="button-board-action button-board-action-comment">
 	                                    <i class="fa-regular fa-comment"></i>
 	                                    <span>댓글</span>
 	                                </button>
@@ -1201,8 +1297,69 @@
 	                                </button>
 	                            </li>
 	                        </ul>
-	                    </div>
-	                </div>
+	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
+	                    
+	                    <div class="comment-input-container" id="commentInputContainer">
+	                    	<div class="comment-profile">
+	                    		<input type="hidden" value="${boardvo.board_no}" />
+	                    		
+		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
+		                    	<div class="comment-input" >
+							        <input type="text" placeholder="댓글 남기기" id="commentInput">
+						            <button class="comment-submit-button">댓글</button>
+							    </div>	
+	                    	</div>
+	                    	
+	                    	<div class="comment-list-container">
+	                    		<div class="comment-sort">
+	                    			<select id="sortOption">
+						                <option value="recent">최신순</option>
+						                <option value="relevant">관련순</option>
+						            </select>
+	                    		</div>
+	                    	</div>
+	                    	
+	                    	<ul class="comment-list">
+	                    		<li class="comment-item">
+									<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+									<div class="comment-content">
+										<div class="comment-info">
+											<span class="comment-author">이름</span>
+											<span class="comment-relationship">팔로워 0명</span>
+											<span class="comment-date">5일</span>
+											<button class="comment-options">...</button>
+										</div>
+										<div class="comment-text">댓글내용 !!!!</div>
+										<div class="comment-actions">
+											<button class="like-button">추천</button>
+						                    <span>|</span>
+						                    <button class="reply-button">답장</button>
+						                </div>
+									</div>                  		
+	                    		</li>
+	                    		
+	                    		<li class="comment-item">
+									<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+									<div class="comment-content">
+										<div class="comment-info">
+											<span class="comment-author">이름</span>
+											<span class="comment-relationship">팔로워 0명</span>
+											<span class="comment-date">5일</span>
+											<button class="comment-options">...</button>
+										</div>
+										<div class="comment-text">댓글내용 !!!!</div>
+										<div class="comment-actions">
+											<button class="like-button">추천</button>
+						                    <span>|</span>
+						                    <button class="reply-button">답장</button>
+						                </div>
+									</div>                  		
+	                    		</li>
+	                    	</ul>
+	                    
+	                    </div> <!-- div.comment-input-container 끝 -->
+
+                    </div>
                	</c:forEach>
            	</div> <!-- div#update 끝 -->
        	</div>

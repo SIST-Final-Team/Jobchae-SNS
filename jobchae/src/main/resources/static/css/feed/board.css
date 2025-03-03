@@ -763,12 +763,15 @@ img.modal-img {
 
 /* ----- 댓글 ----- */
 .comment-input-container {
-	display: flex; 
 	align-items: center; 
-	padding: 10px; 
 	border-top: 1px solid #eee;
 }
 
+.comment-profile {
+	display: flex;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 .profile-image {
 	width: 40px; 
 	height: 40px; 
@@ -804,5 +807,81 @@ img.modal-img {
 	border: none; 
 	background: none; 
 	cursor: pointer; 
-	margin-left: 10px;
+}
+
+.comment-list-container {
+	margin-bottom: 15px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.comment-sort select {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.comment-list {
+    list-style: none;
+    padding: 0;
+}
+
+.comment-item {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.comment-content {
+    flex-grow: 1;
+}
+
+.comment-info {
+    display: flex;
+    align-items: center;
+}
+
+.comment-author {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-right: 5px;
+}
+
+.comment-relationship {
+    font-size: 0.9em;
+    color: #888;
+    margin-right: 5px;
+}
+
+.comment-date {
+    font-size: 0.9em;
+    color: #888;
+    margin-right: auto;
+}
+
+.comment-options {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-right: 12px;
+}
+
+.comment-text {
+    margin-bottom: 5px;
+}
+
+.comment-actions button {
+    background: none;
+    border: none;
+    color: gray;
+    padding: 0;
+    cursor: pointer;
+}
+
+.comment-actions span {
+	color: gray;
 }
