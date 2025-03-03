@@ -8,15 +8,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/company")
 public class ApiCompanyController {
 
-    @GetMapping("/selectCompany/{company_no}")
+    @GetMapping("/dashboard/{company_no}")
     public ResponseEntity<CompanyVO> selectCompany(@PathVariable String company_no){
         return null;
     }
 
-    @PostMapping("/insertCompany")
-    public ResponseEntity<CompanyVO> insertCompany(@RequestBody CompanyVO companyVO){
+    @PostMapping("/registerCompany")
+    public ResponseEntity<CompanyVO> registerCompany(@RequestBody CompanyVO companyVO){
 
         return  null;
     }
+
+
 
 }

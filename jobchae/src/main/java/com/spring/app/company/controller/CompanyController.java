@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/company")
 public class CompanyController {
 
-    @GetMapping()
+    @GetMapping("/dashboard")
     public String selectCompany(){
         return "company/CompanySelectTest";
     }
 
-    @GetMapping("/insertCompany")
-    public String insertCompany(){
+    @GetMapping("/registerCompany")
+    public String registerCompany(){
         return "company/formtest";
     }
 
