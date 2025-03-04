@@ -79,7 +79,7 @@ public class Datasource_jobchae_Configuration {
        -- 위처럼 @Qualifier("sqlsession")을 해주면 빈 이름이 sqlsession 인 SqlSessionTemplate 객체가 abc 에 주입된다.
     */
 
-    @Bean
+    @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager_mymvc_user() {
         DataSourceTransactionManager tm = new DataSourceTransactionManager();
         tm.setDataSource(dataSource());

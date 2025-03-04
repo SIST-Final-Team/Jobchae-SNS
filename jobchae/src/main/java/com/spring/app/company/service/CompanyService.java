@@ -8,7 +8,7 @@ public interface CompanyService {
     CompanyVO selectCompany(String company_no);
 
     //회사 입력
-    CompanyVO insertCompany(CompanyVO companyVO);
+    CompanyVO insertCompany(CompanyVO companyVO, String industryName);
 
     //회사페이지 중단
     CompanyVO deleteCompany(CompanyVO companyVO);

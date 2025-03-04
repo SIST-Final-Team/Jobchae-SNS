@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,26 +20,31 @@ pageEncoding="UTF-8"%>
    -- 9:직원 10000+ -->
   <body>
     <h1>Form Test Page</h1>
-    <form action="#" method="post">
-      <label for="name">Name :</label>
+    <form action="<%= ctxPath%>/company/registerCompany" method="post">
+      <label for="companyName">Name :</label>
       <input
         type="text"
-        id="name"
-        name="name"
+        id="companyName"
+        name="companyName"
         required
         placeholder="단체 이름을 입력하세요"
       />
       <br />
-      <label for="website">Website :</label>
+      <label for="companyWebsite">Website :</label>
       <input
         type="text"
-        id="website"
-        name="website"
+        id="companyWebsite"
+        name="companyWebsite"
         placeholder="http://www.example.com"
       />
       <br />
-      <label for="industry">Industry :</label>
-      <input type="text" id="industry" name="industry" placeholder="Software" />
+      <label for="industryName">Industry :</label>
+      <input
+        type="text"
+        id="industryName"
+        name="industryName"
+        placeholder="Software"
+      />
       <br />
       <label for="companySize">Company Size :</label>
       <select id="companySize" name="companySize">

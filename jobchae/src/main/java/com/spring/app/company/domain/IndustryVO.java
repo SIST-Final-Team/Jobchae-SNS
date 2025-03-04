@@ -26,4 +26,20 @@ public class IndustryVO {
     @NotBlank
     @Column(name = "industry_name", nullable = false, length = 50)
     private String industryName;
+
+    public Long getIndustryNo() {
+        return industryNo;
+    }
+
+    public void setIndustryNo(Long industryNo) {
+        this.industryNo = industryNo;
+    }
+
+    public String getIndustryName() {
+        return industryName;
+    }
+
+    public void setIndustryName(String industryName) {
+        this.industryName = industryName;
+    }
 }

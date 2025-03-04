@@ -34,11 +34,11 @@ public class CompanyVO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_company_no")
-    Long company_no;
+    Long companyNo;
 
     @NotBlank
     @Column(name = "fk_member_id", nullable = false, length = 20)
-    private String fk_member_id;
+    private String fkMemberId;
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
@@ -47,30 +47,108 @@ public class CompanyVO {
 
     @NotBlank
     @Column(name = "company_name", nullable = false, length = 50)
-    String company_name;
+    String companyName;
 
     @Column(name = "company_website", length = 2083)
-    String company_website;
+    String companyWebsite;
 
     @NotNull
     @Column(name = "company_size", nullable = false)
-    int company_size;
+    int companySize;
 
     @NotNull
     @Column(name = "company_type", nullable = false)
-    int company_type;
+    int companyType;
 
     @Column(name = "company_logo", length = 200)
-    String company_logo;
+    String companyLogo;
 
     @Column(name = "company_explain", length = 2000)
-    String company_explain;
+    String companyExplain;
 
     @NotNull
     @Column(name = "company_register_date", nullable = false)
-    Date company_register_date;
+    Date companyRegisterDate = new Date();
 
     public CompanyVO(){};
 
+    public Long getCompanyNo() {
+        return companyNo;
+    }
 
+    public void setCompanyNo(Long companyNo) {
+        this.companyNo = companyNo;
+    }
+
+    public String getFkMemberId() {
+        return fkMemberId;
+    }
+
+    public void setFkMemberId(String fkMemberId) {
+        this.fkMemberId = fkMemberId;
+    }
+
+    public IndustryVO getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(IndustryVO industry) {
+        this.industry = industry;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyWebsite() {
+        return companyWebsite;
+    }
+
+    public void setCompanyWebsite(String companyWebsite) {
+        this.companyWebsite = companyWebsite;
+    }
+
+    public int getCompanySize() {
+        return companySize;
+    }
+
+    public void setCompanySize(int companySize) {
+        this.companySize = companySize;
+    }
+
+    public int getCompanyType() {
+        return companyType;
+    }
+
+    public void setCompanyType(int companyType) {
+        this.companyType = companyType;
+    }
+
+    public String getCompanyLogo() {
+        return companyLogo;
+    }
+
+    public void setCompanyLogo(String companyLogo) {
+        this.companyLogo = companyLogo;
+    }
+
+    public String getCompanyExplain() {
+        return companyExplain;
+    }
+
+    public void setCompanyExplain(String companyExplain) {
+        this.companyExplain = companyExplain;
+    }
+
+    public Date getCompanyRegisterDate() {
+        return companyRegisterDate;
+    }
+
+    public void setCompanyRegisterDate(Date companyRegisterDate) {
+        this.companyRegisterDate = companyRegisterDate;
+    }
 }
