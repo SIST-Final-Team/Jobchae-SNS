@@ -217,6 +217,7 @@
 		from tbl_comment c
 		join tbl_member m
 		on c.fk_member_id = m.member_id
+		order by c.comment_register_date desc
 	</select>
 	
 	<!-- 댓글 수 구하기 -->

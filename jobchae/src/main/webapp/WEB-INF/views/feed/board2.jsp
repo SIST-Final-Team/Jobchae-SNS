@@ -814,8 +814,15 @@
 		});
 		
 		
-		
+		///////////////////////////////////////////////////////////////////////////////////////// 
+		// 게시글 시간
 		$(".time").each(function () {
+	        const timeString = $(this).attr("data-time");
+	        $(this).text(timeAgo(timeString));
+	    });
+
+		// 댓글 시간
+		$(".comment-date").each(function () {
 	        const timeString = $(this).attr("data-time");
 	        $(this).text(timeAgo(timeString));
 	    });
@@ -889,7 +896,7 @@
 			}
 		});
 		
-		// ㅇㅇ
+		// 댓글 삭제
 		$(".comment-delete").click(function() {
 			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
 			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
@@ -916,10 +923,50 @@
 				});
 			}
 		});
-		
-		$(".comment-edit").click(function() {
-			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
-			alert("ddddd");
+
+		$(".comment-edit").click(function() { 
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			
+			const originalText = $(this).closest('.comment-item').find('.comment-content-text').text(); 
+			const editText = $(this).closest('.comment-item').find('#edit-input').val();
+		    //alert(originalText + " " + editText);
+		    
+		    $(this).closest('.comment-item').find('.comment-content-text').hide();
+		    $(this).closest('.comment-item').find('#comment-edit-input').show();
+		});
+
+		$(".comment-edit-button").click(function() { 
+			const comment_content = $(this).closest('.comment-item').find('#edit-input').val();
+			//alert(comment_content);
+			
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/editComment',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_board_no": fk_board_no,
+					   "fk_member_id": fk_member_id,
+					   "comment_no" : comment_no,
+					   "comment_content" : comment_content},
+				success: function(json) {
+					if(json.n == 1) {
+						$(this).closest('.comment-item').find('.comment-content-text').show();
+					    $(this).closest('.comment-item').find('#comment-edit-input').hide();
+						alert("댓글이 수정되었습니다.");
+						location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
 		});
 	
 	});
@@ -1383,10 +1430,18 @@
 														
 														<span class="comment-author">${commentvo.member_name}</span>
 														<!--<span class="comment-relationship">팔로워 0명</span>-->
-														<span class="comment-date">5일</span>
+														<span class="comment-date" data-time="${commentvo.comment_register_date}">5일</span> 
 														<button class="comment-options">...</button>
 													</div>
-													<div class="comment-text">${commentvo.comment_content}</div>
+													<div class="comment-text">
+														<span class="comment-content-text">${commentvo.comment_content}</span>
+														
+														<div class="comment-input" id="comment-edit-input" style="display:none;" >
+															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
+															<button class="comment-edit-button">수정</button>
+														</div>
+													</div>
+													
 													<div class="comment-actions">
 														<button class="like-button">추천</button>
 									                    <span>|</span>

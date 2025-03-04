@@ -759,10 +759,6 @@ img.modal-img {
 	margin: 2px 0 0;
 }
 
-
-
-
-
 /* ----- 댓글 ----- */
 .comment-input-container {
 	align-items: center; 
@@ -890,9 +886,7 @@ img.modal-img {
 }
 
 
-
-
-
+/* 댓글 목록 */
 .options-dropdown2 {
     position: absolute;
     background: white;

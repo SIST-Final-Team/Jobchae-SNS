@@ -451,7 +451,11 @@ img.modal-img {
     background-color: #357ABD; 
 }
 
-.reactions-menu {
+.button-board-action-reaction {
+	position: relative;	
+}
+
+.reactions-menu { /*ㅇㅇ*/
     display: none;
     position: absolute;
     z-index: 999;
@@ -460,6 +464,7 @@ img.modal-img {
     border-radius: 40px;
     width: 350px;
     height: 60px;
+    left: 37%;  
 }
 
 .reactions-menu__reaction {
@@ -495,6 +500,10 @@ img.modal-img {
     }
 }
 
+.reactions-menu__reaction {
+    transition: transform 0.3s ease-in-out; /* 전체 항목에 부드러운 변환 효과 적용 */
+}
+
 .button-board-action:hover + .reactions-menu,
 .reactions-menu:hover {
     display: block;
@@ -504,6 +513,12 @@ img.modal-img {
     transform: scale(1.7); 
     transition: transform 0.3s ease-in-out; 
     cursor: pointer;
+}
+
+/* 첫 번째 항목에 마우스를 올리면 나머지 항목들의 크기 줄이기 */
+.reactions-menu__reaction:nth-child(1):hover ~ .reactions-menu__reaction img {
+    transform: scale(0.7); /* 2~6번째 항목 크기 줄이기 */
+    transition: transform 0.3s ease-in-out; 
 }
 
 #image-medium, #video-medium, #sticky-note-medium {
@@ -759,10 +774,6 @@ img.modal-img {
 	margin: 2px 0 0;
 }
 
-
-
-
-
 /* ----- 댓글 ----- */
 .comment-input-container {
 	align-items: center; 
@@ -890,9 +901,7 @@ img.modal-img {
 }
 
 
-
-
-
+/* 댓글 목록 */
 .options-dropdown2 {
     position: absolute;
     background: white;
