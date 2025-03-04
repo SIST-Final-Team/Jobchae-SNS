@@ -10,7 +10,7 @@
 %>    
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
 
-<%--<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/css/feed/board.css" />--%>
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/css/feed/board.css" />
 
 <!-- Quill 에디터 CSS 추가 -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -18,6 +18,171 @@
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 <style type="text/tailwindcss">
+        html {
+            font-size: 0.9rem;
+        }
+        .h1 {
+            @apply text-[1.35rem] font-bold;
+        }
+        .border-normal {
+            @apply border-1 border-gray-300 rounded-lg bg-white;
+        }
+        .border-search-board {
+            @apply border-1 border-gray-300 rounded-lg bg-white;
+
+            &>div:not(:last-child) {
+                @apply border-b-4 border-gray-200 space-y-2;
+            }
+
+            &>div:not(.py-0) {
+                @apply py-4;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+        .border-board {
+            @apply space-y-4;
+
+            &>div {
+                @apply border-1 border-gray-300 rounded-lg space-y-2 bg-white;
+            }
+
+            &>div {
+                @apply pt-4;
+                @apply pb-2;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+        .nav-selected {
+            @apply relative before:inline-block before:absolute before:w-0.5 before:h-10 before:bg-green-800 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
+        }
+        .nav {
+            @apply list-none pb-2 [&>li]:px-4 [&>li]:hover:bg-gray-100 [&>li]:cursor-pointer [&>li>a]:block [&>li>a]:py-2;
+        }
+        .border-list {
+            @apply my-0.5 space-y-4 py-4;
+            @apply first:border-1 first:border-gray-300 first:rounded-t-lg;
+            @apply not-first:border-1 not-first:border-gray-300;
+            @apply last:border-1 last:border-gray-300 last:rounded-b-lg;
+        }
+        .button-gray:not(.button-selected) {
+            @apply border-1 rounded-full border-gray-400 px-3 py-0.5 font-bold text-gray-700 text-lg;
+            @apply hover:bg-gray-100 hover:inset-ring-1 hover:inset-ring-gray-400 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .button-orange:not(.button-selected) {
+            @apply border-1 rounded-full border-orange-500 px-3 py-0.5 font-bold text-orange-500 text-lg;
+            @apply hover:bg-gray-100 hover:inset-ring-1 hover:inset-ring-orange-500 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .button-selected {
+            @apply border-1 border-orange-400 rounded-full px-3 py-0.5 font-bold text-white text-lg bg-orange-400;
+            @apply hover:bg-orange-500 hover:border-orange-500 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .board-member-profile {
+            @apply flex gap-4;
+
+            /* 프로필 이미지 */
+            div:first-child>a>img {
+                @apply w-15 h-15 object-cover;
+            }
+
+            div:nth-child(2) span {
+                @apply block text-gray-600 text-sm;
+            }
+
+            div:nth-child(2) span:first-child {
+                @apply font-bold text-lg text-black;
+            }
+
+            /* 프로필 정보 및 팔로우 버튼 */
+            div:nth-child(3) {
+                @apply flex items-start;
+
+                button {
+                    @apply px-4 py-1 text-lg rounded-full;
+                }
+
+                button:hover {
+                    @apply bg-gray-100 cursor-pointer;
+                }
+
+                /* 팔로우 버튼 */
+                .follow-button {
+                    @apply text-orange-500 font-bold;
+                }
+                
+                /* 팔로우 버튼 */
+                .unfollow-button {
+                    @apply text-black;
+                }
+            }
+        }
+
+        .file-image {
+            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5;
+
+            :hover {
+                @apply cursor-pointer;
+            }
+
+            button:first-child {
+                @apply max-h-[50rem] m-auto col-span-3;
+            }
+            button:not(:first-child) {
+                @apply m-auto;
+            }
+            
+            button:not(:first-child)>img {
+                @apply object-cover aspect-[3/2];
+            }
+            button.more-image {
+                @apply relative;
+            }
+            button.more-image>img {
+                @apply brightness-50;
+            }
+            button.more-image>span {
+                @apply absolute text-white;
+                @apply top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2;
+            }
+        }
+
+        .reaction-images {
+            @apply flex items-center;
+            img {
+                @apply w-6 rounded-full border-2 border-white;
+            }
+            img:not(img:last-child) {
+                @apply -mr-2;
+            }
+        }
+
+        .button-underline {
+            @apply flex hover:cursor-pointer hover:underline hover:text-orange-500;
+        }
+
+        .button-board-action {
+            @apply w-full h-10 rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        }
+
+		.button-board-attach {
+            @apply w-full h-10 rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        }
 
 </style>
     
@@ -84,7 +249,6 @@
             	$(".carousel-track").empty();
             }
         });
-        
         
 		/////////////////////////////////////////////////////////////////////////////////////////
      	// Quill 에디터
@@ -671,7 +835,7 @@
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 댓글
+		// 댓글 ㅇㅇ
 		$(".comment-options").click(function(event) {
 			event.stopPropagation();
 			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
@@ -683,10 +847,10 @@
 	        $(".options-dropdown2").hide();
 	    });
 		
-		$(".button-board-action-comment").click(function() { // ㅇㅇ
-			var commentItem = $(this).parent(".comment-item");
-			console.log(commentItem);
-			commentItem.find(".comment-input-container").toggle();
+		$(".button-board-action-comment").click(function() { 
+			var commentInputContainer = $(this).closest('div').next('.comment-input-container');
+			//console.log(commentInputContainer);
+			commentInputContainer.slideToggle();
 		});
 
 
@@ -1161,6 +1325,7 @@
 						            <button class="comment-submit-button">댓글</button>
 							    </div>	
 	                    	</div>
+	                    	
 	                    	
 	                    	<div class="comment-list-container">
 	                    		<div class="comment-sort">
