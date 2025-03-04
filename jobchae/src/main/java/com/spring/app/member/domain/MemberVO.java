@@ -55,6 +55,7 @@ public class MemberVO {
 	/// join 해서 가져온 변수
 	private String member_career_company; // 회사명
 	private String school_name;			  // 학교명
+	private String region_name;           // 지역명
 	
 	
 	
@@ -62,6 +63,14 @@ public class MemberVO {
 	//////////////////////////////////////////////////////////////
 
 	
+	public String getRegion_name() {
+		return region_name;
+	}
+
+	public void setRegion_name(String region_name) {
+		this.region_name = region_name;
+	}
+
 	public String getMember_career_company() {
 		return member_career_company;
 	}
