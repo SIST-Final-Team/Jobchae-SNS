@@ -34,6 +34,8 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/jquery-ui-1.13.1.custom/jquery-ui.min.css" />
 <script type="text/javascript" src="<%= ctxPath%>/jquery-ui-1.13.1.custom/jquery-ui.min.js"></script>
 
+<%-- 폰트어썸 --%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <%-- 직접 만든 CSS --%>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/member/memberRegister.css" />
@@ -62,11 +64,28 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
 
 <div class="container mt-5">
 
-        <h4>회원가입</h4>
+        <h4 id="h4_1">회원가입</h4>
 
         <form name="registerFrm" enctype="multipart/form-data">
 
-            <div class="row justify-content-center">
+            <div class="row justify-content-center" id="register_menu">
+            
+            	<%-- 프로필 사진 --%>
+            	<div class="col-lg-4 col-md-7" style="text-align: center; position: relative; height: 200px;">
+            		<div class="icon" style="width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            			<img id="profile_img" src="${pageContext.request.contextPath}/images/no_profile.png">
+            			<label id="icon_label" class="icon_label icon" for="file_input">
+                			<i class="fa-solid fa-camera-retro fa-2xl" style="margin:auto; font-size: 24px;"></i>
+                		</label>
+            		</div>
+            	</div>
+            	<div class="w-100"></div>
+            	<div class="col-lg-5 col-md-7">
+            		<%-- 파일 전송 input --%>
+                	<input type="file" id="file_input" name="attach_member_profile" accept="image/*" style="display: none">
+            	</div>
+            	<div class="w-100"></div>
+
 
                 <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">아이디&nbsp;<span class="star">*</span></div>
                 <div class="w-100"></div>
@@ -170,15 +189,14 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
                 <div id="telerror" class="col-lg-5 col-md-7 error"></div>
                 <div class="w-100" style="margin-bottom: 3%"></div>
 
-                <%-- 우편번호 input 없애자, 우리가 설정한 데이터베이스에서만 검색되도록 설정하자 --%>
+
                 <%-- 지역 --%>
                 <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">지역&nbsp;<span class="star">*</span></div>
                 <div class="w-100"></div>
-                
                 <div class="col-lg-5 col-md-7">  
-                	<input type="text" name="member_region" id="member_region" size="40" maxlength="200" class="requiredInfo underline"
+                	<input type="text" name="region_name" id="region_name" size="40" maxlength="200" class="requiredInfo underline"
                         placeholder="지역" />
-                    <input type="hidden" name="member_region_no" id="member_region_no" />
+                    <input type="hidden" name="fk_region_no" id="fk_region_no" />
                 </div>
                 <div class="w-100"></div>
                 <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
@@ -340,28 +358,15 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
 
                 <div style="margin: 5% 0 5% 0;"></div>
 
-                <%-- 가입, 취소 버튼 --%>
+                <%-- 경력, 학력 입력 창 열기 버튼 --%>
                 <div class="col-lg-5 col-md-7">
-                    <input type="button" class="btnstyle" value="가입하기" onclick="goRegister()" />
+                    <input type="button" id="btn_register" class="btnstyle" onclick="goRegister()" value="회원가입" />
                 </div>
                 <div class="w-100"></div>
                 <div style="margin-bottom: 10%;"></div>
 
-
-
-
-
-
 			<%-- row 끝 --%>
             </div>
-            
-            
-            
-            
-            
-            
-            
-            
             
 
         </form>

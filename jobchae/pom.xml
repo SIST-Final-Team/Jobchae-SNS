@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>jobchae</name>
-	<description>Myspring project for Spring Boot</description>
+	<description>Jobchae project for Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -390,7 +390,19 @@
 
 
 <!-- ======================= 라이브러리 추가 끝 ======================= -->
-	</dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

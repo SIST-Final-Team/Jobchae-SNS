@@ -1,9 +1,9 @@
 package com.spring.app.aop;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -123,6 +123,13 @@ public class CommonAop {
 
 	// ===== After Advice(보조업무) 만들기 ====== //
 
+	@Pointcut("execution(public * com.spring.app..*Controller)")
+	public void insert() {}
+	@After("insert()")
+	public void createAlarm(JoinPoint joinpoint) {
+		System.out.println("실행");
+		String methodName = joinpoint.getSignature().getName();
+	}
 	// ===== Around Advice(보조업무) 만들기 ====== //
 }
 

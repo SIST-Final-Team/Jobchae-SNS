@@ -8,6 +8,7 @@
 
 		<typeAlias type="com.spring.app.member.domain.MemberVO" alias="MemberVO"/>
 		<typeAlias type="com.spring.app.board.domain.BoardVO" alias="BoardVO"/>
+		<typeAlias type="com.spring.app.alarm.domain.AlarmVO" alias="AlarmVO"/>
 		<!--<typeAlias type="com.spring.app.board.domain.CommentVO" alias="CommentVO"/>-->
 
 		<typeAlias type="com.spring.app.reaction.domain.ReactionVO" alias="ReactionVO"/>
@@ -15,6 +16,11 @@
 		<typeAlias type="com.spring.app.comment.domain.CommentVO" alias="CommentVO"/>
 		
 		
+		
+		
+		<typeAlias type="com.spring.app.member.domain.MemberCareerVO" alias="MemberCareerVO"/>
+		<typeAlias type="com.spring.app.member.domain.MemberEducationVO" alias="MemberEducationVO"/>
+		<typeAlias type="com.spring.app.member.domain.MemberSkillVO" alias="MemberSkillVO"/>
 	</typeAliases>
 
 </configuration>

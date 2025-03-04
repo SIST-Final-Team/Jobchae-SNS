@@ -1,5 +1,6 @@
 package com.spring.app.member.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,6 +17,7 @@ import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.FileManager;
 import com.spring.app.common.mail.FuncMail;
 import com.spring.app.common.security.RandomEmailCode;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.service.MemberService;
 
@@ -24,6 +27,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +46,7 @@ public class MemberController {
 	FuncMail funcMail; // 이메일 인증 관련 클래스
 	
 	@Autowired
-	FileManager filemanager; // 파일 관련 클래스
+	FileManager fileManager; // 파일 관련 클래스
 	
 	
 	// 회원가입 폼 페이지 요청
@@ -56,12 +60,11 @@ public class MemberController {
 	}//end of public ModelAndView memberRegister(ModelAndView mav) {}...
 	
 	
-	
 	// 회원가입 
-	@PostMapping("emailCheckOk_memberRegister")
-	public MemberVO memberRegister(HttpServletRequest request, HttpServletResponse response, 
-									MemberVO membervo,
-								   MultipartHttpServletRequest mrequest) {
+	@PostMapping("memberRegister")
+	public ModelAndView emailCheckOk_memberRegister(HttpServletRequest request, HttpServletResponse response,
+									   ModelAndView mav, MemberVO membervo,
+									   MultipartHttpServletRequest mrequest) {
 		// 파일은 mrequest 로, membervo 는 회원정보 받아준다.
 		
 		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
@@ -69,11 +72,86 @@ public class MemberController {
 		session.removeAttribute("emailCheckOk");
 		
 		
+		// 파일부터 넣어주기
+		MultipartFile attach_member_profile = membervo.getAttach_member_profile();
+		// 
 		
+		System.out.println("attach_member_profile => "+ attach_member_profile);
 		
+		// 나오는 결과값을 보고 디폴트 설정해주자
+		// input 태그 name 이 vo 랑 같아야함
 		
+		// 프로필 사진 일단 기본이미지로 default
+		if (!attach_member_profile.isEmpty()) { // 스프링은 빈파일 객체로 반환해줘서 null 이 아니다!
+			
+			// WAS 의 webapp 의 절대경로를 알아와야한다.
+			HttpSession m_session = mrequest.getSession(); // 파일용 세션
+			String root = m_session.getServletContext().getRealPath("/");
+
+			String path = root + "resources" + File.separator + "files";
+			
+			
+			String newProFileName = "";
+			// WAS(톰캣)의 디스크에 저장될 파일명
+
+			byte[] bytes_member_profile = null;
+			// 첨부파일의 내용물을 담는 것
+
+			try {
+				bytes_member_profile = attach_member_profile.getBytes();
+				// 첨부파일의 내용물을 읽어오는 것
+				
+				String origin_member_profile_Filename = attach_member_profile.getOriginalFilename();
+				System.out.println("origin_member_profile_Filename => "+ origin_member_profile_Filename);
+				// 첨부파일명의 파일명(예:강아지.png)을 읽어오는 것
+				// 백그라운드 이미지는 null 로 처리
+				
+				// 파일 확장자!
+				String fileExt = origin_member_profile_Filename.substring(origin_member_profile_Filename.lastIndexOf(".")); 
+				System.out.println("fileExt => "+fileExt);
+				// 백엔드에서 한번 더 사진파일로 걸러주자
+				if (!".jpg".equals(fileExt) && !".png".equals(fileExt) && !".webp".equals(fileExt) && !".jpeg".equals(fileExt)) {
+					mav.addObject("message", "사진 파일만 등록할 수 있습니다.");
+					mav.addObject("loc", "javascript:history.back()");
+					mav.setViewName("common/msg");
+					return mav;
+				}//end of if (fileExt != ".jpg" || fileExt != ".png" || fileExt != ".webp") {}...
+				
+				// 첨부되어진 파일을 업로드 하는 것이다.
+
+				// MemberVO membervo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
+				newProFileName = fileManager.doFileUpload(bytes_member_profile, origin_member_profile_Filename, path);
+				membervo.setMember_profile(newProFileName);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			} // end of try catch...
+			
+		}//end of if (attach_member_profile != null) {}...
 		
-		return membervo;
+		System.out.println("멤버_프로필사진 안넣었을 때 => "+membervo.getMember_profile());
+		// 멤버_프로필사진 안넣었을 때 => null 근데 메퍼에 넣으면 터진다..?(해결 : 메퍼에 null 값의 파라미터로 insert 가 안된다!)
+		
+		// 회원가입 시작
+		int n = service.memberRegister(membervo);
+		
+		if (n == 1) {
+//			mav.addObject("member_id", membervo.getMember_id());
+//			mav.addObject("member_passwd", membervo.getMember_passwd());
+//			mav.setViewName("common/memberRegister_after_autoLogin"); // 자동로그인
+			mav.setViewName("feed/board"); // jsp 파일
+			// TODO 로그인 후 회원경력, 학력 넣어주는 페이지로 이동하도록 로그인 수정해야함
+			
+		} else {
+			mav.addObject("message", "회원가입 실패");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("common/msg");
+		}//end of if else (n == 1) {}...
+		
+		// 회원가입 후 경력과 학력을 넣어줄 예정
+
+		return mav; 
+		// TODO 나중에 회원 경력, 학력 페이지로 가게 만들고, 지금은 그냥 피드로 가자.
 		
 	}//end of public ModelAndView postMethodName(ModelAndView mav, MemberVO membervo) {}...
 	
@@ -154,56 +232,24 @@ public class MemberController {
 	
 	
 	
-	// 지역 검색 시 자동 완성 해주는 메소드
-	@GetMapping("region/search")
-	@ResponseBody
-	public List<Map<String, String>> regionSearch(@RequestParam String member_region) {
-		// 입력한 검색어 찾기
-		List<Map<String, String>> regionList = service.regionSearchShow(member_region); 
+	
+	
+	
+//	// 직종 자동검색 메소드
+//	@GetMapping("job/search")
+//	@ResponseBody
+//	public List<Map<String, String>> jobSearch(@RequestParam String job_name) {
+//		
+//		List<Map<String, String>> jobList = service.jobSearch(job_name);
+//		
+//		return jobList;
+//	}//end of public String jobSearch(@RequestParam String job_name) {}...
+	
+	
+	
+	
+	
 
-		// 담을 맵 선언
-		List<Map<String, String>> mapList = new ArrayList<>();
-
-		if (regionList != null) {
-			for (Map<String, String> regionMap : regionList) {
-				Map<String, String> map = new HashMap<>();
-				map.put("region_no", regionMap.get("REGION_NO")); 
-				map.put("region_name", regionMap.get("REGION_NAME")); // REGION_NO, REGION_NAME
-				mapList.add(map);
-			} // end of for...
-		}
-		
-		return mapList;
-	
-	}//end of public List<Map<String, String>> regionSearch(@RequestParam String member_region) {}...
-	
-	
-	
-	
-	
-	
-	// 정확한 지역명을 검색한 후 찾아주는 메소드
-	@GetMapping("regionKeyWordSearch")
-	@ResponseBody
-	public Map<String, String> regionKeyWordSearch(@RequestParam String member_region) {
-		
-		 Map<String, String> regionMap = service.regionKeyWordSearch(member_region);
-		
-//		System.out.println("번호 => "+regionMap.get("no"));
-//		System.out.println("검색어 => "+regionMap.get("word"));
-		
-		if (regionMap == null) {
-			regionMap = new HashMap<>(); // []
-			regionMap.put("isNull", "1"); // 확인용 정크값, js 에서 걸러주는 역할
-		}
-		
-		return regionMap;
-		
-	}//end of public Map<String, String> getMethodName(@RequestParam String member_region) {}...
-	
-	
-	
-	
 	
 	
 	// === 로그인 페이지 켜는 메소드
@@ -213,11 +259,6 @@ public class MemberController {
 		mav.setViewName("login/login");
 		return mav;
 	}//end of public ModelAndView login(ModelAndView mav) {}...
-	
-	
-	
-	
-	
 	
 	
 	// 로그인 하는 메소드
@@ -249,14 +290,65 @@ public class MemberController {
 	
 	
 	
+	
+	
+	
+	
 
 	
 	
 	
 	
 	
-	
-	
+	// =========================== 김규빈 =========================== //
+	@GetMapping("profile")
+	public ModelAndView profile(ModelAndView mav) {
+		
+		mav.setViewName("/member/profile");
+		
+		return mav;
+	}// end of public ModelAndView profile(ModelAndView mav)----------
+
+	// 테스트용
+	@GetMapping("profile/more/{memberId}")
+	public ModelAndView profileMore(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
+		
+		mav.setViewName("/member/profileMore");
+		
+		return mav;
+	}// end of public ModelAndView profile(ModelAndView mav)----------
+
+	@GetMapping("profile/member-career/{memberId}")
+	public ModelAndView profileMemberCareer(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
+		
+		mav.setViewName("/member/profileMemberCareer");
+		
+		return mav;
+	}// end of public ModelAndView profileMemberCareer(ModelAndView mav)------
+
+	@GetMapping("profile/member-education/{memberId}")
+	public ModelAndView profileMemberEducation(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
+		
+		mav.setViewName("/member/profileMemberEducation");
+		
+		return mav;
+	}// end of public ModelAndView profileMemberEducation(ModelAndView mav)------
+
+	@GetMapping("profile/member-skill/{memberId}")
+	public ModelAndView profileMemberSkill(ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
+		
+		mav.setViewName("/member/profileMemberSkill");
+		
+		return mav;
+	}// end of public ModelAndView profileMemberSkill(ModelAndView mav)------
 	
 	
 	
