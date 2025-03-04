@@ -192,13 +192,13 @@
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
 	
-	console.log(boardList);
-	
-	
     $(document).ready(function() {
         
     	$(".options-dropdown").hide();
+    	$(".options-dropdown2").hide();
+    	$(".comment-input-container").hide();
     	
+	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
@@ -249,7 +249,6 @@
             	$(".carousel-track").empty();
             }
         });
-        
         
 		/////////////////////////////////////////////////////////////////////////////////////////
      	// Quill 에디터
@@ -376,6 +375,7 @@
 	    $(document).click(function () {
 	        $(".options-dropdown").hide();
 	    });
+
 	    
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 글 삭제
@@ -834,11 +834,25 @@
 	    }
 		
 		
-		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
-		// 댓글
-		$(".button-board-action-comment").click(function() {
-			
+		///////////////////////////////////////////////////////////////////////////////////////// 
+		// 댓글 
+		$(".comment-options").click(function(event) {
+			event.stopPropagation();
+			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
+			$(".options-dropdown2").not(dropdown).hide(); 
+	        dropdown.toggle(); 
 		});
+		
+		$(document).click(function () {
+	        $(".options-dropdown2").hide();
+	    });
+		
+		$(".button-board-action-comment").click(function() { 
+			var commentInputContainer = $(this).closest('div').next('.comment-input-container');
+			//console.log(commentInputContainer);
+			commentInputContainer.slideToggle();
+		});
+
 
 		$(".comment-submit-button").click(function() {
 			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
@@ -864,7 +878,8 @@
 					success: function(json) {
 						if(json.n == 1) {
 							$(this).closest('.comment-input-container').find('#commentInput').val('');
-							alert("댓글이 등록되었습니다.")
+							alert("댓글이 등록되었습니다.");
+							location.reload();
 						}
 			        },
 			        error: function(request, status, error){
@@ -872,6 +887,39 @@
 				 	}
 				});
 			}
+		});
+		
+		// ㅇㅇ
+		$(".comment-delete").click(function() {
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val();  
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+		
+			if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
+				$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/deleteComment',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_board_no": fk_board_no,
+						   "fk_member_id": fk_member_id,
+						   "comment_no" : comment_no},
+					success: function(json) {
+						if(json.n == 1) {
+							alert("댓글이 삭제되었습니다.");
+							location.reload();
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+			}
+		});
+		
+		$(".comment-edit").click(function() {
+			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
+			alert("ddddd");
 		});
 	
 	});
@@ -1114,6 +1162,7 @@
 								            <c:otherwise>
 								            	<li class="bookmark-post" value="${boardvo.board_no}"></li>
 								                <li class="interest-none" value="${boardvo.board_no}">관심없음</li>
+								                <li class="report-board" value="${boardvo.board_no}">게시글 신고</li>
 								            </c:otherwise>
 								        </c:choose>
 					                </ul>
@@ -1202,7 +1251,7 @@
 	                            <li>
 	                                <button type="button" class="button-underline">
 	                                    <span>댓글&nbsp;</span>
-	                                    <span id="commentCount">1,205</span>
+	                                    <span id="commentCount">${boardvo.countComment}</span>
 	                                </button>
 	                            </li>
 	                            <li>
@@ -1310,6 +1359,7 @@
 							    </div>	
 	                    	</div>
 	                    	
+	                    	
 	                    	<div class="comment-list-container">
 	                    		<div class="comment-sort">
 	                    			<select id="sortOption">
@@ -1319,44 +1369,57 @@
 	                    		</div>
 	                    	</div>
 	                    	
-	                    	<ul class="comment-list">
-	                    		<li class="comment-item">
-									<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
-									<div class="comment-content">
-										<div class="comment-info">
-											<span class="comment-author">이름</span>
-											<span class="comment-relationship">팔로워 0명</span>
-											<span class="comment-date">5일</span>
-											<button class="comment-options">...</button>
-										</div>
-										<div class="comment-text">댓글내용 !!!!</div>
-										<div class="comment-actions">
-											<button class="like-button">추천</button>
-						                    <span>|</span>
-						                    <button class="reply-button">답장</button>
-						                </div>
-									</div>                  		
-	                    		</li>
-	                    		
-	                    		<li class="comment-item">
-									<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
-									<div class="comment-content">
-										<div class="comment-info">
-											<span class="comment-author">이름</span>
-											<span class="comment-relationship">팔로워 0명</span>
-											<span class="comment-date">5일</span>
-											<button class="comment-options">...</button>
-										</div>
-										<div class="comment-text">댓글내용 !!!!</div>
-										<div class="comment-actions">
-											<button class="like-button">추천</button>
-						                    <span>|</span>
-						                    <button class="reply-button">답장</button>
-						                </div>
-									</div>                  		
-	                    		</li>
+	                    	<ul class="comment-list"> <!-- ㅇㅇ -->
+	                    		<c:if test="${not empty commentvoList}">
+		                    		<c:forEach var="commentvo" items="${commentvoList}">  
+		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
+			                    			<li class="comment-item">
+												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+												<div class="comment-content">
+													<div class="comment-info">
+														<input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
+														<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
+														<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
+														
+														<span class="comment-author">${commentvo.member_name}</span>
+														<!--<span class="comment-relationship">팔로워 0명</span>-->
+														<span class="comment-date">5일</span>
+														<button class="comment-options">...</button>
+													</div>
+													<div class="comment-text">${commentvo.comment_content}</div>
+													<div class="comment-actions">
+														<button class="like-button">추천</button>
+									                    <span>|</span>
+									                    <button class="reply-button">답장</button>
+									                </div>
+												</div>     
+												
+												<!-- 옵션 드롭다운 메뉴 -->
+												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
+										            <div class="options-dropdown2">
+										                <ul>
+											                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+											                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
+										                </ul>
+									            	</div> 
+												</c:if>
+												<c:if test="${membervo.member_id != commentvo.fk_member_id}">
+										            <div class="options-dropdown2">
+										                <ul>
+											                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
+										                </ul>
+									            	</div> 
+												</c:if>
+												<!-- div.options-dropdown 끝 -->
+				                    		</li>
+				                    		
+			                    		</c:if>
+		                    		</c:forEach>
+	                    		</c:if>
 	                    	</ul>
-	                    
+	                    	
+	                    	
+	                    	
 	                    </div> <!-- div.comment-input-container 끝 -->
 
                     </div>

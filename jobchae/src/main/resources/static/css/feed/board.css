@@ -233,6 +233,7 @@ span.category-name {
 
 .feed-post-name {
 	font-weight: bold;
+	margin-left: 1px;
 }
 
 .more-options {

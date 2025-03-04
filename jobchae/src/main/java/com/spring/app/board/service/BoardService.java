@@ -83,6 +83,12 @@ public interface BoardService {
 	// 댓글 수 구하기
 	int getCommentCount(String board_no);
 
+	// 댓글 삭제하기
+	int deleteComment(Map<String, String> paraMap);
+
+	// 댓글 수정하기
+	int editComment(Map<String, String> paraMap);
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);
 

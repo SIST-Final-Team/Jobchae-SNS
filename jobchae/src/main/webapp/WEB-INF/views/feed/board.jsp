@@ -835,7 +835,7 @@
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 댓글 ㅇㅇ
+		// 댓글 
 		$(".comment-options").click(function(event) {
 			event.stopPropagation();
 			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
@@ -887,6 +887,79 @@
 				 	}
 				});
 			}
+		});
+		
+		// 댓글 삭제
+		$(".comment-delete").click(function() {
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val();  
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+		
+			if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
+				$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/deleteComment',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_board_no": fk_board_no,
+						   "fk_member_id": fk_member_id,
+						   "comment_no" : comment_no},
+					success: function(json) {
+						if(json.n == 1) {
+							alert("댓글이 삭제되었습니다.");
+							location.reload();
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+			}
+		});
+
+		$(".comment-edit").click(function() { 
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			
+			const originalText = $(this).closest('.comment-item').find('.comment-content-text').text(); 
+			const editText = $(this).closest('.comment-item').find('#edit-input').val();
+		    //alert(originalText + " " + editText);
+		    
+		    $(this).closest('.comment-item').find('.comment-content-text').hide();
+		    $(this).closest('.comment-item').find('#comment-edit-input').show();
+		});
+
+		$(".comment-edit-button").click(function() { // ㅇㅇ
+			const comment_content = $(this).closest('.comment-item').find('#edit-input').val();
+			//alert(comment_content);
+			
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/editComment',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_board_no": fk_board_no,
+					   "fk_member_id": fk_member_id,
+					   "comment_no" : comment_no,
+					   "comment_content" : comment_content},
+				success: function(json) {
+					if(json.n == 1) {
+						$(this).closest('.comment-item').find('.comment-content-text').show();
+					    $(this).closest('.comment-item').find('#comment-edit-input').hide();
+						alert("댓글이 수정되었습니다.");
+						location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
 		});
 	
 	});
@@ -1344,16 +1417,24 @@
 												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
 												<div class="comment-content">
 													<div class="comment-info">
-														<input type="hidden" value="${commentvo.fk_board_no}">
-														<input type="hidden" value="${commentvo.comment_no}">
-														<input type="hidden" value="${commentvo.fk_member_id}">
+														<input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
+														<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
+														<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
 														
 														<span class="comment-author">${commentvo.member_name}</span>
 														<!--<span class="comment-relationship">팔로워 0명</span>-->
 														<span class="comment-date">5일</span>
 														<button class="comment-options">...</button>
 													</div>
-													<div class="comment-text">${commentvo.comment_content}</div>
+													<div class="comment-text">
+														<span class="comment-content-text">${commentvo.comment_content}</span>
+														
+														<div class="comment-input" id="comment-edit-input" style="display:none;" >
+															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
+															<button class="comment-edit-button">수정</button>
+														</div>
+													</div>
+													
 													<div class="comment-actions">
 														<button class="like-button">추천</button>
 									                    <span>|</span>
@@ -1365,8 +1446,8 @@
 												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
 										            <div class="options-dropdown2">
 										                <ul>
-											                <li class="delete-post2" value="${boardvo.board_no}">댓글 삭제</li>
-											                <li class="delete-post2" value="${boardvo.board_no}">댓글 수정</li>
+											                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+											                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
 										                </ul>
 									            	</div> 
 												</c:if>
