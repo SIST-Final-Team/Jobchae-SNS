@@ -192,13 +192,13 @@
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
 	
-	console.log(boardList);
-	
-	
     $(document).ready(function() {
         
     	$(".options-dropdown").hide();
+    	$(".options-dropdown2").hide();
+    	$(".comment-input-container").hide();
     	
+	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
@@ -376,6 +376,7 @@
 	    $(document).click(function () {
 	        $(".options-dropdown").hide();
 	    });
+
 	    
 		/////////////////////////////////////////////////////////////////////////////////////////
 	 	// 글 삭제
@@ -834,10 +835,23 @@
 	    }
 		
 		
-		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
+		///////////////////////////////////////////////////////////////////////////////////////// 
 		// 댓글
-		$(".button-board-action-comment").click(function() {
-			
+		$(".comment-options").click(function(event) {
+			event.stopPropagation();
+			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
+			$(".options-dropdown2").not(dropdown).hide(); 
+	        dropdown.toggle(); 
+		});
+		
+		$(document).click(function () {
+	        $(".options-dropdown2").hide();
+	    });
+		
+		$(".button-board-action-comment").click(function() { // ㅇㅇ
+			var commentItem = $(this).parent(".comment-item");
+			console.log(commentItem);
+			commentItem.find(".comment-input-container").toggle();
 		});
 
 
@@ -1116,6 +1130,7 @@
 								            <c:otherwise>
 								            	<li class="bookmark-post" value="${boardvo.board_no}"></li>
 								                <li class="interest-none" value="${boardvo.board_no}">관심없음</li>
+								                <li class="report-board" value="${boardvo.board_no}">게시글 신고</li>
 								            </c:otherwise>
 								        </c:choose>
 					                </ul>
@@ -1344,13 +1359,34 @@
 									                    <span>|</span>
 									                    <button class="reply-button">답장</button>
 									                </div>
-												</div>                  		
+												</div>     
+												
+												<!-- 옵션 드롭다운 메뉴 -->
+												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
+										            <div class="options-dropdown2">
+										                <ul>
+											                <li class="delete-post2" value="${boardvo.board_no}">댓글 삭제</li>
+											                <li class="delete-post2" value="${boardvo.board_no}">댓글 수정</li>
+										                </ul>
+									            	</div> 
+												</c:if>
+												<c:if test="${membervo.member_id != commentvo.fk_member_id}">
+										            <div class="options-dropdown2">
+										                <ul>
+											                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
+										                </ul>
+									            	</div> 
+												</c:if>
+												<!-- div.options-dropdown 끝 -->
 				                    		</li>
+				                    		
 			                    		</c:if>
 		                    		</c:forEach>
 	                    		</c:if>
 	                    	</ul>
-	                    
+	                    	
+	                    	
+	                    	
 	                    </div> <!-- div.comment-input-container 끝 -->
 
                     </div>

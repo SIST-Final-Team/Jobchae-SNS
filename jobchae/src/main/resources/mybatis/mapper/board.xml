@@ -208,7 +208,7 @@
 	<!-- 댓글 등록하기 -->
 	<insert id="addComment" parameterType="HashMap">
 		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
-		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, #{fk_board_no}, 0, default, default)
+		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, #{fk_board_no}, default, default)
 	</insert>
 	
 	<!-- 댓글 조회하기 -->
