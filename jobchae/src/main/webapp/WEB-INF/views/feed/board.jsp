@@ -814,8 +814,15 @@
 		});
 		
 		
-		
+		///////////////////////////////////////////////////////////////////////////////////////// 
+		// 게시글 시간
 		$(".time").each(function () {
+	        const timeString = $(this).attr("data-time");
+	        $(this).text(timeAgo(timeString));
+	    });
+
+		// 댓글 시간
+		$(".comment-date").each(function () {
 	        const timeString = $(this).attr("data-time");
 	        $(this).text(timeAgo(timeString));
 	    });
@@ -931,7 +938,7 @@
 		    $(this).closest('.comment-item').find('#comment-edit-input').show();
 		});
 
-		$(".comment-edit-button").click(function() { // ㅇㅇ
+		$(".comment-edit-button").click(function() { 
 			const comment_content = $(this).closest('.comment-item').find('#edit-input').val();
 			//alert(comment_content);
 			
@@ -1423,7 +1430,7 @@
 														
 														<span class="comment-author">${commentvo.member_name}</span>
 														<!--<span class="comment-relationship">팔로워 0명</span>-->
-														<span class="comment-date">5일</span>
+														<span class="comment-date" data-time="${commentvo.comment_register_date}">5일</span> 
 														<button class="comment-options">...</button>
 													</div>
 													<div class="comment-text">
