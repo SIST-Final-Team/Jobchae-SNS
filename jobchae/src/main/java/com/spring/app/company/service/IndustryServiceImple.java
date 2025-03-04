@@ -4,6 +4,8 @@ import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.model.IndustryDAO;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class IndustryServiceImple implements IndustryService{
 
@@ -39,6 +41,13 @@ public class IndustryServiceImple implements IndustryService{
         }
 
         return industryVO;
+    }
+
+    @Override
+    public List<IndustryVO> selectAllIndustry() {
+
+        List<IndustryVO> industryVOList = industryDAO.findAll();
+        return industryVOList;
     }
 
 }
