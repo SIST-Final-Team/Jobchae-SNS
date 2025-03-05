@@ -19,9 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
 import com.spring.app.common.FileManager;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
-import com.spring.app.file.domain.FileVO;
+import com.spring.app.comment.domain.CommentVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,7 +40,7 @@ public class BoardController {
 	
 	// 피드 조회하기
 	@GetMapping("feed")
-	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam(required = false) String sort) {
 		
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
@@ -52,24 +53,60 @@ public class BoardController {
 		// 로그인된 사용자의 정보 얻어오기
 		MemberVO membervo = service.getUserInfo(login_userid);
 		
+		if (sort == null || sort.isEmpty()) {
+			sort = "latest"; // 기본값을 최신순으로 설정
+		}
+		//System.out.println("sort " + sort);
+		
 		// 피드 조회하기
-		List<BoardVO> boardvo = service.getAllBoards(login_userid);
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("login_userid", login_userid);
+		paraMap.put("sort", sort);
+		List<BoardVO> boardvoList = service.getAllBoards(paraMap);
 		
 		// 피드 순회하면서 첨부파일 있는 피드 조회
-		for (BoardVO board : boardvo) {
-			String board_no = board.getBoard_no();
+		for (BoardVO boardvo : boardvoList) {
+			String board_no = boardvo.getBoard_no();
 	        List<FileVO> filevoList = service.getFiles(board_no);
-	        board.setFileList(filevoList); 
+	        boardvo.setFileList(filevoList); 
+	        //System.out.println(board_no + " : " + boardvo.getFileList().size());
 	        
-	        System.out.println(board_no + " : " + board.getFileList().size());
+	        // 팔로워 수 구하기
+	        String following_id = boardvo.getFk_member_id();
+	        int followerCount = service.getFollowerCount(following_id);
+	        boardvo.setCountFollow(String.valueOf(followerCount)); 
+	        //System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
+	        
+	        // 반응 많은 순 상위 1~3개 추출하기
+	        //List<String> reactionCounts = service.getReactionCountsByBoard(board_no);
+	        //System.out.println("board_no Reaction Counts: " + reactionCounts);
+	        
+	        // 댓글 수 구하기
+	        int countComment = service.getCommentCount(board_no);
+	        boardvo.setCountComment(String.valueOf(countComment));
+	        //System.out.println("countComment : " + countComment);
 		}
 		
 		// 반응 조회하기
-		List<ReactionVO> reactionvo = service.getAllReaction(login_userid);
+		List<ReactionVO> reactionvoList = service.getAllReaction(login_userid);
 		
-		mav.addObject("boardvo", boardvo);
+		// 피드별 반응 개수 조회하기
+		List<Map<String, String>> reactionCountList = service.getReactionCount();
+		
+		//for (Map<String, String> map : reactionCountList) {
+		    //String reactionTargetNo = (String) map.get("reaction_target_no"); 
+		    //String reactionCount = (String) map.get("reaction_count"); 
+		    //System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
+		//}
+		
+		// 댓글 조회하기
+        List<CommentVO> commentvoList = service.getAllComments();
+		
+		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);
-		mav.addObject("reactionvo", reactionvo);
+		mav.addObject("reactionvoList", reactionvoList);
+		mav.addObject("reactionCountList", reactionCountList);
+		mav.addObject("commentvoList", commentvoList);
 		
 		mav.setViewName("feed/board");
 		

@@ -15,6 +15,7 @@ public class MemberCareerVO {
 	
 	private String region_name;					/* 지역명 */
 	private String job_name;					/* 직종명 */
+	private String company_logo;				/* 기업 로고 */
 
 	public String getMember_career_no() {
 		return member_career_no;
@@ -118,5 +119,13 @@ public class MemberCareerVO {
 
 	public void setJob_name(String job_name) {
 		this.job_name = job_name;
+	}
+
+	public String getCompany_logo() {
+		return company_logo;
+	}
+
+	public void setCompany_logo(String company_logo) {
+		this.company_logo = company_logo;
 	}
 }

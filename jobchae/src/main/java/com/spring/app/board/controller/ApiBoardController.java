@@ -1,17 +1,23 @@
 package com.spring.app.board.controller;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
 
@@ -39,6 +45,7 @@ public class ApiBoardController {
 		paraMap.put("board_no", board_no);
 		
 		int n = service.deleteBoard(paraMap);
+		//int n2 = service.deleteFile(paraMap);
 		
 		if (n != 1) {
 			mav.addObject("message", "삭제 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
@@ -156,4 +163,186 @@ public class ApiBoardController {
 		
 		return map; 
 	}
+	
+	
+	// 게시물 반응 개수 조회하기
+	@PostMapping("getReactionCounts")
+	@ResponseBody
+	public Map<String, String> getReactionCounts(HttpServletRequest request, @RequestParam String reaction_target_no) {
+		
+		Map<String, String> reactionCounts = service.getReactionCounts(reaction_target_no);
+		//System.out.println("Reaction Counts: " + reactionCounts);
+		
+		// Map.Entry를 기준으로 내림차순 정렬
+	    Map<String, String> sortedReactionCounts = reactionCounts.entrySet()
+	        .stream()
+	        .filter(entry -> !entry.getKey().equals("7"))
+	        .sorted((entry1, entry2) -> Integer.parseInt(entry2.getValue()) - Integer.parseInt(entry1.getValue()))
+	        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+	    // 콘솔에 출력
+	    sortedReactionCounts.forEach((key, value) -> 
+	        System.out.println("Reaction Type: " + key + ", Count: " + value)
+	    );
+	    
+		return reactionCounts;
+	}
+	
+	// 게시물 반응별 유저 조회하기
+	@PostMapping("getReactionMembers")
+	@ResponseBody
+	public Map<String, Object> getReactionMembers(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status) {
+		
+		//System.out.println("reaction_target_no: " + reaction_target_no);
+		//System.out.println("reaction_status: " + reaction_status);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("reaction_target_no", reaction_target_no);
+		paraMap.put("reaction_status", reaction_status);
+		
+		List<MemberVO> reaction_membervoList = service.getReactionMembers(paraMap);
+		/*
+		for (MemberVO member : reaction_membervoList) {
+		    System.out.println("Member ID: " + member.getMember_id());
+		    System.out.println("Member Name: " + member.getMember_name());
+		    System.out.println("-------------------------------");
+		}
+		*/
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("membervo", reaction_membervoList);
+		return map;
+	}
+		
+	
+	// 게시글 정렬
+	@GetMapping("feed")
+	@ResponseBody
+	public Map<String, Object> feed(HttpServletRequest request, @RequestParam String sort) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		String login_userid = loginuser.getMember_id();
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("login_userid", login_userid);
+		paraMap.put("sort", sort);
+		List<BoardVO> boardvoList = service.getAllBoards(paraMap);
+		
+		//for (BoardVO boardvo : boardvoList) {
+		    //System.out.println("Board No: " + boardvo.getBoard_register_date());
+		//}
+		//System.out.println();
+		
+		
+		// 피드 순회하면서 첨부파일 있는 피드 조회
+		for (BoardVO boardvo : boardvoList) {
+			String board_no = boardvo.getBoard_no();
+	        List<FileVO> filevoList = service.getFiles(board_no);
+	        boardvo.setFileList(filevoList); 
+	        //System.out.println(board_no + " : " + boardvo.getFileList().size());
+	        
+	        // 팔로워 수 구하기
+	        String following_id = boardvo.getFk_member_id();
+	        int followerCount = service.getFollowerCount(following_id);
+	        boardvo.setCountFollow(String.valueOf(followerCount)); 
+	        //System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
+	        
+	        // 반응 많은 순 상위 1~3개 추출하기
+	        //List<String> reactionCounts = service.getReactionCountsByBoard(board_no);
+	        //System.out.println("board_no Reaction Counts: " + reactionCounts);
+		}
+		
+		MemberVO membervo = service.getUserInfo(login_userid);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("boardvoList", boardvoList);
+		map.put("membervo", membervo);
+		return map;
+	}
+	
+	// 북마크 조회하기
+	@PostMapping("selectBookmarkBoard")
+	@ResponseBody
+	public Map<String, Integer> selectBookmarkBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String bookmark_target_no) {
+
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("bookmark_target_no : " + bookmark_target_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("bookmark_target_no", bookmark_target_no);
+		boolean isBookmarked = service.selectBookmarkBoard(paraMap);
+		//System.out.println("isBookmarked : " + isBookmarked);
+		
+		Map<String, Integer> map = new HashMap<>();
+		
+		if (isBookmarked) {
+			map.put("status", 1);	// 이미 북마크된 상태
+		} else {
+			map.put("status", 0);
+		}
+		
+		return map; 
+	}
+	
+	// 게시글 북마크 추가하기
+	@PostMapping("addBookmarkBoard")
+	@ResponseBody
+	public Map<String, Integer> addBookmarkBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String bookmark_target_no) {
+
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("bookmark_target_no : " + bookmark_target_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("bookmark_target_no", bookmark_target_no);
+		int n = service.addBookmarkBoard(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		
+		return map; 
+	}
+	
+	// 게시글 북마크 삭제하기
+	@PostMapping("deleteBookmarkBoard")
+	@ResponseBody
+	public Map<String, Integer> deleteBookmarkBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String bookmark_target_no) {
+
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("bookmark_target_no : " + bookmark_target_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("bookmark_target_no", bookmark_target_no);
+		int n = service.deleteBookmarkBoard(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		
+		return map; 
+	}
+	
+	// 댓글 등록하기
+	@PostMapping("addComment")
+	@ResponseBody
+	public Map<String, Integer> addComment(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_content) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("comment_content : " + comment_content);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("comment_content", comment_content);
+		int n = service.addComment(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
 }

@@ -1,0 +1,261 @@
+<style>
+
+/* 모달 전체 배경 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 모달 본체 */
+.modal-container {
+  background: white;
+  width: 600px;
+  height: 500px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 모달 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 반응 카테고리 탭 */
+.reaction-tabs {
+  display: flex;
+  gap: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.reaction-tabs button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.reaction-tabs button img {
+    vertical-align: middle; 
+}
+
+.reaction-tabs button span {
+    vertical-align: middle; 
+}
+
+.reaction-tabs .active {
+  background: #0073b1;
+  color: white;
+}
+
+/* 반응 목록 */
+.reaction-list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* 개별 사용자 정보 */
+.reaction-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.reaction-item:last-child {
+  border-bottom: none;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0;
+}
+
+.connection {
+  color: gray;
+  font-size: 12px;
+}
+
+.user-job {
+  font-size: 12px;
+  color: gray;
+  margin: 2px 0 0;
+}
+
+</style>
+
+<!-- jQuery 라이브러리 추가 (CDN) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+
+    $(docuemnt).ready(function() {
+        const buttons = document.querySelectorAll(".reaction-tabs button");
+
+        buttons.forEach((button) => {
+            button.addEventListener("click", function () {
+              // 기존 활성화된 버튼에서 active 제거
+              document.querySelector(".reaction-tabs .active")?.classList.remove("active");
+      
+              // 클릭한 버튼에 active 추가
+              this.classList.add("active");
+            });
+          });
+    });
+
+</script>
+
+<!-- 모달 배경 -->
+<div class="modal-overlay">
+    <div class="modal-container">
+      
+      <!-- 모달 헤더 -->
+      <div class="modal-header">
+        <h2>반응</h2>
+        <button class="close-btn">&times;</button>
+      </div>
+  
+      <!-- 반응 카테고리 -->
+      <div class="reaction-tabs">
+        <button class="active">전체 141</button>
+        <button><img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> <span>121</span></button>
+        <button><img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 10</button>
+        <button><img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 100</button>
+        <button><img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6gz02r6oxefigck4ye888wosd" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 100</button>
+        <button><img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 100</button>
+        <button><img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6namow3mrvcg3dyuevtpfwjm0" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 100</button>
+      </div>
+  
+      <!-- 반응 목록 -->
+      <div class="reaction-list">
+        <div class="reaction-item">
+          <img src="profile1.jpg" alt="Profile Image" class="avatar">
+          <div class="user-info">
+            <p class="user-name">Soyoung P. <span class="connection">· 3촌 이상</span></p>
+            <p class="user-job">Experienced chaplain & administrator</p>
+          </div>
+        </div>
+  
+        <div class="reaction-item">
+          <img src="profile2.jpg" alt="Profile Image" class="avatar">
+          <div class="user-info">
+            <p class="user-name">Jae Kyoung Jun <span class="connection">· 3촌 이상</span></p>
+            <p class="user-job">Learning & Development Partner</p>
+          </div>
+        </div>
+  
+        <div class="reaction-item">
+          <img src="profile3.jpg" alt="Profile Image" class="avatar">
+          <div class="user-info">
+            <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+            <p class="user-job">Machine Learning Engineer @Sendbird</p>
+          </div>
+        </div>
+
+        <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <img src="profile3.jpg" alt="Profile Image" class="avatar">
+            <div class="user-info">
+              <p class="user-name">Mansoo Kim <span class="connection">· 3촌 이상</span></p>
+              <p class="user-job">Machine Learning Engineer @Sendbird</p>
+            </div>
+          </div>
+
+  
+        <!-- 추가 사용자 리스트 -->
+      </div>
+  
+    </div>
+  </div>
+  

@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
     
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%
     String ctxPath = request.getContextPath();
@@ -187,7 +189,12 @@
 <script type="text/javascript">
     
 	let currentX = 0;
-
+	let uploadedFiles = [];
+	let boardList = $(".feed-item");
+	
+	console.log(boardList);
+	
+	
     $(document).ready(function() {
         
     	$(".options-dropdown").hide();
@@ -197,14 +204,26 @@
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
         const rangeModal = document.getElementById("rangeModal");
+        const reactionModal = document.getElementById("reactionModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
+        reactionModal.style.display = "none";
+        
+        
         
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
         prevBtn.style.display = "none";
         nextBtn.style.display = "none";
+        
+        const prevBtn2 = document.getElementById("prevBtn2");
+        const nextBtn2 = document.getElementById("nextBtn2");
+        prevBtn2.style.display = "none";
+        nextBtn2.style.display = "none";
+        
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         $("button.write-button").click(function() {
 
@@ -304,8 +323,10 @@
 		        return;
 		    }
 			else {
-				alert("글이 성공적으로 업데이트 되었습니다.");
+				const files = document.getElementById("file-image").files;
+				console.log("업로드된 파일들: ", files);
 				
+				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
 		      	frm.action = "<%= ctxPath%>/board/add";
@@ -313,9 +334,39 @@
 			}
 		});
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////// 
     	// 글 옵션
 	    $(".more-options").click(function (e) {
+	    	const fk_member_id = document.getElementById("loginuserID").value;
+	    	const board_fk_member_id = $(this).siblings(".board-fk_member_id").val();
+	    	const bookmark_target_no = $(this).attr("value");
+	    	
+	    	//console.log("fk_member_id " + fk_member_id)
+	    	//console.log("board_fk_member_id " + board_fk_member_id)
+	    	
+	    	if (fk_member_id != board_fk_member_id) {
+	    		$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/selectBookmarkBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_member_id": fk_member_id,
+						   "bookmark_target_no": bookmark_target_no},
+					success: function(json) {
+
+						//alert("북마크 상태: " + json.status);
+						if (json.status == 1) {
+							$("li.bookmark-post[value='" + bookmark_target_no + "']").text("북마크 해제");
+						} else {
+							$("li.bookmark-post[value='" + bookmark_target_no + "']").text("북마크");
+						}
+					
+					},
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	    	}
+	    	
 	        e.stopPropagation(); 
 	        let dropdown = $(this).siblings(".options-dropdown");
 	        $(".options-dropdown").not(dropdown).hide(); 
@@ -476,7 +527,7 @@
 		    
 		});
 		
-		$(".close").click(function () {
+		$(".close").click(function() {
 		    $("#rangeModal").hide();
 		});
 		
@@ -486,12 +537,78 @@
             }
         });
 		
-		/////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////// 
+		// 북마크
+		$(".bookmark-post").click(function() {
+			const fk_member_id = document.getElementById("loginuserID").value;
+			const bookmark_target_no = $(this).attr("value");
+			//alert(fk_member_id + " " + bookmark_target_no);
+			
+			const text = $(this).text();  
+   			//alert("클릭한 텍스트: " + text);
+   			
+   			if (text == "북마크") {
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/api/board/addBookmarkBoard',
+   					type: 'post',
+   					dataType: 'json',
+   					data: {"fk_member_id": fk_member_id,
+   						   "bookmark_target_no": bookmark_target_no},
+   					success: function(json) {
+   						if(json.n == 1) {
+   							alert("해당 게시글이 북마크에 추가되었습니다.");
+   						 	location.reload();
+   						}
+   			        },
+   			        error: function(request, status, error){
+   						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+   				 	}
+   				});
+   			} else {
+   				$.ajax({
+   					url: '${pageContext.request.contextPath}/api/board/deleteBookmarkBoard',
+   					type: 'post',
+   					dataType: 'json',
+   					data: {"fk_member_id": fk_member_id,
+   						   "bookmark_target_no": bookmark_target_no},
+   					success: function(json) {
+   						if(json.n == 1) {
+   							alert("북마크가 정상적으로 해제되었습니다.");
+   						 	location.reload();
+   						}
+   			        },
+   			        error: function(request, status, error){
+   						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+   				 	}
+   				});
+   			}
+
+		});
+		
+		
+		///////////////////////////////////////////////////////////////////////////////////////// 
 	 	// 정렬방식
 		$(".dropdown-content a").click(function() {
 	        var selectedValue = $(this).text();  
 	        $(".dropbtn").text(selectedValue + " ▼");  
-	    });
+	        
+	        if (selectedValue == "최신순") {
+				location.reload();
+        	} else {
+        	    const reactionCounts = document.querySelectorAll('#reactionCount');
+
+        	    const reactionData = Array.from(reactionCounts).map(span => {
+        	        const reactionCount = span.textContent.trim();
+        	        return {
+        	            board_no: span.getAttribute('value'),
+        	            reaction_count: reactionCount === '' || reactionCount === null ? 0 : reactionCount
+        	        };
+        	    });
+
+        	    reactionData.sort((a, b) => b.reaction_count - a.reaction_count);
+        	    console.log(reactionData);
+        	}
+        });
 		
 	    $(".dropbtn").click(function (e) {
 	        e.stopPropagation(); 
@@ -579,7 +696,108 @@
 			});
 		});
 		
+		$("span#reactionCount").click(function() {
+			const reaction_target_no = $(this).attr("value");
+			$("input[name='reaction_target_no']").val(reaction_target_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/getReactionCounts',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no},
+				success: function(json) {
+					$("#reaction-all").text(json["7"]);
+					$("#reaction-like").text(json["1"]);
+					$("#reaction-praise").text(json["2"]);
+					$("#reaction-empathy").text(json["3"]);
+					$("#reaction-appreciation").text(json["4"]);
+					$("#reaction-interest").text(json["5"]);
+					$("#reaction-entertainment").text(json["6"]);
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/getReactionMembers',
+				type: 'post',
+				dataType: 'json',
+				data: {"reaction_target_no": reaction_target_no,
+					   "reaction_status" : "7"},
+				success: function(json) {
+					//console.log(json.membervo);
+					$(".reaction-list").empty();
+					
+					json.membervo.forEach(function(member) {
+						let member_name = member.member_name;
+						var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+		        		$(".reaction-list").append(html);
+					});
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
+			reactionModal.style.display = "block";
+			const firstButton = document.querySelector(".reaction-tabs button");
+		    firstButton.classList.add("active");
+		});
+		
+		$("span#closeModalButton").click(function() {
+			reactionModal.style.display = "none";
+			const activeButton = document.querySelector(".reaction-tabs .active");
+            if (activeButton) {
+                activeButton.classList.remove("active");
+            }
+        });
+		
+		$(window).click(function(e) {
+            if (e.target == reactionModal) {
+            	reactionModal.style.display = "none";
+            	const activeButton = document.querySelector(".reaction-tabs .active");
+                if (activeButton) {
+                    activeButton.classList.remove("active");
+                }
+            }
+        });
+		
+		
+		const buttons = document.querySelectorAll(".reaction-tabs button");
 
+        buttons.forEach((button) => {
+	        button.addEventListener("click", function () {
+	          document.querySelector(".reaction-tabs .active")?.classList.remove("active");
+	          this.classList.add("active");
+	          
+	          const reaction_target_no = $("input[name='reaction_target_no']").val();
+	          const reaction_status = this.value;
+	          //alert(reaction_status + " " + reaction_target_no);
+	          
+	          $.ajax({
+					url: '${pageContext.request.contextPath}/api/board/getReactionMembers',
+					type: 'post',
+					dataType: 'json',
+					data: {"reaction_target_no": reaction_target_no,
+						   "reaction_status" : reaction_status},
+					success: function(json) {
+						//console.log(json.membervo);
+						$(".reaction-list").empty();
+						
+						json.membervo.forEach(function(member) {
+							let member_name = member.member_name; //여기
+							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+			        		$(".reaction-list").append(html);
+						});
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+	          
+	        });
+        });
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// Modal 이미지 미리보기
@@ -594,91 +812,169 @@
 			currentX -= 208;
 			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
 		});
+		
+		
+		
+		$(".time").each(function () {
+	        const timeString = $(this).attr("data-time");
+	        $(this).text(timeAgo(timeString));
+	    });
+		
+		function timeAgo(dateString) {
+	        const now = new Date();
+	        const past = new Date(dateString);
+	        const diff = Math.floor((now - past) / 1000); 
 
+	        if (diff < 60) return "방금"; 
+	        if (diff < 3600) return Math.floor(diff / 60) + "분 전"; 
+	        if (diff < 86400) return Math.floor(diff / 3600) + "시간 전";
+	        if (diff < 2592000) return Math.floor(diff / 86400) + "일 전";
+	        if (diff < 31536000) return Math.floor(diff / 2592000) + "달 전";
+	        return Math.floor(diff / 31536000) + "년 전"; 
+	    }
+		
+		
+		///////////////////////////////////////////////////////////////////////////////////////// ㅇㅇ
+		// 댓글
+		$(".button-board-action-comment").click(function() {
+			
+		});
+
+		$(".comment-submit-button").click(function() {
+			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
+			//alert("클릭" + fk_board_no);
+			
+			const fk_member_id = document.getElementById("loginuserID").value;
+			
+			const comment_content = $(this).closest('.comment-input-container').find('#commentInput').val().trim(); 
+			//alert(comment_content);
+			
+			if (comment_content == "") {
+				alert("댓글 내용을 입력해주세요.");
+				$(this).closest('.comment-input-container').find('#commentInput').val('');
+				return;
+			} else {
+				$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/addComment',
+					type: 'post',
+					dataType: 'json',
+					data: {"fk_board_no": fk_board_no,
+						   "fk_member_id": fk_member_id,
+						   "comment_content" : comment_content},
+					success: function(json) {
+						if(json.n == 1) {
+							$(this).closest('.comment-input-container').find('#commentInput').val('');
+							alert("댓글이 등록되었습니다.")
+						}
+			        },
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+			}
+		});
 	
 	});
     
-    // 이미지 미리보기
-	function previewImage(event) {
-    	
-	    const files = event.target.files;
-	    const track = document.querySelector(".carousel-track");
-	    
-	    if (!track) {
-	        console.error("미리보기 요소를 찾을 수 없습니다.");
-	        return;
-	    }
-	
-	    Array.from(files).forEach((file, index) => {
-	
-	        if (file.type.startsWith("image/")) {
-	            const reader = new FileReader();
-	
-	            reader.onload = function (e) {
-	
-	                const previewBox = document.createElement("div");
-	                previewBox.className = "preview-box";
-	
-	                const img = document.createElement("img");
-	                img.src = e.target.result;
-	                img.alt = file.name;
-	                
-	                const closeButton = document.createElement("div");
-	                closeButton.className = "close-btn";
-	                closeButton.innerText = "×";
-	                
-	                closeButton.addEventListener("click", () => {
-	                    previewBox.remove();
-	                    togglePrevButton();
-	                    updateCarouselPosition();
-	                });
-	                
-	                previewBox.appendChild(img);
-	                previewBox.appendChild(closeButton); 
-	                track.appendChild(previewBox);
-	                
-	                togglePrevButton();
-	                updateCarouselPosition();
-	            };
-	
-	            reader.onerror = function () {
-	                console.error("파일 읽기 오류 발생");
-	            };
-	
-	            reader.readAsDataURL(file);
-	        } else {
-	            alert("이미지 파일만 업로드할 수 있습니다.");
-	        }
-	    });
-	    
-	    function togglePrevButton() {
-	        const previewCount = track.querySelectorAll(".preview-box").length;
-	        
-	        if (previewCount === 0) {
-	            prevBtn.style.display = "none";  
-	            nextBtn.style.display = "none";  
-	        } 
-	        else if (previewCount < 4) {
-	        	prevBtn.style.display = "block";
-	        	nextBtn.style.display = "none";
-	        } else {
-	        	prevBtn.style.display = "block";
-	        	nextBtn.style.display = "block";
-	        }
-	        
-	    }
-	    
-	    function updateCarouselPosition() {
-	        const previewCount = track.querySelectorAll(".preview-box").length;
+    function previewImage(event) {
+        const files = event.target.files;
+        const track = document.querySelector(".carousel-track");
 
-	        if (previewCount > 3) {
-	            currentX = parseInt($(track).css("transform").split(',')[4]) || 0;
-	            currentX = currentX - 208; 
-	            $(track).css("transform", "translateX(" + currentX + "px)");
-	        }
-	    }
+        if (!track) {
+            console.error("미리보기 요소를 찾을 수 없습니다.");
+            return;
+        }
 
-	}
+        const dataTransfer = new DataTransfer(); 
+
+        Array.from(files).forEach((file) => {
+            if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const previewBox = document.createElement("div");
+                    previewBox.className = "preview-box";
+
+                    let mediaElement;
+                    if (file.type.startsWith("image/")) {
+                        mediaElement = document.createElement("img");
+                        mediaElement.src = e.target.result;
+                        mediaElement.alt = file.name;
+                    } else if (file.type.startsWith("video/")) {
+                        mediaElement = document.createElement("video");
+                        mediaElement.src = e.target.result;
+                        mediaElement.controls = true;  
+                        mediaElement.alt = file.name;
+                    }
+
+                    const closeButton = document.createElement("div");
+                    closeButton.className = "close-btn";
+                    closeButton.innerText = "×";
+
+                    closeButton.addEventListener("click", () => {
+                        previewBox.remove();
+                        removeFile(file);
+                        togglePrevButton();
+                        updateCarouselPosition();
+                    });
+
+                    previewBox.appendChild(mediaElement);
+                    previewBox.appendChild(closeButton);
+                    track.appendChild(previewBox);
+
+                    dataTransfer.items.add(file);
+
+                    togglePrevButton();
+                    updateCarouselPosition();
+                };
+
+                reader.onerror = function () {
+                    console.error("파일 읽기 오류 발생");
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("이미지와 비디오 파일만 업로드할 수 있습니다.");
+            }
+        });
+
+        function removeFile(fileToRemove) {
+            const newDataTransfer = new DataTransfer();
+            Array.from(dataTransfer.files).forEach((file) => {
+                if (file !== fileToRemove) {
+                    newDataTransfer.items.add(file);
+                }
+            });
+            event.target.files = newDataTransfer.files;
+        }
+
+        function togglePrevButton() {
+            const previewCount = track.querySelectorAll(".preview-box").length;
+            if (previewCount === 0) {
+                prevBtn.style.display = "none";
+                nextBtn.style.display = "none";
+            } else if (previewCount < 4) {
+                prevBtn.style.display = "block";
+                nextBtn.style.display = "none";
+            } else {
+                prevBtn.style.display = "block";
+                nextBtn.style.display = "block";
+            }
+        }
+
+        function updateCarouselPosition() {
+            const previewCount = track.querySelectorAll(".preview-box").length;
+            if (previewCount > 3) {
+                currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
+                currentX = currentX - 208;
+                $(track).css("transform", "translateX(" + currentX + "px)");
+            }
+        }
+
+        event.target.files = dataTransfer.files;
+    }
+    
+    
 
 
 </script>
@@ -686,24 +982,27 @@
 
 <div class="container m-auto grid grid-cols-14 gap-6 xl:max-w-[1140px]">
 
+		<!-- 좌측 프로필 -->
+		<div class="left-side col-span-3 hidden md:block h-full relative">
+		    <div class="border-normal sticky top-20">
+		        
+		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/images/쉐보레전면.jpg'); background-size: cover; background-position: center;"></div>
+		        
+		        <div class="flex flex-col items-center p-4 -mt-10">
+		            <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
+		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
+		            <p class="text-gray-500 text-sm">팔로워 0명</p>
+		        </div>
 		
-        <!-- 좌측 네비게이션 -->
-        <div class="left-side col-span-3 hidden md:block h-full relative">
-            <div class="border-normal sticky top-20">
-                <h1 class="h1 p-4">이 페이지에는</h1>
-                <ul class="nav">
-                    <li class="nav-selected"><a href="#update">업데이트</a></li>
-                    <li><a href="#member">사람</a></li>
-                    <li><a href="#company">회사</a></li>
-                    <li><a href="#updateMore">업데이트 더보기</a></li>
-                </ul>
-            </div>
-        </div>
+		    </div>
+		</div>
 
         
         <!-- 중앙 본문 -->
         <div class="center col-span-14 md:col-span-7 space-y-2 m-5">
-
+			
+			<input type="hidden" id="loginuserID" value="${membervo.member_id}">
+			
 			<div id="write" class="border-board">
 			
 				<div>
@@ -714,7 +1013,7 @@
                         </div>
                         <div class="flex-1">
                         	<!-- 글 작성 -->
-	                        <button class="write-button">                   
+	                        <button class="write-button button-board-action">                   
 	                            <span>
 	                                <span>
 	                                    <span class="write-span">
@@ -758,8 +1057,8 @@
 			        <div class="dropdown">
 			            <button class="dropbtn">최신순 ▼</button>
 			            <div class="dropdown-content">
-			                <a href="#" data-value="latest">최신순</a>
-			                <a href="#" data-value="likes">좋아요순</a>
+			                <a data-value="latest">최신순</a>
+			                <a data-value="likes">좋아요순</a>
 			            </div>
 			        </div>
 			    </div>
@@ -767,7 +1066,7 @@
 			
             <div id="update" class="border-board">
                 <!-- 게시물 동적으로 생성 -->
-                <c:forEach var="board" items="${boardvo}">              
+                <c:forEach var="boardvo" items="${boardvoList}">              
                 	
                 	<div>
 	                    <!-- 멤버 프로필 -->                                                              
@@ -778,42 +1077,43 @@
 	                        <div class="flex-1">
 	                            <a href="#">
 	                                <c:choose>
-					        			<c:when test="${membervo.member_id == board.fk_member_id}">
-					        				<p class="feed-post-name">${board.member_name} · 나</p> 
+					        			<c:when test="${membervo.member_id == boardvo.fk_member_id}">
+					        				<p class="feed-post-name">${boardvo.member_name} · 나</p> 
 					        			</c:when>
 					        			<c:otherwise>
-					        				<p class="feed-post-name">${board.member_name}</p> 
+					        				<p class="feed-post-name">${boardvo.member_name}</p> 
 					        			</c:otherwise>
 					        		</c:choose>
-	                                <span>팔로워 26,549명</span>
+	                                <span>팔로워 ${boardvo.countFollow}명</span>
 	                            </a>
-	                            <span>1년</span>
+	                            <span class="time" data-time="${boardvo.board_register_date}"></span>
 	                        </div>
 	                        <div style="position: relative;">
 	                        	<c:choose>
-	                        		<c:when test="${membervo.member_id != board.fk_member_id}">
+	                        		<c:when test="${membervo.member_id != boardvo.fk_member_id}">
 			                            <button type="button" class="follow-button">
                             				<!--  <i class="fa-solid fa-plus"></i>&nbsp;팔로우-->
 		                            	</button>
 	                            	</c:when>
-                            	</c:choose>
-	                            <button type="button" class="more-options"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
-	                            <input type="hidden" class="board-content" value="${board.board_content}" data-board-content="${board.board_content}" />
-	                            <input type="hidden" class="board-visibility-origin" value="${board.board_visibility}" data-board-content="${board.board_visibility}" />
-	                            <input type="hidden" class="board-comment-allowed-origin" value="${board.board_comment_allowed}" data-board-content="${board.board_comment_allowed}" />
+                            	</c:choose> 
+	                            <button type="button" class="more-options" value="${boardvo.board_no}"><!--<i class="fa-solid fa-ellipsis"></i>-->...</button>
+	                            <input type="hidden" class="board-fk_member_id" value="${boardvo.fk_member_id}" data-board-content="${boardvo.fk_member_id}" />
+	                            <input type="hidden" class="board-content" value="${boardvo.board_content}" data-board-content="${boardvo.board_content}" />
+	                            <input type="hidden" class="board-visibility-origin" value="${boardvo.board_visibility}" data-board-content="${boardvo.board_visibility}" />
+	                            <input type="hidden" class="board-comment-allowed-origin" value="${boardvo.board_comment_allowed}" data-board-content="${boardvo.board_comment_allowed}" />
 	                            
 				        		<!-- 옵션 드롭다운 메뉴 -->
 					            <div class="options-dropdown">
 					                <ul>
 					                    <c:choose>
-								            <c:when test="${membervo.member_id == board.fk_member_id}">
-								                <li class="delete-post" value="${board.board_no}">글 삭제</li>
-								            	<li class="edit-post" value="${board.board_no}">글 수정</li>
-								                <li class="set-board-range" value="${board.board_no}">허용범위</li>
+								            <c:when test="${membervo.member_id == boardvo.fk_member_id}">
+								                <li class="delete-post" value="${boardvo.board_no}">글 삭제</li>
+								            	<li class="edit-post" value="${boardvo.board_no}">글 수정</li>
+								                <li class="set-board-range" value="${boardvo.board_no}">허용범위</li>
 								            </c:when>
 								            <c:otherwise>
-								            	<li class="bookmark-post" value="${board.board_no}">북마크</li>
-								                <li class="interest-none" value="${board.board_no}">관심없음</li>
+								            	<li class="bookmark-post" value="${boardvo.board_no}"></li>
+								                <li class="interest-none" value="${boardvo.board_no}">관심없음</li>
 								            </c:otherwise>
 								        </c:choose>
 					                </ul>
@@ -822,33 +1122,81 @@
 	                    </div>
 	                    <!-- 글 내용 -->
 	                    <div>
-	                        <p>${board.board_content}</p>
+	                        <p>${boardvo.board_content}</p>
 	                    </div>
-	                    <!-- 사진 또는 동영상 등 첨부파일 
+	             
+
+						<!-- 첨부파일 미리보기 -->
 	                    <div class="px-0">
-	                        <div class="file-image">
-	                            <button type="button"><img src="<%= ctxPath%>/images/4.png"/></button>
-	                            <button type="button"><img src="<%= ctxPath%>/images/6.png"/></button>
-	                            <button type="button"><img src="<%= ctxPath%>/images/7.png"/></button>
-	                            <button type="button" class="more-image"><img src="<%= ctxPath%>/images/240502-Gubi-Showroom-London-003-Print.jpg"/>
-	                                <span class="flex items-center">
-	                                    <span><i class="fa-solid fa-plus"></i></span>
-	                                    <span class="text-4xl">3</span>
-	                                </span>
-	                            </button>
-	                        </div>
-	                    </div>
+						    <div class="file-image">
+						        <!-- 5장 미만 -->
+						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}">
+						            <c:forEach var="file" items="${boardvo.fileList}">
+						                <button type="button">
+						                    <!-- 파일 확장자 추출 -->
+        									<c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+        									
+        									<!-- 이미지 파일인 경우 -->
+									        <c:if test="${fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png' || fileExtension == 'gif' || fileExtension == 'bmp' || fileExtension == 'webp'}">
+									            <img src="<%= ctxPath%>/resources/files/${file.file_name}" />
+									        </c:if>
+									        
+									        <!-- 비디오 파일인 경우 -->
+									        <c:if test="${fileExtension == 'mp4' || fileExtension == 'avi' || fileExtension == 'mov' || fileExtension == 'mkv'}">
+									            <video width="100%" controls>
+									                <source src="<%= ctxPath%>/resources/files/${file.file_name}" type="video/mp4">
+									            </video>
+									        </c:if>
+						                </button>
+						            </c:forEach>
+						        </c:if>
+						
+						        <!-- 5장 이상 -->
+						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() >= 5}">
+						            <c:forEach var="file" items="${boardvo.fileList}" varStatus="status">
+						                <!-- 첫 3장은 그대로 출력 -->
+						                <c:if test="${status.index < 3}">
+						                    <button type="button">
+						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                    </button>
+						                </c:if>
+						
+						                <!-- 4번째 이미지는 +n 형식으로 출력 -->
+						                <c:if test="${status.index == 3}">
+						                    <button type="button" class="more-image">
+						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                        <span class="flex items-center">
+						                            <span><i class="fa-solid fa-plus"></i></span>
+						                            <span class="text-4xl">${boardvo.fileList.size() - 3}</span>
+						                        </span>
+						                    </button>
+						                </c:if>
+						            </c:forEach>
+						        </c:if>
+						    </div>
+						</div>
+	                    
+	                    
+	                    
 	                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
 	                    <div>
 	                        <ul class="flex gap-4 text-gray-600">
 	                            <li class="flex-1">
 	                                <button type="button" class="button-underline">
-	                                    <div class="reaction-images">
-	                                        <img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
-	                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-	                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-	                                    </div>
-	                                    <span id="reactionCount">120</span>
+	                                
+                                    	<c:forEach var="reactionCount" items="${reactionCountList}">
+	                                		<c:if test="${reactionCount.reaction_count > 0 and boardvo.board_no == reactionCount.reaction_target_no}">
+		                                		<div class="reaction-images">
+													<img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
+			                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
+			                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
+		                                        </div>
+		                                        <span id="reactionCount" value="${boardvo.board_no}">
+													${reactionCount.reaction_count}
+			                                    </span>
+	                                		</c:if>
+								        </c:forEach>
+								        
 	                                </button>
 	                            </li>
 	                            <li>
@@ -867,39 +1215,43 @@
 	                    </div>
 	
 	                    <hr class="border-gray-300 mx-4">
+	                    
 	                    <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    <div class="py-0">
 	                        <ul class="grid grid-cols-4 gap-4 text-center">
 	                            <li>
 	                            	<input type="hidden" name="" value="dd"/>
-	                                <button type="button" class="button-board-action button-board-action-reaction" value="${board.board_no}">
-	                                    <i class="fa-regular fa-thumbs-up"></i>
-	                                    
-	                                    <c:set var="matched" value="false" />
-	                                    
-	                                    <!-- 반응 있을 때 -->
-								        <c:forEach var="reaction" items="${reactionvo}">
-								            <c:if test="${board.board_no == reaction.reaction_target_no}">
-								                <c:choose>
-								                    <c:when test="${reaction.reaction_status == 1}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8ekq8gho1ruaf8i7f86vd1ftt" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="1" style="color: #0A66C2; ">추천</span></c:when>
-								                    <c:when test="${reaction.reaction_status == 2}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/b1dl5jk88euc7e9ri50xy5qo8" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="2" style="color: #44712E;">축하</span></c:when>
-								                    <c:when test="${reaction.reaction_status == 3}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/3wqhxqtk2l554o70ur3kessf1" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="3" style="color: #715E86;">응원</span></c:when>
-								                    <c:when test="${reaction.reaction_status == 4}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cpho5fghnpme8epox8rdcds22" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="4" style="color: #B24020;">마음에 쏙듬</span></c:when>
-								                    <c:when test="${reaction.reaction_status == 5}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/lhxmwiwoag9qepsh4nc28zus" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="5" style="color: #915907;">통찰력</span></c:when>
-								                    <c:when test="${reaction.reaction_status == 6}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/41j9d0423ck1snej32brbuuwg" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="6" style="color: #1A707E;">웃음</span></c:when>
-								                    <c:otherwise>기타</c:otherwise>
-								                </c:choose>
-								                <c:set var="matched" value="true" />
-								            </c:if>
-								        </c:forEach>
-								        
-								        <!-- 반응 없을 때 -->
-								        <c:if test="${!matched}">
-								            <span>추천</span>	
-								        </c:if>
-								        
+	                                <button type="button" class="button-board-action button-board-action-reaction" value="${boardvo.board_no}">
+	                                	<div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+		                                    <i class="fa-regular fa-thumbs-up"></i>
+		                                    <c:set var="matched" value="false" />
+		                                    
+		                                    <!-- 반응 있을 때 -->
+									        <c:forEach var="reactionvo" items="${reactionvoList}">
+									            <c:if test="${boardvo.board_no == reactionvo.reaction_target_no}">
+									                <c:choose>
+									                    <c:when test="${reactionvo.reaction_status == 1}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8ekq8gho1ruaf8i7f86vd1ftt" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="1" style="color: #0A66C2; ">추천</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 2}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/b1dl5jk88euc7e9ri50xy5qo8" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="2" style="color: #44712E;">축하</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 3}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/3wqhxqtk2l554o70ur3kessf1" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="3" style="color: #715E86;">응원</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 4}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cpho5fghnpme8epox8rdcds22" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="4" style="color: #B24020;">마음에 쏙듬</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 5}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/lhxmwiwoag9qepsh4nc28zus" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="5" style="color: #915907;">통찰력</span></c:when>
+									                    <c:when test="${reactionvo.reaction_status == 6}"><img class="reactions-icon artdeco-button__icon reactions-react-button__icon reactions-icon__consumption--small data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/41j9d0423ck1snej32brbuuwg" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="small"><span data-value="6" style="color: #1A707E;">웃음</span></c:when>
+									                    <c:otherwise>기타</c:otherwise>
+									                </c:choose>
+									                <c:set var="matched" value="true" />
+									            </c:if>
+									        </c:forEach>
+									        
+									        <!-- 반응 없을 때 -->
+									        <c:if test="${!matched}">
+								        		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" id="thumbs-up-outline-small" width="16" height="16" aria-hidden="true" role="none" data-supported-dps="16x16" fill="currentColor">
+  													<path d="M12.91 7l-2.25-2.57a8.21 8.21 0 01-1.5-2.55L9 1.37A2.08 2.08 0 007 0a2.08 2.08 0 00-2.06 2.08v1.17a5.81 5.81 0 00.31 1.89l.28.86H2.38A1.47 1.47 0 001 7.47a1.45 1.45 0 00.64 1.21 1.48 1.48 0 00-.37 2.06 1.54 1.54 0 00.62.51h.05a1.6 1.6 0 00-.19.71A1.47 1.47 0 003 13.42v.1A1.46 1.46 0 004.4 15h4.83a5.61 5.61 0 002.48-.58l1-.42H14V7zM12 12.11l-1.19.52a3.59 3.59 0 01-1.58.37H5.1a.55.55 0 01-.53-.4l-.14-.48-.49-.21a.56.56 0 01-.34-.6l.09-.56-.42-.42a.56.56 0 01-.09-.68L3.55 9l-.4-.61A.28.28 0 013.3 8h5L7.14 4.51a4.15 4.15 0 01-.2-1.26V2.08A.09.09 0 017 2a.11.11 0 01.08 0l.18.51a10 10 0 001.9 3.24l2.84 3z"></path>
+												</svg>
+												<span>추천</span>
+									        </c:if>
+								        </div>
 	                                </button>
-	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${board.board_no}" style="">
+	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${boardvo.board_no}" style="">
 									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" value="1" tabindex="-1" type="button">
 									      	<span class="reactions-menu__reaction-description">추천</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8fz8rainn3wh49ad6ef9gotj1" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
@@ -927,7 +1279,7 @@
 								    </span>
 	                            </li>
 	                            <li>
-	                                <button type="button" class="button-board-action">
+	                                <button type="button" class="button-board-action button-board-action-comment">
 	                                    <i class="fa-regular fa-comment"></i>
 	                                    <span>댓글</span>
 	                                </button>
@@ -945,10 +1297,71 @@
 	                                </button>
 	                            </li>
 	                        </ul>
-	                    </div>
-	                </div>
+	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
+	                    
+	                    <div class="comment-input-container" id="commentInputContainer">
+	                    	<div class="comment-profile">
+	                    		<input type="hidden" value="${boardvo.board_no}" />
+	                    		
+		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
+		                    	<div class="comment-input" >
+							        <input type="text" placeholder="댓글 남기기" id="commentInput">
+						            <button class="comment-submit-button">댓글</button>
+							    </div>	
+	                    	</div>
+	                    	
+	                    	<div class="comment-list-container">
+	                    		<div class="comment-sort">
+	                    			<select id="sortOption">
+						                <option value="recent">최신순</option>
+						                <option value="relevant">관련순</option>
+						            </select>
+	                    		</div>
+	                    	</div>
+	                    	
+	                    	<ul class="comment-list">
+	                    		<li class="comment-item">
+									<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+									<div class="comment-content">
+										<div class="comment-info">
+											<span class="comment-author">이름</span>
+											<span class="comment-relationship">팔로워 0명</span>
+											<span class="comment-date">5일</span>
+											<button class="comment-options">...</button>
+										</div>
+										<div class="comment-text">댓글내용 !!!!</div>
+										<div class="comment-actions">
+											<button class="like-button">추천</button>
+						                    <span>|</span>
+						                    <button class="reply-button">답장</button>
+						                </div>
+									</div>                  		
+	                    		</li>
+	                    		
+	                    		<li class="comment-item">
+									<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+									<div class="comment-content">
+										<div class="comment-info">
+											<span class="comment-author">이름</span>
+											<span class="comment-relationship">팔로워 0명</span>
+											<span class="comment-date">5일</span>
+											<button class="comment-options">...</button>
+										</div>
+										<div class="comment-text">댓글내용 !!!!</div>
+										<div class="comment-actions">
+											<button class="like-button">추천</button>
+						                    <span>|</span>
+						                    <button class="reply-button">답장</button>
+						                </div>
+									</div>                  		
+	                    		</li>
+	                    	</ul>
+	                    
+	                    </div> <!-- div.comment-input-container 끝 -->
+
+                    </div>
                	</c:forEach>
-           	</div>
+           	</div> <!-- div#update 끝 -->
        	</div>
                
                 
@@ -1015,9 +1428,8 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="board_image" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" />
-				            <input type="file" name="board_video" id="file-video" style="display:none;" accept="video/*" />
-				            <input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" />
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*" onchange="previewImage(event)" multiple/>
+				            <!-- <input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" /> -->
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
@@ -1055,10 +1467,17 @@
 					    </div>
 					</div>
 					
-				    <!-- 이미지 미리보기 표시 영역 -->
-		            <div id="image-preview-container" style="">
-		                <div id="image-preview-list"></div> <!-- 첨부된 이미지 목록 -->
-		            </div>
+				    <!-- 이미지 미리보기 영역 -->
+					<div id="carousel-container2">
+					    <button id="prevBtn2" class="carousel-btn">〈</button>
+					
+					    <div id="image-preview-container2">
+					        <div class="carousel-track">
+					        </div>
+					    </div>
+					
+					    <button id="nextBtn2" class="carousel-btn">〉</button>
+					</div>
 					
                     <div class="ql-category">
 	                    <div>
@@ -1150,7 +1569,52 @@
 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 		        
-        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 반응 Modal -->
+		<div id="reactionModal" class="modal">
+    		<div class="reactionmodal-content">
+			
+				<!-- 모달 헤더 -->
+				<div class="reactionmodal-header">
+					<h2>반응</h2>
+					<input type="hidden" name="reaction_target_no" value="">
+					<span class="close" id="closeModalButton">&times;</span>
+				</div>
+	
+				<!-- 반응 카테고리 -->
+				<div class="reaction-tabs">
+					<button class="active" value="7">전체 <span id="reaction-all"></span></button>
+					<button value="1">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-like"></span>
+					</button>
+					<button value="2">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-praise"></span>
+					</button>
+					<button value="3">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-empathy"></span>
+					</button>
+					<button value="4">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-appreciation"></span>
+					</button>
+					<button value="5">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6gz02r6oxefigck4ye888wosd" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-interest"></span>
+					</button>
+					<button value="6">
+						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6namow3mrvcg3dyuevtpfwjm0" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
+						<span id="reaction-entertainment"></span>
+					</button>
+				</div>
+
+				<!-- 반응 목록 -->
+				<div class="reaction-list"></div>
+			</div>
+	  	</div>
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
 		<!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
