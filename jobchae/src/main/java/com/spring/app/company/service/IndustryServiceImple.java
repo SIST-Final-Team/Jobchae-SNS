@@ -43,10 +43,21 @@ public class IndustryServiceImple implements IndustryService{
         return industryVO;
     }
 
+    //모든 업종 조회
     @Override
     public List<IndustryVO> selectAllIndustry() {
 
         List<IndustryVO> industryVOList = industryDAO.findAll();
+        return industryVOList;
+    }
+
+    //검색할 때 나오는 업종 리스트
+    @Override
+    public List<IndustryVO> selectIndustryList(String industryName) {
+        //TODO : 나중에 코드 보강 필요
+        List<IndustryVO> industryVOList = industryDAO.findByIndustryNameContaining(industryName);
+
+
         return industryVOList;
     }
 

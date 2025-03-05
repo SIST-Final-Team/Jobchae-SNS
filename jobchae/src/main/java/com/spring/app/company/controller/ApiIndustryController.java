@@ -27,4 +27,11 @@ public class ApiIndustryController {
         return ResponseEntity.ok(industryVOList);
     }
 
+    @GetMapping("/list/{industryName}")
+    public ResponseEntity<List<IndustryVO>> selectIndustryListByName(){
+
+
+        return null;
+    }
+
 }

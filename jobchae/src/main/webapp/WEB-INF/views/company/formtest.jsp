@@ -40,11 +40,12 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
       <br />
       <label for="industryName">Industry :</label>
       <input
-        type="text"
+        list="options"
         id="industryName"
         name="industryName"
         placeholder="Software"
       />
+      <details id="options"></details>
       <br />
       <label for="companySize">Company Size :</label>
       <select id="companySize" name="companySize">
@@ -86,5 +87,21 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
       &nbsp;
       <button type="reset">Reset</button>
     </form>
+
+    <script>
+      const industryOptions = document.getElementById("options");
+
+      async function fetchIndustryList() {
+        const response = await fetch(`<%= ctxPath%>/api/industry/list`);
+        const jsonData = await response.json();
+        html = "";
+        jsonData.forEach((item) => {
+          html += `<option value="\${item.industryNo}">\${item.industryName}</option>`;
+        });
+        industryOptions.innerHTML = html;
+      }
+
+      fetchIndustryList();
+    </script>
   </body>
 </html>
