@@ -597,7 +597,7 @@ img.modal-img {
     transition: background 0.3s;
 }
 
-#write-update:hover, #edit-update:hover, #saveRange:hover {
+#write-update:hover, #edit-update:hover, #saveRange:hover, #saveIgnored:hover {
     background: #084B99;
 }
 

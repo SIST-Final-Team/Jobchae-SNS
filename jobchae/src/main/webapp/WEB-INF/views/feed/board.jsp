@@ -991,7 +991,10 @@
             	ignoredModal.style.display = "none";
             }
         });
-	
+		
+		$("#saveIgnored").click(function() {
+			alert("ㅋㅋ");
+		});
 	});
     
     function previewImage(event) {
