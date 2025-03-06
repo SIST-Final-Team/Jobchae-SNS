@@ -34,6 +34,24 @@ public interface MemberService {
 	// 회원 휴면을 자동으로 지정해주는 스케줄러
 	void deactivateMember_idle();
 	
+	// 휴면 해제 실행 메소드
+	ModelAndView memberReactivation(ModelAndView mav, Map<String, String> paraMap, HttpServletRequest request);
+	
+	// 비밀번호 변경 메소드
+	ModelAndView passwdUpdate(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap);
+	
+	// 아이디 찾기 메소드
+	ModelAndView idFind(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap);
+	
+	// 회원이 존재하는지 검사하는 메소드
+	boolean isExistMember(Map<String, String> paraMap);
+	
+	// 회원탈퇴 메소드
+	ModelAndView memberDisable(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap);
+	
+	// 탈퇴된 회원 한달 뒤 자동삭제 스캐줄러
+	void memberDelete();
+	
 	// === 이준영 끝 === //
 	
 	
@@ -85,6 +103,18 @@ public interface MemberService {
 	// 회원 보유기술 등록, 삭제
 	int addMemberSkill(MemberSkillVO memberSkillVO);
 	int deleteMemberSkill(Map<String, String> paraMap);
+
+	
+	
+	
+
+	
+
+	
+
+	
+
+	
 
 	
 	

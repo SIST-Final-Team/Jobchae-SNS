@@ -26,15 +26,17 @@ $(document).ready(function () {
     // 사진 첨부
     $("img#profile_img").on("click", function (e) {
 
-        $("input#file_input").click();
+        $("input#file_input_pro").click(); // 프로필 사진 설정
 
     });//end of $("img#profile_img").on("click", function (e) {}...
 
+    console.log($("input#file_input_background").val());
 
     // 파일 인풋 값이 들어갔을 때 이벤트
-    $("input#file_input").change(function (e) {
+    $("input#file_input_pro").change(function (e) {
 
-        // console.log($("input#file_input").val());
+        console.log("프로필 사진 => ",$("input#file_input_pro").val());
+        console.log("백그라운드 사진 => ",$("input#file_input_background").val());
 
         const inputFile = $(e.target).get(0).files[0];
         const preview_profile_img = $("img#profile_img"); // 미리보기 사진칸
@@ -58,7 +60,7 @@ $(document).ready(function () {
 
             const uploadSize = inputFile.size;
 
-            if (limitSize < uploadSize) { // 이미지 크기가 5mb 이상인 경우
+            if (limitSize < uploadSize) { // 이미지 크기가 10mb 이상인 경우
                 alert('10MB 미만 이미지만 업로드가 가능합니다.');
                 $(e.target).get(0).value = ""; // input 비우기
                 return;
@@ -76,19 +78,15 @@ $(document).ready(function () {
         } else { // 파일을 업로드하지 않은 경우
             $(preview_profile_img).attr("src", `${contextPath}/images/no_profile.png`); // 미리보기 이미지 초기화
             console.log("$(e.target).get(0).value => ", $(e.target).get(0).value);
-            $(e.target).get(0).value = ""; // 파일 value 도 초기화
+            $(e.target).get(0).value = `${contextPath}/images/no_profile.png`; // 파일 value 도 초기화
             $("#icon_label").show();
         }// 
 
-    });//$("input#file_input").change(function (e) {}...
+    });//$("input#file_input_pro").change(function (e) {}...
 
 
-    // $("div.error").hide();
-    // $("input#member_id").focus();
+    // 백그라운드 사진 default 파일을 지정
 
-    // $("input#name").bind("blur", function(e){ alert("name 에 있던 포커스를 잃어버렸습니다."); }); 
-    // 또는
-    // $("input#name").blur(function(e){ alert("name 에 있던 포커스를 잃어버렸습니다."); }); 
 
 
     // userid 블러 처리
@@ -414,7 +412,7 @@ $(document).ready(function () {
         }
         // === 두번째 방법 === //
         $.ajax({
-            url: `${contextPath}/member/idDuplicateCheck`, //              /member/ 까진 똑같아서 제외함
+            url: `${contextPath}/api/member/idDuplicateCheck`, //              /member/ 까진 똑같아서 제외함
             data: { "member_id": $(`input#member_id`).val() }, // json 모양 파라미터(객체 아님!!)
             type: "post",  // 빼면 get 방식
             async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
@@ -473,7 +471,7 @@ $(document).ready(function () {
         } else {
             // 데이터 베이스 검사 후 중복이 안되면 true 값을 반환, 인증메일 발송
             $.ajax({
-                url: `${contextPath}/member/emailCheck_Send`, //
+                url: `${contextPath}/api/member/emailCheck_Send`, //
                 data: { "member_email": $(`input#member_email`).val() },
                 type: "post",  // 빼면 get 방식
                 async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
@@ -512,10 +510,11 @@ $(document).ready(function () {
 
         if (b_email_auth_click == false) {
             alert("이메일이 변경되었습니다. 인증번호를 다시 발급해주세요.");
-
+            return;
+            
         } else { // true 여야 데이터 베이스에 들어감
             $.ajax({
-                url: `${contextPath}/member/emailAuth`,
+                url: `${contextPath}/api/member/emailAuth`,
                 data: { "email_auth_text": $(`input#email_auth`).val() },
                 type: "post",  // 빼면 get 방식
                 async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
@@ -729,8 +728,8 @@ $(document).ready(function () {
 
     // 검색어 클릭시 완성하기
     $(document).on("mousedown", "li[name='result_a']", function (e) {
-        const word = $(e.target).text();
-        const no = $(e.target).children("input[name='no_result']").val();
+        const word = $(this).text();
+        const no = $(this).children("input[name='no_result']").val();
         // $("input[name='no_result']").val();
         $("input[name='region_name']").val(word); // 텍스트 박스에 검색된 결과의 문자열을 입력해준다.
         $("input[name='fk_region_no']").val(no);

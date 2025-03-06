@@ -37,23 +37,13 @@
 	</select>
 	
 	
-	<!-- 회원가입  여기 터짐 고쳐야함 --> 
+	<!-- 회원가입 --> 
 	<insert id="memberRegister" parameterType="MemberVO">
 		
 		INSERT INTO tbl_member(member_id, fk_region_no, member_passwd, member_name, member_birth, 
-							   	   member_email, member_tel, member_profile)
-		
-		<if test="member_profile != null">
-			VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
-			   	   #{member_email}, #{member_tel}, #{member_profile})
-		</if>
-
-		<if test="member_profile == null">
-			VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
-			   	   #{member_email}, #{member_tel}, null)
-		</if>
-	
-		
+							   	   member_email, member_tel, member_profile, member_background_img)
+		VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
+			   #{member_email}, #{member_tel}, #{member_profile}, #{member_background_img})
 	</insert>
 
 	
@@ -112,12 +102,70 @@
 	
 	<!-- 회원 휴면을 자동으로 지정해주는 스케줄러 -->
 	<update id="deactivateMember_idle">
-		UPDATE tbl_member SET member_idle = 0 WHERE member_id = (SELECT fk_member_id
-                                                        FROM tbl_login
-                                                        GROUP BY fk_member_id
-                                                        HAVING MAX(login_date) &lt; ADD_MONTHS(SYSDATE, -12))
+		UPDATE tbl_member SET member_idle = 0 
+		WHERE member_id = (SELECT fk_member_id
+						   FROM tbl_login
+						   GROUP BY fk_member_id
+						   HAVING MAX(login_date) &lt; ADD_MONTHS(SYSDATE, -12))
 	</update>
 	
+	
+	<!-- 휴면 해제 실행 메소드 -->
+	<update id="memberReactivation" parameterType="String">
+		UPDATE tbl_member SET member_idle = 0 WHERE member_id = #{member_id}
+	</update>
+	
+	
+
+	<!-- 비밀번호 중복 확인  -->
+	<select id="passwdExist" parameterType="String" resultType="String">
+		SELECT member_passwd
+		FROM tbl_member
+		WHERE member_passwd = #{new_member_passwd}
+	</select>
+	
+	
+	<!-- 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경 하고 비밀번호 변경날짜 갱신 -->
+	<update id="passwdUpdate" parameterType="HashMap">
+		UPDATE tbl_member SET member_passwd = #{new_member_passwd} AND member_passwdupdate_date = SYSDATE 
+		WHERE member_id = #{member_id}
+	</update>
+	
+	
+
+	<!-- 아이디찾기 메소드 -->
+	<select id="idFind" parameterType="HashMap" resultType="String">
+		SELECT member_id
+		FROM tbl_member
+		WHERE member_name = #{member_name} AND member_email = #{member_email}
+	</select>
+	
+	<!-- 회원이 존재하는지 검사하는 메소드 -->
+	<select id="isExistMember" parameterType="HashMap" resultType="String">
+		SELECT member_name
+		FROM tbl_member
+		WHERE member_id = #{member_id} AND member_passwd = #{member_passwd}
+	</select>
+	
+	<!-- 회원 탈퇴(비활성화) -->
+	<update id="memberDisable" parameterType="HashMap">
+		UPDATE tbl_member SET member_status = 2 WHERE member_id = #{member_id}
+	</update>
+	
+	
+	<!-- 탈퇴한 회원 한달 뒤 자동삭제 스캐줄러 -->
+	<delete id="memberDelete">
+		DELETE FROM tbl_member
+		WHERE member_status = (SELECT member_status
+                       		   FROM tbl_member
+                       		   WHERE member_disable_date &lt; ADD_MONTHS(SYSDATE, -1))
+	</delete>
+	
+	
+	<insert id="memberDisableDate">
+		INSERT tbl_member(member_disable_date)
+		VALUES(SYSDATE)
+	</insert>
 	
 	
 	<!-- === 이준영 끝 === -->

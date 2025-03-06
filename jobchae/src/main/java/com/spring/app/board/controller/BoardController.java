@@ -43,9 +43,10 @@ public class BoardController {
 		
 		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
-		MemberVO loginuser = new MemberVO();
-		loginuser.setMember_id("user001");
-		session.setAttribute("loginuser", loginuser);
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+//		MemberVO loginuser = new MemberVO(); // feat: 이준영, 기능 구현 중 오류발생하여 주석처리함
+//		loginuser.setMember_id("user001");
+//		session.setAttribute("loginuser", loginuser);
 		String login_userid = loginuser.getMember_id();
 		// 임시로 세션값 저장해주기. 끝
 		
