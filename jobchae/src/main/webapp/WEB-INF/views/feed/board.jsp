@@ -324,9 +324,17 @@
 		        return;
 		    }
 			else {
-				const files = document.getElementById("file-image").files;
-				console.log("업로드된 파일들: ", files);
+				const imageFiles = document.getElementById("file-image").files;
+    			const videoFiles = document.getElementById("file-video").files;
 				
+    			// 파일이 없으면 해당 input 제거
+    		    if (imageFiles.length === 0) {
+    		        document.getElementById("file-image").remove();
+    		    }
+    		    if (videoFiles.length === 0) {
+    		        document.getElementById("file-video").remove();
+    		    }
+    			
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -1065,6 +1073,7 @@
     		
     		$("#mentionedName").text(member_name);
     	});
+    	
 
     });
     
@@ -1079,8 +1088,16 @@
 
         const dataTransfer = new DataTransfer(); 
 
-        Array.from(files).forEach((file) => {
-            if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+        Array.from(files).forEach((file) => { 
+            if (file.type.startsWith("image/") || 
+            	file.type.startsWith("video/") || 
+                file.type === "application/pdf" || 
+                file.type === "application/msword" || 
+                file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || 
+                file.type === "text/plain" || 
+                file.type === "text/csv") {
                 const reader = new FileReader();
 
                 reader.onload = function (e) {
@@ -1097,6 +1114,23 @@
                         mediaElement.src = e.target.result;
                         mediaElement.controls = true;  
                         mediaElement.alt = file.name;
+                    } else if (file.type === "application/pdf") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; // ㅇㅇ
+                        mediaElement.innerHTML = file.name; 
+                    }
+                    else if (file.type === "application/msword" || 
+                        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                        file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = file.name; 
+                    }
+                    else if (file.type === "text/plain" || file.type === "text/csv") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = file.name; 
                     }
 
                     const closeButton = document.createElement("div");
@@ -1649,8 +1683,9 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*" onchange="previewImage(event)" multiple/>
-				            <!-- <input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" /> -->
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" multiple/>
+				            <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>
+				            <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->

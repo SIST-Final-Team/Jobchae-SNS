@@ -130,7 +130,7 @@ public class BoardController {
 				// WAS 절대경로 알아오기
 				HttpSession session = mrequest.getSession();
 				String root = session.getServletContext().getRealPath("/");
-				String path =  root + "resources" + File.separator + "files";  
+				String path =  root + "resources" + File.separator + "files" + File.separator + "board";  
 				//System.out.println("path : " + path);
 				//C:\git\Jobchae-SNS\jobchae\src\main\webapp\resources\files
 				
