@@ -10,7 +10,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
     <h1>Company Info Test</h1>
     <ul id="companyList">
       <li id="companyNo"></li>
-      <li id="fkMemberId"></li>
+      <li id="member"></li>
       <li id="industry"></li>
       <li id="companyName"></li>
       <li id="companyWebsite"></li>
@@ -39,7 +39,16 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         );
 
         liList.forEach((li) => {
-          li.textContent = jsonData[li["id"]];
+          if(li["id"] == "member") {
+            li.textContent = jsonData["member"]["member_id"];
+          }
+          else if(li["id"] == "industry") {
+            li.textContent = jsonData["industry"]["industryName"];
+          }
+          else {
+            li.textContent = jsonData[li["id"]];
+          }
+
           if (li == "") {
             li.textContent = "null";
           }

@@ -2,6 +2,7 @@ package com.spring.app.company.controller;
 
 import com.spring.app.company.domain.CompanyVO;
 import com.spring.app.company.service.CompanyService;
+import com.spring.app.member.domain.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,9 @@ public class CompanyController {
 //        }
 
         //멤버 등록
-        companyVO.setFkMemberId("user001");
+        MemberVO member = new MemberVO();
+        member.setMember_id("user001");
+        companyVO.setMember(member);
         String industryName = (String)request.getParameter("industryName");
 
         //회사 등록

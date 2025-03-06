@@ -37,8 +37,8 @@ public class CompanyVO {
     Long companyNo;
 
     @NotBlank
-    @Column(name = "fk_member_id", nullable = false, length = 20)
-    private String fkMemberId;
+    @Transient
+    private MemberVO member;
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
@@ -80,12 +80,12 @@ public class CompanyVO {
         this.companyNo = companyNo;
     }
 
-    public String getFkMemberId() {
-        return fkMemberId;
+    public MemberVO getMember() {
+        return member;
     }
 
-    public void setFkMemberId(String fkMemberId) {
-        this.fkMemberId = fkMemberId;
+    public void setMember(MemberVO member) {
+        this.member = member;
     }
 
     public IndustryVO getIndustry() {
