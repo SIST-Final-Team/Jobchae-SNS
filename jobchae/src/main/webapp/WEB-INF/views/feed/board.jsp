@@ -978,6 +978,10 @@
 			const fk_board_no = $(this).attr("value");
 			//alert(fk_member_id + " " + fk_board_no)
 			
+	    	$("input[name='ignored_fk_board_no']").val(fk_board_no);
+	    	//alert($("input[name='ignored_fk_board_no']").val());
+	    	
+	    	$("input[name='reason']").first().prop("checked", true);
 			ignoredModal.style.display = "block";
 			
 		});
@@ -993,7 +997,27 @@
         });
 		
 		$("#saveIgnored").click(function() {
-			alert("ㅋㅋ");
+			const fk_member_id = document.getElementById("loginuserID").value;
+			const fk_board_no = $("input[name='ignored_fk_board_no']").val()
+			//alert(fk_member_id + " " + fk_board_no)
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/ignoredBoard',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_member_id": fk_member_id,
+					   "fk_board_no": fk_board_no},
+				success: function(json) {
+					if(json.n == 1) {
+						alert("관심없음 설정이 되었습니다.");
+						location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+			
 		});
 	});
     
@@ -1442,7 +1466,7 @@
 	                    		</div>
 	                    	</div>
 	                    	
-	                    	<ul class="comment-list"> <!-- ㅇㅇ -->
+	                    	<ul class="comment-list"> 
 	                    		<c:if test="${not empty commentvoList}">
 		                    		<c:forEach var="commentvo" items="${commentvoList}">  
 		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
@@ -1768,7 +1792,7 @@
 	
 				<!-- 모달 헤더 -->
 				<div class="ignoredModal-header">
-					<input type="text" name="fk_board_no" value="">
+					<input type="text" name="ignored_fk_board_no" value="">
 					
 					<h2>앞으로 표시하지 않기</h2>
 					<span class="close" id="closeModalButton">&times;</span>
@@ -1787,7 +1811,6 @@
 					    <li><label><input type="radio" name="reason" value="too_old"> 글이 너무 오래 됐음</label></li>
 					    <li><label><input type="radio" name="reason" value="etc"> 기타</label></li>
 					</ul>
-
 				</div>
 		    	
 		    	<div style="display: flex; justify-content: flex-end; margin-right: 20px;">

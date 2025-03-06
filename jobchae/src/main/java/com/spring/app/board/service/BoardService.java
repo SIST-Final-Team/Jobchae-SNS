@@ -89,6 +89,9 @@ public interface BoardService {
 	// 댓글 수정하기
 	int editComment(Map<String, String> paraMap);
 
+	// 관심없음 등록하기
+	int ignoredBoard(Map<String, String> paraMap);
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);
 

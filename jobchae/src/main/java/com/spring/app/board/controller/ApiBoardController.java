@@ -386,4 +386,23 @@ public class ApiBoardController {
 		map.put("n", n);
 		return map; 
 	}
+	
+	
+	// 관심없음 등록하기
+	@PostMapping("ignoredBoard")
+	@ResponseBody
+	public Map<String, Integer> ignoredBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String fk_board_no) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		int n = service.ignoredBoard(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
 }

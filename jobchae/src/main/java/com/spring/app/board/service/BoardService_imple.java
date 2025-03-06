@@ -200,6 +200,13 @@ public class BoardService_imple implements BoardService {
 		return n;
 	}
 
+	// 관심없음 등록하기
+	@Override
+	public int ignoredBoard(Map<String, String> paraMap) {
+		int n = dao.ignoredBoard(paraMap);
+		return n;
+	}
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//@Override
 	//public List<String> getReactionCountsByBoard(String board_no) {
