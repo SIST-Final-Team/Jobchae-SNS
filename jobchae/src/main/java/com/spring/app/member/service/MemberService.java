@@ -72,7 +72,18 @@ public interface MemberService {
 	// 자동완성을 위한 보유기술 목록 조회 및 검색
 	List<Map<String, String>> getSkillListForAutocomplete(Map<String, String> params);
 
-	// 회원 경력 1개 조회
+	/**
+	 * 회원 한 명의 정보 조회
+	 * @param paraMap member_id: 조회할 대상 아이디, login_member_id: 현재 로그인한 회원 아이디
+	 * @return
+	 */
+	MemberVO getMember(Map<String, String> paraMap);
+
+	/**
+	 * 회원 경력 1개 조회
+	 * @param paraMap 맵에 필요한 키 값 member_id: 조회할 대상 아이디, login_member_id: 현재 로그인한 회원 아이디, size: 개수
+	 * @return
+	 */
 	MemberCareerVO getMemberCareer(Map<String, String> paraMap);
 	
 	// 한 회원의 경력 모두 조회
@@ -82,8 +93,12 @@ public interface MemberService {
 	int addMemberCareer(MemberCareerVO memberCareerVO);
 	int updateMemberCareer(MemberCareerVO memberCareerVO);
 	int deleteMemberCareer(Map<String, String> paraMap);
-
-	// 회원 학력 1개 조회
+	
+	/**
+	 * 회원 학력 1개 조회
+	 * @param paraMap 맵에 필요한 키 값 member_id: 조회할 대상 아이디, login_member_id: 현재 로그인한 회원 아이디, size: 개수
+	 * @return
+	 */
 	MemberEducationVO getMemberEducation(Map<String, String> paraMap);
 	
 	// 한 회원의 학력 모두 조회
@@ -94,7 +109,11 @@ public interface MemberService {
 	int updateMemberEducation(MemberEducationVO memberEducationVO);
 	int deleteMemberEducation(Map<String, String> paraMap);
 
-	// 회원 보유기술 1개 조회
+	/**
+	 * 회원 보유기술 1개 조회
+	 * @param paraMap 맵에 필요한 키 값 member_id: 조회할 대상 아이디, login_member_id: 현재 로그인한 회원 아이디, size: 개수
+	 * @return
+	 */
 	MemberSkillVO getMemberSkill(Map<String, String> paraMap);
 	
 	// 한 회원의 보유기술 모두 조회

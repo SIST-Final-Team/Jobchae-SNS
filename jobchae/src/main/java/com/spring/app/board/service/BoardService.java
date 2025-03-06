@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.spring.app.board.domain.BoardVO;
+import com.spring.app.comment.domain.CommentVO;
 import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
@@ -20,10 +21,13 @@ public interface BoardService {
 	MemberVO getUserInfo(String login_userid);
 
 	// 피드 조회하기
-	List<BoardVO> getAllBoards(String login_userid);
+	List<BoardVO> getAllBoards(Map<String, String> paraMap);
 
 	// 글 삭제
 	int deleteBoard(Map<String, String> paraMap);
+	
+	// 글 삭제시 파일도 같이 삭제
+	int deleteFile(Map<String, String> paraMap);
 
 	// 글 수정
 	int editBoard(Map<String, String> paraMap);
@@ -48,6 +52,40 @@ public interface BoardService {
 	
 	// 각 피드별 파일 존재여부 검사
 	List<FileVO> getFiles(String board_no);
+	
+	// 피드별 반응 개수 조회하기
+	List<Map<String, String>> getReactionCount();
+
+	// 팔로워 수 구하기
+	int getFollowerCount(String following_id);
+
+	// 게시물 반응 개수 조회하기
+	Map<String, String> getReactionCounts(String reaction_target_no);
+
+	// 게시물 반응별 유저 조회하기
+	List<MemberVO> getReactionMembers(Map<String, String> paraMap);
+
+	// 게시글 북마크 추가하기
+	int addBookmarkBoard(Map<String, String> paraMap);
+	
+	// 게시글 북마크 조회하기
+	boolean selectBookmarkBoard(Map<String, String> paraMap);
+
+	// 게시글 북마크 삭제하기
+	int deleteBookmarkBoard(Map<String, String> paraMap);
+
+	// 댓글 등록하기
+	int addComment(Map<String, String> paraMap);
+
+	// 댓글 조회하기
+	List<CommentVO> getAllComments();
+
+	// 댓글 수 구하기
+	int getCommentCount(String board_no);
+
+	// 반응 많은 순 상위 1~3개 추출하기
+	//List<String> getReactionCountsByBoard(String board_no);
+
 
 
 }

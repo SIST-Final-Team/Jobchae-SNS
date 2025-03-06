@@ -23,20 +23,20 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
   </head>
   <body class="bg-stone-100">
     <nav
-      class="w-full h-[5.5vh] bg-white border-b-1 border-gray-300 sticky top-0 flex justify-center z-999"
+      class="w-full h-15 bg-white border-b-1 border-gray-300 sticky top-0 flex justify-center z-999"
     >
-      <div class="h-full w-[59vw] flex">
+      <div class="h-full text-center flex">
         <!-- 로고 -->
         <div class="h-full w-25 flex-1 text-left">
-          <a href="">
+          <a href="" class="h-full w-25">
             <img
               src="${pageContext.request.contextPath}/images/LinkedIn_icon.svg"
-              class="h-3/4 ml-2 mt-1.5"
+              class="h-3/4 mt-1.5 w-25  object-contain"
           /></a>
         </div>
         <!-- 검색상자 -->
-        <div id="searchBox" class="h-9 ml-4 mt-2">
-          <div id="searchInput" class="flex rounded-sm h-full">
+        <div id="searchBox" class="h-9 ml-4 mt-2 h-full text-left">
+          <div id="searchInput" class="flex rounded-sm h-3/4">
             <div id="SearchIconDiv" class="h-full">🔍</div>
             <div id="SearchInputDiv" class="h-full">
               <input

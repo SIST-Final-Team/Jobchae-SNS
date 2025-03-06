@@ -497,6 +497,12 @@ public class MemberService_imple implements MemberService {
 		return dao.getSkillListForAutocomplete(paraMap);
 	}
 
+	// 회원 한 명의 정보 조회
+	@Override
+	public MemberVO getMember(Map<String, String> paraMap) {
+		return dao.getMember(paraMap);
+	}
+
 	// 회원 경력 1개 조회
 	@Override
 	public MemberCareerVO getMemberCareer(Map<String, String> paraMap) {

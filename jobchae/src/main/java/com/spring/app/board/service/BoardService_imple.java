@@ -1,6 +1,5 @@
 package com.spring.app.board.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.model.BoardDAO;
+import com.spring.app.comment.domain.CommentVO;
 import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
@@ -42,8 +42,8 @@ public class BoardService_imple implements BoardService {
 	
 	// 피드 조회하기
 	@Override
-	public List<BoardVO> getAllBoards(String login_userid) {
-		List<BoardVO> boardList = dao.getAllBoards(login_userid);
+	public List<BoardVO> getAllBoards(Map<String, String> paraMap) {
+		List<BoardVO> boardList = dao.getAllBoards(paraMap);
 		return boardList;
 	}
 	
@@ -53,7 +53,14 @@ public class BoardService_imple implements BoardService {
 		int n = dao.deleteBoard(paraMap);
 		return n;
 	}
-
+	
+	// 글 삭제시 파일도 같이 삭제
+	@Override
+	public int deleteFile(Map<String, String> paraMap) {
+		int n = dao.deleteFile(paraMap);
+		return n;
+	}
+	
 	// 글 수정
 	@Override
 	public int editBoard(Map<String, String> paraMap) {
@@ -109,6 +116,84 @@ public class BoardService_imple implements BoardService {
 		List<FileVO> filevoList = dao.getFiles(board_no);
 		return filevoList;
 	}
+
+	// 피드별 반응 개수 조회하기
+	@Override
+	public List<Map<String, String>> getReactionCount() {
+		List<Map<String, String>> reactionCountList = dao.getReactionCount();
+		return reactionCountList;
+	}
+
+	// 팔로워 수 구하기
+	@Override
+	public int getFollowerCount(String following_id) {
+		int n = dao.getFollowerCount(following_id);
+		return n;
+	}
+
+	// 게시물 반응 개수 조회하기
+	@Override
+	public Map<String, String> getReactionCounts(String reaction_target_no) {
+		return dao.getReactionCounts(reaction_target_no);
+	}
+
+	// 게시물 반응별 유저 조회하기
+	@Override
+	public List<MemberVO> getReactionMembers(Map<String, String> paraMap) {
+		List<MemberVO> reaction_membervoList = dao.getReactionMembers(paraMap);
+		return reaction_membervoList;
+	}
+
+	// 게시글 북마크 추가하기
+	@Override
+	public int addBookmarkBoard(Map<String, String> paraMap) {
+		int n = dao.addBookmarkBoard(paraMap);
+		return n;
+	}
+
+	// 게시글 북마크 조회하기
+	@Override
+	public boolean selectBookmarkBoard(Map<String, String> paraMap) {
+		int n = dao.selectBookmarkBoard(paraMap);
+		return n > 0;
+	}
+
+	// 게시글 북마크 삭제하기
+	@Override
+	public int deleteBookmarkBoard(Map<String, String> paraMap) {
+		int n = dao.deleteBookmarkBoard(paraMap);
+		return n;
+	}
+
+	// 댓글 등록하기
+	@Override
+	public int addComment(Map<String, String> paraMap) {
+		int n = dao.addComment(paraMap);
+		return n;
+	}
+
+	// 댓글 조회하기
+	@Override
+	public List<CommentVO> getAllComments() {
+		List<CommentVO> commentvoList = dao.getAllComments();
+		return commentvoList;
+	}
+
+	// 댓글 수 구하기
+	@Override
+	public int getCommentCount(String board_no) {
+		int n = dao.getCommentCount(board_no);
+		return n;
+	}
+
+	// 반응 많은 순 상위 1~3개 추출하기
+	//@Override
+	//public List<String> getReactionCountsByBoard(String board_no) {
+		//List<String> reaction_top3List = dao.getReactionCountsByBoard(board_no);
+		//return reaction_top3List;
+	//}
+
+	
 
 	
 

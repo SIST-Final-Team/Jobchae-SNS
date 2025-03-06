@@ -12,7 +12,6 @@ import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 
-@Repository
 @Mapper
 public interface MemberDAO {
 
@@ -82,6 +81,13 @@ public interface MemberDAO {
 	List<Map<String, String>> getSchoolListForAutocomplete(Map<String, String> paraMap);
 	// 자동완성을 위한 보유기술 목록 조회 및 검색
 	List<Map<String, String>> getSkillListForAutocomplete(Map<String, String> paraMap);
+
+	/**
+	 * 회원 한 명의 정보 조회
+	 * @param paraMap member_id : 조회할 대상 id, login_member_id: 로그인한 회원 id
+	 * @return
+	 */
+	MemberVO getMember(Map<String, String> paraMap);
 
 	/**
 	 * 회원 경력 1개 조회

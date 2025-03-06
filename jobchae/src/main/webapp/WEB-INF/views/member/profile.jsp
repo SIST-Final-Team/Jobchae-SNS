@@ -20,6 +20,9 @@
         body {
             background-color: rgb(244, 242, 238);
         }
+        dialog::backdrop {
+            background:rgba(0, 0, 0, 0.6);
+        }
         .h1 {
             @apply text-[1.35rem] font-bold;
         }
@@ -220,7 +223,18 @@
             @apply bg-gray-100 cursor-pointer;
         }
     </style>
+
 <script type="text/javascript">
+    const ctxPath = '${pageContext.request.contextPath}';
+    const memberId = '${requestScope.memberId}'; // 조회 대상 회원 아이디
+    const reload = true; // 등록, 수정, 삭제 후 페이지 새로고침 여부
+    const isMyProfile = ${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}; // 본인의 프로필인지 여부
+</script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/member/profileMore.js"></script>
+
+<script type="text/javascript">
+
 $(document).ready(function() {
 
     // 스크롤 위치에 따라 nav 선택 변경
@@ -235,92 +249,8 @@ $(document).ready(function() {
         }
     });
 
-    // 정렬기준 모달 열기
-    $(".btn-open-modal").on("click", function() {
-        const btnId = $(this).attr("id");
-        const modalId = "#modal" + btnId.slice("btn".length);
-        const rect = this.getBoundingClientRect();
-        $(modalId)[0].showModal();
-    });
-
-    // 바깥 클릭하면 모달 닫기
-    /*
-    $(".modal").on("click", function(e) {
-        if (e.target === this) {
-            this.close();
-        }
-    });
-    */
-    
-    // 취소 버튼 또는 X 버튼으로 모달 닫기
-    $(".btn-close-modal").on("click", function(e) {
-        $(this).parent().parent().parent()[0].close();
-    });
-
-
-    // 자동완성 드롭다운 모달 열기
-    $(".input-search").on("focus", function() {
-        const inputId = $(this).attr("id");
-        const dropdownId = "#suggest" + inputId.slice("input".length);
-        const width = $(this).width();
-
-        $(dropdownId).css({"width":width+8});
-        $(dropdownId).removeClass("hidden");
-    });
-    
-    // 바깥 클릭하면 드롭다운 모달 닫기
-    $(".input-search").on("blur", function() {
-        const inputId = $(this).attr("id");
-        const dropdownId = "#" + inputId.slice(5) + "Suggest";
-
-        setTimeout(() => {
-            $(dropdownId).addClass("hidden");
-        }, 100);
-    });
-
-    // 자동완성 선택 시 값 변경
-    $(".suggest").on("click", function(e) {
-        const keyword = $(e.target).text();
-
-        const suggestId = $(this).attr("id");
-        const inputId = "#input" + suggestId.slice(0, -"Suggest".length);
-
-        const value = $(e.target).data("value");
-        if(value!= undefined) {
-            $(inputId).val(keyword);
-            $(inputId+"Value").val(value);
-        }
-    });
-
-    $(".input-search").on("input", function() {
-        const inputId = $(this).attr("id");
-        const search = inputId.slice("input".length);
-        const dropdownId = "#suggest" + search;
-
-        getSearch(inputId, search, dropdownId);
-    });
 });
 
-function getSearch(inputId, searchPath, dropdownId) {
-
-    const searchType = $(inputId).attr("name");
-    const searchWord = search
-
-    $.$.ajax({
-        url: "${pageContext.request.contextPath}/search/"+searchPath,
-        data: {searchType : $(inputId).val() // "region_name" : "서울"
-              },
-        dataType: "dataType",
-        success: function (response) {
-            
-
-            // 자동완성 표시
-            const width = $(inputId).width();
-            $(dropdownId).css({"width":width+8});
-            $(dropdownId).removeClass("hidden");
-        }
-    });
-}
 </script>
 <style>
 dialog.dropdown::backdrop {
@@ -328,277 +258,382 @@ dialog.dropdown::backdrop {
 }
 </style>
 
-    <!-- 경력 Modal -->
-    <dialog id="modalMemberCareer" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+    <!-- 연락처 Modal -->
+    <dialog id="modalMemberContact"
+        class="fixed left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-150">
         <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
             <!-- 모달 상단부 -->
             <div>
-                <button type="button" class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <h1 class="h1 px-8">연락처</h1>
+
+                <hr class="border-gray-200 mt-4">
+            </div>
+
+            <!-- 모달 내용 -->
+            <div class="space-y-4 overflow-auto">
+                <ul class="space-y-4 px-8">
+                    <li>
+                        <div class="font-bold text-lg">JobChae 프로필</div>
+                        <div>
+                            <a class="hover:underline text-orange-500 font-bold" href="http://localhost${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
+                                localhost${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="font-bold text-lg">이메일</div>
+                        <div>
+                            <a class="hover:underline text-orange-500 font-bold" href="mailto:${requestScope.memberVO.member_email}">
+                                ${requestScope.memberVO.member_email}
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="font-bold text-lg">전화번호</div>
+                        <div>
+                            <a class="hover:underline text-orange-500 font-bold" href="tel:${requestScope.memberVO.member_tel}">
+                                ${requestScope.memberVO.member_tel}
+                            </a>
+                        </div>
+                    </li>
+                    <%-- <li>
+                        <div>팔로우 날짜</div>
+                        <div></div>
+                    </li> --%>
+                </ul>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 경력 Modal -->
+    <dialog id="modalMemberCareer"
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+        <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
+            <!-- 모달 상단부 -->
+            <div>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
                 <h1 class="h1 px-8">경력 입력</h1>
 
                 <hr class="border-gray-200 mt-4">
             </div>
-            
+
             <!-- 모달 내용 -->
             <div class="space-y-4 overflow-auto">
                 <div class="text-gray-500 px-8">* 필수</div>
                 <form name="memberCareerForm">
-                <ul class="space-y-4 px-8">
-                    <li>
-                        <label for="jobName" class="text-gray-500">직종 *</label><br>
-                        <input type="text" name="job_name" id="jobName" class="input-search w-full border-1 rounded-sm p-1"/>
-                        <input type="hidden" name="fk_job_no" id="jobNameResult"/>
-
-                        <!-- 직종 자동완성 Dropdown -->
-                        <div id="jobNameSuggest" class="absolute suggest bg-white hidden rounded-lg drop-shadow-lg">
-                            <ul>
-                                <li class="hover:bg-gray-100 p-2" data-no="1">소프트웨어 개발자1</li>
-                                <li class="hover:bg-gray-100 p-2" data-no="2">소프트웨어 개발자2</li>
-                                <li class="hover:bg-gray-100 p-2" data-no="3">소프트웨어 개발자3</li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <label for="member_career_type" class="text-gray-500">고용 형태 *</label><br>
-                        <select name="member_career_type" class="w-full border-1 rounded-sm p-1" id="member_career_type">
-                            <option value="0">선택하세요</option>
-                            <option value="1">정규직</option>
-                            <option value="2">시간제</option>
-                            <option value="3">자영업/개인사업</option>
-                            <option value="4">프리랜서</option>
-                            <option value="5">계약직</option>
-                            <option value="6">인턴</option>
-                            <option value="7">수습생</option>
-                            <option value="8">시즌</option>
-                        </select>
-                    </li>
-                    <li>
-                        <label for="member_career_company" class="text-gray-500">회사 또는 단체 *</label><br>
-                        <input type="text" name="member_career_company" id="member_career_company" class="w-full border-1 rounded-sm p-1"/>
-                    </li>
-                    <li>
-                        <label class="text-gray-500">시작일 *</label><br>
-                        <input type="hidden" name="member_career_startdate"/>
-                        <div class="flex gap-4">
-                            <select id="member_career_startdate_year" class="w-full border-1 rounded-sm p-1">
-                                <option value="0">연도</option>
-                                <option value="2025">2025</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
+                    <input type="hidden" name="member_career_no">
+                    <ul class="space-y-4 px-8">
+                        <li>
+                            <label for="job_name" class="text-gray-500">직종 *</label><br>
+                            <input type="text" name="job_name" id="job_name"
+                                data-target-url="/api/member/job/search"
+                                data-search-type="job_name"
+                                data-result-name="fk_job_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="hidden" name="fk_job_no" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">직종을 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_career_type" class="text-gray-500">고용 형태 *</label><br>
+                            <select name="member_career_type" class="w-full border-1 rounded-sm p-1 required"
+                                id="member_career_type">
+                                <option value="0">선택하세요</option>
+                                <option value="1">정규직</option>
+                                <option value="2">시간제</option>
+                                <option value="3">자영업/개인사업</option>
+                                <option value="4">프리랜서</option>
+                                <option value="5">계약직</option>
+                                <option value="6">인턴</option>
+                                <option value="7">수습생</option>
+                                <option value="8">시즌</option>
                             </select>
-                            <select id="member_career_startdate_month" class="w-full border-1 rounded-sm p-1">
-                                <option value="0">월</option>
-                                <option value="1">1월</option>
-                                <option value="2">2월</option>
-                                <option value="3">3월</option>
-                                <option value="4">4월</option>
-                                <option value="5">5월</option>
-                                <option value="6">6월</option>
-                                <option value="7">7월</option>
-                                <option value="8">8월</option>
-                                <option value="9">9월</option>
-                                <option value="10">10월</option>
-                                <option value="11">11월</option>
-                                <option value="12">12월</option>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <label class="text-gray-500">종료일 *</label><br>
-                        <input type="hidden" name="member_career_enddate"/>
-                        <div class="flex gap-4">
-                            <select id="member_career_enddate_year" class="w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200" disabled>
-                                <option value="0">연도</option>
-                                <option value="2025">2025</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                            </select>
-                            <select id="member_career_enddate_month" class="w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200" disabled>
-                                <option value="0">월</option>
-                                <option value="1">1월</option>
-                                <option value="2">2월</option>
-                                <option value="3">3월</option>
-                                <option value="4">4월</option>
-                                <option value="5">5월</option>
-                                <option value="6">6월</option>
-                                <option value="7">7월</option>
-                                <option value="8">8월</option>
-                                <option value="9">9월</option>
-                                <option value="10">10월</option>
-                                <option value="11">11월</option>
-                                <option value="12">12월</option>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <label for="region_name" class="text-gray-500">지역 *</label><br>
-                        <input type="text" name="region_name" id="region_name" class="w-full border-1 rounded-sm p-1"/>
-                        <input type="hidden" name="fk_region_no"/>
-                    </li>
-                    <li>
-                        <label for="member_career_explain" class="text-gray-500">설명</label><br>
-                        <textarea name="member_career_explain" id="member_career_explain" class="w-full h-40 border-1 rounded-sm p-1"></textarea>
-                    </li>
-                </ul>
+                            <span class="hidden error text-red-600 text-sm">고용 형태를 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_career_company" class="w-14 text-gray-500">회사 또는 단체 *</label><br>
+                            <div class="relative">
+                                <input type="text" name="member_career_company" id="member_career_company"
+                                data-target-url="/api/member/company/search"
+                                data-search-type="company_name"
+                                data-result-name="fk_company_no"
+                                class="input-search w-full border-1 rounded-sm p-1 required"/>
+                                <span class="hidden error text-red-600 text-sm">회사 또는 단체를 입력하세요.</span>
+                            </div>
+                            <input type="hidden" name="fk_company_no"/>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <input type="checkbox" name="member_career_is_current" value="1" style="zoom:1.5;" class="accent-orange-600 opacity-60 required" id="member_career_is_current"/>
+                            <label for="member_career_is_current" class="text-lg pb-0.5">현재 이 업무로 근무 중</label>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">시작일 *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_career_startdate_year" class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_career_startdate_month" class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_career_startdate"class="required"/>
+                            <span class="hidden error text-red-600 text-sm">시작일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">종료일 *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_career_enddate_year"
+                                    class="select-date w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_career_enddate_month"
+                                    class="select-date w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_career_enddate" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">종료일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="region_name" class="text-gray-500">지역 *</label><br>
+                            <input type="text" name="region_name" id="region_name"
+                                data-target-url="/api/member/region/search"
+                                data-search-type="region_name"
+                                data-result-name="fk_region_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="hidden" name="fk_region_no" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">지역을 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_career_explain" class="text-gray-500">설명</label><br>
+                            <textarea name="member_career_explain" id="member_career_explain"
+                                class="w-full h-40 border-1 rounded-sm p-1 resize-none"></textarea>
+                        </li>
+                    </ul>
                 </form>
             </div>
 
             <!-- 모달 하단부 -->
             <div>
-            <hr class="border-gray-200 mb-4">
-            <div class="flex justify-end items-center gap-4 px-4">
-                <div>
-                    <button type="button" class="button-selected">저장</button>
+                <hr class="border-gray-200 mb-4">
+                <div class="flex justify-between items-center px-4">
+                    <div>
+                        <button type="button" id="deleteMemberCareer" class="btn-transparent">경력 삭제</button>
+                    </div>
+                    <div>
+                        <button type="button" id="submitMemberCareer" class="button-selected">저장</button>
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
     </dialog>
 
     <!-- 학력 Modal -->
-    <dialog id="modalMemberEducation" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+    <dialog id="modalMemberEducation"
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
         <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
             <!-- 모달 상단부 -->
             <div>
-                <button type="button" class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
                 <h1 class="h1 px-8">학력 입력</h1>
 
                 <hr class="border-gray-200 mt-4">
             </div>
-            
+
             <!-- 모달 내용 -->
             <div class="space-y-4 overflow-auto">
                 <div class="text-gray-500 px-8">* 필수</div>
                 <form name="memberEducationForm">
-                <ul class="space-y-4 px-8">
-                    <li>
-                        <label for="school_name" class="text-gray-500">학교 *</label><br>
-                        <input type="text" name="school_name" id="school_name" class="w-full border-1 rounded-sm p-1"/>
-                        <input type="hidden" name="fk_school_no"/>
-                    </li>
-                    <li>
-                        <label for="member_education_degree" class="text-gray-500">학위 *</label><br>
-                        <input type="text" name="member_education_degree" id="member_education_degree" class="w-full border-1 rounded-sm p-1"/>
-                    </li>
-                    <li>
-                        <label for="major_name" class="text-gray-500">전공 *</label><br>
-                        <input type="text" name="major_name" id="major_name" class="w-full border-1 rounded-sm p-1"/>
-                        <input type="text" name="fk_major_no" class="hidden"/>
-                    </li>
-                    <li>
-                        <label class="text-gray-500">입학일 *</label><br>
-                        <input type="hidden" name="member_education_startdate"/>
-                        <div class="flex gap-4">
-                            <select id="member_education_startdate_year" class="w-full border-1 rounded-sm p-1">
-                                <option value="0">연도</option>
-                                <option value="2025">2025</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
+                    <input type="hidden" name="member_education_no">
+                    <ul class="space-y-4 px-8">
+                        <li>
+                            <label for="school_name" class="text-gray-500">학교 *</label><br>
+                            <input type="text" name="school_name" id="school_name"
+                                data-target-url="/api/member/school/search"
+                                data-search-type="school_name"
+                                data-result-name="fk_school_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="hidden" name="fk_school_no" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">학교를 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_education_degree" class="text-gray-500">학위 *</label><br>
+                            <select name="member_education_degree" class="w-full border-1 rounded-sm p-1 required"
+                                id="member_education_degree">
+                                <option value="0">선택하세요</option>
+                                <option value="1">중학교 졸업</option>
+                                <option value="2">고등학교 졸업</option>
+                                <option value="3">전문학사</option>
+                                <option value="4">학사</option>
+                                <option value="5">석사</option>
+                                <option value="6">박사</option>
                             </select>
-                            <select id="member_education_startdate_month" class="w-full border-1 rounded-sm p-1">
-                                <option value="0">월</option>
-                                <option value="1">1월</option>
-                                <option value="2">2월</option>
-                                <option value="3">3월</option>
-                                <option value="4">4월</option>
-                                <option value="5">5월</option>
-                                <option value="6">6월</option>
-                                <option value="7">7월</option>
-                                <option value="8">8월</option>
-                                <option value="9">9월</option>
-                                <option value="10">10월</option>
-                                <option value="11">11월</option>
-                                <option value="12">12월</option>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <label class="text-gray-500">졸업일(예정) *</label><br>
-                        <input type="hidden" name="member_education_enddate"/>
-                        <div class="flex gap-4">
-                            <select id="member_education_enddate_year" class="w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200" disabled>
-                                <option value="0">연도</option>
-                                <option value="2025">2025</option>
-                                <option value="2024">2024</option>
-                                <option value="2023">2023</option>
-                            </select>
-                            <select id="member_education_enddate_month" class="w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200" disabled>
-                                <option value="0">월</option>
-                                <option value="1">1월</option>
-                                <option value="2">2월</option>
-                                <option value="3">3월</option>
-                                <option value="4">4월</option>
-                                <option value="5">5월</option>
-                                <option value="6">6월</option>
-                                <option value="7">7월</option>
-                                <option value="8">8월</option>
-                                <option value="9">9월</option>
-                                <option value="10">10월</option>
-                                <option value="11">11월</option>
-                                <option value="12">12월</option>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <label for="member_education_grade" class="text-gray-500">학점 *</label><br>
-                        <input type="number" name="member_education_grade" id="member_education_grade" class="w-full border-1 rounded-sm p-1"/>
-                    </li>
-                    <li>
-                        <label for="member_education_explain" class="text-gray-500">설명</label><br>
-                        <textarea name="member_education_explain" id="member_education_explain" class="w-full h-40 border-1 rounded-sm p-1"></textarea>
-                    </li>
-                </ul>
+                            <span class="hidden error text-red-600 text-sm">학위를 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="major_name" class="text-gray-500">전공 *</label><br>
+                            <input type="text" name="major_name" id="major_name"
+                                data-target-url="/api/member/major/search"
+                                data-search-type="major_name"
+                                data-result-name="fk_major_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="text" name="fk_major_no" class="hidden required" />
+                            <span class="hidden error text-red-600 text-sm">전공을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">입학일 *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_education_startdate_year" class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_education_startdate_month"
+                                    class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_education_startdate" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">입학일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">졸업일(예정) *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_education_enddate_year"
+                                    class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_education_enddate_month"
+                                    class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_education_enddate" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">졸업일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_education_grade" class="text-gray-500">학점 *</label><br>
+                            <input type="number" name="member_education_grade" id="member_education_grade"
+                                class="w-full border-1 rounded-sm p-1 required" min=2.0 max=4.5/>
+                                <span class="hidden error text-red-600 text-sm">학점을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_education_explain" class="text-gray-500">설명</label><br>
+                            <textarea name="member_education_explain" id="member_education_explain"
+                                class="w-full h-40 border-1 rounded-sm p-1 resize-none"></textarea>
+                        </li>
+                    </ul>
                 </form>
             </div>
 
             <!-- 모달 하단부 -->
             <div>
-            <hr class="border-gray-200 mb-4">
-            <div class="flex justify-end items-center gap-4 px-4">
-                <div>
-                    <button type="button" class="button-selected">저장</button>
+                <hr class="border-gray-200 mb-4">
+                <div class="flex justify-between items-center px-4">
+                    <div>
+                        <button type="button" id="deleteMemberEducation" class="btn-transparent">학력 삭제</button>
+                    </div>
+                    <div>
+                        <button type="button" id="submitMemberEducation" class="button-selected">저장</button>
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
     </dialog>
 
     <!-- 보유기술 Modal -->
-    <dialog id="modalMemberSkill" class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+    <dialog id="modalMemberSkill"
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
         <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
             <!-- 모달 상단부 -->
             <div>
-                <button type="button" class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
                 <h1 class="h1 px-8">보유기술 입력</h1>
 
                 <hr class="border-gray-200 mt-4">
             </div>
-            
+
             <!-- 모달 내용 -->
             <div class="space-y-4 overflow-auto">
                 <div class="text-gray-500 px-8">* 필수</div>
                 <form name="memberSkillForm">
-                <ul class="space-y-4 px-8">
-                    <li>
-                        <label for="skill_name" class="text-gray-500">보유기술 *</label><br>
-                        <input type="text" name="skill_name" id="skill_name" class="w-full border-1 rounded-sm p-1"/>
-                        <input type="text" name="fk_skill_no" class="hidden"/>
-                    </li>
-                </ul>
+                    <ul class="space-y-4 px-8">
+                        <li>
+                            <label for="skill_name" class="text-gray-500">보유기술 *</label><br>
+                            <input type="text" name="skill_name" id="skill_name"
+                                data-target-url="/api/member/skill/search"
+                                data-search-type="skill_name"
+                                data-result-name="fk_skill_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="text" name="fk_skill_no" class="hidden" />
+                        </li>
+                    </ul>
                 </form>
             </div>
 
             <!-- 모달 하단부 -->
             <div>
-            <hr class="border-gray-200 mb-4">
-            <div class="flex justify-end items-center gap-4 px-4">
-                <div>
-                    <button type="button" class="button-selected">저장</button>
+                <hr class="border-gray-200 mb-4">
+                <div class="flex justify-end items-center px-4">
+                    <div>
+                        <button type="button" id="submitMemberSkill" class="button-selected">저장</button>
+                    </div>
                 </div>
-            </div>
             </div>
         </div>
     </dialog>
+
+
     <!-- 본문 -->
     <div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]">
 
@@ -607,25 +642,25 @@ dialog.dropdown::backdrop {
             <div class="scroll-mt-22 border-board">
 
                 <!-- 프로필 -->
-                <div class="py-0 relative pb-4">
+                <div class="pt-0! relative pb-4!">
                     <div class="w-full h-50 px-0 bg-gray-100">
-                    	<c:if test="${empty sessionScope.loginuser.member_background_img}">
+                    	<c:if test="${empty requestScope.memberVO.member_background_img}">
                         	<img src="${pageContext.request.contextPath}/images/profile/background_img.jpg" class="w-full h-50 object-cover rounded-t-md"/>
                         	<button type="button" class="button absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"><i class="fa-solid fa-camera"></i></button>
                         </c:if>
-                    	<c:if test="${not empty sessionScope.loginuser.member_background_img}">
-                        	<img src="${pageContext.request.contextPath}/${sessionScope.loginuser.member_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
+                    	<c:if test="${not empty requestScope.memberVO.member_background_img}">
+                        	<img src="${pageContext.request.contextPath}/${requestScope.memberVO.member_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
                         </c:if>
                     </div>
-                    <c:if test="${empty sessionScope.loginuser.member_profile}">
+                    <c:if test="${empty requestScope.memberVO.member_profile}">
 	                    <div class="absolute top-22">
 	                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/images/profile/profile.png" class="w-40 h-40 rounded-full object-cover"/></button>
 	                    </div>
 	                    <button type="button" class="button absolute top-50 left-33 w-12 h-12 rounded-full border-1 border-orange-500 text-orange-500 flex justify-center text-center items-center bg-white text-xl"><i class="fa-solid fa-plus"></i></button>
                     </c:if>
-                    <c:if test="${not empty sessionScope.loginuser.member_profile}">
+                    <c:if test="${not empty requestScope.memberVO.member_profile}">
 	                    <div class="absolute top-22">
-	                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/${sessionScope.loginuser.member_profile}" class="w-40 h-40 rounded-full object-cover"/></button>
+	                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/${requestScope.memberVO.member_profile}" class="w-40 h-40 rounded-full object-cover"/></button>
 	                    </div>
                     </c:if>
                     <div class="text-end text-xl py-2">
@@ -634,14 +669,21 @@ dialog.dropdown::backdrop {
 
                     <div>
                         <div class="text-3xl font-bold">
-                            이준영
+                            ${requestScope.memberVO.member_name}
                         </div>
                         <div class="text-lg">
-                            신한대학교 학생
+                            <c:if test="${not empty requestScope.memberVO.school_name}">
+                                <div>${requestScope.memberVO.school_name} 학생</div>
+                            </c:if>
+                            <c:if test="${not empty requestScope.memberVO.member_career_company}">
+                                <div>${requestScope.memberVO.member_career_company} 재직중</div>
+                            </c:if>
                         </div>
                         <div class="space-x-2">
-                            <span class="text-gray-500">대한민국 서울</span>
-                            <span><a href="#" class="hover:underline text-orange-500 font-bold">연락처</a></span>
+                            <span class="text-gray-500">${requestScope.memberVO.region_name}</span>
+                            <span><button class="hover:underline text-orange-500 font-bold btn-open-modal"
+                                data-target-modal="MemberContact">연락처</button>
+                            </span>
                         </div>
                         <div>
                             <a href="#" class="hover:underline text-orange-500 font-bold">팔로워 1,243명</a>
@@ -654,7 +696,7 @@ dialog.dropdown::backdrop {
                 </div>
 
                 <!-- 분석 -->
-                <div class="py-0">
+                <div class="py-0!">
                     <h1 class="h1 pt-4">분석</h1>
                     <div class="flex space-x-2 pb-2 text-gray-800 text-center">
                             <a href="#" class="button-board-action space-x-2">
@@ -677,7 +719,7 @@ dialog.dropdown::backdrop {
                 </div>
 
                 <!-- 활동 -->
-                <div class="space-y-0">
+                <div class="space-y-0 pb-0!">
                     <h1 class="h1 mb-0">활동</h1>
                     <div class="text-gray-500 pb-2 text-lg">
                         팔로워 2,123명
@@ -884,103 +926,197 @@ dialog.dropdown::backdrop {
                 </div>
 
                 <!-- 경력 -->
-                <div>
-                    <div class="flex">
+                <div class="pb-0!">
+                    <div class="flex items-center">
                         <h1 class="h1 flex-1">경력</h1>
-                        <button type="button" id="btnMemberCareer" class="btn-transparent btn-open-modal"><i class="fa-solid fa-plus"></i></button>
-                        <button type="button" class="btn-transparent"><i class="fa-solid fa-pen"></i></button>
+                        <%-- 로그인 본인 체크 --%>
+                        <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                            <button type="button" data-target-modal="MemberCareer"
+                                class="btn-transparent btn-open-modal"><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="btn-transparent" onclick="location.href=ctxPath+'/member/profile/member-career/'+memberId">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </c:if>
                     </div>
-                    
-                    <ul class="space-y-2">
-                        <li class="border-b-1 border-gray-300 py-2">
-                            <a href="#" class="flex">
-                                <div>
-                                    <img src="./쉐보레전면.jpg" class="aspect-square w-15 object-cover"/>
-                                </div>
-                                <div class="flex-1 ml-4">
-                                    <div class="font-bold text-xl hover:underline">직종</div>
-                                    <div>단체</div>
-                                    <div class="text-gray-600">2018년 3월 ~ 2023년 2월</div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="py-2">
-                            <a href="#" class="flex">
-                                <div>
-                                    <img src="./쉐보레전면.jpg" class="aspect-square w-15 object-cover"/>
-                                </div>
-                                <div class="flex-1 ml-4">
-                                    <div class="font-bold text-xl hover:underline">직종</div>
-                                    <div>단체</div>
-                                    <div class="text-gray-600">2018년 3월 ~ 2023년 2월</div>
-                                </div>
-                            </a>
-                        </li>
+
+                    <ul id="memberCareerList" class="space-y-2">
+                        <%-- 경력 목록 출력 --%>
+                        <c:if test="${not empty requestScope.memberCareerVOList}">
+                            <c:forEach var="item" items="${memberCareerVOList}" varStatus="status">
+                            <c:if test="${status.count < 3}">
+                                <li class="${(status.count < requestScope.memberCareerVOList.size() && status.count < 2)? 'border-b-1 border-gray-300 ':''}py-2 flex items-start">
+                                    <a href="#" class="flex flex-1">
+                                        <div>
+                                            <c:if test="${not empty item.company_logo}">
+                                                <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                                            </c:if>
+                                            <c:if test="${empty item.company_logo}">
+                                                <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>
+                                            </c:if>
+                                        </div>
+                                        <div class="flex-1 ml-4">
+                                            <div class="font-bold text-xl hover:underline">${item.job_name}</div>
+                                            <div>${item.member_career_company}</div>
+                                            <div class="text-gray-600">${item.member_career_startdate}${enddate}</div>
+                                        </div>
+                                    </a>
+                                    <%-- 로그인 본인 체크 --%>
+                                    <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                                        <button type="button" data-target-modal="MemberCareer" data-target-no="${item.member_career_no}"
+                                            class="btn-transparent btn-open-modal"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                    </c:if>
+                                </li>
+                            </c:if>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${empty requestScope.memberCareerVOList}">
+                            <li class="text-center text-lg py-2"><span class="block">조회된 경력 정보가 없습니다.</span>
+                                <%-- 로그인 본인 체크 --%>
+                                <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                                    <button type="button" data-target-modal="MemberCareer"
+                                        class="btn-open-modal btn-transparent px-3!"><i class="fa-solid fa-plus"></i>
+                                    </button>
+                                    <span class="font-bold -ml-1">버튼을 눌러 경력을 추가해보세요.</span>
+                                </c:if>
+                            </li>
+                        </c:if>
                     </ul>
+                    <c:if test="${not empty requestScope.memberCareerVOList and requestScope.memberCareerVOList.size() > 2}">
+                        <div class="px-0">
+                            <hr class="border-gray-300">
+                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/member/profile/member-career/'+memberId">
+                                경력 모두 보기 <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </c:if>
                 </div>
 
                 <!-- 학력 -->
-                <div>
-                    <div class="flex">
+                <div class="pb-0!">
+                    <div class="flex items-center">
                         <h1 class="h1 flex-1">학력</h1>
-                        <button type="button" id="btnMemberEducation" class="btn-open-modal btn-transparent"><i class="fa-solid fa-plus"></i></button>
-                        <button type="button" class="btn-transparent"><i class="fa-solid fa-pen"></i></button>
+                        <%-- 로그인 본인 체크 --%>
+                        <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                            <button type="button" data-target-modal="MemberEducation"
+                                class="btn-open-modal btn-transparent"><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="btn-transparent" onclick="location.href=ctxPath+'/member/profile/member-education/'+memberId">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </c:if>
                     </div>
-                    
-                    <ul class="space-y-2">
-                        <li class="border-b-1 border-gray-300 py-2">
-                            <a href="#" class="flex">
-                                <div>
-                                    <img src="./쉐보레전면.jpg" class="aspect-square w-15 object-cover"/>
-                                </div>
-                                <div class="flex-1 ml-4">
-                                    <div class="font-bold text-xl hover:underline">한양대학교</div>
-                                    <div>컴퓨터 공학 석사</div>
-                                    <div class="text-gray-600">2018년 3월 ~ 2023년 2월</div>
-                                    <div>학점: 3</div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="py-2">
-                            <a href="#" class="flex">
-                                <div>
-                                    <img src="./쉐보레전면.jpg" class="aspect-square w-15 object-cover"/>
-                                </div>
-                                <div class="flex-1 ml-4">
-                                    <div class="font-bold text-xl hover:underline">한양대학교</div>
-                                    <div>컴퓨터 공학 석사</div>
-                                    <div class="text-gray-600">2018년 3월 ~ 2023년 2월</div>
-                                    <div>학점: 3</div>
-                                </div>
-                            </a>
-                        </li>
+
+                    <ul id="memberEducationList" class="space-y-2">
+                        <%-- 학력 목록 출력 --%>
+                        <c:if test="${not empty requestScope.memberEducationVOList}">
+                            <c:forEach var="item" items="${memberEducationVOList}" varStatus="status">
+                            <c:if test="${status.count < 3}">
+                                <li class="${(status.count < requestScope.memberEducationVOList.size() && status.count < 2)? 'border-b-1 border-gray-300 ':''}py-2 flex items-start">
+                                    <a href="#" class="flex flex-1">
+                                        <div>
+                                            <c:if test="${not empty item.school_logo}">
+                                                <img src="${pageContext.request.contextPath}/resources/files/${item.school_logo}" class="aspect-square w-15 object-cover" />
+                                            </c:if>
+                                            <c:if test="${empty item.school_logo}">
+                                                <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-school text-2xl text-gray-500"></i></div>
+                                            </c:if>
+                                        </div>
+                                        <div class="flex-1 ml-4">
+                                            <div class="font-bold text-xl hover:underline">${item.school_name}</div>
+                                            <div>${item.major_name}</div>
+                                            <div class="text-gray-600">${item.member_education_startdate} ~ ${item.member_education_enddate}</div>
+                                            <div>학점: ${item.member_education_grade}</div>
+                                        </div>
+                                    </a>
+                                    <%-- 로그인 본인 체크 --%>
+                                    <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                                        <button type="button" data-target-modal="MemberEducation" data-target-no="${item.member_education_no}"
+                                            class="btn-open-modal btn-transparent"><i class="fa-solid fa-pen"></i></button>
+                                    </c:if>
+                                </li>
+                            </c:if>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${empty requestScope.memberEducationVOList}">
+                            <li class="text-center text-lg py-2"><span class="block">조회된 학력 정보가 없습니다.</span>
+                                <%-- 로그인 본인 체크 --%>
+                                <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                                    <button type="button" data-target-modal="MemberEducation"
+                                        class="btn-open-modal btn-transparent px-3!"><i class="fa-solid fa-plus"></i>
+                                    </button>
+                                    <span class="font-bold -ml-1">버튼을 눌러 학력을 추가해보세요.</span>
+                                </c:if>
+                            </li>
+                        </c:if>
                     </ul>
+                    <c:if test="${not empty requestScope.memberEducationVOList and requestScope.memberEducationVOList.size() > 2}">
+                        <div class="px-0">
+                            <hr class="border-gray-300">
+                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/member/profile/member-education/'+memberId">
+                                학력 모두 보기 <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </c:if>
                 </div>
 
                 <!-- 보유기술 -->
-                <div>
-                    <div class="flex">
+                <div class="pb-0!">
+                    <div class="flex items-center">
                         <h1 class="h1 flex-1">보유기술</h1>
-                        <button type="button" id="btnMemberSkill" class="btn-open-modal btn-transparent"><i class="fa-solid fa-plus"></i></button>
-                        <button type="button" class="btn-transparent"><i class="fa-solid fa-pen"></i></button>
+                        <%-- 로그인 본인 체크 --%>
+                        <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                            <button type="button" data-target-modal="MemberSkill"
+                                class="btn-open-modal btn-transparent"><i class="fa-solid fa-plus"></i></button>
+                            <button type="button" class="btn-transparent" onclick="location.href=ctxPath+'/member/profile/member-skill/'+memberId">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </c:if>
                     </div>
-                    
-                    <ul class="space-y-2">
-                        <li class="border-b-1 border-gray-300 py-2">
-                            <a href="#" class="flex">
-                                <div class="font-bold text-lg hover:underline">스프링 MVC</div>
-                            </a>
-                        </li>
-                        <li class="py-2">
-                            <a href="#" class="flex">
-                                <div class="font-bold text-lg hover:underline">스프링 프레임워크</div>
-                            </a>
-                        </li>
+
+                    <ul id="memberSkillList" class="space-y-2">
+                        <%-- 보유기술 목록 출력 --%>
+                        <c:if test="${not empty requestScope.memberSkillVOList}">
+                            <c:forEach var="item" items="${memberSkillVOList}" varStatus="status">
+                            <c:if test="${status.count < 3}">
+                                <li class="${(status.count < requestScope.memberSkillVOList.size() && status.count < 2)? 'border-b-1 border-gray-300 ':''}py-2 flex items-start">
+                                    <a href="#" class="flex-1">
+                                        <div class="font-bold text-lg hover:underline">${item.skill_name}</div>
+                                    </a>
+                                    <%-- 로그인 본인 체크 --%>
+                                    <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                                        <button type="button" id="deleteMemberSkill"
+                                            data-member_skill_no="${item.member_skill_no}"
+                                            data-skill_name="${item.skill_name}"
+                                            class="btn-transparent"><i class="fa-solid fa-xmark"></i></button>
+                                    </c:if>
+                                </li>
+                            </c:if>
+                            </c:forEach>
+                        </c:if>
+                        <c:if test="${empty requestScope.memberSkillVOList}">
+                            <li class="text-center text-lg py-2"><span class="block">조회된 보유기술 정보가 없습니다.</span>
+                                <%-- 로그인 본인 체크 --%>
+                                <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
+                                    <button type="button" data-target-modal="MemberSkill"
+                                        class="btn-open-modal btn-transparent px-3!"><i class="fa-solid fa-plus"></i>
+                                    </button>
+                                    <span class="font-bold -ml-1">버튼을 눌러 보유기술을 추가해보세요.</span>
+                                </c:if>
+                            </li>
+                        </c:if>
                     </ul>
+                    <c:if test="${not empty requestScope.memberSkillVOList and requestScope.memberSkillVOList.size() > 2}">
+                        <div class="px-0">
+                            <hr class="border-gray-300">
+                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/member/profile/member-skill/'+memberId">
+                                보유기술 모두 보기 <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </c:if>
                 </div>
 
                 <!-- 관심분야 -->
-                <div class="py-0">
+                <div class="py-0!">
                     <h1 class="h1 pt-4">관심분야</h1>
                     <div class="px-0">
                         <!-- 탭 -->

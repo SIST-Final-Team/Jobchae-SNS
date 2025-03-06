@@ -13,11 +13,18 @@
 
 		<typeAlias type="com.spring.app.reaction.domain.ReactionVO" alias="ReactionVO"/>
 		<typeAlias type="com.spring.app.file.domain.FileVO" alias="FileVO"/>
+		<typeAlias type="com.spring.app.comment.domain.CommentVO" alias="CommentVO"/>
+		
+		
 		
 		
 		<typeAlias type="com.spring.app.member.domain.MemberCareerVO" alias="MemberCareerVO"/>
 		<typeAlias type="com.spring.app.member.domain.MemberEducationVO" alias="MemberEducationVO"/>
 		<typeAlias type="com.spring.app.member.domain.MemberSkillVO" alias="MemberSkillVO"/>
+		
+		<!-- 추가된 FollowEntity 즉, FollowVO 대신 Entity를 사용함. -->
+		<typeAlias type="com.spring.app.follow.domain.FollowEntity" alias="FollowEntity"/>
+		                
 	</typeAliases>
 
 </configuration>

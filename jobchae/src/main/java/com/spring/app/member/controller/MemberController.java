@@ -19,6 +19,9 @@ import com.spring.app.common.mail.FuncMail;
 import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.config.DefaultImageNames;
 import com.spring.app.file.domain.FileVO;
+import com.spring.app.member.domain.MemberCareerVO;
+import com.spring.app.member.domain.MemberEducationVO;
+import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.service.MemberService;
 
@@ -373,8 +376,35 @@ public class MemberController {
 	
 	
 	// =========================== 김규빈 =========================== //
-	@GetMapping("profile")
-	public ModelAndView profile(ModelAndView mav) {
+	@GetMapping("profile/{memberId}")
+	public ModelAndView profile(HttpServletRequest request, ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("member_id", memberId);
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+		if(loginuser != null) {
+			paraMap.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			paraMap.put("login_member_id", " ");
+		}
+
+		MemberVO memberVO = service.getMember(paraMap);	// 회원 정보
+
+		paraMap.put("size", "3");
+		
+		List<MemberCareerVO> memberCareerVOList = service.getMemberCareerListByMemberId(paraMap);          // 회원 경력
+		List<MemberEducationVO> memberEducationVOList = service.getMemberEducationListByMemberId(paraMap); // 회원 학력
+		List<MemberSkillVO> memberSkillVOList = service.getMemberSkillListByMemberId(paraMap);             // 회원 보유스킬
+
+		mav.addObject("memberVO", memberVO);							 // 회원 정보
+		mav.addObject("memberCareerVOList", memberCareerVOList);		 // 회원 경력
+		mav.addObject("memberEducationVOList", memberEducationVOList); // 회원 학력
+		mav.addObject("memberSkillVOList", memberSkillVOList);		 // 회원 보유스킬
 		
 		mav.setViewName("/member/profile");
 		
@@ -382,15 +412,15 @@ public class MemberController {
 	}// end of public ModelAndView profile(ModelAndView mav)----------
 
 	// 테스트용
-	@GetMapping("profile/more/{memberId}")
-	public ModelAndView profileMore(ModelAndView mav, @PathVariable String memberId) {
+	// @GetMapping("profile/more/{memberId}")
+	// public ModelAndView profileMore(ModelAndView mav, @PathVariable String memberId) {
 		
-		mav.addObject("memberId", memberId);
+	// 	mav.addObject("memberId", memberId);
 		
-		mav.setViewName("/member/profileMore");
+	// 	mav.setViewName("/member/profileMore");
 		
-		return mav;
-	}// end of public ModelAndView profile(ModelAndView mav)----------
+	// 	return mav;
+	// }// end of public ModelAndView profileMore(ModelAndView mav)----------
 
 	@GetMapping("profile/member-career/{memberId}")
 	public ModelAndView profileMemberCareer(ModelAndView mav, @PathVariable String memberId) {
