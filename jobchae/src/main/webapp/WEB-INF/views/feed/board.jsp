@@ -205,10 +205,12 @@
         const editModal = document.getElementById("editModal");
         const rangeModal = document.getElementById("rangeModal");
         const reactionModal = document.getElementById("reactionModal");
+        const ignoredModal = document.getElementById("ignoredModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
         reactionModal.style.display = "none";
+        ignoredModal.style.display = "none";
         
         
         
@@ -968,6 +970,27 @@
 			 	}
 			});
 		});
+		
+		
+		// 관심없음  ㅇㅇ
+		$(".interest-none").click(function() {
+			const fk_member_id = document.getElementById("loginuserID").value;
+			const fk_board_no = $(this).attr("value");
+			//alert(fk_member_id + " " + fk_board_no)
+			
+			ignoredModal.style.display = "block";
+			
+		});
+		
+		$("span#closeModalButton").click(function() {
+			ignoredModal.style.display = "none";
+        });
+		
+		$(window).click(function(e) {
+            if (e.target == ignoredModal) {
+            	ignoredModal.style.display = "none";
+            }
+        });
 	
 	});
     
@@ -1734,6 +1757,45 @@
 	  	</div>
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
+        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 관심없음 Modal ㅇㅇ -->
+	    <div id="ignoredModal" class="modal">
+		    <div class="modal-content" style="width: 600px; height: 400px;">
+	
+				<!-- 모달 헤더 -->
+				<div class="ignoredModal-header">
+					<input type="text" name="fk_board_no" value="">
+					
+					<h2>앞으로 표시하지 않기</h2>
+					<span class="close" id="closeModalButton">&times;</span>
+				</div>
+
+				<hr class="border-gray-300 mx-4">
+
+				<!--모달 내용 -->
+				<div class="ignoredModal-body">
+					<p>홈 개선에 도움이 필요한 이유를 알려주세요.</p>
+					<ul class="reason-list">
+					    <li><label><input type="radio" name="reason" value="writer"> 글쓴이에게 관심 없음</label></li>
+					    <li><label><input type="radio" name="reason" value="topic"> 이 주제에 관심 없음</label></li>
+					    <li><label><input type="radio" name="reason" value="too_much"> 관련 글을 너무 많이 봤음</label></li>
+					    <li><label><input type="radio" name="reason" value="seen_before"> 전에 이 글을 봤음</label></li>
+					    <li><label><input type="radio" name="reason" value="too_old"> 글이 너무 오래 됐음</label></li>
+					    <li><label><input type="radio" name="reason" value="etc"> 기타</label></li>
+					</ul>
+
+				</div>
+		    	
+		    	<div style="display: flex; justify-content: flex-end; margin-right: 20px;">
+			    	<button type="button" id="saveIgnored" class="save-btn">전송</button>
+		    	</div>
+		    	
+		    </div>
+		</div>    
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+
+
 		<!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
             <div class="border-list sticky top-20 space-y-2 text-center relative bg-white">
