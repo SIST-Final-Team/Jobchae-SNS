@@ -24,6 +24,9 @@ public interface MemberService {
 	
 	// 회원가입
 	int memberRegister(MemberVO membervo);
+
+	// 회원가입시 회원설정 추가하기
+	int insertMemberSetting(String member_id);
 	
 	// 지역 검색 시 자동 완성 해주는 메소드 
 	List<Map<String, String>> regionSearchShow(String region_name);

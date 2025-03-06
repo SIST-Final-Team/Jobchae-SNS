@@ -113,10 +113,17 @@ public class MemberService_imple implements MemberService {
 		}
 		//
 		int n = dao.memberRegister(membervo);
+		insertMemberSetting(membervo.getMember_id()); // 회원가입시 회원설정 추가하기
+		
 		return n;
 		
 	}//end of public int memberRegister(MemberVO membervo) {}...
-
+	
+	// 회원가입시 회원설정 추가하기
+	@Override
+	public int insertMemberSetting(String member_id) {
+		return insertMemberSetting(member_id);
+	}// end of public int insertMemberSetting(String member_id) {}...
 
 
 
@@ -586,6 +593,12 @@ public class MemberService_imple implements MemberService {
 	public int deleteMemberSkill(Map<String, String> paraMap) {
 		return dao.deleteMemberSkill(paraMap);
 	}
+
+
+
+
+
+
 
 
 

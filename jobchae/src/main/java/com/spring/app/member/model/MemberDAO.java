@@ -29,6 +29,9 @@ public interface MemberDAO {
 	// 회원가입
 	int memberRegister(MemberVO membervo);
 	
+	// 회원가입시 회원설정 추가하기
+	int insertMemberSetting(String member_id);
+	
 	// 입력한 아이디와 비밀번호로 회원 정보 가져오는 메소드
 	MemberVO getLoginMember(Map<String, String> paraMap);
 

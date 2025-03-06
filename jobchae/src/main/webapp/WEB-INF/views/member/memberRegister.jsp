@@ -74,7 +74,7 @@ console.log('${pageContext.request.servletPath}');  // 파일명
             	<div class="col-lg-4 col-md-7" style="text-align: center; position: relative; height: 200px;">
             		<div class="icon" style="width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             			<img id="profile_img" src="${pageContext.request.contextPath}/images/no_profile.png">
-            			<label id="icon_label" class="icon_label icon" for="file_input">
+            			<label id="icon_label" class="icon_label icon" for="file_input_profile">
                 			<i class="fa-solid fa-camera-retro fa-2xl" style="margin:auto; font-size: 24px;"></i>
                 		</label>
             		</div>
@@ -82,7 +82,7 @@ console.log('${pageContext.request.servletPath}');  // 파일명
             	<div class="w-100"></div>
             	<div class="col-lg-5 col-md-7">
             		<%-- 파일 전송 input --%>
-                	<input type="file" id="file_input_pro" name="attach_member_profile" accept="image/*" style="display: none">
+                	<input type="file" id="file_input_profile" name="attach_member_profile" accept="image/*" style="display: none">
             	</div>
             	<div class="w-100"></div>
 

@@ -26,17 +26,14 @@ $(document).ready(function () {
     // 사진 첨부
     $("img#profile_img").on("click", function (e) {
 
-        $("input#file_input_pro").click(); // 프로필 사진 설정
+        $("input#file_input_profile").click(); // 프로필 사진 설정
 
     });//end of $("img#profile_img").on("click", function (e) {}...
 
-    console.log($("input#file_input_background").val());
-
     // 파일 인풋 값이 들어갔을 때 이벤트
-    $("input#file_input_pro").change(function (e) {
+    $("input#file_input_profile").change(function (e) {
 
-        console.log("프로필 사진 => ",$("input#file_input_pro").val());
-        console.log("백그라운드 사진 => ",$("input#file_input_background").val());
+        console.log("프로필 사진 => ",$("input#file_input_profile").val());
 
         const inputFile = $(e.target).get(0).files[0];
         const preview_profile_img = $("img#profile_img"); // 미리보기 사진칸
@@ -82,7 +79,7 @@ $(document).ready(function () {
             $("#icon_label").show();
         }// 
 
-    });//$("input#file_input_pro").change(function (e) {}...
+    });//$("input#file_input_profile").change(function (e) {}...
 
 
     // 백그라운드 사진 default 파일을 지정

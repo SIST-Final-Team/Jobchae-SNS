@@ -45,6 +45,12 @@
 		VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
 			   #{member_email}, #{member_tel}, #{member_profile}, #{member_background_img})
 	</insert>
+	<insert id="insertMemberSetting" parameterType="String">
+		INSERT INTO tbl_member_setting(fk_member_id, member_setting_profile
+					, member_setting_followed, member_setting_message
+					, member_setting_following_board, member_setting_comment)
+		VALUES(#{member_id}, default, default, default, default, default)
+	</insert>
 
 	
 	<!-- 로그인 처리하기, 스케줄러 완성되면 조인문을 삭제하자. -->
