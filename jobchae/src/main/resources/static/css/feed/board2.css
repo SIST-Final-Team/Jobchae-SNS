@@ -451,7 +451,11 @@ img.modal-img {
     background-color: #357ABD; 
 }
 
-.reactions-menu {
+.button-board-action-reaction {
+	position: relative;	
+}
+
+.reactions-menu { /*ㅇㅇ*/
     display: none;
     position: absolute;
     z-index: 999;
@@ -460,6 +464,7 @@ img.modal-img {
     border-radius: 40px;
     width: 350px;
     height: 60px;
+    left: 37%;  
 }
 
 .reactions-menu__reaction {
@@ -495,6 +500,10 @@ img.modal-img {
     }
 }
 
+.reactions-menu__reaction {
+    transition: transform 0.3s ease-in-out; /* 전체 항목에 부드러운 변환 효과 적용 */
+}
+
 .button-board-action:hover + .reactions-menu,
 .reactions-menu:hover {
     display: block;
@@ -504,6 +513,12 @@ img.modal-img {
     transform: scale(1.7); 
     transition: transform 0.3s ease-in-out; 
     cursor: pointer;
+}
+
+/* 첫 번째 항목에 마우스를 올리면 나머지 항목들의 크기 줄이기 */
+.reactions-menu__reaction:nth-child(1):hover ~ .reactions-menu__reaction img {
+    transform: scale(0.7); /* 2~6번째 항목 크기 줄이기 */
+    transition: transform 0.3s ease-in-out; 
 }
 
 #image-medium, #video-medium, #sticky-note-medium {
@@ -582,7 +597,7 @@ img.modal-img {
     transition: background 0.3s;
 }
 
-#write-update:hover, #edit-update:hover, #saveRange:hover {
+#write-update:hover, #edit-update:hover, #saveRange:hover, #saveIgnored:hover {
     background: #084B99;
 }
 
@@ -672,6 +687,12 @@ img.modal-img {
 	justify-content: space-between;
 	align-items: center;
 	padding: 15px;
+}
+
+.reaction-modal-button {
+	display: flex; 
+	align-items: center; 
+	gap: 8px;
 }
 
 .reactionmodal-header h2 {
@@ -914,4 +935,59 @@ img.modal-img {
 .options-dropdown2 li:hover {
     background: #f5f5f5;
     border-radius: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.ignoredModal-header h2 {
+	font-size: 18px;
+	margin-bottom: 15px;
+	margin-left: 15px;
+}
+
+.ignoredModal-body {
+	margin-left: 15px;
+	margin-top: 15px;
+}
+
+.reason-list {
+    list-style: none;
+    padding: 0;
+}
+
+.reason-list li {
+    margin: 10px 0;
+}
+
+.reason-list input {
+    margin-right: 10px;
+}
+     
+#saveIgnored {
+	display: block;
+    width: 100px;
+    padding: 12px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
