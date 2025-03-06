@@ -96,6 +96,9 @@ public interface BoardDAO {
 	// 관심없음 등록하기
 	int ignoredBoard(Map<String, String> paraMap);
 
+	// 대댓글 등록하기
+	int addCommentReply(Map<String, String> paraMap);
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);
 

@@ -689,6 +689,12 @@ img.modal-img {
 	padding: 15px;
 }
 
+.reaction-modal-button {
+	display: flex; 
+	align-items: center; 
+	gap: 8px;
+}
+
 .reactionmodal-header h2 {
 	font-size: 18px;
 	margin: 0;

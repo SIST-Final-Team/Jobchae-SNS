@@ -192,7 +192,7 @@
 	<!-- 댓글 등록하기 -->
 	<insert id="addComment" parameterType="HashMap">
 		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
-		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, #{fk_board_no}, default, default)
+		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, seq_comment_no.currval, default, default)
 	</insert>
 	
 	<!-- 댓글 조회하기 -->
@@ -228,5 +228,12 @@
 	<insert id="ignoredBoard" parameterType="HashMap">
 		insert into tbl_ignored(ignored_no, fk_member_id, fk_board_no, ignored_register_date)
 		values(seq_ignored_no.nextVal, #{fk_member_id}, #{fk_board_no}, default)
+	</insert>
+	
+	
+	<!-- 대댓글 등록하기 -->
+	<insert id="addCommentReply" parameterType="HashMap">
+		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
+		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, #{comment_no}, #{comment_no}, 1, default)
 	</insert>
 </mapper>

@@ -872,29 +872,63 @@
 			const comment_content = $(this).closest('.comment-input-container').find('#commentInput').val().trim(); 
 			//alert(comment_content);
 			
-			if (comment_content == "") {
-				alert("댓글 내용을 입력해주세요.");
-				$(this).closest('.comment-input-container').find('#commentInput').val('');
-				return;
+			const mentionedNameText = $('#mentionedName').text().trim();
+			//alert(mentionedNameText);
+			
+			const comment_no = $("input[name='hidden-comment-reply-no']").val();
+			//alert(comment_no);
+			
+			if (mentionedNameText !== "") { // 대댓글이라면
+				if (comment_content == "") {
+					alert("댓글 내용을 입력해주세요.");
+					$(this).closest('.comment-input-container').find('#commentInput').val('');
+					return;
+				} else {
+					$.ajax({
+						url: '${pageContext.request.contextPath}/api/board/addCommentReply',
+						type: 'post',
+						dataType: 'json',
+						data: {"fk_board_no": fk_board_no,
+							   "fk_member_id": fk_member_id,
+							   "comment_content" : comment_content,
+							   "comment_no": comment_no},
+						success: function(json) {
+							if(json.n == 1) {
+								$(this).closest('.comment-input-container').find('#commentInput').val('');
+								alert("댓글이 등록되었습니다.");
+								location.reload();
+							}
+				        },
+				        error: function(request, status, error){
+							console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+					 	}
+					});
+				}
 			} else {
-				$.ajax({
-					url: '${pageContext.request.contextPath}/api/board/addComment',
-					type: 'post',
-					dataType: 'json',
-					data: {"fk_board_no": fk_board_no,
-						   "fk_member_id": fk_member_id,
-						   "comment_content" : comment_content},
-					success: function(json) {
-						if(json.n == 1) {
-							$(this).closest('.comment-input-container').find('#commentInput').val('');
-							alert("댓글이 등록되었습니다.");
-							location.reload();
-						}
-			        },
-			        error: function(request, status, error){
-						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-				 	}
-				});
+				if (comment_content == "") {
+					alert("댓글 내용을 입력해주세요.");
+					$(this).closest('.comment-input-container').find('#commentInput').val('');
+					return;
+				} else {
+					$.ajax({
+						url: '${pageContext.request.contextPath}/api/board/addComment',
+						type: 'post',
+						dataType: 'json',
+						data: {"fk_board_no": fk_board_no,
+							   "fk_member_id": fk_member_id,
+							   "comment_content" : comment_content},
+						success: function(json) {
+							if(json.n == 1) {
+								$(this).closest('.comment-input-container').find('#commentInput').val('');
+								alert("댓글이 등록되었습니다.");
+								location.reload();
+							}
+				        },
+				        error: function(request, status, error){
+							console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+					 	}
+					});
+				}
 			}
 		});
 		
@@ -972,7 +1006,7 @@
 		});
 		
 		
-		// 관심없음  ㅇㅇ
+		// 관심없음
 		$(".interest-none").click(function() {
 			const fk_member_id = document.getElementById("loginuserID").value;
 			const fk_board_no = $(this).attr("value");
@@ -1017,9 +1051,22 @@
 					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
 			 	}
 			});
-			
 		});
-	});
+
+    
+    	// 대댓글 ㅇㅇ
+    	$(".reply-button").click(function() {
+    		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
+    		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
+    		const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+    		alert(board_no + " " + member_name + " " + comment_no);
+    		
+    		$("input[name='hidden-comment-reply-no']").val(comment_no);
+    		
+    		$("#mentionedName").text(member_name);
+    	});
+
+    });
     
     function previewImage(event) {
         const files = event.target.files;
@@ -1451,8 +1498,10 @@
 	                    		
 		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
 		                    	<div class="comment-input" >
+		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
 							        <input type="text" placeholder="댓글 남기기" id="commentInput">
 						            <button class="comment-submit-button">댓글</button>
+						            <input type="text" name="hidden-comment-reply-no" value="" />
 							    </div>	
 	                    	</div>
 	                    	
@@ -1471,12 +1520,13 @@
 		                    		<c:forEach var="commentvo" items="${commentvoList}">  
 		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
 			                    			<li class="comment-item">
-												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>
 												<div class="comment-content">
 													<div class="comment-info">
 														<input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
 														<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
 														<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
+														<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
 														
 														<span class="comment-author">${commentvo.member_name}</span>
 														<!--<span class="comment-relationship">팔로워 0명</span>-->
@@ -1484,6 +1534,7 @@
 														<button class="comment-options">...</button>
 													</div>
 													<div class="comment-text">
+													
 														<span class="comment-content-text">${commentvo.comment_content}</span>
 														
 														<div class="comment-input" id="comment-edit-input" style="display:none;" >
@@ -1495,8 +1546,10 @@
 													<div class="comment-actions">
 														<button class="like-button">추천</button>
 									                    <span>|</span>
-									                    <button class="reply-button">답장</button>
+									                    <button class="reply-button">답장</button> <!-- ㅇㅇ -->
 									                </div>
+									                
+									                
 												</div>     
 												
 												<!-- 옵션 드롭다운 메뉴 -->
@@ -1752,27 +1805,27 @@
 				<!-- 반응 카테고리 -->
 				<div class="reaction-tabs">
 					<button class="active" value="7">전체 <span id="reaction-all"></span></button>
-					<button value="1">
+					<button value="1" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-like"></span>
 					</button>
-					<button value="2">
+					<button value="2" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-praise"></span>
 					</button>
-					<button value="3">
+					<button value="3" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-empathy"></span>
 					</button>
-					<button value="4">
+					<button value="4" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-appreciation"></span>
 					</button>
-					<button value="5">
+					<button value="5" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6gz02r6oxefigck4ye888wosd" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-interest"></span>
 					</button>
-					<button value="6">
+					<button value="6" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6namow3mrvcg3dyuevtpfwjm0" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-entertainment"></span>
 					</button>
@@ -1786,13 +1839,13 @@
         
         
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
-        <!-- 관심없음 Modal ㅇㅇ -->
+        <!-- 관심없음 Modal -->
 	    <div id="ignoredModal" class="modal">
 		    <div class="modal-content" style="width: 600px; height: 400px;">
 	
 				<!-- 모달 헤더 -->
 				<div class="ignoredModal-header">
-					<input type="text" name="ignored_fk_board_no" value="">
+					<input type="hidden" name="ignored_fk_board_no" value="">
 					
 					<h2>앞으로 표시하지 않기</h2>
 					<span class="close" id="closeModalButton">&times;</span>

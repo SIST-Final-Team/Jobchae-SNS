@@ -207,6 +207,13 @@ public class BoardService_imple implements BoardService {
 		return n;
 	}
 
+	// 대댓글 등록하기
+	@Override
+	public int addCommentReply(Map<String, String> paraMap) {
+		int n = dao.addCommentReply(paraMap);
+		return n;
+	}
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//@Override
 	//public List<String> getReactionCountsByBoard(String board_no) {
