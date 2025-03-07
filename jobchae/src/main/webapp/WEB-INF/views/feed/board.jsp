@@ -323,7 +323,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성 ㅇㅇ
+		// 글 작성 
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -1091,6 +1091,8 @@
 
     });
     
+    
+    // 글 작성에서 첨부파일 미리보기
     function previewImage(event) {
         const files = event.target.files;
         const track = document.querySelector(".carousel-track");
@@ -1114,6 +1116,7 @@
                 file.type === "text/csv") {
                 const reader = new FileReader();
 
+                // ㅇㅇ
                 reader.onload = function (e) {
                     const previewBox = document.createElement("div");
                     previewBox.className = "preview-box";
@@ -1131,20 +1134,38 @@
                     } else if (file.type === "application/pdf") {
                         mediaElement = document.createElement("div");
                         mediaElement.className = "file-icon"; 
-                        mediaElement.innerHTML = file.name; 
-                    }
-                    else if (file.type === "application/msword" || 
-                        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
-                        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
-                        file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
-                        mediaElement = document.createElement("div");
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/msword" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                    	mediaElement = document.createElement("div");
                         mediaElement.className = "file-icon";
-                        mediaElement.innerHTML = file.name; 
-                    }
-                    else if (file.type === "text/plain" || file.type === "text/csv") {
-                        mediaElement = document.createElement("div");
+                    	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                            				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                            				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                            				   + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                    	mediaElement = document.createElement("div");
                         mediaElement.className = "file-icon";
-                        mediaElement.innerHTML = file.name; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+					         				   + file.name + "</span></div>";
+                    } else if (file.type === "text/plain" || file.type === "text/csv") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+        				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                							   + file.name + "</span></div>";
                     }
 
                     const closeButton = document.createElement("div");
@@ -1272,6 +1293,7 @@
                         </div>
                     </div>
 
+					<!-- 
                     <hr class="border-gray-300 mx-4">
 
                     <div class="py-0">
@@ -1293,7 +1315,7 @@
                                 </button>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
 			</div>
 			
