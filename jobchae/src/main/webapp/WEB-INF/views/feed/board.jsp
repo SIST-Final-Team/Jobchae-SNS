@@ -25,7 +25,7 @@
             @apply text-[1.35rem] font-bold;
         }
         .border-normal {
-            @apply border-1 border-gray-300 rounded-lg bg-white;
+            @apply border-1 border-gray-300 rounded-lg bg-white;01
         }
         .border-search-board {
             @apply border-1 border-gray-300 rounded-lg bg-white;
@@ -197,7 +197,15 @@
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
     	$(".comment-input-container").hide();
-    	
+		// ㅇㅇ
+		var content = document.getElementById('boardContent');
+        var button = document.getElementById('toggleButton');
+        
+        if (content.scrollHeight > content.clientHeight) {
+            button.style.display = 'block'; // 버튼 보이게
+        } else {
+            button.style.display = 'none'; // 버튼 숨기기
+        }
 	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
@@ -1062,7 +1070,7 @@
 		});
 
     
-    	// 대댓글 ㅇㅇ
+    	// 대댓글 
     	$(".reply-button").click(function() {
     		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
     		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
@@ -1200,7 +1208,12 @@
         event.target.files = dataTransfer.files;
     }
     
-    
+    function toggleContent() {
+        var container = document.querySelector('.board-content-container');
+        container.classList.toggle('expanded');
+        var button = document.getElementById('toggleButton');
+        button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
+    }    
 
 
 </script>
@@ -1347,9 +1360,13 @@
 					            </div> <!-- div.options-dropdown 끝 -->
 	                        </div>
 	                    </div>
-	                    <!-- 글 내용 -->
-	                    <div>
-	                        <p>${boardvo.board_content}</p>
+	                    
+	                    <!-- 글 내용 --> <!-- ㅇㅇ -->
+	                    <div class="board-content-container">
+	                    	<div class="board-content" id="boardContent"> 
+		                        <p>${boardvo.board_content}</p>
+		                    </div>
+		                    <button id="toggleButton" class="more-btn" onclick="toggleContent()">더보기</button>
 	                    </div>
 	             
 
@@ -1580,7 +1597,7 @@
 													<div class="comment-actions">
 														<button class="like-button">추천</button>
 									                    <span>|</span>
-									                    <button class="reply-button">답장</button> <!-- ㅇㅇ -->
+									                    <button class="reply-button">답장</button> 
 									                </div>
 									                
 									                

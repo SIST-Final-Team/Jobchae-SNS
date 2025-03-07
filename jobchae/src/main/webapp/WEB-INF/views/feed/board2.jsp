@@ -25,7 +25,7 @@
             @apply text-[1.35rem] font-bold;
         }
         .border-normal {
-            @apply border-1 border-gray-300 rounded-lg bg-white;
+            @apply border-1 border-gray-300 rounded-lg bg-white;01
         }
         .border-search-board {
             @apply border-1 border-gray-300 rounded-lg bg-white;
@@ -197,7 +197,15 @@
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
     	$(".comment-input-container").hide();
-    	
+		// ㅇㅇ
+		var content = document.getElementById('boardContent');
+        var button = document.getElementById('toggleButton');
+        
+        if (content.scrollHeight > content.clientHeight) {
+            button.style.display = 'block'; // 버튼 보이게
+        } else {
+            button.style.display = 'none'; // 버튼 숨기기
+        }
 	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
@@ -324,9 +332,17 @@
 		        return;
 		    }
 			else {
-				const files = document.getElementById("file-image").files;
-				console.log("업로드된 파일들: ", files);
+				const imageFiles = document.getElementById("file-image").files;
+    			const videoFiles = document.getElementById("file-video").files;
 				
+    			// 파일이 없으면 해당 input 제거
+    		    if (imageFiles.length === 0) {
+    		        document.getElementById("file-image").remove();
+    		    }
+    		    if (videoFiles.length === 0) {
+    		        document.getElementById("file-video").remove();
+    		    }
+    			
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -1054,7 +1070,7 @@
 		});
 
     
-    	// 대댓글 ㅇㅇ
+    	// 대댓글 
     	$(".reply-button").click(function() {
     		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
     		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
@@ -1065,6 +1081,7 @@
     		
     		$("#mentionedName").text(member_name);
     	});
+    	
 
     });
     
@@ -1079,8 +1096,16 @@
 
         const dataTransfer = new DataTransfer(); 
 
-        Array.from(files).forEach((file) => {
-            if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+        Array.from(files).forEach((file) => { 
+            if (file.type.startsWith("image/") || 
+            	file.type.startsWith("video/") || 
+                file.type === "application/pdf" || 
+                file.type === "application/msword" || 
+                file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || 
+                file.type === "text/plain" || 
+                file.type === "text/csv") {
                 const reader = new FileReader();
 
                 reader.onload = function (e) {
@@ -1097,6 +1122,23 @@
                         mediaElement.src = e.target.result;
                         mediaElement.controls = true;  
                         mediaElement.alt = file.name;
+                    } else if (file.type === "application/pdf") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = file.name; 
+                    }
+                    else if (file.type === "application/msword" || 
+                        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                        file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = file.name; 
+                    }
+                    else if (file.type === "text/plain" || file.type === "text/csv") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = file.name; 
                     }
 
                     const closeButton = document.createElement("div");
@@ -1166,7 +1208,12 @@
         event.target.files = dataTransfer.files;
     }
     
-    
+    function toggleContent() {
+        var container = document.querySelector('.board-content-container');
+        container.classList.toggle('expanded');
+        var button = document.getElementById('toggleButton');
+        button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
+    }    
 
 
 </script>
@@ -1313,9 +1360,13 @@
 					            </div> <!-- div.options-dropdown 끝 -->
 	                        </div>
 	                    </div>
-	                    <!-- 글 내용 -->
-	                    <div>
-	                        <p>${boardvo.board_content}</p>
+	                    
+	                    <!-- 글 내용 --> <!-- ㅇㅇ -->
+	                    <div class="board-content-container">
+	                    	<div class="board-content" id="boardContent"> 
+		                        <p>${boardvo.board_content}</p>
+		                    </div>
+		                    <button id="toggleButton" class="more-btn" onclick="toggleContent()">더보기</button>
 	                    </div>
 	             
 
@@ -1331,13 +1382,13 @@
         									
         									<!-- 이미지 파일인 경우 -->
 									        <c:if test="${fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png' || fileExtension == 'gif' || fileExtension == 'bmp' || fileExtension == 'webp'}">
-									            <img src="<%= ctxPath%>/resources/files/${file.file_name}" />
+									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
 									        </c:if>
 									        
 									        <!-- 비디오 파일인 경우 -->
 									        <c:if test="${fileExtension == 'mp4' || fileExtension == 'avi' || fileExtension == 'mov' || fileExtension == 'mkv'}">
 									            <video width="100%" controls>
-									                <source src="<%= ctxPath%>/resources/files/${file.file_name}" type="video/mp4">
+									                <source src="<%= ctxPath%>/resources/files/board/${file.file_name}" type="video/mp4">
 									            </video>
 									        </c:if>
 						                </button>
@@ -1350,14 +1401,14 @@
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
 						                    <button type="button">
-						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                    </button>
 						                </c:if>
 						
 						                <!-- 4번째 이미지는 +n 형식으로 출력 -->
 						                <c:if test="${status.index == 3}">
 						                    <button type="button" class="more-image">
-						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                        <span class="flex items-center">
 						                            <span><i class="fa-solid fa-plus"></i></span>
 						                            <span class="text-4xl">${boardvo.fileList.size() - 3}</span>
@@ -1546,7 +1597,7 @@
 													<div class="comment-actions">
 														<button class="like-button">추천</button>
 									                    <span>|</span>
-									                    <button class="reply-button">답장</button> <!-- ㅇㅇ -->
+									                    <button class="reply-button">답장</button> 
 									                </div>
 									                
 									                
@@ -1649,8 +1700,9 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*" onchange="previewImage(event)" multiple/>
-				            <!-- <input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" /> -->
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" multiple/>
+				            <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>
+				            <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->

@@ -42,14 +42,12 @@ public class BoardController {
 	@GetMapping("feed")
 	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam(required = false) String sort) {
 		
-		// 임시로 세션값 저장해주기. 시작
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
 //		MemberVO loginuser = new MemberVO(); // feat: 이준영, 기능 구현 중 오류발생하여 주석처리함
 //		loginuser.setMember_id("user001");
 //		session.setAttribute("loginuser", loginuser);
 		String login_userid = loginuser.getMember_id();
-		// 임시로 세션값 저장해주기. 끝
 		
 		// 로그인된 사용자의 정보 얻어오기
 		MemberVO membervo = service.getUserInfo(login_userid);
@@ -133,7 +131,7 @@ public class BoardController {
 				String root = session.getServletContext().getRealPath("/");
 				String path =  root + "resources" + File.separator + "files" + File.separator + "board";  
 				//System.out.println("path : " + path);
-				//C:\git\Jobchae-SNS\jobchae\src\main\webapp\resources\files
+				//C:\git\Jobchae-SNS\jobchae\src\main\webapp\resources\files\board
 				
 				//System.out.println("attach.length : " + attach.length);
 
@@ -149,7 +147,7 @@ public class BoardController {
 					file_name = fileManager.doFileUpload(bytes, file_original_name, path);	// 첨부파일 업로드
 					file_size = file.getSize();
 					
-					System.out.println("파일명 : " + file_name);
+					//System.out.println("파일명 : " + file_name);
 					
 					Map<String, String> paraMap2 = new HashMap<>();
 					paraMap2.put("file_target_no", file_target_no);

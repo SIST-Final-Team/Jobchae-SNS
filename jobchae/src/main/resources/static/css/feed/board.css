@@ -991,3 +991,32 @@ img.modal-img {
     cursor: pointer;
     transition: background 0.3s;
 }
+
+
+
+
+
+
+/* 게시글 5줄 이상 넘어가면 더보기 버튼 */
+.board-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.more-btn {
+    display: none;
+    margin-top: 10px;
+}
+.board-content-container.expanded .board-content {
+    display: block;
+    -webkit-line-clamp: unset; 
+}
+
+.board-content-container.expanded #toggleButton {
+    display: block; 
+}
+
+
+
