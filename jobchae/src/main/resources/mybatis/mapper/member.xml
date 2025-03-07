@@ -45,6 +45,7 @@
 		VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
 			   #{member_email}, #{member_tel}, #{member_profile}, #{member_background_img})
 	</insert>
+	<!-- 회원가입시 회원설정 추가하기 -->
 	<insert id="insertMemberSetting" parameterType="String">
 		INSERT INTO tbl_member_setting(fk_member_id, member_setting_profile
 					, member_setting_followed, member_setting_message
@@ -205,7 +206,7 @@
 					WHERE member_education_enddate &gt;= SYSDATE AND rownum = 1
 					ORDER BY member_education_enddate, member_education_startdate DESC) me
 		ON m.MEMBER_ID = me.FK_MEMBER_ID
-		join tbl_school s
+		LEFT JOIN tbl_school s
 		on me.fk_school_no = s.school_no
 		where member_id = #{member_id} and member_status = 1 and (ms.member_setting_profile = 1 OR m.member_id = #{login_member_id})
 	</select>

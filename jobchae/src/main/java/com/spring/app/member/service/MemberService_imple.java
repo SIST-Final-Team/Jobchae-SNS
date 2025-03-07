@@ -113,7 +113,10 @@ public class MemberService_imple implements MemberService {
 		}
 		//
 		int n = dao.memberRegister(membervo);
-		insertMemberSetting(membervo.getMember_id()); // 회원가입시 회원설정 추가하기
+		
+		if(n == 1) {
+			insertMemberSetting(membervo.getMember_id()); // 회원가입시 회원설정 추가하기
+		}
 		
 		return n;
 		
@@ -122,7 +125,7 @@ public class MemberService_imple implements MemberService {
 	// 회원가입시 회원설정 추가하기
 	@Override
 	public int insertMemberSetting(String member_id) {
-		return insertMemberSetting(member_id);
+		return dao.insertMemberSetting(member_id);
 	}// end of public int insertMemberSetting(String member_id) {}...
 
 
