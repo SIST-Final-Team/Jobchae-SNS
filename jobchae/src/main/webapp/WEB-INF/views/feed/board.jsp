@@ -1116,7 +1116,7 @@
                         mediaElement.alt = file.name;
                     } else if (file.type === "application/pdf") {
                         mediaElement = document.createElement("div");
-                        mediaElement.className = "file-icon"; // ㅇㅇ
+                        mediaElement.className = "file-icon"; 
                         mediaElement.innerHTML = file.name; 
                     }
                     else if (file.type === "application/msword" || 
