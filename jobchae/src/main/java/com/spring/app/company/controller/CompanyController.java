@@ -34,30 +34,12 @@ public class CompanyController {
         return "company/formtest";
     }
 
-    //회사 등록
-    @PostMapping("/registerCompany")
-    public ModelAndView registerCompany(CompanyVO companyVO, HttpServletRequest request) {
 
-        //파라미터 확인
-//        Enumeration<String> parameterNames = request.getParameterNames();
-//        while(parameterNames.hasMoreElements()) {
-//            String name = parameterNames.nextElement();
-//            System.out.println(name +" : "+ request.getParameter(name));
-//        }
 
-        //멤버 등록
-        MemberVO member = new MemberVO();
-        member.setMember_id("user001");
-        companyVO.setMember(member);
-        String industryName = (String)request.getParameter("industryName");
-
-        //회사 등록
-        CompanyVO company = companyService.insertCompany(companyVO, industryName);
-        //회사 대시보드로 이동
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/company/dashboard/"+company.getCompanyNo());
-        modelAndView.addObject("company", company);
-        return  modelAndView;
+    //회사 삭제
+    @GetMapping("/deleteCompany/{company_no}")
+    public String deleteCompany(@PathVariable String company_no){
+        return "company/CompanyDeleteTest";
     }
 
 }

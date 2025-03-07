@@ -20,7 +20,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
    -- 9:직원 10000+ -->
   <body>
     <h1>Form Test Page</h1>
-    <form action="<%= ctxPath%>/company/registerCompany" method="post">
+    <form action="<%= ctxPath%>/api/company/registerCompany" method="post">
       <label for="companyName">Name :</label>
       <input
         type="text"
