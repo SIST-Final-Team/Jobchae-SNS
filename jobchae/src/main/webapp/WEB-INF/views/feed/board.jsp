@@ -1365,13 +1365,13 @@
         									
         									<!-- 이미지 파일인 경우 -->
 									        <c:if test="${fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png' || fileExtension == 'gif' || fileExtension == 'bmp' || fileExtension == 'webp'}">
-									            <img src="<%= ctxPath%>/resources/files/${file.file_name}" />
+									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
 									        </c:if>
 									        
 									        <!-- 비디오 파일인 경우 -->
 									        <c:if test="${fileExtension == 'mp4' || fileExtension == 'avi' || fileExtension == 'mov' || fileExtension == 'mkv'}">
 									            <video width="100%" controls>
-									                <source src="<%= ctxPath%>/resources/files/${file.file_name}" type="video/mp4">
+									                <source src="<%= ctxPath%>/resources/files/board/${file.file_name}" type="video/mp4">
 									            </video>
 									        </c:if>
 						                </button>
@@ -1384,14 +1384,14 @@
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
 						                    <button type="button">
-						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                    </button>
 						                </c:if>
 						
 						                <!-- 4번째 이미지는 +n 형식으로 출력 -->
 						                <c:if test="${status.index == 3}">
 						                    <button type="button" class="more-image">
-						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                        <span class="flex items-center">
 						                            <span><i class="fa-solid fa-plus"></i></span>
 						                            <span class="text-4xl">${boardvo.fileList.size() - 3}</span>
