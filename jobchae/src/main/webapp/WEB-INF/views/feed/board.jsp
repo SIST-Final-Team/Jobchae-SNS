@@ -197,14 +197,16 @@
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
     	$(".comment-input-container").hide();
-		// ㅇㅇ
+		
+    	
+    	// 긴 글 더보기 처리
 		var content = document.getElementById('boardContent');
         var button = document.getElementById('toggleButton');
         
         if (content.scrollHeight > content.clientHeight) {
-            button.style.display = 'block'; // 버튼 보이게
+            button.style.display = 'block'; 
         } else {
-            button.style.display = 'none'; // 버튼 숨기기
+            button.style.display = 'none'; 
         }
 	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -321,7 +323,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성
+		// 글 작성 ㅇㅇ
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -334,7 +336,8 @@
 			else {
 				const imageFiles = document.getElementById("file-image").files;
     			const videoFiles = document.getElementById("file-video").files;
-				
+    			const attachmentFiles = document.getElementById("file-attachment").files;
+    			
     			// 파일이 없으면 해당 input 제거
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
@@ -342,7 +345,10 @@
     		    if (videoFiles.length === 0) {
     		        document.getElementById("file-video").remove();
     		    }
-    			
+    		    if (attachmentFiles.length === 0) {
+    		        document.getElementById("file-attachment").remove();
+    		    }
+    		    
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -1208,6 +1214,8 @@
         event.target.files = dataTransfer.files;
     }
     
+    
+ 	// 긴 글 더보기 처리
     function toggleContent() {
         var container = document.querySelector('.board-content-container');
         container.classList.toggle('expanded');
@@ -1361,7 +1369,7 @@
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- 글 내용 --> <!-- ㅇㅇ -->
+	                    <!-- 글 내용 -->
 	                    <div class="board-content-container">
 	                    	<div class="board-content" id="boardContent"> 
 		                        <p>${boardvo.board_content}</p>
