@@ -94,14 +94,14 @@ $(document).ready(function () {
                 </div>
                 <div class="w-100"></div>
                 <div class="col-lg-5 col-md-7 col_mt">
-                    <button type="button" id="btnuserSubmit" class="btnstyle" onclick="gouserLogin()">LOGIN</button>
+                    <button type="button" id="btnuserSubmit" class="btnstyle" onclick="gomemberLogin()">LOGIN</button>
                 </div>
                 <div class="w-100"></div>
                 <!-- <div class="col-lg-5 col-md-7 col_mt">혹시 회원이 아니신가요?</div> -->
                 <div class="w-100"></div>
                 <div class="col-lg-5 col-md-7 col_mt">
                     <button type="button" id="btnRegister" class="btnstyle" style="border:none; background-color: #000; color: #fff;" 
-                    	onclick="goRegister()">JOIN US
+                    	onclick="goRegister()">회원가입
                     </button>
                 </div>
            </div>

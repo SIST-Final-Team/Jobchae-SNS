@@ -644,24 +644,14 @@ dialog.dropdown::backdrop {
                 <!-- 프로필 -->
                 <div class="pt-0! relative pb-4!">
                     <div class="w-full h-50 px-0 bg-gray-100">
-                    	<c:if test="${empty requestScope.memberVO.member_background_img}">
-                        	<img src="${pageContext.request.contextPath}/images/profile/background_img.jpg" class="w-full h-50 object-cover rounded-t-md"/>
-                        	<button type="button" class="button absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"><i class="fa-solid fa-camera"></i></button>
-                        </c:if>
-                    	<c:if test="${not empty requestScope.memberVO.member_background_img}">
-                        	<img src="${pageContext.request.contextPath}/${requestScope.memberVO.member_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
-                        </c:if>
+                        <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
+                        <button type="button" class="button absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"><i class="fa-solid fa-camera"></i></button>
                     </div>
-                    <c:if test="${empty requestScope.memberVO.member_profile}">
-	                    <div class="absolute top-22">
-	                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/images/profile/profile.png" class="w-40 h-40 rounded-full object-cover"/></button>
-	                    </div>
+                    <div class="absolute top-22">
+                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_profile}" class="w-40 h-40 rounded-full object-cover"/></button>
+                    </div>
+                    <c:if test="${requestScope.memberVO.member_profile == 'default/profile.png'}">
 	                    <button type="button" class="button absolute top-50 left-33 w-12 h-12 rounded-full border-1 border-orange-500 text-orange-500 flex justify-center text-center items-center bg-white text-xl"><i class="fa-solid fa-plus"></i></button>
-                    </c:if>
-                    <c:if test="${not empty requestScope.memberVO.member_profile}">
-	                    <div class="absolute top-22">
-	                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/${requestScope.memberVO.member_profile}" class="w-40 h-40 rounded-full object-cover"/></button>
-	                    </div>
                     </c:if>
                     <div class="text-end text-xl py-2">
                         <button type="button" class="btn-transparent"><i class="fa-solid fa-pen"></i></button>

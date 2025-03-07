@@ -57,7 +57,7 @@ public class CommonAop {
 		HttpSession session = request.getSession();
 
 		if(session.getAttribute("loginuser") == null) {
-			String message = "먼저 로그인 하세요~~ (AOP Before Advice 활용)";
+			String message = "먼저 로그인을 하십시오!";
 			String loc = request.getContextPath() + "/member/login";
 
 			request.setAttribute("message", message);
@@ -67,7 +67,7 @@ public class CommonAop {
 			String url = MyUtil.getCurrentURL(request);
 			session.setAttribute("goBackURL", url); // 세션에 url 정보를 저장시켜둔다.
 
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/msg.jsp");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/common/msg.jsp");
 	        try {
 				dispatcher.forward(request, response);
 			} catch (ServletException | IOException e) {

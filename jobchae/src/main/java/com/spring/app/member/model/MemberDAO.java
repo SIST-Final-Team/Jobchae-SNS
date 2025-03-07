@@ -29,6 +29,9 @@ public interface MemberDAO {
 	// 회원가입
 	int memberRegister(MemberVO membervo);
 	
+	// 회원가입시 회원설정 추가하기
+	int insertMemberSetting(String member_id);
+	
 	// 입력한 아이디와 비밀번호로 회원 정보 가져오는 메소드
 	MemberVO getLoginMember(Map<String, String> paraMap);
 
@@ -38,6 +41,33 @@ public interface MemberDAO {
 	// 회원 휴면을 자동으로 지정해주는 스케줄러
 	void deactivateMember_idle();
 
+	// 휴면 해제 실행 메소드
+	int memberReactivation(String member_id);
+	
+	// 비밀번호 중복 확인
+	String passwdExist(String new_member_passwd);
+	
+	// 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경
+	int passwdUpdate(Map<String, String> paraMap);
+	
+	// 비밀번호 변경 후 비밀번호 변경일자 넣어주기
+	int passwdUpdateDate(Map<String, String> paraMap);
+	
+	// 아이디 찾기 메소드
+	String idFind(Map<String, String> paraMap);
+	
+	// 회원이 존재하는지 검사하는 메소드
+	String isExistMember(Map<String, String> paraMap);
+	
+	// 회원 탈퇴 메소드
+	int memberDisable(Map<String, String> paraMap);
+	
+	// 탈퇴된 회원 한달 뒤 자동삭제 스캐줄러
+	void memberDelete();
+	
+	// 회원 탈퇴 시간 넣어주기 (관리자가 탈퇴한 회원을 되살릴 때 시간은 삭제해야한다.)
+	int memberDisableDate();
+	
 	// === 이준영 끝 === //
 	
 	
@@ -119,6 +149,25 @@ public interface MemberDAO {
 	// 회원 보유기술 등록, 삭제
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
 
 	
 

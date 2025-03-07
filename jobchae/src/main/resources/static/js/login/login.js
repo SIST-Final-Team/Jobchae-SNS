@@ -5,11 +5,11 @@ const contextPath = sessionStorage.getItem("contextpath");
 
 $(document).ready(function () {
 
-    $(`input#login_member_id`).keydown((e) => {
+    $(`input#login_member_passwd`).keydown((e) => {
 
         if (e.keyCode == 13) { // 입력란에 엔터를 했을 경우
 
-            gouserLogin();
+            gomemberLogin();
         }
 
     });//end of $(`input#loginPwd`).keydown((e) => { }...
@@ -25,7 +25,7 @@ $(document).ready(function () {
 
 
 // 로그인 처리 함수
-function gouserLogin() {
+function gomemberLogin() {
 
     // alert("로그인처리합니다.");
 
@@ -67,22 +67,6 @@ function gouserLogin() {
     
 }//end of function goLogin() { }...
 
-
-
-
-
-
-
-
-
-
-// // 로그아웃 버튼 메소드
-// function goLogOut() {
-
-//     // 로그아웃을 처리해주는 페이지로 이동
-//     location.href = `${contextPath}/login/logout.gu`;
-
-// }//end of function goLogOut() { }...
 
 
 
