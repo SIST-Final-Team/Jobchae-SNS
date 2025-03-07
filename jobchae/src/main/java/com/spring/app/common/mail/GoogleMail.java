@@ -52,7 +52,7 @@ public class GoogleMail {
     	MimeMessage msg = new MimeMessage(ses);
 
     	// 제목 설정
-    	String subject = "GUBI 인증번호 발송";
+    	String subject = "JobChae 인증번호 발송";
     	msg.setSubject(subject);
     	        
     	// 보내는 사람의 메일주소

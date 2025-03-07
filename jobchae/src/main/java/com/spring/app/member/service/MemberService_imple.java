@@ -1,10 +1,14 @@
 package com.spring.app.member.service;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.common.AES256;
+import com.spring.app.common.FileManager;
 import com.spring.app.common.security.Sha256;
 import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
@@ -25,6 +31,7 @@ import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.model.MemberDAO;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -37,6 +44,12 @@ public class MemberService_imple implements MemberService {
 	// 양방향 암호화 자동 객체 선언
 	@Autowired
 	private AES256 aes;
+	
+	@Autowired
+	private FileManager filemanager;
+	
+	@Autowired
+    private ServletContext servletContext;
 	
 	
 
@@ -407,6 +420,7 @@ public class MemberService_imple implements MemberService {
 	
 	// 회원 탈퇴 메소드
 	@Override
+	@Transactional(value = "transactionManager_jobchae", propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
 	public ModelAndView memberDisable(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {
 		
 		int n = dao.memberDisable(paraMap);
@@ -432,17 +446,52 @@ public class MemberService_imple implements MemberService {
 	
 	
 	
-	// 탈퇴된 회원 한달 뒤 자동삭제 스캐줄러
+	// => FK_TBL_LOGIN_ FK_MEMBER_ID 이란 이름의 제약조건 때문에 멤버 삭제 불가능.
+	// 제약조건들을 다 delete cascade 해줘야함. 너무 많아서 기능을 잠궈두겠다!!!!
+	// 탈퇴된 회원 한달 뒤 자동삭제 스캐줄러 4시 시작
 	@Override
 	public void memberDelete() {
-		dao.memberDelete();
 		
 		// 디비에 없는 파일은 한달에 한번 한꺼번에 삭제하자!
+		String root = servletContext.getRealPath("/");
+        String path = root + "resources" + File.separator + "files" + File.separator + "profile";
+
+        System.out.println("파일 경로: " + path);
+        // 파일 처리 로직 추가
 		
+		// 탈퇴한 회원 파일명을 리스트로 가져오기 검색
+		List<Map<String, String>> disableFileList = dao.disableFileList();
+		
+		// 검색 성공 시
+		if (disableFileList.size() > 0) {
+			for (Map<String, String> map : disableFileList) {
+				// 가져온 프로필이 기본이미지이면 삭제하지말고 넘겨라
+				String member_profile = map.get("member_profile");
+				String member_background_img = map.get("member_background_img");
+				
+				try {
+					if (!"default/profile.png".equals(member_profile)) {
+						filemanager.doProfileDelete(member_profile, path);
+					}
+					if (!"default/background_img.jpg".equals(member_background_img)) {
+						filemanager.doBackgroundfileDelete(member_background_img, path);
+					}//
+				} catch (Exception e) {
+					e.printStackTrace();
+				}//
+			}//end of for (Map<String, String> map : disableFileList) {}...
+		}//end of if (disableFileList.size() > 0) {}...
+		
+		// 회원 데이터 삭제
+		dao.memberDelete();
 		
 	}// end of public void memberDelete() {}...
 	
 	
+	
+	
+
+
 	
 	
 	// === 이준영 끝 === //
@@ -596,6 +645,11 @@ public class MemberService_imple implements MemberService {
 	public int deleteMemberSkill(Map<String, String> paraMap) {
 		return dao.deleteMemberSkill(paraMap);
 	}
+
+
+
+
+
 
 
 

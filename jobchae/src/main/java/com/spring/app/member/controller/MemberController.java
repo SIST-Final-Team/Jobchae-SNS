@@ -90,7 +90,7 @@ public class MemberController {
 			HttpSession m_session = mrequest.getSession(); // 파일용 세션
 			String root = m_session.getServletContext().getRealPath("/");
 
-			String path = root + "resources" + File.separator + "files";
+			String path = root + "resources" + File.separator + "files" + File.separator + "profile";
 			
 			String newProFileName = "";
 			// WAS(톰캣)의 디스크에 저장될 파일명
