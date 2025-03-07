@@ -197,14 +197,16 @@
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
     	$(".comment-input-container").hide();
-		// ㅇㅇ
+		
+    	
+    	// 긴 글 더보기 처리
 		var content = document.getElementById('boardContent');
         var button = document.getElementById('toggleButton');
         
         if (content.scrollHeight > content.clientHeight) {
-            button.style.display = 'block'; // 버튼 보이게
+            button.style.display = 'block'; 
         } else {
-            button.style.display = 'none'; // 버튼 숨기기
+            button.style.display = 'none'; 
         }
 	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -250,13 +252,17 @@
         	writeModal.style.display = "none";
         	writeQuill.setText('');
         	$(".carousel-track").empty();
+        	prevBtn.style.display = "none";
+            nextBtn.style.display = "none";
         });
 
-        $(window).click(function(e) {
+        $(window).click(function(e) { // ㅇㅇ
             if (e.target == writeModal) {
             	writeModal.style.display = "none";
             	writeQuill.setText('');
             	$(".carousel-track").empty();
+            	prevBtn.style.display = "none";
+                nextBtn.style.display = "none";
             }
         });
         
@@ -321,7 +327,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성
+		// 글 작성 
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -334,7 +340,8 @@
 			else {
 				const imageFiles = document.getElementById("file-image").files;
     			const videoFiles = document.getElementById("file-video").files;
-				
+    			const attachmentFiles = document.getElementById("file-attachment").files;
+    			
     			// 파일이 없으면 해당 input 제거
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
@@ -342,7 +349,10 @@
     		    if (videoFiles.length === 0) {
     		        document.getElementById("file-video").remove();
     		    }
-    			
+    		    if (attachmentFiles.length === 0) {
+    		        document.getElementById("file-attachment").remove();
+    		    }
+    		    
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -1085,6 +1095,8 @@
 
     });
     
+    
+    // 글 작성에서 첨부파일 미리보기
     function previewImage(event) {
         const files = event.target.files;
         const track = document.querySelector(".carousel-track");
@@ -1125,26 +1137,45 @@
                     } else if (file.type === "application/pdf") {
                         mediaElement = document.createElement("div");
                         mediaElement.className = "file-icon"; 
-                        mediaElement.innerHTML = file.name; 
-                    }
-                    else if (file.type === "application/msword" || 
-                        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
-                        file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
-                        file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
-                        mediaElement = document.createElement("div");
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/msword" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                    	mediaElement = document.createElement("div");
                         mediaElement.className = "file-icon";
-                        mediaElement.innerHTML = file.name; 
-                    }
-                    else if (file.type === "text/plain" || file.type === "text/csv") {
-                        mediaElement = document.createElement("div");
+                    	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                            				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                            				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                            				   + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                    	mediaElement = document.createElement("div");
                         mediaElement.className = "file-icon";
-                        mediaElement.innerHTML = file.name; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+					         				   + file.name + "</span></div>";
+                    } else if (file.type === "text/plain" || file.type === "text/csv") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+        				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                							   + file.name + "</span></div>";
                     }
 
                     const closeButton = document.createElement("div");
                     closeButton.className = "close-btn";
                     closeButton.innerText = "×";
 
+                    // ㅇㅇ
                     closeButton.addEventListener("click", () => {
                         previewBox.remove();
                         removeFile(file);
@@ -1208,6 +1239,8 @@
         event.target.files = dataTransfer.files;
     }
     
+    
+ 	// 긴 글 더보기 처리
     function toggleContent() {
         var container = document.querySelector('.board-content-container');
         container.classList.toggle('expanded');
@@ -1264,6 +1297,7 @@
                         </div>
                     </div>
 
+					<!-- 
                     <hr class="border-gray-300 mx-4">
 
                     <div class="py-0">
@@ -1285,7 +1319,7 @@
                                 </button>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
 			</div>
 			
@@ -1361,7 +1395,7 @@
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- 글 내용 --> <!-- ㅇㅇ -->
+	                    <!-- 글 내용 -->
 	                    <div class="board-content-container">
 	                    	<div class="board-content" id="boardContent"> 
 		                        <p>${boardvo.board_content}</p>

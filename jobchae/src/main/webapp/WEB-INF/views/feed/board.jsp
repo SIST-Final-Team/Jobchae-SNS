@@ -252,13 +252,17 @@
         	writeModal.style.display = "none";
         	writeQuill.setText('');
         	$(".carousel-track").empty();
+        	prevBtn.style.display = "none";
+            nextBtn.style.display = "none";
         });
 
-        $(window).click(function(e) {
+        $(window).click(function(e) { // ㅇㅇ
             if (e.target == writeModal) {
             	writeModal.style.display = "none";
             	writeQuill.setText('');
             	$(".carousel-track").empty();
+            	prevBtn.style.display = "none";
+                nextBtn.style.display = "none";
             }
         });
         
@@ -1116,7 +1120,6 @@
                 file.type === "text/csv") {
                 const reader = new FileReader();
 
-                // ㅇㅇ
                 reader.onload = function (e) {
                     const previewBox = document.createElement("div");
                     previewBox.className = "preview-box";
@@ -1172,6 +1175,7 @@
                     closeButton.className = "close-btn";
                     closeButton.innerText = "×";
 
+                    // ㅇㅇ
                     closeButton.addEventListener("click", () => {
                         previewBox.remove();
                         removeFile(file);

@@ -40,7 +40,7 @@ public class BoardController {
 	
 	// 피드 조회하기
 	@GetMapping("feed")
-	public ModelAndView feed(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam(required = false) String sort) {
+	public ModelAndView feed(HttpServletRequest request, HttpServletResponse reponse, ModelAndView mav, @RequestParam(required = false) String sort) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
