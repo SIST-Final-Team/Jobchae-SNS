@@ -103,7 +103,7 @@ public class ApiAlarmController {
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
 		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNumber);
-		logger.info("alarmList: " + resultMap);
+//		logger.info("alarmList: " + resultMap);
 		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
 		return response;
 	}

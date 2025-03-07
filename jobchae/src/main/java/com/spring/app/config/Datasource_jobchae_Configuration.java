@@ -80,7 +80,7 @@ public class Datasource_jobchae_Configuration {
     */
 
     @Bean
-    public PlatformTransactionManager transactionManager_mymvc_user() {
+    public PlatformTransactionManager transactionManager_jobchae() {
         DataSourceTransactionManager tm = new DataSourceTransactionManager();
         tm.setDataSource(dataSource());
         return tm;

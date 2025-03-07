@@ -17,7 +17,11 @@ import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.FileManager;
 import com.spring.app.common.mail.FuncMail;
 import com.spring.app.common.security.RandomEmailCode;
+import com.spring.app.config.DefaultImageNames;
 import com.spring.app.file.domain.FileVO;
+import com.spring.app.member.domain.MemberCareerVO;
+import com.spring.app.member.domain.MemberEducationVO;
+import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.service.MemberService;
 
@@ -42,8 +46,7 @@ public class MemberController {
 	@Autowired
 	MemberService service;
 	
-	@Autowired
-	FuncMail funcMail; // 이메일 인증 관련 클래스
+	
 	
 	@Autowired
 	FileManager fileManager; // 파일 관련 클래스
@@ -72,11 +75,10 @@ public class MemberController {
 		session.removeAttribute("emailCheckOk");
 		
 		
-		// 파일부터 넣어주기
-		MultipartFile attach_member_profile = membervo.getAttach_member_profile();
-		// 
+		// 파일부터 넣어주기 
+		MultipartFile attach_member_profile = membervo.getAttach_member_profile(); // 프로필사진
 		
-		System.out.println("attach_member_profile => "+ attach_member_profile);
+//		System.out.println("attach_member_profile => "+ attach_member_profile);
 		
 		// 나오는 결과값을 보고 디폴트 설정해주자
 		// input 태그 name 이 vo 랑 같아야함
@@ -90,19 +92,18 @@ public class MemberController {
 
 			String path = root + "resources" + File.separator + "files";
 			
-			
 			String newProFileName = "";
 			// WAS(톰캣)의 디스크에 저장될 파일명
-
+			
 			byte[] bytes_member_profile = null;
 			// 첨부파일의 내용물을 담는 것
-
+			
 			try {
 				bytes_member_profile = attach_member_profile.getBytes();
 				// 첨부파일의 내용물을 읽어오는 것
 				
 				String origin_member_profile_Filename = attach_member_profile.getOriginalFilename();
-				System.out.println("origin_member_profile_Filename => "+ origin_member_profile_Filename);
+//				System.out.println("origin_member_profile_Filename => "+ origin_member_profile_Filename);
 				// 첨부파일명의 파일명(예:강아지.png)을 읽어오는 것
 				// 백그라운드 이미지는 null 로 처리
 				
@@ -127,20 +128,27 @@ public class MemberController {
 				e.printStackTrace();
 			} // end of try catch...
 			
+		} else { // 들어온 프로필사진이 없을 때
+			membervo.setMember_profile(DefaultImageNames.ProfileName);
+			
 		}//end of if (attach_member_profile != null) {}...
 		
-		System.out.println("멤버_프로필사진 안넣었을 때 => "+membervo.getMember_profile());
+//		System.out.println("멤버_프로필사진 안넣었을 때 => "+membervo.getMember_profile());
 		// 멤버_프로필사진 안넣었을 때 => null 근데 메퍼에 넣으면 터진다..?(해결 : 메퍼에 null 값의 파라미터로 insert 가 안된다!)
 		
-		// 회원가입 시작
+		// (백그라운드사진 파일은 기본파일명을 넣어주자)
+		membervo.setMember_background_img(DefaultImageNames.BackgroundfileName);
+		// 회원가입 시작 
 		int n = service.memberRegister(membervo);
 		
 		if (n == 1) {
-//			mav.addObject("member_id", membervo.getMember_id());
-//			mav.addObject("member_passwd", membervo.getMember_passwd());
-//			mav.setViewName("common/memberRegister_after_autoLogin"); // 자동로그인
-			mav.setViewName("feed/board"); // jsp 파일
-			// TODO 로그인 후 회원경력, 학력 넣어주는 페이지로 이동하도록 로그인 수정해야함
+			mav.addObject("member_id", membervo.getMember_id());
+			mav.addObject("member_passwd", membervo.getMember_passwd());
+			mav.addObject("alert_choice", 0);
+			
+			mav.setViewName("common/after_autoLogin"); // 자동로그인
+//			mav.setViewName("feed/board"); // jsp 파일
+			// TODO 로그인 후 회원경력, 학력 넣어주는 페이지로 이동하도록 로그인 수정해야함, 그리고 거기서 자동로그인을 해줘야함
 			
 		} else {
 			mav.addObject("message", "회원가입 실패");
@@ -155,101 +163,6 @@ public class MemberController {
 		
 	}//end of public ModelAndView postMethodName(ModelAndView mav, MemberVO membervo) {}...
 	
-	
-	
-	
-	
-	// 아이디 중복체크
-	@PostMapping("idDuplicateCheck")
-	@ResponseBody
-	public Map<String, Boolean> idDuplicateCheck(@RequestParam String member_id) {
-		
-		boolean isExists = service.idDuplicateCheck(member_id);
-		
-		Map<String, Boolean> id_checkMap = new HashMap<>();
-		id_checkMap.put("isExists", isExists);
-		
-		return id_checkMap;
-		
-	}//end of public String postMethodName(@RequestBody String entity) {}...
-	
-	
-	
-	
-	
-	// 이메일 중복확인 및 인증메일 발송
-	@PostMapping("emailCheck_Send")
-	@ResponseBody
-	public Map<String, Boolean> emailCheck_Send(HttpServletRequest request, @RequestParam String member_email) {
-		
-		Map<String, Boolean> email_check_SendMap = new HashMap<>();
-		
-		// 메일이 정상적으로 전송되었는지 유무를 알아오기 위한 용도
-		boolean sendMailSuccess = false;
-		
-		// 이메일 중복 검사
-		boolean isExists = service.emailCheck(member_email);
-		
-		if (!isExists) { // 이메일 중복이 없으면
-			
-			// 인증 이메일을 발송한다!
-			sendMailSuccess = funcMail.sendMail(request, member_email);
-			// 여기까지 했다. 이메일 보내는 메소드를 완성하고 그걸 위에 오토와이어드로 선언, 사용하면 끝!
-			
-		}//end of if (!isExists) {}...
-		
-		// 이메일 중복여부 넣어주자
-		email_check_SendMap.put("isExists", isExists);
-		// 이메일 발송여부도 넣어주자
-		email_check_SendMap.put("sendMailSuccess", sendMailSuccess);
-		
-		return email_check_SendMap;
-		
-	}//end of public String postMethodName(@RequestBody String entity) {}...
-	
-	
-	
-	
-	
-	// 이메일 인증 번호 받아서 확인해주는 메소드
-	@PostMapping("emailAuth")
-	@ResponseBody
-	public Map<String, Boolean> emailAuth(HttpServletRequest request, @RequestParam String email_auth_text) {
-		
-		Map<String, Boolean> email_AuthMap = new HashMap<>(); // 보내줄 맵 선언
-		
-		// 이메일 인증번호를 비교해서 확인해주는 메소드
-		boolean isExists = funcMail.emailAuth(request, email_auth_text); // 인증번호가 맞으면 true, 아니면 false
-		
-		email_AuthMap.put("isExists", isExists); // 넣어준다.
-		
-		return email_AuthMap;
-		
-	}//end of public Map<String, Boolean> emailAuth(@RequestParam String email_auth_text) {}...
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	// 직종 자동검색 메소드
-//	@GetMapping("job/search")
-//	@ResponseBody
-//	public List<Map<String, String>> jobSearch(@RequestParam String job_name) {
-//		
-//		List<Map<String, String>> jobList = service.jobSearch(job_name);
-//		
-//		return jobList;
-//	}//end of public String jobSearch(@RequestParam String job_name) {}...
-	
-	
-	
-	
-	
-
 	
 	
 	// === 로그인 페이지 켜는 메소드
@@ -278,13 +191,175 @@ public class MemberController {
 	
 	
 	
-	// 회원 탈퇴
-//	@GetMapping("")
-//	public String getMethodName(@RequestParam String param) {
-//		return new String();
-//	}//end of 
+	// 휴면 해제 이동 메소드
+	@GetMapping("memberReactivation")
+	public ModelAndView memberReactivation(ModelAndView mav) {
+		mav.setViewName("login/memberReactivation");
+		return mav;
+	}//end of public ModelAndView memberReactivation(ModelAndView mav) {}...
 	
 	
+	// 휴면 해제 실행 메소드
+	@PostMapping("memberReactivation")
+	public ModelAndView emailCheckOk_memberReactivation(HttpServletRequest request, HttpServletResponse response, 
+														ModelAndView mav, @RequestParam Map<String, String> paraMap) {
+		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
+		HttpSession session = request.getSession();
+		session.removeAttribute("emailCheckOk");
+		
+		// 쓰였던 정보들을 삭제시켜준다.
+		session.removeAttribute("member_id");
+		session.removeAttribute("member_email");
+		session.removeAttribute("member_passwd");
+		
+		// 휴면 해제 실행 메소드
+		mav = service.memberReactivation(mav, paraMap, request);
+		
+		return mav;
+	}//end of public ModelAndView emailCheckOk_memberReactivation(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam Map<String, String> paraMap) {}...
+	
+	
+	
+	// 비밀번호 변경 페이지 이동
+	@GetMapping("passwdUpdate")
+	public ModelAndView passwdUpdate(ModelAndView mav) {
+		mav.setViewName("login/passwdUpdate");
+		return mav;
+	}//end of public ModelAndView passwdUpdate(ModelAndView mav) {}...
+	
+	
+	// 비밀번호 변경 메소드
+	@PostMapping("passwdUpdate")
+	public ModelAndView emailCheckOk_passwdUpdate(HttpServletRequest request, HttpServletResponse response, 
+												  ModelAndView mav, @RequestParam Map<String, String> paraMap) {
+		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
+		HttpSession session = request.getSession();
+		session.removeAttribute("emailCheckOk");
+				
+		mav = service.passwdUpdate(mav, request, paraMap);
+		return mav;
+	}// end of public ModelAndView passwdUpdate(ModelAndView mav) {}...
+	
+	
+	
+	// 비밀번호 찾기 페이지 이동
+	@GetMapping("passwdFind")
+	public ModelAndView passwdFind(ModelAndView mav) {
+		mav.setViewName("login/passwdFind");
+		return mav;
+	}//end of public ModelAndView passwdFind(ModelAndView mav) {}...
+	
+	
+	// 비밀번호 찾기를 통해 비밀번호 변경으로 페이지 이동
+	@PostMapping("passwdFind")
+	public ModelAndView emailCheckOk_passwdFind(ModelAndView mav, HttpServletRequest request,@RequestParam Map<String, String> paraMap) {
+		
+		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
+		HttpSession session = request.getSession();
+		session.removeAttribute("emailCheckOk");
+		
+		mav.addObject("member_id", paraMap.get("member_id"));
+		mav.addObject("member_email", paraMap.get("member_email"));
+		mav.addObject("is_passwdFind", paraMap.get("is_passwdFind")); // 구별할 수 있는 값
+		
+		mav.setViewName("login/passwdUpdate");
+		return mav;
+	}// end of public ModelAndView passwdFind(ModelAndView mav) {}...
+	
+	
+	
+	// 아이디 찾기 페이지 이동 
+	@GetMapping("idFind")
+	public ModelAndView idFind(ModelAndView mav) {
+		mav.setViewName("login/idFind");
+		return mav;
+	}//end of public ModelAndView idFind(ModelAndView mav) {}...
+	
+	
+	// 아이디 찾기 메소드
+	@PostMapping("idFind")
+	public ModelAndView emailCheckOk_idFind(HttpServletRequest request, HttpServletResponse response,
+											ModelAndView mav, @RequestParam Map<String, String> paraMap) {
+		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
+		HttpSession session = request.getSession();
+		session.removeAttribute("emailCheckOk");
+		
+		mav = service.idFind(mav, request, paraMap);
+		return mav;
+	}//end of public ModelAndView idFind(ModelAndView mav) {}...
+	
+	
+	
+	// 로그아웃
+	@GetMapping("logout")
+	public ModelAndView logout(ModelAndView mav, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession(); // 세션불러오기
+		
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+		String goBackURL = (String)session.getAttribute("goBackURL"); // 돌아갈 url
+		
+		if (goBackURL != null && loginuser != null) { // url 이랑 로그인 되어있으면
+			mav.setViewName("redirect:" + goBackURL);
+			session.invalidate(); // 세션 완전 삭제
+		
+		} else { // 돌아갈 곳 없으면 그냥 삭제
+			mav.setViewName("board/feed"); // 원래는 메인페이지로 가야한다. 만드자. TODO
+			session.invalidate(); // 세션 완전 삭제
+		} // end of if...
+		
+		return mav;
+	}//end of public ModelAndView logout(ModelAndView mav, HttpServletRequest request) {}...
+	
+	
+	
+	
+	@GetMapping("memberDisable")
+	public ModelAndView requiredLogin_memberDisable(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO)session.getAttribute("loginuser");
+//		String member_id = loginuser.getMember_id();
+//		System.out.println("확인용!!!!!!!!!!!member_id => "+ member_id);
+		mav.setViewName("member/memberDisable");
+		return mav;
+	}
+	
+	
+	
+	// 회원탈퇴 메소드(로그인을 해야지 탈퇴도 가능함)
+	@PostMapping("memberDisable")
+	public ModelAndView requiredLogin_memberDisable(HttpServletRequest request, HttpServletResponse response, 
+													ModelAndView mav, @RequestParam Map<String, String> paraMap) {
+		mav = service.memberDisable(mav, request, paraMap);
+		return mav;
+	}//end of public ModelAndView memberDelete(ModelAndView mav, @RequestParam Map<String, String> paraMap) {}...
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// =========================== 이준영 끝 =========================== //
 	
 	
 	
@@ -301,8 +376,35 @@ public class MemberController {
 	
 	
 	// =========================== 김규빈 =========================== //
-	@GetMapping("profile")
-	public ModelAndView profile(ModelAndView mav) {
+	@GetMapping("profile/{memberId}")
+	public ModelAndView profile(HttpServletRequest request, ModelAndView mav, @PathVariable String memberId) {
+		
+		mav.addObject("memberId", memberId);
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("member_id", memberId);
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+		if(loginuser != null) {
+			paraMap.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			paraMap.put("login_member_id", " ");
+		}
+
+		MemberVO memberVO = service.getMember(paraMap);	// 회원 정보
+
+		paraMap.put("size", "3");
+		
+		List<MemberCareerVO> memberCareerVOList = service.getMemberCareerListByMemberId(paraMap);          // 회원 경력
+		List<MemberEducationVO> memberEducationVOList = service.getMemberEducationListByMemberId(paraMap); // 회원 학력
+		List<MemberSkillVO> memberSkillVOList = service.getMemberSkillListByMemberId(paraMap);             // 회원 보유스킬
+
+		mav.addObject("memberVO", memberVO);							 // 회원 정보
+		mav.addObject("memberCareerVOList", memberCareerVOList);		 // 회원 경력
+		mav.addObject("memberEducationVOList", memberEducationVOList); // 회원 학력
+		mav.addObject("memberSkillVOList", memberSkillVOList);		 // 회원 보유스킬
 		
 		mav.setViewName("/member/profile");
 		
@@ -310,15 +412,15 @@ public class MemberController {
 	}// end of public ModelAndView profile(ModelAndView mav)----------
 
 	// 테스트용
-	@GetMapping("profile/more/{memberId}")
-	public ModelAndView profileMore(ModelAndView mav, @PathVariable String memberId) {
+	// @GetMapping("profile/more/{memberId}")
+	// public ModelAndView profileMore(ModelAndView mav, @PathVariable String memberId) {
 		
-		mav.addObject("memberId", memberId);
+	// 	mav.addObject("memberId", memberId);
 		
-		mav.setViewName("/member/profileMore");
+	// 	mav.setViewName("/member/profileMore");
 		
-		return mav;
-	}// end of public ModelAndView profile(ModelAndView mav)----------
+	// 	return mav;
+	// }// end of public ModelAndView profileMore(ModelAndView mav)----------
 
 	@GetMapping("profile/member-career/{memberId}")
 	public ModelAndView profileMemberCareer(ModelAndView mav, @PathVariable String memberId) {

@@ -6,18 +6,18 @@
 
 <%
    String ctxPath = request.getContextPath();
-   //      /MyMVC
+   //      /jobchae
 %>
 
 <%--  
 .jsp 파일에서 사용되어지는 것들 
-console.log('${pageContext.request.contextPath}');  // 컨텍스트패스   /MyMVC
-console.log('${pageContext.request.requestURL}');   // 전체 URL     http://localhost:9090/MyMVC/WEB-INF/member/admin/memberList.jsp
+console.log('${pageContext.request.contextPath}');  // 컨텍스트패스   /jobchae
+console.log('${pageContext.request.requestURL}');   // 전체 URL     
 console.log('${pageContext.request.scheme}');       // http        http
 console.log('${pageContext.request.serverName}');   // localhost   localhost
 console.log('${pageContext.request.serverPort}');   // 포트번호      9090
-console.log('${pageContext.request.requestURI}');   // 요청 URI     /MyMVC/WEB-INF/member/admin/memberList.jsp 
-console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/member/admin/memberList.jsp 
+console.log('${pageContext.request.requestURI}');   // 요청 URI      
+console.log('${pageContext.request.servletPath}');  // 파일명        
 --%>
 
 
@@ -74,7 +74,7 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
             	<div class="col-lg-4 col-md-7" style="text-align: center; position: relative; height: 200px;">
             		<div class="icon" style="width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             			<img id="profile_img" src="${pageContext.request.contextPath}/images/no_profile.png">
-            			<label id="icon_label" class="icon_label icon" for="file_input">
+            			<label id="icon_label" class="icon_label icon" for="file_input_profile">
                 			<i class="fa-solid fa-camera-retro fa-2xl" style="margin:auto; font-size: 24px;"></i>
                 		</label>
             		</div>
@@ -82,7 +82,7 @@ console.log('${pageContext.request.servletPath}');  // 파일명       /WEB-INF/
             	<div class="w-100"></div>
             	<div class="col-lg-5 col-md-7">
             		<%-- 파일 전송 input --%>
-                	<input type="file" id="file_input" name="attach_member_profile" accept="image/*" style="display: none">
+                	<input type="file" id="file_input_profile" name="attach_member_profile" accept="image/*" style="display: none">
             	</div>
             	<div class="w-100"></div>
 

@@ -35,6 +35,11 @@ spring: # 주의할 점은 내용작성시 들여쓰기 내어쓰기시 공백�
   data:
     mongodb:
       uri: mongodb://localhost:27017/JobchaeTest
+  jpa:
+    show-sql: true #실행한 쿼리를 콘솔에 출력
+    properties:
+      hibernate:
+        format_sql: true #쿼리를 보기좋게 출력
 
 mybatis: #mybatis 설정
   mapper-locations: mybatis/mapper/**/*.xml          #src/main/resources 아래 폴더속에 매퍼파일을 생성
@@ -43,7 +48,12 @@ logging: #로그 지정
     #root: error
     '[com.spring.board]': debug 
     #com.zaxxer.hikari.HikariConfig: DEBUG
-    #com.zaxxer.hikari: TRACE 
+    #com.zaxxer.hikari: TRACE
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace #sql문을 출력
 
 server:
   port: 80

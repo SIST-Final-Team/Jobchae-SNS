@@ -37,23 +37,20 @@
 	</select>
 	
 	
-	<!-- 회원가입  여기 터짐 고쳐야함 --> 
+	<!-- 회원가입 --> 
 	<insert id="memberRegister" parameterType="MemberVO">
 		
 		INSERT INTO tbl_member(member_id, fk_region_no, member_passwd, member_name, member_birth, 
-							   	   member_email, member_tel, member_profile)
-		
-		<if test="member_profile != null">
-			VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
-			   	   #{member_email}, #{member_tel}, #{member_profile})
-		</if>
-
-		<if test="member_profile == null">
-			VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
-			   	   #{member_email}, #{member_tel}, null)
-		</if>
-	
-		
+							   	   member_email, member_tel, member_profile, member_background_img)
+		VALUES(#{member_id}, to_number(#{fk_region_no}), #{member_passwd}, #{member_name}, to_date(#{member_birth}, 'yyyy-mm-dd'),
+			   #{member_email}, #{member_tel}, #{member_profile}, #{member_background_img})
+	</insert>
+	<!-- 회원가입시 회원설정 추가하기 -->
+	<insert id="insertMemberSetting" parameterType="String">
+		INSERT INTO tbl_member_setting(fk_member_id, member_setting_profile
+					, member_setting_followed, member_setting_message
+					, member_setting_following_board, member_setting_comment)
+		VALUES(#{member_id}, default, default, default, default, default)
 	</insert>
 
 	
@@ -112,12 +109,70 @@
 	
 	<!-- 회원 휴면을 자동으로 지정해주는 스케줄러 -->
 	<update id="deactivateMember_idle">
-		UPDATE tbl_member SET member_idle = 0 WHERE member_id = (SELECT fk_member_id
-                                                        FROM tbl_login
-                                                        GROUP BY fk_member_id
-                                                        HAVING MAX(login_date) &lt; ADD_MONTHS(SYSDATE, -12))
+		UPDATE tbl_member SET member_idle = 0 
+		WHERE member_id = (SELECT fk_member_id
+						   FROM tbl_login
+						   GROUP BY fk_member_id
+						   HAVING MAX(login_date) &lt; ADD_MONTHS(SYSDATE, -12))
 	</update>
 	
+	
+	<!-- 휴면 해제 실행 메소드 -->
+	<update id="memberReactivation" parameterType="String">
+		UPDATE tbl_member SET member_idle = 0 WHERE member_id = #{member_id}
+	</update>
+	
+	
+
+	<!-- 비밀번호 중복 확인  -->
+	<select id="passwdExist" parameterType="String" resultType="String">
+		SELECT member_passwd
+		FROM tbl_member
+		WHERE member_passwd = #{new_member_passwd}
+	</select>
+	
+	
+	<!-- 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경 하고 비밀번호 변경날짜 갱신 -->
+	<update id="passwdUpdate" parameterType="HashMap">
+		UPDATE tbl_member SET member_passwd = #{new_member_passwd} AND member_passwdupdate_date = SYSDATE 
+		WHERE member_id = #{member_id}
+	</update>
+	
+	
+
+	<!-- 아이디찾기 메소드 -->
+	<select id="idFind" parameterType="HashMap" resultType="String">
+		SELECT member_id
+		FROM tbl_member
+		WHERE member_name = #{member_name} AND member_email = #{member_email}
+	</select>
+	
+	<!-- 회원이 존재하는지 검사하는 메소드 -->
+	<select id="isExistMember" parameterType="HashMap" resultType="String">
+		SELECT member_name
+		FROM tbl_member
+		WHERE member_id = #{member_id} AND member_passwd = #{member_passwd}
+	</select>
+	
+	<!-- 회원 탈퇴(비활성화) -->
+	<update id="memberDisable" parameterType="HashMap">
+		UPDATE tbl_member SET member_status = 2 WHERE member_id = #{member_id}
+	</update>
+	
+	
+	<!-- 탈퇴한 회원 한달 뒤 자동삭제 스캐줄러 -->
+	<delete id="memberDelete">
+		DELETE FROM tbl_member
+		WHERE member_status = (SELECT member_status
+                       		   FROM tbl_member
+                       		   WHERE member_disable_date &lt; ADD_MONTHS(SYSDATE, -1))
+	</delete>
+	
+	
+	<insert id="memberDisableDate">
+		INSERT tbl_member(member_disable_date)
+		VALUES(SYSDATE)
+	</insert>
 	
 	
 	<!-- === 이준영 끝 === -->
@@ -128,6 +183,33 @@
 
 
 	<!-- === 김규빈 시작 === -->
+
+	<!-- 회원 한 명의 정보 조회 -->
+	<select id="getMember" parameterType="HashMap" resultType="MemberVO">
+		select member_id, m.fk_region_no, member_name
+			, member_birth, member_email, member_tel, member_register_date
+			, member_passwdupdate_date, member_status, member_idle
+			, member_is_company , member_profile, member_background_img, member_hire_status
+			, r.region_name, mc.member_career_company, s.school_name
+		from tbl_member m
+		join tbl_member_setting ms
+		on m.member_id = ms.fk_member_id
+		join tbl_region r
+		on m.fk_region_no = r.region_no
+		LEFT JOIN (SELECT member_career_company, fk_member_id
+					FROM TBL_MEMBER_CAREER
+					WHERE member_career_is_current = 1 AND rownum = 1
+					ORDER BY member_career_enddate, member_career_startdate DESC) mc
+		ON m.MEMBER_ID = mc.FK_MEMBER_ID
+		LEFT JOIN (SELECT fk_school_no, fk_member_id
+					FROM TBL_MEMBER_EDUCATION
+					WHERE member_education_enddate &gt;= SYSDATE AND rownum = 1
+					ORDER BY member_education_enddate, member_education_startdate DESC) me
+		ON m.MEMBER_ID = me.FK_MEMBER_ID
+		LEFT JOIN tbl_school s
+		on me.fk_school_no = s.school_no
+		where member_id = #{member_id} and member_status = 1 and (ms.member_setting_profile = 1 OR m.member_id = #{login_member_id})
+	</select>
 	
 	<!-- 자동완성을 위한 직종 목록 조회 및 검색 -->
 	<resultMap type="HashMap" id="jobMap">
@@ -190,7 +272,7 @@
 	<!-- 회원 경력 1개 조회 -->
 	<select id="getMemberCareer" parameterType="HashMap" resultType="MemberCareerVO">
 		SELECT member_career_no, mc.fk_member_id, mc.fk_region_no, r.region_name
-			 , mc.fk_job_no, j.job_name, fk_company_no, member_career_company, member_career_type
+			 , mc.fk_job_no, j.job_name, fk_company_no, company_logo, member_career_company, member_career_type
 			 , to_char(member_career_startdate, 'yyyy-mm') AS member_career_startdate
 			 , to_char(member_career_enddate, 'yyyy-mm') AS member_career_enddate
 			 , member_career_explain
@@ -202,13 +284,15 @@
 		ON mc.fk_region_no = r.region_no
 		JOIN tbl_job j
 		ON mc.fk_job_no = j.job_no
+		LEFT JOIN tbl_company c
+		ON mc.fk_company_no = c.company_no
 		WHERE member_career_no = #{member_career_no} AND (ms.member_setting_profile = 1 OR mc.fk_member_id = #{login_member_id})
 	</select>
 	
 	<!-- 한 회원의 경력 모두 조회 -->
 	<select id="getMemberCareerListByMemberId" parameterType="HashMap" resultType="MemberCareerVO">
 		SELECT member_career_no, mc.fk_member_id, mc.fk_region_no, r.region_name
-			 , mc.fk_job_no, j.job_name, fk_company_no, member_career_company, member_career_type
+			 , mc.fk_job_no, j.job_name, fk_company_no, company_logo, member_career_company, member_career_type
 			 , to_char(member_career_startdate, 'yyyy-mm') AS member_career_startdate
 			 , to_char(member_career_enddate, 'yyyy-mm') AS member_career_enddate
 			 , member_career_explain
@@ -220,7 +304,11 @@
 		ON mc.fk_region_no = r.region_no
 		JOIN tbl_job j
 		ON mc.fk_job_no = j.job_no
+		LEFT JOIN tbl_company c
+		ON mc.fk_company_no = c.company_no
 		WHERE mc.fk_member_id = #{member_id} AND (ms.member_setting_profile = 1 OR mc.fk_member_id = #{login_member_id})
+		<if test="size != null">AND rownum &lt;= #{size}</if>
+		ORDER BY member_career_enddate DESC, member_career_startdate DESC
 	</select>
 
 	<!-- 회원 경력 등록 -->
@@ -293,6 +381,8 @@
 		join tbl_major m
 		on me.fk_major_no = m.major_no
 		WHERE me.fk_member_id = #{member_id} AND (ms.member_setting_profile = 1 OR me.fk_member_id = #{login_member_id})
+		<if test="size != null">AND rownum &lt;= #{size}</if>
+		ORDER BY member_education_enddate DESC, member_education_startdate DESC
 	</select>
 
 	<!-- 회원 학력 등록 -->
@@ -338,6 +428,7 @@
 		join tbl_skill sk
 		on msk.fk_skill_no = sk.skill_no
 		where member_skill_no = #{member_skill_no} AND (ms.member_setting_profile = 1 OR msk.fk_member_id = #{login_member_id})
+		ORDER BY skill_name
 	</select>
 	
 	<!-- 한 회원의 보유기술 모두 조회 -->
@@ -349,6 +440,7 @@
 		join tbl_skill sk
 		on msk.fk_skill_no = sk.skill_no
 		WHERE msk.fk_member_id = #{member_id} AND (ms.member_setting_profile = 1 OR msk.fk_member_id = #{login_member_id})
+		<if test="size != null">AND rownum &lt;= #{size}</if>
 	</select>
 
 	<!-- 회원 보유기술 등록 -->
