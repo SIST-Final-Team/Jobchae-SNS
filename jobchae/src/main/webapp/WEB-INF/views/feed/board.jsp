@@ -203,12 +203,13 @@
 		var content = document.getElementById('boardContent');
         var button = document.getElementById('toggleButton');
         
-        if (content.scrollHeight > content.clientHeight) {
-            button.style.display = 'block'; 
-        } else {
-            button.style.display = 'none'; 
+        if (content && button) { 
+	        if (content.scrollHeight > content.clientHeight) {
+	            button.style.display = 'block'; 
+	        } else {
+	            button.style.display = 'none'; 
+	        }
         }
-	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
