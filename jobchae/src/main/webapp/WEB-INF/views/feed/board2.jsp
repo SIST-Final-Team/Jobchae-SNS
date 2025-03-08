@@ -191,6 +191,7 @@
 	let currentX = 0;
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
+	let currentPreviewBox = 1;
 	
     $(document).ready(function() {
         
@@ -203,12 +204,13 @@
 		var content = document.getElementById('boardContent');
         var button = document.getElementById('toggleButton');
         
-        if (content.scrollHeight > content.clientHeight) {
-            button.style.display = 'block'; 
-        } else {
-            button.style.display = 'none'; 
+        if (content && button) { 
+	        if (content.scrollHeight > content.clientHeight) {
+	            button.style.display = 'block'; 
+	        } else {
+	            button.style.display = 'none'; 
+	        }
         }
-	    	
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
@@ -256,7 +258,7 @@
             nextBtn.style.display = "none";
         });
 
-        $(window).click(function(e) { // ㅇㅇ
+        $(window).click(function(e) { 
             if (e.target == writeModal) {
             	writeModal.style.display = "none";
             	writeQuill.setText('');
@@ -833,12 +835,19 @@
 			if (currentX < 0) {
 				currentX += 208;
 				$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+				currentPreviewBox--;
 			}
 		});
 		
 		$("button#nextBtn").click(function() {
-			currentX -= 208;
-			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+			const previewCountMax = document.querySelector(".carousel-track").querySelectorAll(".preview-box").length;
+			if (previewCountMax > (currentPreviewBox + 2)) {
+				currentX -= 208;
+				$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+				currentPreviewBox++;
+			} else {
+				alert("끝까지 확인하셨습니다.");
+			}
 		});
 		
 		
@@ -1098,6 +1107,7 @@
     
     // 글 작성에서 첨부파일 미리보기
     function previewImage(event) {
+    	
         const files = event.target.files;
         const track = document.querySelector(".carousel-track");
 
@@ -1170,17 +1180,15 @@
                 							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
                 							   + file.name + "</span></div>";
                     }
-
+					
                     const closeButton = document.createElement("div");
                     closeButton.className = "close-btn";
                     closeButton.innerText = "×";
 
-                    // ㅇㅇ
                     closeButton.addEventListener("click", () => {
                         previewBox.remove();
                         removeFile(file);
                         togglePrevButton();
-                        updateCarouselPosition();
                     });
 
                     previewBox.appendChild(mediaElement);
@@ -1191,6 +1199,7 @@
 
                     togglePrevButton();
                     updateCarouselPosition();
+                    
                 };
 
                 reader.onerror = function () {
@@ -1203,7 +1212,8 @@
             }
         });
 
-        function removeFile(fileToRemove) {
+        
+        function removeFile(fileToRemove) { 
             const newDataTransfer = new DataTransfer();
             Array.from(dataTransfer.files).forEach((file) => {
                 if (file !== fileToRemove) {
@@ -1211,7 +1221,16 @@
                 }
             });
             event.target.files = newDataTransfer.files;
+
+            let currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
+            let previewCount = track.querySelectorAll(".preview-box").length;
+			
+            if (currentX !== 0) {
+                currentX = currentX + 208; 
+                $(track).css("transform", "translateX(" + currentX + "px)"); 
+            }
         }
+
 
         function togglePrevButton() {
             const previewCount = track.querySelectorAll(".preview-box").length;
@@ -1227,14 +1246,16 @@
             }
         }
 
-        function updateCarouselPosition() {
+        function updateCarouselPosition() {  
             const previewCount = track.querySelectorAll(".preview-box").length;
             if (previewCount > 3) {
                 currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
-                currentX = currentX - 208;
+                currentX = currentX - 208; 
                 $(track).css("transform", "translateX(" + currentX + "px)");
+                currentPreviewBox++;
             }
         }
+
 
         event.target.files = dataTransfer.files;
     }
@@ -1427,6 +1448,8 @@
 									        </c:if>
 						                </button>
 						            </c:forEach>
+						            
+						            
 						        </c:if>
 						
 						        <!-- 5장 이상 -->
@@ -1453,6 +1476,22 @@
 						        </c:if>
 						    </div>
 						</div>
+	                    
+	                    <!-- 이미지/비디오가 아닌 파일들 -->
+	                    <c:if test="${not empty boardvo.fileList}">
+						    <div class="file-download-container">
+						        <c:forEach var="file" items="${boardvo.fileList}">
+						            <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						            
+						            <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						                <div class="file-item">
+						                    <span class="file-icon">📄</span>
+						                    <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
+						                </div>
+						            </c:if>
+						        </c:forEach>
+						    </div>
+						</c:if>                
 	                    
 	                    
 	                    
