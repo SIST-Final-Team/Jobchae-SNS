@@ -1425,7 +1425,7 @@
 	                    </div>
 	             
 
-						<!-- 첨부파일 미리보기 ㅇㅇ -->
+						<!-- 첨부파일 미리보기 -->
 	                    <div class="px-0">
 						    <div class="file-image">
 						        <!-- 5장 미만 -->
@@ -1475,19 +1475,30 @@
 						    </div>
 						</div>
 	                    
-	                    <!-- 이미지/비디오가 아닌 파일들 -->
+	                    <!-- 이미지/비디오가 아닌 파일들 ㅇㅇ -->
 	                    <c:if test="${not empty boardvo.fileList}">
-					        <c:forEach var="file" items="${boardvo.fileList}">
-					            <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
-					            <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
-					               	<div class="file-download-container">
-										<div class="file-item">
-						                    <span class="file-icon">📄</span>
-						                    <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
-						                </div>
-					                </div>
-					            </c:if>
-					        </c:forEach>
+						    <c:set var="hasDocumentFile" value="false" />
+						    <c:forEach var="file" items="${boardvo.fileList}">
+						        <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						        <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						            <c:set var="hasDocumentFile" value="true" />
+						        </c:if>
+						    </c:forEach>
+						
+						    <!-- 문서 파일이 하나라도 있을 경우 다운로드 영역 출력 -->
+						    <c:if test="${hasDocumentFile}">
+						        <div class="file-download-container">
+						            <c:forEach var="file" items="${boardvo.fileList}">
+						                <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						                <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						                    <div class="file-item">
+						                        <span class="file-icon">📄</span>
+						                        <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
+						                    </div>
+						                </c:if>
+						            </c:forEach>
+						        </div>
+						    </c:if>
 						</c:if>   
 	                    
 	                    
