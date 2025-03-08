@@ -1427,6 +1427,8 @@
 									        </c:if>
 						                </button>
 						            </c:forEach>
+						            
+						            
 						        </c:if>
 						
 						        <!-- 5장 이상 -->
@@ -1453,6 +1455,22 @@
 						        </c:if>
 						    </div>
 						</div>
+	                    
+	                    <!-- 이미지/비디오가 아닌 파일들 -->
+	                    <c:if test="${not empty boardvo.fileList}">
+						    <div class="file-download-container">
+						        <c:forEach var="file" items="${boardvo.fileList}">
+						            <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						            
+						            <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						                <div class="file-item">
+						                    <span class="file-icon">📄</span>
+						                    <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
+						                </div>
+						            </c:if>
+						        </c:forEach>
+						    </div>
+						</c:if>                
 	                    
 	                    
 	                    

@@ -1020,3 +1020,34 @@ img.modal-img {
 
 
 
+
+
+
+.file-download-container {
+    text-align: left;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 98%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+}
+
+.file-item:hover {
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.file-icon {
+    margin-right: 8px;
+}
+
+
+
+
