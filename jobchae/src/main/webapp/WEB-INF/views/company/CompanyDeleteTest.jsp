@@ -32,11 +32,11 @@ request.getContextPath(); %>
         // console.log(jsonData);
 
         //회사 정보를 화면에 출력
-        const memberId = document.getElementById("member_id");
-        const companyNo = document.getElementById("companyNo");
+        const memberIdPara = document.getElementById("member_id");
+        const companyNoPara = document.getElementById("companyNo");
 
-        memberId.textContent = jsonData["member"]["member_id"];
-        companyNo.textContent = jsonData["companyNo"];
+        memberIdPara.textContent = jsonData["member"]["member_id"];
+        companyNoPara.textContent = jsonData["companyNo"];
       }
 
       fetchCompanyInfo();
