@@ -360,7 +360,7 @@ div.modal {
 	margin-right: 15px;
 }
 
-#visibilityStatus {
+#visibilityStatus, #visibilityStatus2 {
 	padding-left: 18px;	
 }
 
@@ -620,6 +620,7 @@ img.modal-img {
     transition: transform 0.5s ease; 
 }
 
+
 .preview-box {
     flex: 0 0 calc((640px - 16px) / 3); 
     height: 200px;
@@ -664,6 +665,15 @@ img.modal-img {
 #prevBtn:hover, #nextBtn:hover {
 	background: #f0f0f0;
 }
+
+
+
+
+
+
+
+
+
 
 /* ----- 반응 종류들?? 뜨게 하는 Modal ----- */
 .reactionmodal-content {
@@ -1017,6 +1027,105 @@ img.modal-img {
 .board-content-container.expanded #toggleButton {
     display: block; 
 }
+
+
+
+
+
+
+.file-download-container {
+    text-align: left;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 98%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+}
+
+.file-item:hover {
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.file-icon {
+    margin-right: 8px;
+}
+
+
+
+
+
+
+
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.image-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    margin: 6% auto; 
+    text-align: center;
+    background-color: #1C1F23; 
+    border-radius: 8px; 
+    padding: 20px; 
+}
+
+.modal-image {
+    display: block; 
+    max-width: 100%;
+    max-height: 80vh;
+    margin: 20px auto; 
+}
+
+#imageModal > .image-modal-content > .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white; 
+    font-size: 30px; 
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.chevron-icon {
+  fill: white;
+}
+
+#chevron-left-medium,
+#chevron-right-medium {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent; 
+  cursor: pointer;
+}
+
+#chevron-left-medium {
+  left: 20px;
+}
+
+#chevron-right-medium {
+  right: 20px;
+}
+
+
 
 
 

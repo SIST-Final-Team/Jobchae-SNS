@@ -236,4 +236,13 @@
 		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
 		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, #{comment_no}, #{comment_no}, 1, default)
 	</insert>
+	
+	
+	
+	<!-- 파일 조회하기 -->
+	<select id="selectFileList" parameterType="HashMap">
+		select file_no, file_target_no, file_name, file_original_name, file_size
+		from tbl_file
+		where file_target_no = #{file_target_no}
+	</select>
 </mapper>

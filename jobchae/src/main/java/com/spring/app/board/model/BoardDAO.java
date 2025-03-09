@@ -99,6 +99,9 @@ public interface BoardDAO {
 	// 대댓글 등록하기
 	int addCommentReply(Map<String, String> paraMap);
 
+	// 파일 조회하기
+	List<FileVO> selectFileList(Map<String, String> paraMap);
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);
 

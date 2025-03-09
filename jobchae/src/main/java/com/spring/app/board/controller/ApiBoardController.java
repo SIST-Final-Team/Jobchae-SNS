@@ -428,4 +428,21 @@ public class ApiBoardController {
 		map.put("n", n);
 		return map; 
 	}
+	
+	
+	// 파일 조회하기
+	@PostMapping("selectFileList")
+	@ResponseBody
+	public Map<String, Object> selectFileList(HttpServletRequest request, @RequestParam String file_target_no) {
+
+		//System.out.println("file_target_no : " + file_target_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("file_target_no", file_target_no);
+		List<FileVO> filevoList = service.selectFileList(paraMap);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("filevoList", filevoList);
+		return map; 
+	}
 }

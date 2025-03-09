@@ -214,6 +214,13 @@ public class BoardService_imple implements BoardService {
 		return n;
 	}
 
+	// 파일 조회하기
+	@Override
+	public List<FileVO> selectFileList(Map<String, String> paraMap) {
+		List<FileVO> filevoList = dao.selectFileList(paraMap);
+		return filevoList;
+	}
+
 	// 반응 많은 순 상위 1~3개 추출하기
 	//@Override
 	//public List<String> getReactionCountsByBoard(String board_no) {

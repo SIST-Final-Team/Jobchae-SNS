@@ -218,11 +218,13 @@
         const rangeModal = document.getElementById("rangeModal");
         const reactionModal = document.getElementById("reactionModal");
         const ignoredModal = document.getElementById("ignoredModal");
+        const imageModal = document.getElementById("imageModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
         reactionModal.style.display = "none";
         ignoredModal.style.display = "none";
+        imageModal.style.display = "none";
         
         
         
@@ -1101,6 +1103,48 @@
     		$("#mentionedName").text(member_name);
     	});
     	
+    	
+    	// ㅇㅇ
+    	$(".file-preview-button").click(function() {
+    		const file_target_no = $(this).prev("input[name='preview-board-no']").val();
+    		//alert(file_target_no);
+    		
+    		$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/selectFileList',
+				type: 'post',
+				dataType: 'json',
+				data: {"file_target_no": file_target_no},
+				success: function(response) {
+					const filevoList = response.filevoList;
+					console.log(filevoList);
+   					imageModal.style.display = "block";
+   					
+   					const imageContainer = document.getElementById('image-container');
+   					imageContainer.innerHTML = "";
+   					
+   					filevoList.forEach(function(file) {
+   		                const img = document.createElement('img');
+   		                img.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;  
+   		                img.classList.add('modal-image');  
+   		                imageContainer.appendChild(img);  
+   		            });
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+    		
+    	});
+    	
+    	$("span#closeModalButton").click(function() {
+    		imageModal.style.display = "none";
+        });
+    	
+    	$(window).click(function(e) { 
+            if (e.target == imageModal) {
+            	imageModal.style.display = "none";
+            }
+        });
 
     });
     
@@ -1429,9 +1473,10 @@
 	                    <div class="px-0">
 						    <div class="file-image">
 						        <!-- 5장 미만 -->
-						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}">
+						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}"> <!-- ㅇㅇ -->
 						            <c:forEach var="file" items="${boardvo.fileList}">
-						                <button type="button">
+						            <input type="text" name="preview-board-no" value="${boardvo.board_no}">
+						                <button type="button" class="file-preview-button">
 						                    <!-- 파일 확장자 추출 -->
         									<c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
         									
@@ -1455,7 +1500,7 @@
 						            <c:forEach var="file" items="${boardvo.fileList}" varStatus="status">
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
-						                    <button type="button">
+						                    <button type="button" class="file-preview-button">
 						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                    </button>
 						                </c:if>
@@ -1475,7 +1520,7 @@
 						    </div>
 						</div>
 	                    
-	                    <!-- 이미지/비디오가 아닌 파일들 ㅇㅇ -->
+	                    <!-- 이미지/비디오가 아닌 파일들  -->
 	                    <c:if test="${not empty boardvo.fileList}">
 						    <c:set var="hasDocumentFile" value="false" />
 						    <c:forEach var="file" items="${boardvo.fileList}">
@@ -1798,11 +1843,11 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info2">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	
                         </div>
                         <div class="modal-name">
-                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
-                            <span id="visibilityStatus2">전체공개</span>
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
+                            <span id="visibilityStatus2"></span>
                         </div>
                     </button>
                     <span class="close" id="closeModalButton">&times;</span>
@@ -1825,7 +1870,7 @@
 					    <button id="prevBtn2" class="carousel-btn">〈</button>
 					
 					    <div id="image-preview-container2">
-					        <div class="carousel-track">
+					        <div class="carousel-track2">
 					        </div>
 					    </div>
 					
@@ -1846,7 +1891,7 @@
 						</div>
 						<form name="editFrm" enctype="multipart/form-data">
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 
-				            <input type="hidden" name="board_no" value="" />	
+				            <input type="text" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
 				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
@@ -2005,6 +2050,30 @@
 		    </div>
 		</div>    
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+
+
+		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 피드 사진 크게보기 Modal ㅇㅇ -->
+		<div id="imageModal" class="image-modal" style="text-align: center;">
+			<div class="image-modal-content">
+			
+				<span class="close" id="closeModalButton">&times;</span>
+				
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip" id="chevron-left-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
+				  <path d="M16 2L8.5 12 16 22h-2.5L6 12l7.5-10z"></path>
+				</svg>
+				
+				<!--  <img id="modalImage" class="modal-image" src="<%= ctxPath%>/images/쉐보레전면.jpg"> -->
+				<div id="image-container"></div>
+				
+				
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip modal-prev" id="chevron-right-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
+				  <path d="M10.5 2L18 12l-7.5 10H8l7.5-10L8 2z"></path>
+				</svg>
+				
+			</div>
+		</div>
+		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 
 
 		<!-- 우측 광고 -->

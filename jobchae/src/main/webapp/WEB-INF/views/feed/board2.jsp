@@ -218,11 +218,13 @@
         const rangeModal = document.getElementById("rangeModal");
         const reactionModal = document.getElementById("reactionModal");
         const ignoredModal = document.getElementById("ignoredModal");
+        const imageModal = document.getElementById("imageModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
         reactionModal.style.display = "none";
         ignoredModal.style.display = "none";
+        imageModal.style.display = "none";
         
         
         
@@ -1101,6 +1103,14 @@
     		$("#mentionedName").text(member_name);
     	});
     	
+    	
+    	// ㅇㅇ
+    	$(".file-preview-button").click(function() {
+    		const board_no = $(this).prev("input[name='preview-board-no']").val();
+    		alert(board_no);
+    		
+    		imageModal.style.display = "block";
+    	});
 
     });
     
@@ -1429,9 +1439,10 @@
 	                    <div class="px-0">
 						    <div class="file-image">
 						        <!-- 5장 미만 -->
-						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}">
+						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}"> <!-- ㅇㅇ -->
 						            <c:forEach var="file" items="${boardvo.fileList}">
-						                <button type="button">
+						            <input type="text" name="preview-board-no" value="${boardvo.board_no}">
+						                <button type="button" class="file-preview-button">
 						                    <!-- 파일 확장자 추출 -->
         									<c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
         									
@@ -1448,16 +1459,14 @@
 									        </c:if>
 						                </button>
 						            </c:forEach>
-						            
-						            
-						        </c:if>
+						        </c:if> <!-- 5장 미만 끝 -->
 						
 						        <!-- 5장 이상 -->
 						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() >= 5}">
 						            <c:forEach var="file" items="${boardvo.fileList}" varStatus="status">
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
-						                    <button type="button">
+						                    <button type="button" class="file-preview-button">
 						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                    </button>
 						                </c:if>
@@ -1473,26 +1482,35 @@
 						                    </button>
 						                </c:if>
 						            </c:forEach>
-						        </c:if>
+						        </c:if> <!-- 5장 이상 끝 -->
 						    </div>
 						</div>
 	                    
-	                    <!-- 이미지/비디오가 아닌 파일들 -->
+	                    <!-- 이미지/비디오가 아닌 파일들  -->
 	                    <c:if test="${not empty boardvo.fileList}">
-						    <div class="file-download-container">
-						        <c:forEach var="file" items="${boardvo.fileList}">
-						            <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
-						            
-						            <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
-						                <div class="file-item">
-						                    <span class="file-icon">📄</span>
-						                    <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
-						                </div>
-						            </c:if>
-						        </c:forEach>
-						    </div>
-						</c:if>                
-	                    
+						    <c:set var="hasDocumentFile" value="false" />
+						    <c:forEach var="file" items="${boardvo.fileList}">
+						        <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						        <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						            <c:set var="hasDocumentFile" value="true" />
+						        </c:if>
+						    </c:forEach>
+						
+						    <!-- 문서 파일이 하나라도 있을 경우 다운로드 영역 출력 -->
+						    <c:if test="${hasDocumentFile}">
+						        <div class="file-download-container">
+						            <c:forEach var="file" items="${boardvo.fileList}">
+						                <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						                <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						                    <div class="file-item">
+						                        <span class="file-icon">📄</span>
+						                        <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
+						                    </div>
+						                </c:if>
+						            </c:forEach>
+						        </div>
+						    </c:if>
+						</c:if>   
 	                    
 	                    
 	                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
@@ -1791,11 +1809,11 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info2">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	
                         </div>
                         <div class="modal-name">
-                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
-                            <span id="visibilityStatus2">전체공개</span>
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
+                            <span id="visibilityStatus2"></span>
                         </div>
                     </button>
                     <span class="close" id="closeModalButton">&times;</span>
@@ -1818,7 +1836,7 @@
 					    <button id="prevBtn2" class="carousel-btn">〈</button>
 					
 					    <div id="image-preview-container2">
-					        <div class="carousel-track">
+					        <div class="carousel-track2">
 					        </div>
 					    </div>
 					
@@ -1839,7 +1857,7 @@
 						</div>
 						<form name="editFrm" enctype="multipart/form-data">
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 
-				            <input type="hidden" name="board_no" value="" />	
+				            <input type="text" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
 				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
@@ -1998,6 +2016,28 @@
 		    </div>
 		</div>    
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+
+
+		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 피드 사진 크게보기 Modal ㅇㅇ -->
+		<div id="imageModal" class="image-modal" style="text-align: center;">
+			<div class="image-modal-content">
+			
+				<span class="close" id="closeModalButton">&times;</span>
+				
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip" id="chevron-left-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
+				  <path d="M16 2L8.5 12 16 22h-2.5L6 12l7.5-10z"></path>
+				</svg>
+				
+				<img id="modalImage" class="modal-image" src="<%= ctxPath%>/images/쉐보레전면.jpg">
+				
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip modal-prev" id="chevron-right-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
+				  <path d="M10.5 2L18 12l-7.5 10H8l7.5-10L8 2z"></path>
+				</svg>
+				
+			</div>
+		</div>
+		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
 
 
 		<!-- 우측 광고 -->
