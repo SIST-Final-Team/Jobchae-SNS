@@ -4,6 +4,7 @@ import com.spring.app.company.domain.CompanyVO;
 import com.spring.app.company.service.CompanyService;
 import com.spring.app.member.domain.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,15 @@ public class ApiCompanyController {
     }
 
     @GetMapping("/dashboard/{company_no}")
-    public ResponseEntity<CompanyVO> selectCompany(@PathVariable String company_no){
+    public ResponseEntity<CompanyVO> selectCompany(@PathVariable String company_no, HttpServletRequest request){
 
         //멤버 정보 조회
-        MemberVO member = new MemberVO();
-        member.setMember_id("user001");
-        member.setMember_birth("1996-02-27");
+        HttpSession session = request.getSession();
+
+        MemberVO member = (MemberVO)session.getAttribute("loginuser");
+        member.setMember_id(member.getMember_id());
+        member.setMember_birth(member.getMember_birth());
+        session.removeAttribute("loginuser");
 
 
         //회사 정보 조회
