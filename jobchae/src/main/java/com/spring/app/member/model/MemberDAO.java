@@ -68,6 +68,9 @@ public interface MemberDAO {
 	// 회원 탈퇴 시간 넣어주기 (관리자가 탈퇴한 회원을 되살릴 때 시간은 삭제해야한다.)
 	int memberDisableDate();
 	
+	// 탈퇴한 회원 파일명을 리스트로 가져오기 검색
+	List<Map<String, String>> disableFileList();
+	
 	// === 이준영 끝 === //
 	
 	
@@ -149,6 +152,8 @@ public interface MemberDAO {
 	// 회원 보유기술 등록, 삭제
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
+
+	
 
 	
 

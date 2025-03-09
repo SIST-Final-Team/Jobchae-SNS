@@ -127,6 +127,8 @@ public interface MemberService {
 	int deleteMemberSkill(Map<String, String> paraMap);
 
 	
+
+	
 	
 	
 
