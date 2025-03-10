@@ -89,8 +89,12 @@ public class CompanyServiceImple implements CompanyService{
 
     //회사 정보 업데이트
     @Override
-    public CompanyVO updateCompany(CompanyVO companyVO) {
-        return null;
+    public CompanyVO updateCompany(CompanyVO companyVO, String industryName) {
+        IndustryVO industryVO = industryService.selectIndustryByName(industryName);
+        companyVO.setIndustry(industryVO);
+        logger.info(companyVO.toString());
+        CompanyVO company = companyDAO.save(companyVO);
+        return company;
     }
 
 }

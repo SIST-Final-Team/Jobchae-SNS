@@ -85,9 +85,9 @@ public class ApiCompanyController {
 
     //회사 정보 업데이트
     @PutMapping("/updateCompany")
-    public ResponseEntity<CompanyVO> updateCompany(CompanyVO companyVO) {
+    public ResponseEntity<CompanyVO> updateCompany(CompanyVO companyVO, @RequestParam String industryName) {
 
-        CompanyVO updateCompany = companyService.updateCompany(companyVO);
+        CompanyVO updateCompany = companyService.updateCompany(companyVO, industryName);
 
         return ResponseEntity.ok(updateCompany);
     }

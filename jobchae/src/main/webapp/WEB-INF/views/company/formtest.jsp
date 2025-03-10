@@ -45,7 +45,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         name="industryName"
         placeholder="Software"
       />
-      <details id="options"></details>
+      <datalist id="options"></datalist>
       <br />
       <label for="companySize">Company Size :</label>
       <select id="companySize" name="companySize">
