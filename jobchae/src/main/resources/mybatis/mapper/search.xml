@@ -61,54 +61,71 @@
 						, reactionStatusList
 		        <!-- 팔로우 -->
 		        <if test="login_member_id != null">
-					, NVL2(follower_id, '1', '0') as isFollow
+					, NVL2(following_id, '1', '0') as isFollow
 		        </if>
 		        from tbl_board b
 				join tbl_member m on b.fk_member_id = m.member_id
 		        <!-- 팔로우 -->
 		        <if test="login_member_id != null">
-					left join tbl_follow f on m.member_id = f.following_id
+					left join
+					(
+						select following_id
+						from tbl_follow
+						where follower_id = #{login_member_id}
+					) f
+					on m.member_id = f.following_id
 		        </if>
-				left join (select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
-						from tbl_file
-						where file_target_type = 'board') fi
+				left join
+				(
+					select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+					from tbl_file
+					where file_target_type = 'board'
+				) fi
 				on b.board_no = fi.file_target_no
-				left join (select fk_board_no, count(*) as comment_count
-						from tbl_comment
-						group by fk_board_no) c
+				left join
+				(
+					select fk_board_no, count(*) as comment_count
+					from tbl_comment
+					group by fk_board_no
+				) c
 				on b.board_no = c.fk_board_no
-				left join (select reaction_target_no, count(*) as reaction_count
-						from tbl_reaction
-						where reaction_target_type = 'board'
-						group by reaction_target_no) r
+				left join
+				(
+					select reaction_target_no, count(*) as reaction_count
+					from tbl_reaction
+					where reaction_target_type = 'board'
+					group by reaction_target_no
+				) r
 				on b.board_no = r.reaction_target_no
 				<!-- 반응 목록 상위 3개 시작 -->
-				left join (SELECT reaction_target_no,
-						       LISTAGG(reaction_status, ', ') WITHIN GROUP (ORDER BY reaction_count DESC) AS reactionStatusList
-						FROM (
-						    SELECT reaction_target_no, 
-						           reaction_status,
-						           COUNT(*) AS reaction_count,
-						           ROW_NUMBER() OVER (PARTITION BY reaction_target_no ORDER BY COUNT(*) DESC) AS row_num
-						    FROM tbl_reaction
-						    WHERE reaction_target_type = 'board'
-						    GROUP BY reaction_target_no, reaction_status
-						) t
-						WHERE row_num &lt;= 3
-						GROUP BY reaction_target_no) rs
+				left join
+				(
+					SELECT reaction_target_no,
+					       LISTAGG(reaction_status, ', ') WITHIN GROUP (ORDER BY reaction_count DESC) AS reactionStatusList
+					FROM (
+					    SELECT reaction_target_no, 
+					           reaction_status,
+					           COUNT(*) AS reaction_count,
+					           ROW_NUMBER() OVER (PARTITION BY reaction_target_no ORDER BY COUNT(*) DESC) AS row_num
+					    FROM tbl_reaction
+					    WHERE reaction_target_type = 'board'
+					    GROUP BY reaction_target_no, reaction_status
+					) t
+					WHERE row_num &lt;= 3
+					GROUP BY reaction_target_no
+				) rs
 				on b.board_no = rs.reaction_target_no
 				<!-- 반응 목록 상위 3개 끝 -->
-				left join (select board_parent_no, count(*) as embed_count
-						from tbl_board
-						group by board_parent_no) e
+				left join
+				(
+					select board_parent_no, count(*) as embed_count
+					from tbl_board
+					group by board_parent_no
+				) e
 				on b.board_no = e.board_parent_no
 		        where b.board_is_delete = 0
 		        <!-- 검색어 -->
 		        and b.board_content like '%'|| #{searchWord} ||'%'
-		        <!-- 팔로우 -->
-		        <if test="login_member_id != null">
-		        	and (f.follower_id = #{login_member_id} or f.follower_id is null)
-		        </if>
 		        <!-- 작성일자 최근 30일, 7일, 1일 -->
 		        <if test="board_register_date != null">
 		            and b.board_register_date &gt;= sysdate - #{board_register_date}
