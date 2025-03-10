@@ -101,6 +101,23 @@ document.addEventListener("DOMContentLoaded", function () {
         </li>
       </ul>`;
 
+  const headerProfile = document.getElementById("headerProfile");
+  const headerProfileIcon = document.getElementById("headerProfileIcon");
+
+
+  //프로필 아이콘 클릭시
+  headerProfileIcon.addEventListener("click", () => {
+    headerProfileIcon.classList.toggle("opacity-50");
+    headerProfile.classList.toggle("hidden");
+  });
+
+  //프로필 박스 클릭시
+  headerProfile.addEventListener("click", (e) => {
+    //이벤트 버블링 방지
+    e.stopPropagation();
+  });
+
+
   //모든 검색결과 리스트
   let htmlResultListSecond = `<ul class="SearchBoxDropDown" id="searchBoxMenuRecentSecond">`;
   data.forEach((item) => {

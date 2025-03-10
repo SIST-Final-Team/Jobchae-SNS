@@ -304,7 +304,7 @@ public class MemberController {
 			session.invalidate(); // 세션 완전 삭제
 		
 		} else { // 돌아갈 곳 없으면 그냥 삭제
-			mav.setViewName("board/feed"); // 원래는 메인페이지로 가야한다. 만드자. TODO
+			mav.setViewName("redirect:/member/login"); // 원래는 메인페이지로 가야한다. 만드자. TODO
 			session.invalidate(); // 세션 완전 삭제
 		} // end of if...
 		
