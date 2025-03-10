@@ -1,6 +1,7 @@
 package com.spring.app.company.controller;
 
 import com.spring.app.company.domain.CompanyVO;
+import com.spring.app.company.model.CompanyDAO;
 import com.spring.app.company.service.CompanyService;
 import com.spring.app.member.domain.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +15,12 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/api/company")
 public class ApiCompanyController {
 
+    private final CompanyDAO companyDAO;
     CompanyService companyService;
 
-    public ApiCompanyController(CompanyService companyService) {
+    public ApiCompanyController(CompanyService companyService, CompanyDAO companyDAO) {
         this.companyService = companyService;
+        this.companyDAO = companyDAO;
     }
 
     @GetMapping("/dashboard/{company_no}")
@@ -29,7 +32,6 @@ public class ApiCompanyController {
         MemberVO member = (MemberVO)session.getAttribute("loginuser");
         member.setMember_id(member.getMember_id());
         member.setMember_birth(member.getMember_birth());
-        session.removeAttribute("loginuser");
 
 
         //회사 정보 조회
@@ -71,8 +73,24 @@ public class ApiCompanyController {
 
 
     //회사 삭제
+    @DeleteMapping("/deleteCompany")
+    public ResponseEntity<CompanyVO> deleteCompany(@RequestParam String companyNo, @RequestParam String memberId) {
 
 
+        CompanyVO companyVO = companyService.deleteCompany(companyNo, memberId);
+
+
+        return ResponseEntity.ok(companyVO);
+    }
+
+    //회사 정보 업데이트
+    @PutMapping("/updateCompany")
+    public ResponseEntity<CompanyVO> updateCompany(CompanyVO companyVO) {
+
+        CompanyVO updateCompany = companyService.updateCompany(companyVO);
+
+        return ResponseEntity.ok(updateCompany);
+    }
 
 
 

@@ -11,7 +11,7 @@ public interface CompanyService {
     CompanyVO insertCompany(CompanyVO companyVO, String industryName);
 
     //회사페이지 중단
-    CompanyVO deleteCompany(CompanyVO companyVO);
+    CompanyVO deleteCompany(String companyNo, String memberId);
 
     //회사 정보 업데이트
     CompanyVO updateCompany(CompanyVO companyVO);

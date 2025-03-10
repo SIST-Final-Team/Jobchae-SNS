@@ -38,7 +38,6 @@ public class CompanyVO {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_company_no")
     Long companyNo;
 
-    @NotNull
     @Transient
     private MemberVO member;
 
@@ -176,5 +175,23 @@ public class CompanyVO {
 
     public void setFkMemberId(String fkMemberId) {
         this.fkMemberId = fkMemberId;
+    }
+
+    @Override
+    public String toString() {
+        return "CompanyVO{" +
+                "companyNo=" + companyNo +
+                ", member=" + member +
+                ", fkMemberId='" + fkMemberId + '\'' +
+                ", industry=" + industry +
+                ", companyName='" + companyName + '\'' +
+                ", companyWebsite='" + companyWebsite + '\'' +
+                ", companySize=" + companySize +
+                ", companyType=" + companyType +
+                ", companyLogo='" + companyLogo + '\'' +
+                ", companyExplain='" + companyExplain + '\'' +
+                ", companyRegisterDate=" + companyRegisterDate +
+                ", companyStatus=" + companyStatus +
+                '}';
     }
 }

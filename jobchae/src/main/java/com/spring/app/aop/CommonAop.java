@@ -38,7 +38,7 @@ public class CommonAop {
 	//     Pointcut 이란 공통관심사<예: 로그인 유무검사>를 필요로 하는 메소드를 말한다.
 	@Pointcut("execution(public * com.spring.app..*Controller.requiredLogin_*(..))")
 	// 접근제한자 : public
-	// return 타입 : 맘대로
+	// return 타입 : 맘대로　
 	// com.spring.app 패키지 아래 어떤 패키지든
 	// Controller로 끝나는 클래스
 	// 메소드명 : requiredLogin_으로 시작
@@ -123,13 +123,7 @@ public class CommonAop {
 
 	// ===== After Advice(보조업무) 만들기 ====== //
 
-	@Pointcut("execution(public * com.spring.app..*Controller)")
-	public void insert() {}
-	@After("insert()")
-	public void createAlarm(JoinPoint joinpoint) {
-		System.out.println("실행");
-		String methodName = joinpoint.getSignature().getName();
-	}
+
 	// ===== Around Advice(보조업무) 만들기 ====== //
 }
 
