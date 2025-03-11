@@ -843,6 +843,8 @@
 		
 		$("button#nextBtn").click(function() {
 			const previewCountMax = document.querySelector(".carousel-track").querySelectorAll(".preview-box").length;
+			//alert(previewCountMax);
+			
 			if (previewCountMax > (currentPreviewBox + 2)) {
 				currentX -= 208;
 				$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
@@ -1106,35 +1108,59 @@
     	
     	// ㅇㅇ
     	$(".file-preview-button").click(function() {
-    		const file_target_no = $(this).prev("input[name='preview-board-no']").val();
-    		//alert(file_target_no);
     		
-    		$.ajax({
-				url: '${pageContext.request.contextPath}/api/board/selectFileList',
-				type: 'post',
-				dataType: 'json',
-				data: {"file_target_no": file_target_no},
-				success: function(response) {
-					const filevoList = response.filevoList;
-					console.log(filevoList);
-   					imageModal.style.display = "block";
-   					
-   					const imageContainer = document.getElementById('image-container');
-   					imageContainer.innerHTML = "";
-   					
-   					filevoList.forEach(function(file) {
-   		                const img = document.createElement('img');
-   		                img.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;  
-   		                img.classList.add('modal-image');  
-   		                imageContainer.appendChild(img);  
-   		            });
-		        },
-		        error: function(request, status, error){
-					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-			 	}
-			});
-    		
+    		const file_target_no = $(this).closest(".px-0").find("input[name='preview-board-no']").val();
+    	    //alert(file_target_no);
+    	    
+    	    $.ajax({
+    	        url: '${pageContext.request.contextPath}/api/board/selectFileList',
+    	        type: 'post',
+    	        dataType: 'json',
+    	        data: {"file_target_no": file_target_no},
+    	        success: function(response) {
+    	            const filevoList = response.filevoList;
+    	            console.log(filevoList);
+    	            
+    	            const imageModal = document.getElementById("imageModal");
+    	            imageModal.style.display = "block";
+    	            
+    	            const imageContainer = document.getElementById('image-container');
+    	            imageContainer.innerHTML = "";
+    	            
+    	            let currentIndex = 0;
+    	            
+    	            function showImage(index) {
+    	                imageContainer.innerHTML = "";
+    	                const img = document.createElement('img');
+    	                img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+    	                img.classList.add('modal-image');
+    	                imageContainer.appendChild(img);
+    	            }
+    	            
+    	            if (filevoList.length > 0) {
+    	                showImage(currentIndex);
+    	            }
+    	            
+    	            $("#chevron-left-medium").off().on("click", function() {
+    	                if (currentIndex > 0) {
+    	                    currentIndex--;
+    	                    showImage(currentIndex);
+    	                }
+    	            });
+    	            
+    	            $("#chevron-right-medium").off().on("click", function() {
+    	                if (currentIndex < filevoList.length - 1) {
+    	                    currentIndex++;
+    	                    showImage(currentIndex);
+    	                }
+    	            });
+    	        },
+    	        error: function(request, status, error){
+    	            console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+    	        }
+    	    });
     	});
+    	
     	
     	$("span#closeModalButton").click(function() {
     		imageModal.style.display = "none";
@@ -1145,7 +1171,9 @@
             	imageModal.style.display = "none";
             }
         });
-
+    	
+    	
+    	
     });
     
     
@@ -1469,13 +1497,14 @@
 	                    </div>
 	             
 
-						<!-- 첨부파일 미리보기 -->
+		            	
+						<!-- 첨부파일 미리보기 ㅇㅇ -->
 	                    <div class="px-0">
+		            		<input type="text" name="preview-board-no" class="preview-board-no" value="${boardvo.board_no}">
 						    <div class="file-image">
 						        <!-- 5장 미만 -->
-						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}"> <!-- ㅇㅇ -->
+						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}">
 						            <c:forEach var="file" items="${boardvo.fileList}">
-						            <input type="text" name="preview-board-no" value="${boardvo.board_no}">
 						                <button type="button" class="file-preview-button">
 						                    <!-- 파일 확장자 추출 -->
         									<c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
@@ -1507,7 +1536,7 @@
 						
 						                <!-- 4번째 이미지는 +n 형식으로 출력 -->
 						                <c:if test="${status.index == 3}">
-						                    <button type="button" class="more-image">
+						                    <button type="button" class="more-image file-preview-button">
 						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                        <span class="flex items-center">
 						                            <span><i class="fa-solid fa-plus"></i></span>
@@ -1517,6 +1546,7 @@
 						                </c:if>
 						            </c:forEach>
 						        </c:if> <!-- 5장 이상 끝 -->
+						        
 						    </div>
 						</div>
 	                    
@@ -1677,7 +1707,7 @@
 		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
 							        <input type="text" placeholder="댓글 남기기" id="commentInput">
 						            <button class="comment-submit-button">댓글</button>
-						            <input type="text" name="hidden-comment-reply-no" value="" />
+						            <input type="hidden" name="hidden-comment-reply-no" value="" />
 							    </div>	
 	                    	</div>
 	                    	
@@ -1891,7 +1921,7 @@
 						</div>
 						<form name="editFrm" enctype="multipart/form-data">
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 
-				            <input type="text" name="board_no" value="" />	
+				            <input type="hidden" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
 				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
@@ -2063,9 +2093,7 @@
 				  <path d="M16 2L8.5 12 16 22h-2.5L6 12l7.5-10z"></path>
 				</svg>
 				
-				<!--  <img id="modalImage" class="modal-image" src="<%= ctxPath%>/images/쉐보레전면.jpg"> -->
 				<div id="image-container"></div>
-				
 				
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip modal-prev" id="chevron-right-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
 				  <path d="M10.5 2L18 12l-7.5 10H8l7.5-10L8 2z"></path>

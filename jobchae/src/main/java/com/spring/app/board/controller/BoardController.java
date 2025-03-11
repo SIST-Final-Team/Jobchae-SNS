@@ -147,7 +147,7 @@ public class BoardController {
 					file_name = fileManager.doFileUpload(bytes, file_original_name, path);	// 첨부파일 업로드
 					file_size = file.getSize();
 					
-					//System.out.println("파일명 : " + file_name);
+					System.out.println("파일명 : " + file_name);
 					
 					Map<String, String> paraMap2 = new HashMap<>();
 					paraMap2.put("file_target_no", file_target_no);

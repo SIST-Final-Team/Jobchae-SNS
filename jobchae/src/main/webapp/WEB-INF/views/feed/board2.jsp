@@ -1106,11 +1106,45 @@
     	
     	// ㅇㅇ
     	$(".file-preview-button").click(function() {
-    		const board_no = $(this).prev("input[name='preview-board-no']").val();
-    		alert(board_no);
+    		const file_target_no = $(this).prev("input[name='preview-board-no']").val();
+    		//alert(file_target_no);
     		
-    		imageModal.style.display = "block";
+    		$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/selectFileList',
+				type: 'post',
+				dataType: 'json',
+				data: {"file_target_no": file_target_no},
+				success: function(response) {
+					const filevoList = response.filevoList;
+					console.log(filevoList);
+   					imageModal.style.display = "block";
+   					
+   					const imageContainer = document.getElementById('image-container');
+   					imageContainer.innerHTML = "";
+   					
+   					filevoList.forEach(function(file) {
+   		                const img = document.createElement('img');
+   		                img.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;  
+   		                img.classList.add('modal-image');  
+   		                imageContainer.appendChild(img);  
+   		            });
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+    		
     	});
+    	
+    	$("span#closeModalButton").click(function() {
+    		imageModal.style.display = "none";
+        });
+    	
+    	$(window).click(function(e) { 
+            if (e.target == imageModal) {
+            	imageModal.style.display = "none";
+            }
+        });
 
     });
     
@@ -2029,7 +2063,9 @@
 				  <path d="M16 2L8.5 12 16 22h-2.5L6 12l7.5-10z"></path>
 				</svg>
 				
-				<img id="modalImage" class="modal-image" src="<%= ctxPath%>/images/쉐보레전면.jpg">
+				<!--  <img id="modalImage" class="modal-image" src="<%= ctxPath%>/images/쉐보레전면.jpg"> -->
+				<div id="image-container"></div>
+				
 				
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip modal-prev" id="chevron-right-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
 				  <path d="M10.5 2L18 12l-7.5 10H8l7.5-10L8 2z"></path>
