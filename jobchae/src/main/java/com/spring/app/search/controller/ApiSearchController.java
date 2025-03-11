@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.search.domain.SearchBoardVO;
+import com.spring.app.search.domain.SearchCompanyVO;
+import com.spring.app.search.domain.SearchMemberVO;
 import com.spring.app.search.service.SearchService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -25,8 +29,10 @@ public class ApiSearchController {
 	@Autowired
 	SearchService service;
 	
+	@Operation(summary = "글 검색", description = "글 내용으로 글 검색")
+    @Parameter(name = "params", description = "검색을 위한 Map")
 	@GetMapping("board")
-	public List<SearchBoardVO> getMethodName(HttpServletRequest request, @RequestParam Map<String, String> params) {
+	public List<SearchBoardVO> searchBoard(HttpServletRequest request, @RequestParam Map<String, String> params) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
@@ -47,5 +53,95 @@ public class ApiSearchController {
 		return service.searchBoardByContent(params);
 	}
 	
+	@Operation(summary = "회원 검색", description = "회원명으로 회원 검색")
+    @Parameter(name = "params", description = "검색을 위한 Map")
+	@GetMapping("member")
+	public List<SearchMemberVO> searchMember(HttpServletRequest request, @RequestParam Map<String, Object> params) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		
+		// 로그인 여부 확인
+		if(loginuser != null) {
+			params.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			params.put("login_member_id", null);
+		}
+		
+		// 현재 회사 일련번호 배열
+		if(params.get("fk_company_no") != null) {
+			String[] arr_fk_company_no = ((String) params.get("fk_company_no")).split("\\,");
+			params.put("arr_fk_company_no", arr_fk_company_no);
+		}
+		
+		// 현재 학력 일련번호 배열
+		if(params.get("fk_school_no") != null) {
+			String[] arr_fk_school_no = ((String) params.get("fk_school_no")).split("\\,");
+			params.put("arr_fk_school_no", arr_fk_school_no);
+		}
+		
+		// 보유기술 일련번호 배열
+		if(params.get("fk_skill_no") != null) {
+			String[] arr_fk_skill_no = ((String) params.get("fk_skill_no")).split("\\,");
+			params.put("arr_fk_skill_no", arr_fk_skill_no);
+		}
+		
+		// 지역 일련번호 배열
+		if(params.get("fk_region_no") != null) {
+			String[] arr_fk_region_no = ((String) params.get("fk_region_no")).split("\\,");
+			params.put("arr_fk_region_no", arr_fk_region_no);
+		}
+		
+		if(params.get("start") == null) {
+			params.put("start", "1");
+			params.put("end", "4");
+		}
+		
+		return service.searchMemberByName(params);
+	}
+	
+	@Operation(summary = "회사 검색", description = "회사명으로 회사 검색")
+    @Parameter(name = "params", description = "검색을 위한 Map")
+	@GetMapping("company")
+	public List<SearchCompanyVO> searchCompany(HttpServletRequest request, @RequestParam Map<String, Object> params) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		
+		// 로그인 여부 확인
+		if(loginuser != null) {
+			params.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			params.put("login_member_id", null);
+		}
+		
+		// 업종 일련번호 배열
+		if(params.get("fk_industry_no") != null) {
+			String[] arr_fk_industry_no = ((String) params.get("fk_industry_no")).split("\\,");
+			params.put("arr_fk_industry_no", arr_fk_industry_no);
+		}
+		
+		// 회사 규모 배열
+		if(params.get("company_size") != null) {
+			String[] arr_company_size = ((String) params.get("company_size")).split("\\,");
+			params.put("arr_company_size", arr_company_size);
+		}
+		
+		// TODO : SQL에 지역 추가하기
+		// 지역 일련번호 배열
+		if(params.get("fk_region_no") != null) {
+			String[] arr_fk_region_no = ((String) params.get("fk_region_no")).split("\\,");
+			params.put("arr_fk_region_no", arr_fk_region_no);
+		}
+		
+		if(params.get("start") == null) {
+			params.put("start", "1");
+			params.put("end", "4");
+		}
+		
+		return service.searchCompanyByName(params);
+	}
 
 }
