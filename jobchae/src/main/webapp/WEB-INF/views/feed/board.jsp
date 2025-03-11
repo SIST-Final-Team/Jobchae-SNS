@@ -342,7 +342,6 @@
 		        return;
 		    }
 			else {
-				// 추가됨
 				const imageFiles = document.getElementById("file-image").files;
     			const videoFiles = document.getElementById("file-video").files;
     			const attachmentFiles = document.getElementById("file-attachment").files;
@@ -357,10 +356,9 @@
     		    if (attachmentFiles.length === 0) {
     		        document.getElementById("file-attachment").remove();
     		    }
-    		 // 추가됨
     		 
-    		    //console.log(imageFiles);
-    		    //console.log(videoFiles);
+    		    console.log(imageFiles);
+    		    console.log(videoFiles);
     		    //console.log(attachmentFiles);
     		    
     		    // ㅇㅇ
@@ -368,7 +366,7 @@
 				const frm = document.addFrm;
 		      	frm.method = "post";
 		      	frm.action = "<%= ctxPath%>/board/add";
-		      	//frm.submit();
+		      	frm.submit();
 			}
 		});
 		
@@ -645,7 +643,7 @@
         	    });
 
         	    reactionData.sort((a, b) => b.reaction_count - a.reaction_count);
-        	    console.log(reactionData);
+        	    //console.log(reactionData);
         	}
         });
 		
@@ -1126,7 +1124,7 @@
     	        data: {"file_target_no": file_target_no},
     	        success: function(response) {
     	            const filevoList = response.filevoList;
-    	            console.log(filevoList);
+    	            //console.log(filevoList);
     	            
     	            const imageModal = document.getElementById("imageModal");
     	            imageModal.style.display = "block";
@@ -1201,7 +1199,7 @@
 
         Array.from(files).forEach((file) => { 
         	
-        	console.log(file);
+        	//console.log(file);
         	
             if (file.type.startsWith("image/") || 
             	file.type.startsWith("video/") || 
