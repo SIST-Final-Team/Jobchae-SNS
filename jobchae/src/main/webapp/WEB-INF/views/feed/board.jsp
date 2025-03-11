@@ -191,7 +191,8 @@
 	let currentX = 0;
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
-	let currentPreviewBox = 1;
+	let currentPreviewBox = 1; 
+	let dataTransfer = new DataTransfer(); // ㅇㅇ
 	
     $(document).ready(function() {
         
@@ -199,9 +200,8 @@
     	$(".options-dropdown2").hide();
     	$(".comment-input-container").hide();
 		
-    	
     	// 긴 글 더보기 처리
-		var content = document.getElementById('boardContent');
+		var content = document.getElementById('boardContent'); 
         var button = document.getElementById('toggleButton');
         
         if (content && button) { 
@@ -210,9 +210,9 @@
 	        } else {
 	            button.style.display = 'none'; 
 	        }
-        }
+        } 
+        
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
         const rangeModal = document.getElementById("rangeModal");
@@ -342,6 +342,7 @@
 		        return;
 		    }
 			else {
+				// 추가됨
 				const imageFiles = document.getElementById("file-image").files;
     			const videoFiles = document.getElementById("file-video").files;
     			const attachmentFiles = document.getElementById("file-attachment").files;
@@ -356,12 +357,18 @@
     		    if (attachmentFiles.length === 0) {
     		        document.getElementById("file-attachment").remove();
     		    }
+    		 // 추가됨
+    		 
+    		    //console.log(imageFiles);
+    		    //console.log(videoFiles);
+    		    //console.log(attachmentFiles);
     		    
+    		    // ㅇㅇ
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
 		      	frm.action = "<%= ctxPath%>/board/add";
-		      	frm.submit();
+		      	//frm.submit();
 			}
 		});
 		
@@ -1177,7 +1184,7 @@
     });
     
     
-    // 글 작성에서 첨부파일 미리보기
+    // 글 작성에서 첨부파일 미리보기 ㅇㅇ
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1187,10 +1194,15 @@
             console.error("미리보기 요소를 찾을 수 없습니다.");
             return;
         }
+        
+        //console.log(files);
 
-        const dataTransfer = new DataTransfer(); 
+        //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
+        	
+        	console.log(file);
+        	
             if (file.type.startsWith("image/") || 
             	file.type.startsWith("video/") || 
                 file.type === "application/pdf" || 
@@ -1201,7 +1213,8 @@
                 file.type === "text/plain" || 
                 file.type === "text/csv") {
                 const reader = new FileReader();
-
+				
+                
                 reader.onload = function (e) {
                     const previewBox = document.createElement("div");
                     previewBox.className = "preview-box";
@@ -1330,6 +1343,7 @@
 
 
         event.target.files = dataTransfer.files;
+        console.log(files);
     }
     
     
@@ -1793,7 +1807,7 @@
                
                 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
-        <!-- 글 작성 Modal -->
+        <!-- 글 작성 Modal ㅇㅇ -->
         <div id="writeModal" class="modal">
             <div class="modal-content">
                 <div class="content-top">
@@ -2083,7 +2097,7 @@
 
 
 		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
-        <!-- 피드 사진 크게보기 Modal ㅇㅇ -->
+        <!-- 피드 사진 크게보기 Modal -->
 		<div id="imageModal" class="image-modal" style="text-align: center;">
 			<div class="image-modal-content">
 			
