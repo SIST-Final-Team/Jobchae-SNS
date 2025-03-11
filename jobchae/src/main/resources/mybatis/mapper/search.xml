@@ -303,19 +303,23 @@
     	select *
 		from
 		(
-			select rownum as rno, company_no, fk_member_id, fk_industry_no
+			select rownum as rno, company_no, fk_member_id, fk_industry_no, fk_region_no
 				, company_name, company_website, company_size
 				, company_type, company_logo, company_explain
 				, company_register_date, company_status
 				, industry_name
+				, region_name
 			from
 			(
-				select company_no, fk_member_id, fk_industry_no
+				select company_no, fk_member_id, fk_industry_no, fk_region_no
 					, company_name, company_website, company_size
 					, company_type, company_logo, company_explain
 					, company_register_date, company_status
 					, i.industry_name
+					, r.region_name
 				from tbl_company c
+				left join tbl_region r
+				on c.fk_region_no = r.region_no
 				left join tbl_industry i
 				on c.fk_industry_no = i.industry_no
 				where company_status = 1
@@ -325,6 +329,13 @@
 					and fk_industry_no in
 					<foreach collection="arr_fk_industry_no" index="i" open="(" separator="," close=")">
 						'${arr_fk_industry_no[i]}'
+					</foreach>
+				</if>
+				<!-- 지역 -->
+				<if test="arr_fk_region_no != null">
+					and fk_region_no in
+					<foreach collection="arr_fk_region_no" index="i" open="(" separator="," close=")">
+						'${arr_fk_region_no[i]}'
 					</foreach>
 				</if>
 				<!-- 회사 규모 -->

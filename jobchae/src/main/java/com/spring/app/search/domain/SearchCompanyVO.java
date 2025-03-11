@@ -25,6 +25,7 @@ public class SearchCompanyVO {
     private String company_no;            /* 기업 페이지 일련번호 */
     private String fk_member_id;          /* 회원 아이디 */
     private String fk_industry_no;        /* 업종 일련번호 */
+    private String fk_region_no;          /* 지역 일련번호 */
     private String company_name;          /* 기업명 */
     private String company_website;       /* 기업웹사이트 */
     private String company_size;          /* 단체 규모 */
@@ -35,6 +36,7 @@ public class SearchCompanyVO {
     private String company_status;        /* 등록 상태 1:등록됨, 2:삭제됨*/
 
     private String industry_name;         /* 업종명 */
+    private String region_name;           /* 지역명 */
 
 	public String getCompany_no() {
 		return company_no;
@@ -60,12 +62,12 @@ public class SearchCompanyVO {
 		this.fk_industry_no = fk_industry_no;
 	}
 
-	public String getIndustry_name() {
-		return industry_name;
+	public String getFk_region_no() {
+		return fk_region_no;
 	}
 
-	public void setIndustry_name(String industry_name) {
-		this.industry_name = industry_name;
+	public void setFk_region_no(String fk_region_no) {
+		this.fk_region_no = fk_region_no;
 	}
 
 	public String getCompany_name() {
@@ -131,5 +133,22 @@ public class SearchCompanyVO {
 	public void setCompany_status(String company_status) {
 		this.company_status = company_status;
 	}
+
+	public String getIndustry_name() {
+		return industry_name;
+	}
+
+	public void setIndustry_name(String industry_name) {
+		this.industry_name = industry_name;
+	}
+
+	public String getRegion_name() {
+		return region_name;
+	}
+
+	public void setRegion_name(String region_name) {
+		this.region_name = region_name;
+	}
     
+
 }
