@@ -346,6 +346,39 @@
     			const videoFiles = document.getElementById("file-video").files;
     			const attachmentFiles = document.getElementById("file-attachment").files;
     			
+    			// 중복 파일을 제거한 배열을 만들어 처리
+    	        let uniqueFiles = {
+    	            image: [],
+    	            video: [],
+    	            attachment: []
+    	        };
+    			
+    	     	// 이미지 파일 처리
+    	        Array.from(imageFiles).forEach(file => {
+    	            if (!uniqueFiles.image.find(f => f.name === file.name)) {
+    	                uniqueFiles.image.push(file);
+    	            }
+    	        });
+    	     
+    	     	// 비디오 파일 처리
+    	        Array.from(videoFiles).forEach(file => {
+    	            if (!uniqueFiles.video.find(f => f.name === file.name)) {
+    	                uniqueFiles.video.push(file);
+    	            }
+    	        });
+
+    	     	// 첨부파일 처리
+    	        Array.from(attachmentFiles).forEach(file => {
+    	            if (!uniqueFiles.attachment.find(f => f.name === file.name)) {
+    	                uniqueFiles.attachment.push(file);
+    	            }
+    	        });
+    	     	
+    	     	// 콘솔에 중복이 제거된 파일 목록 출력
+    	        console.log("Image Files:", uniqueFiles.image);
+    	        console.log("Video Files:", uniqueFiles.video);
+    	        console.log("Attachment Files:", uniqueFiles.attachment);
+    	        
     			// 파일이 없으면 해당 input 제거
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
@@ -356,10 +389,6 @@
     		    if (attachmentFiles.length === 0) {
     		        document.getElementById("file-attachment").remove();
     		    }
-    		 
-    		    console.log(imageFiles);
-    		    console.log(videoFiles);
-    		    //console.log(attachmentFiles);
     		    
     		    // ㅇㅇ
 				alert("글이 성공적으로 업데이트 되었습니다.");
@@ -1853,10 +1882,10 @@
 	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
 							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
 							</svg>
-                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-image').click();">
 								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
 							</svg>
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-attachment').click();">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-image').click();">
 							  <path d="M3 3v15a3 3 0 003 3h9v-6h6V3zm9 8H6v-1h6zm6-3H6V7h12zm-2 8h5l-5 5z"></path>
 							</svg>
 	                    </div>
@@ -1867,9 +1896,9 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" multiple/>
-				            <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>
-				            <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*, .pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
+				            <!--  <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>-->
+				            <!-- <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>-->
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
