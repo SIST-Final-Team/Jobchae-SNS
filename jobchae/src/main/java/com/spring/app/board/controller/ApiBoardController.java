@@ -441,6 +441,10 @@ public class ApiBoardController {
 		paraMap.put("file_target_no", file_target_no);
 		List<FileVO> filevoList = service.selectFileList(paraMap);
 		
+		for (FileVO filevo : filevoList) {
+	        System.out.println("File Name: " + filevo.getFile_name());
+	    }
+		
 		Map<String, Object> map = new HashMap<>();
 		map.put("filevoList", filevoList);
 		return map; 

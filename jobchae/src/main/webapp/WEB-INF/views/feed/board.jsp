@@ -192,7 +192,7 @@
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
 	let currentPreviewBox = 1; 
-	let dataTransfer = new DataTransfer(); // ㅇㅇ
+	let dataTransfer = new DataTransfer(); 
 	
     $(document).ready(function() {
         
@@ -233,10 +233,11 @@
         prevBtn.style.display = "none";
         nextBtn.style.display = "none";
         
-        const prevBtn2 = document.getElementById("prevBtn2");
-        const nextBtn2 = document.getElementById("nextBtn2");
-        prevBtn2.style.display = "none";
-        nextBtn2.style.display = "none";
+        // ㅇㅇ
+        //const prevBtn2 = document.getElementById("prevBtn2");
+        //const nextBtn2 = document.getElementById("nextBtn2");
+        //prevBtn2.style.display = "none";
+        //nextBtn2.style.display = "none";
         
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -343,54 +344,44 @@
 		    }
 			else {
 				const imageFiles = document.getElementById("file-image").files;
-    			const videoFiles = document.getElementById("file-video").files;
-    			const attachmentFiles = document.getElementById("file-attachment").files;
+    			//const videoFiles = document.getElementById("file-video").files;
+    			//const attachmentFiles = document.getElementById("file-attachment").files;
     			
     			// 중복 파일을 제거한 배열을 만들어 처리
+    			/*
     	        let uniqueFiles = {
     	            image: [],
     	            video: [],
     	            attachment: []
     	        };
+    			*/
     			
     	     	// 이미지 파일 처리
+    	     	/*
     	        Array.from(imageFiles).forEach(file => {
     	            if (!uniqueFiles.image.find(f => f.name === file.name)) {
     	                uniqueFiles.image.push(file);
     	            }
     	        });
-    	     
-    	     	// 비디오 파일 처리
-    	        Array.from(videoFiles).forEach(file => {
-    	            if (!uniqueFiles.video.find(f => f.name === file.name)) {
-    	                uniqueFiles.video.push(file);
-    	            }
-    	        });
-
-    	     	// 첨부파일 처리
-    	        Array.from(attachmentFiles).forEach(file => {
-    	            if (!uniqueFiles.attachment.find(f => f.name === file.name)) {
-    	                uniqueFiles.attachment.push(file);
-    	            }
-    	        });
+    	    	*/ 
     	     	
-    	     	// 콘솔에 중복이 제거된 파일 목록 출력
-    	        console.log("Image Files:", uniqueFiles.image);
-    	        console.log("Video Files:", uniqueFiles.video);
-    	        console.log("Attachment Files:", uniqueFiles.attachment);
+    	     	
+    	        //console.log("Image Files:", uniqueFiles.image);
+    	        //console.log("Video Files:", uniqueFiles.video);
+    	        //console.log("Attachment Files:", uniqueFiles.attachment);
     	        
-    			// 파일이 없으면 해당 input 제거
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
     		    }
+    		    /*
     		    if (videoFiles.length === 0) {
     		        document.getElementById("file-video").remove();
     		    }
     		    if (attachmentFiles.length === 0) {
     		        document.getElementById("file-attachment").remove();
     		    }
+    		    */
     		    
-    		    // ㅇㅇ
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -866,7 +857,7 @@
         });
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// Modal 이미지 미리보기
+		// Modal 이미지 미리보기 ㅇㅇ
 		$("button#prevBtn").click(function() {
 			if (currentX < 0) {
 				currentX += 208;
@@ -1165,10 +1156,33 @@
     	            
     	            function showImage(index) {
     	                imageContainer.innerHTML = "";
-    	                const img = document.createElement('img');
-    	                img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
-    	                img.classList.add('modal-image');
-    	                imageContainer.appendChild(img);
+    	                const file = filevoList[index];
+    	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
+    	                
+    	                
+    	                console.log(filevoList[index].file_name);
+    	                //console.log("<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name);
+
+    	                
+    	                //const img = document.createElement('img');
+    	                //img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+    	                //img.classList.add('modal-image');
+    	                //imageContainer.appendChild(img);
+    	                
+    	                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension)) {
+		                    const img = document.createElement('img');
+		                    img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+		                    img.classList.add('modal-image');
+		                    imageContainer.appendChild(img);
+		                } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'xlsx'].includes(fileExtension)) {
+		                    const video = document.createElement('video');
+		                    video.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+		                    video.classList.add('modal-video');
+		                    video.controls = true;
+		                    imageContainer.appendChild(video);
+		                } else {
+		                    imageContainer.innerHTML = "<p>지원되지 않는 파일 형식입니다.</p>";
+		                }
     	            }
     	            
     	            if (filevoList.length > 0) {
@@ -1195,7 +1209,6 @@
     	    });
     	});
     	
-    	
     	$("span#closeModalButton").click(function() {
     		imageModal.style.display = "none";
         });
@@ -1206,12 +1219,9 @@
             }
         });
     	
-    	
-    	
     });
+   
     
-    
-    // 글 작성에서 첨부파일 미리보기 ㅇㅇ
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1223,7 +1233,6 @@
         }
         
         //console.log(files);
-
         //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
@@ -1320,7 +1329,7 @@
 
                 reader.readAsDataURL(file);
             } else {
-                alert("이미지와 비디오 파일만 업로드할 수 있습니다.");
+                alert("지원하지 않는 파일 형식입니다.");
             }
         });
 
@@ -1368,9 +1377,8 @@
             }
         }
 
-
         event.target.files = dataTransfer.files;
-        console.log(files);
+        //console.log(files);
     }
     
     
@@ -1381,7 +1389,6 @@
         var button = document.getElementById('toggleButton');
         button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
     }    
-
 
 </script>
 
@@ -1539,7 +1546,7 @@
 	             
 
 		            	
-						<!-- 첨부파일 미리보기 ㅇㅇ -->
+						<!-- 첨부파일 미리보기 -->
 	                    <div class="px-0">
 		            		<input type="text" name="preview-board-no" class="preview-board-no" value="${boardvo.board_no}">
 						    <div class="file-image">
@@ -1834,7 +1841,7 @@
                
                 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
-        <!-- 글 작성 Modal ㅇㅇ -->
+        <!-- 글 작성 Modal -->
         <div id="writeModal" class="modal">
             <div class="modal-content">
                 <div class="content-top">
@@ -1937,15 +1944,24 @@
 					</div>
 					
 				    <!-- 이미지 미리보기 영역 -->
-					<div id="carousel-container2">
-					    <button id="prevBtn2" class="carousel-btn">〈</button>
+					<div id="carousel-container"> <!-- ㅇㅇ -->
+					    <button id="prevBtn" class="carousel-btn">〈</button>
 					
-					    <div id="image-preview-container2">
-					        <div class="carousel-track2">
+					    <div id="image-preview-container">
+					        <div class="carousel-track">
+					        	<div class="preview-box">
+					        		<img src="<%= ctxPath%>/images/쉐보레전면.jpg">
+					        		<div class="close-btn"></div>
+					        	</div>
+					        	<div class="preview-box">
+					        		<img src="<%= ctxPath%>/images/쉐보레전면.jpg">
+					        		<div class="close-btn"></div>
+					        	</div>
+
 					        </div>
 					    </div>
 					
-					    <button id="nextBtn2" class="carousel-btn">〉</button>
+					    <button id="nextBtn" class="carousel-btn">〉</button>
 					</div>
 					
                     <div class="ql-category">
