@@ -66,11 +66,11 @@
 		where fk_member_id = #{fk_member_id} and board_no = #{board_no}
 	</update>	
 	
-	<!-- 글 수정 -->
+	<!-- 글 수정 
 	<update id="editBoard" parameterType="HashMap">
 		update tbl_board set board_content = #{board_content}, board_visibility = #{board_visibility}
 		where board_no = #{board_no} and fk_member_id = #{fk_member_id}	
-	</update>
+	</update>-->
 	
 	<!-- 게시물 반응 -->
 	<insert id="reactionBoard" parameterType="HashMap">
@@ -245,4 +245,36 @@
 		from tbl_file
 		where file_target_no = #{file_target_no}
 	</select>
+	
+	
+	
+	<!-- 글 수정 -->
+	<update id="editBoard" parameterType="HashMap">
+		update tbl_board set board_content = #{board_content}, board_visibility = #{board_visibility}
+		where board_no = #{board_no} and fk_member_id = #{fk_member_id}	
+	</update>
+	
+	
+	<!-- 파일 조회하기 -->
+	<select id="selectFileList2" resultType="FileVO" parameterType="String">
+		select file_no, file_target_no, file_name, file_original_name, file_size
+		from tbl_file
+		where file_target_no = #{board_no}
+	</select>
+	
+	
+	<!-- 피일 삭제 (수정) -->
+	<delete id="deleteFiles" parameterType="java.util.List">
+		delete from tbl_file where file_no in
+		<foreach item="file_no" collection="list" open="(" separator="," close=")">
+	        #{file_no}
+	    </foreach>
+	</delete>
+	
+	<!-- 파일 첨수 (수정) -->
+	<insert id="editBoardWithFiles" parameterType="HashMap" >
+		insert into tbl_file(file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date)
+		values(seq_file_no.nextVal, #{board_no}, 'board', #{file_name}, #{file_original_name}, #{file_size}, default)
+	</insert>
+	
 </mapper>

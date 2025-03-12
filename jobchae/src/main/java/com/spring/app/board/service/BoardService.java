@@ -30,7 +30,7 @@ public interface BoardService {
 	int deleteFile(Map<String, String> paraMap);
 
 	// 글 수정
-	int editBoard(Map<String, String> paraMap);
+	//int editBoard(Map<String, String> paraMap);
 
 	// 게시물 반응
 	int reactionBoard(Map<String, String> paraMap);
@@ -97,6 +97,17 @@ public interface BoardService {
 
 	// 파일 조회하기
 	List<FileVO> selectFileList(Map<String, String> paraMap);
+	List<FileVO> selectFileList2(String board_no);
+
+	// 게시글 수정
+	int editBoard(Map<String, String> paraMap);
+
+	// 게시글 수정 (첨부파일 삭제)
+	int deleteFiles(List<String> deleteFileList);
+
+	// 파일 첨수 (수정)
+	int editBoardWithFiles(Map<String, String> paraMap);
+
 
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);

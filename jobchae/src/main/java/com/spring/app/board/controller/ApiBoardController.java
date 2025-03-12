@@ -1,5 +1,6 @@
 package com.spring.app.board.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
+import com.spring.app.common.FileManager;
 import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
@@ -32,6 +35,9 @@ public class ApiBoardController {
 
 	@Autowired
 	BoardService service;
+	
+	@Autowired  
+	private FileManager fileManager; 
 	
 	// 글 삭제
 	@PostMapping("deleteBoard")
@@ -443,24 +449,60 @@ public class ApiBoardController {
 		paraMap.put("file_target_no", file_target_no);
 		List<FileVO> filevoList = service.selectFileList(paraMap);
 		
-		/*
-		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "svg", "mp4", "avi", "mov", "wmv", "mkv", "flv");
-
-	    Iterator<FileVO> iterator = filevoList.iterator();
-	    while (iterator.hasNext()) {
-	        FileVO filevo = iterator.next();
-	        String fileName = filevo.getFile_name();
-	        
-	        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-	        
-	        if (!allowedExtensions.contains(fileExtension)) {
-	            iterator.remove(); 
-	        }
-	    }
-	    */
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("filevoList", filevoList);
 		return map; 
 	}
+	
+	
+	// 게시글 수정
+	@PostMapping("editBoard")
+	@ResponseBody
+	public Map<String, Object> editBoard(HttpServletRequest request, @RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, @RequestParam List<String> fileNoList, ModelAndView mav) {
+
+		//System.out.println("board_no : " + board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("board_content : " + board_content);
+		//System.out.println("board_visibility : " + board_visibility);
+		//System.out.println("fileNoList : " + fileNoList.size());
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("board_no", board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("board_content", board_content);
+		paraMap.put("board_visibility", board_visibility);
+		int n = service.editBoard(paraMap);
+		
+		List<FileVO> filevoList = service.selectFileList2(board_no);
+		for (FileVO file : filevoList) {
+	        System.out.println("file_no: " + file.getFile_no());
+	    }
+		
+		// 삭제할 파일 목록 찾기
+	    List<String> deleteFileList = new ArrayList<>();
+	    for (FileVO file : filevoList) {
+	        String fileNo = String.valueOf(file.getFile_no());
+	        if (!fileNoList.contains(fileNo)) { 
+	            deleteFileList.add(fileNo);
+	        }
+	    }
+	    
+	    int n2 = 1;
+	    if (!deleteFileList.isEmpty()) {
+	        n2 *= service.deleteFiles(deleteFileList);
+	    }
+	    
+	    if (n * n2 != 1) {
+			mav.addObject("message", "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("msg");
+		}
+	    
+		Map<String, Object> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
 }

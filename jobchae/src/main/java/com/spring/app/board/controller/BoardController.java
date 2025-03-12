@@ -147,7 +147,7 @@ public class BoardController {
 					file_name = fileManager.doFileUpload(bytes, file_original_name, path);	// 첨부파일 업로드
 					file_size = file.getSize();
 					
-					System.out.println("파일명 : " + file_name);
+					//System.out.println("파일명 : " + file_name);
 					
 					Map<String, String> paraMap2 = new HashMap<>();
 					paraMap2.put("file_target_no", file_target_no);
@@ -184,27 +184,60 @@ public class BoardController {
 	
 	
 	// 글 수정
-	@PostMapping("editBoard")
-	public ModelAndView editBoard(@RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, ModelAndView mav) {
+	@PostMapping("editBoardFile")
+	public ModelAndView editBoardFile(@RequestParam String board_no, @RequestParam(required = false) MultipartFile[] attach, ModelAndView mav, MultipartHttpServletRequest mrequest) {
 		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("board_no", board_no);
-		paraMap.put("fk_member_id", fk_member_id);
-		paraMap.put("board_content", board_content);
-		paraMap.put("board_visibility", board_visibility);
-		
-		int n = service.editBoard(paraMap);
-		
-		if (n != 1) {
-			mav.addObject("message", "수정 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-			mav.addObject("loc", "javascript:history.back()");
-			mav.setViewName("msg");
+		try {
+			
+			if (attach != null) {	// 이미지 첨부했을 경우
+				
+				// WAS 절대경로 알아오기
+				HttpSession session = mrequest.getSession();
+				String root = session.getServletContext().getRealPath("/");
+				String path =  root + "resources" + File.separator + "files" + File.separator + "board";  
+				//System.out.println("path : " + path);
+				//C:\git\Jobchae-SNS\jobchae\src\main\webapp\resources\files\board
+				
+				//System.out.println("attach.length : " + attach.length);
+
+				//int n = service.add(paraMap);
+				//String file_target_no = paraMap.get("board_no");	// 채번
+				
+				for (MultipartFile file : attach) {
+					String file_name = "";		
+					byte[] bytes = file.getBytes();
+					long file_size = 0;
+					
+					String file_original_name = file.getOriginalFilename();
+					file_name = fileManager.doFileUpload(bytes, file_original_name, path);	// 첨부파일 업로드
+					file_size = file.getSize();
+					
+					System.out.println("파일명 : " + file_name);
+					
+					Map<String, String> paraMap = new HashMap<>();
+					paraMap.put("board_no", board_no);
+					paraMap.put("file_name", file_name);
+					paraMap.put("file_original_name", file_original_name);
+					paraMap.put("file_size", String.valueOf(file_size));
+					
+					int n = service.editBoardWithFiles(paraMap);
+					
+					if (n != 1) {
+						mav.addObject("message", "업데이트 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+						mav.addObject("loc", "javascript:history.back()");
+						mav.setViewName("msg");
+					}
+				}
+				
+			}  
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
+
 		mav.setViewName("redirect:/board/feed");
 		return mav;
 	}
-
+	
 
 
 }
