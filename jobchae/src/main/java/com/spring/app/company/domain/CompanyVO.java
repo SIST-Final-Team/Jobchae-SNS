@@ -4,6 +4,8 @@ import com.spring.app.member.domain.MemberVO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.Date;
 
@@ -36,10 +38,13 @@ public class CompanyVO {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_company_no")
     Long companyNo;
 
-    @NotBlank
-    @Column(name = "fk_member_id", nullable = false, length = 20)
-    private String fkMemberId;
+    @NotNull
+    @Transient
+    private MemberVO member;
 
+    @NotBlank
+    @Column(name = "fk_member_id", unique = true, nullable = false)
+    private String fkMemberId;
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="fk_industry_no")
@@ -70,6 +75,11 @@ public class CompanyVO {
     @Column(name = "company_register_date", nullable = false)
     Date companyRegisterDate = new Date();
 
+    @NotNull
+    @Range(min =1, max = 2)
+    @Column(name = "company_status", nullable = false, length = 1)
+    int companyStatus = 1;
+
     public CompanyVO(){};
 
     public Long getCompanyNo() {
@@ -80,12 +90,12 @@ public class CompanyVO {
         this.companyNo = companyNo;
     }
 
-    public String getFkMemberId() {
-        return fkMemberId;
+    public MemberVO getMember() {
+        return member;
     }
 
-    public void setFkMemberId(String fkMemberId) {
-        this.fkMemberId = fkMemberId;
+    public void setMember(MemberVO member) {
+        this.member = member;
     }
 
     public IndustryVO getIndustry() {
@@ -140,6 +150,14 @@ public class CompanyVO {
         return companyExplain;
     }
 
+    public int getCompanyStatus() {
+        return companyStatus;
+    }
+
+    public void setCompanyStatus(int companyStatus) {
+        this.companyStatus = companyStatus;
+    }
+
     public void setCompanyExplain(String companyExplain) {
         this.companyExplain = companyExplain;
     }
@@ -150,5 +168,13 @@ public class CompanyVO {
 
     public void setCompanyRegisterDate(Date companyRegisterDate) {
         this.companyRegisterDate = companyRegisterDate;
+    }
+
+    public String getFkMemberId() {
+        return fkMemberId;
+    }
+
+    public void setFkMemberId(String fkMemberId) {
+        this.fkMemberId = fkMemberId;
     }
 }

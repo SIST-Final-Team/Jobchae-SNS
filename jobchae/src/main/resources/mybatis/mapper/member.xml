@@ -175,6 +175,18 @@
 	</insert>
 	
 	
+	<!-- 탈퇴한 회원 파일명을 리스트로 가져오기 검색 -->
+	<resultMap type="HashMap" id="disableFileList_map">
+		<result column="member_profile"   		property="member_profile"   		javaType="String"/>
+		<result column="member_background_img" 	property="member_background_img" 	javaType="String"/>
+	</resultMap>
+	<select id="disableFileList" resultMap="disableFileList_map">
+		SELECT member_profile, member_background_img
+		FROM tbl_member
+		WHERE member_status = 2
+	</select>
+	
+	
 	<!-- === 이준영 끝 === -->
 	
 	

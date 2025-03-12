@@ -53,7 +53,16 @@ public class CompanyServiceImple implements CompanyService{
     //회사페이지 중단
     @Override
     public CompanyVO deleteCompany(CompanyVO companyVO) {
-        return null;
+
+        //TODO : 회사가 없는 경우 예외 처리
+        //회사의 상태를 중단으로 변경
+        companyVO.setCompanyStatus(2);
+
+        // 회사 정보 업데이트
+        CompanyVO deletedCompany = companyDAO.save(companyVO);
+
+
+        return deletedCompany;
     }
 
     //회사 정보 업데이트

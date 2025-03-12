@@ -164,4 +164,47 @@ public class FileManager {
 		
 		return false;
 	}// end of public boolean doFileDownload(String fileName, String originalFilename, String path, HttpServletResponse response)---------
-}
+
+
+	
+	
+	
+	
+	// === 프로필사진 파일 삭제하기 === //
+	public void doProfileDelete(String filename, String path) throws Exception {
+
+		String pathname = path + File.separator + filename;
+
+		File file = new File(pathname);
+
+		if (file.exists()) {
+			file.delete();
+		}
+
+	}// end of public void doFileDelete(String filename, String path) throws Exception--------------------------
+
+	
+	// === 배경사진 파일 삭제하기 === //
+	public void doBackgroundfileDelete(String filename, String path) throws Exception {
+
+		String pathname = path + File.separator + filename;
+
+		File file = new File(pathname);
+
+		if (file.exists()) {
+			file.delete();
+		}
+
+	}// end of public void doFileDelete(String filename, String path) throws Exception--------------------------
+
+	
+	
+
+
+}//end of class...
+
+
+
+
+
+

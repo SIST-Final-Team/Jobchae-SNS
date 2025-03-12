@@ -4,6 +4,7 @@ import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.service.IndustryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,10 +29,12 @@ public class ApiIndustryController {
     }
 
     @GetMapping("/list/{industryName}")
-    public ResponseEntity<List<IndustryVO>> selectIndustryListByName(){
+    public ResponseEntity<List<IndustryVO>> selectIndustryListByName(@PathVariable String industryName){
+
+        List<IndustryVO> industryVOList = industryService.selectIndustryList(industryName);
 
 
-        return null;
+        return ResponseEntity.ok(industryVOList);
     }
 
 }

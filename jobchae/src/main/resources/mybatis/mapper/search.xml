@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ==== mapper 기본설정 ==== -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ==== 루트 엘리먼트 & 네임스페이스 설정 ==== -->
+<mapper namespace="com.spring.app.search.model.SearchDAO">
+
+	<!-- 파일 collection을 사용하기 위한 resultMap -->
+	<resultMap id="SearchBoardMap" type="SearchBoardVO">
+		<id property="board_no" column="board_no"/>
+		<result property="fk_member_id" column="fk_member_id"/>
+		<result property="board_content" column="board_content"/>
+		<result property="board_visibility" column="board_visibility"/>
+		<result property="board_comment_allowed" column="board_comment_allowed"/>
+		<result property="board_register_date" column="board_register_date"/>
+		<result property="board_parent_no" column="board_parent_no"/>
+		<result property="board_group_no" column="board_group_no"/>
+		<result property="board_depth" column="board_depth"/>
+		<result property="board_is_delete" column="board_is_delete"/>
+		<result property="member_id" column="member_id"/>
+		<result property="member_name" column="member_name"/>
+		<result property="commentCount" column="commentCount"/>
+		<result property="reactionCount" column="reactionCount"/>
+		<result property="embedCount" column="embedCount"/>
+		<result property="reactionStatusList" column="reactionStatusList"/>
+	    
+	    <collection property="fileList" ofType="FileVO">
+			<id property="file_no" column="file_no"/>
+			<result property="file_target_no" column="file_target_no"/>
+			<result property="file_target_type" column="file_target_type"/>
+			<result property="file_name" column="file_name"/>
+			<result property="file_original_name" column="file_original_name"/>
+			<result property="file_size" column="file_size"/>
+			<result property="file_register_date" column="file_register_date"/>
+	    </collection>
+	</resultMap>
+	
+    <select id="searchBoardByContent" parameterType="HashMap" resultMap="SearchBoardMap">
+    	select *
+		from
+		(
+			select rownum as rno, board_no, fk_member_id, board_content, board_visibility, board_comment_allowed, board_register_date
+					, board_parent_no, board_group_no, board_depth, board_is_delete, member_id, member_name
+					, file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+					, commentCount
+					, reactionCount
+					, embedCount
+					, reactionStatusList
+		        <!-- 팔로우 -->
+		        <if test="login_member_id != null">
+					, isFollow
+		        </if>
+			from
+			(
+		        select b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name, m.member_birth
+		                , file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+						, NVL(c.comment_count, 0) AS commentCount
+						, NVL(r.reaction_count, 0) AS reactionCount
+						, NVL(e.embed_count, 0) AS embedCount
+						, reactionStatusList
+		        <!-- 팔로우 -->
+		        <if test="login_member_id != null">
+					, NVL2(following_id, '1', '0') as isFollow
+		        </if>
+		        from tbl_board b
+				join tbl_member m on b.fk_member_id = m.member_id
+		        <!-- 팔로우 -->
+		        <if test="login_member_id != null">
+					left join
+					(
+						select following_id
+						from tbl_follow
+						where follower_id = #{login_member_id}
+					) f
+					on m.member_id = f.following_id
+		        </if>
+				left join
+				(
+					select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+					from tbl_file
+					where file_target_type = 'board'
+				) fi
+				on b.board_no = fi.file_target_no
+				left join
+				(
+					select fk_board_no, count(*) as comment_count
+					from tbl_comment
+					group by fk_board_no
+				) c
+				on b.board_no = c.fk_board_no
+				left join
+				(
+					select reaction_target_no, count(*) as reaction_count
+					from tbl_reaction
+					where reaction_target_type = 'board'
+					group by reaction_target_no
+				) r
+				on b.board_no = r.reaction_target_no
+				<!-- 반응 목록 상위 3개 시작 -->
+				left join
+				(
+					SELECT reaction_target_no,
+					       LISTAGG(reaction_status, ', ') WITHIN GROUP (ORDER BY reaction_count DESC) AS reactionStatusList
+					FROM (
+					    SELECT reaction_target_no, 
+					           reaction_status,
+					           COUNT(*) AS reaction_count,
+					           ROW_NUMBER() OVER (PARTITION BY reaction_target_no ORDER BY COUNT(*) DESC) AS row_num
+					    FROM tbl_reaction
+					    WHERE reaction_target_type = 'board'
+					    GROUP BY reaction_target_no, reaction_status
+					) t
+					WHERE row_num &lt;= 3
+					GROUP BY reaction_target_no
+				) rs
+				on b.board_no = rs.reaction_target_no
+				<!-- 반응 목록 상위 3개 끝 -->
+				left join
+				(
+					select board_parent_no, count(*) as embed_count
+					from tbl_board
+					group by board_parent_no
+				) e
+				on b.board_no = e.board_parent_no
+		        where b.board_is_delete = 0
+		        <!-- 검색어 -->
+		        and b.board_content like '%'|| #{searchWord} ||'%'
+		        <!-- 작성일자 최근 30일, 7일, 1일 -->
+		        <if test="board_register_date != null">
+		            and b.board_register_date &gt;= sysdate - #{board_register_date}
+		        </if>
+		        <!-- 이미지가 첨부된 게시글 -->
+		        <if test='searchFileType == "image"'>
+		            and SUBSTR(file_name, INSTR(file_name, '.', -1) + 1) in ('jpg', 'jpeg', 'png', 'gif', 'webp')
+		        </if>
+		        <!-- 동영상이 첨부된 게시글 -->
+		        <if test='searchFileType == "video"'>
+		            and SUBSTR(file_name, INSTR(file_name, '.', -1) + 1) in ('mp4')
+		        </if>
+		        order by b.board_register_date desc
+			)
+		)
+		where rno BETWEEN #{start} AND #{end}
+    </select>
+
+</mapper>

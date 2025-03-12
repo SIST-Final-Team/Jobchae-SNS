@@ -16,5 +16,7 @@ public interface CompanyService {
     //회사 정보 업데이트
     CompanyVO updateCompany(CompanyVO companyVO);
 
+    //회사 통계 조회
+
 
 }

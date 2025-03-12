@@ -132,12 +132,46 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         </div>
         <!-- 마이페이지 -->
         <div
+          id="headerProfileIcon"
           class="h-full w-20 flex-none text-center border-r-1 border-gray-300 text-sm opacity-50 hover:opacity-100"
         >
           <img
             src="${pageContext.request.contextPath}/images/no_profile_image.png"
             class="h-2/5 m-auto mt-1.5 round-full"
           />나▼
+          <div
+                  id="headerProfile"
+                  class="bg-white border-1 text-left rounded opacity-100 w-40 hidden"
+          >
+            <ul>
+              <li class="border-b-1 border-gray-300">
+                <div class="grid grid-cols-3 grid-rows-2">
+                  <div class="row-span-2">로고로고로고</div>
+                  <div id="headerProfileId" class="col-span-2">이름</div>
+                  <div id="headerProfileExplane" class="col-span-2">설명</div>
+                </div>
+              </li>
+              <li class="border-b-1 border-gray-300">
+                <span class="text-2xl font-semibold mb-4">계정</span>
+                <ul>
+                  <li>개인정보 설정</li>
+                  <li>고객센터</li>
+                  <li>언어</li>
+                </ul>
+              </li>
+              <li class="border-b-1 border-gray-300">
+                <span class="text-2xl font-semibold mb-4">관리</span>
+                <ul>
+                  <li>글&활동</li>
+                  <li>회사:<span>회사이름</span></li>
+                  <li>채용공고 계정</li>
+                </ul>
+              </li>
+              <li class="border-b-1 border-gray-300">
+                <a href="<%= ctxPath%>/member/logout">로그아웃</a>
+              </li>
+            </ul>
+          </div>
         </div>
         <!-- 비즈니스 -->
         <div
