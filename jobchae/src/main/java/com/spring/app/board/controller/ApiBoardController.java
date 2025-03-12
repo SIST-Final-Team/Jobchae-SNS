@@ -467,7 +467,6 @@ public class ApiBoardController {
 		//System.out.println("fk_member_id : " + fk_member_id);
 		//System.out.println("board_content : " + board_content);
 		//System.out.println("board_visibility : " + board_visibility);
-		//System.out.println("fileNoList : " + fileNoList.size());
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("board_no", board_no);
@@ -478,6 +477,8 @@ public class ApiBoardController {
 		
 		List<FileVO> filevoList = service.selectFileList2(board_no);
 		
+		int n2 = 1;
+		
 		if (fileNoList != null) {
 			// 삭제할 파일 목록 찾기
 		    List<String> deleteFileList = new ArrayList<>();
@@ -487,20 +488,26 @@ public class ApiBoardController {
 		            deleteFileList.add(fileNo);
 		        }
 		    }
-		    
-		    int n2 = 1;
 		    if (!deleteFileList.isEmpty()) {
 		        n2 *= service.deleteFiles(deleteFileList);
 		    }
+		} else {	// 첨부파일을 다 삭제하려는 경우
+			List<String> deleteFileList = new ArrayList<>();
+		    for (FileVO file : filevoList) {
+		        deleteFileList.add(String.valueOf(file.getFile_no()));
+		    }
 		    
-		    if (n * n2 != 1) {
-				mav.addObject("message", "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-				mav.addObject("loc", "javascript:history.back()");
-				mav.setViewName("msg");
-			}
+		    if (!deleteFileList.isEmpty()) {
+		    	n2 *= service.deleteFiles(deleteFileList);
+		    }
 		}
 		
-	    
+		if (n * n2 != 1) {
+			mav.addObject("message", "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("msg");
+		}
+		
 		Map<String, Object> map = new HashMap<>();
 		map.put("n", n);
 		return map; 

@@ -189,10 +189,12 @@
 <script type="text/javascript">
     
 	let currentX = 0;
+	let currentX2 = 0;
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
 	let currentPreviewBox = 1; 
-	let dataTransfer = new DataTransfer(); // ㅇㅇ
+	let currentPreviewBox2 = 1; 
+	let dataTransfer = new DataTransfer(); 
 	
     $(document).ready(function() {
         
@@ -342,28 +344,11 @@
 		        return;
 		    }
 			else {
-				// 추가됨
 				const imageFiles = document.getElementById("file-image").files;
-    			const videoFiles = document.getElementById("file-video").files;
-    			const attachmentFiles = document.getElementById("file-attachment").files;
-    			
-    			// 파일이 없으면 해당 input 제거
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
     		    }
-    		    if (videoFiles.length === 0) {
-    		        document.getElementById("file-video").remove();
-    		    }
-    		    if (attachmentFiles.length === 0) {
-    		        document.getElementById("file-attachment").remove();
-    		    }
-    		 // 추가됨
-    		 
-    		    //console.log(imageFiles);
-    		    //console.log(videoFiles);
-    		    //console.log(attachmentFiles);
     		    
-    		    // ㅇㅇ
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -446,9 +431,10 @@
 	    });
 	 	
 		/////////////////////////////////////////////////////////////////////////////////////////
-	 	// 글 수정
+	 	// 글 수정 
 		let board_content = "";
 	    $(".edit-post").click(function () {
+	    	const track = document.querySelector(".carousel-track2");
 	        const board_no = $(this).attr("value");
 	        const visibilityOrigin = $(".board-visibility-origin").val();
 	        board_content = $(this).closest('.board-member-profile').find(".board-content").val();
@@ -470,6 +456,119 @@
             //alert("board-visibility-origin 값: " + visibilityOrigin);
 	        //alert("board_content : " + board_content);  
 	        
+	        $.ajax({
+               url: '${pageContext.request.contextPath}/api/board/selectFileList',
+               type: 'post',
+               dataType: 'json',
+               data: {"file_target_no": board_no},
+               success: function(response) {
+               		let filevoList = response.filevoList;
+                   	console.log(filevoList);
+                   
+                   	let mediaElement;
+                   	
+                   	filevoList.forEach(file => {
+                   		const previewBox = document.createElement("div");
+                       	previewBox.className = "preview-box2";
+                       	
+                        const fileExtension = file.file_name.split('.').pop().toLowerCase();
+                        let mediaElement;
+						
+                        console.log("파일번호:" + file.file_no + "   파일확장자:" + fileExtension);
+                        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) {
+                            mediaElement = document.createElement("img");
+                            mediaElement.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;
+                            mediaElement.classList.add("preview-image");
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(fileExtension)) {
+                            mediaElement = document.createElement("video");
+                            mediaElement.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;
+                            mediaElement.classList.add("preview-video");
+                            mediaElement.controls = true;
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['pdf'].includes(fileExtension)) {
+                            mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon"; 
+                            mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                     + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                     + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                     + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['doc', 'docx'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon"; 
+                            mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                     + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                     + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                     + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['xlsx'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon";
+                        	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                				   + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['pptx'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon";
+                            mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+    					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+    					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+    					         				   + file.file_original_name + "</span></div>";
+                        } else if (['text', 'csv'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon";
+            				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                    							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                    							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                    							   + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        }
+
+                        if (mediaElement) {
+                            previewBox.appendChild(mediaElement);
+                        }
+                        
+                        const closeButton2 = document.createElement("div");
+                        closeButton2.className = "close-btn";
+                        closeButton2.innerText = "×";
+
+                        closeButton2.addEventListener("click", () => {
+                            previewBox.remove();
+                            removeFile(file);
+                            //togglePrevButton();
+                        });
+
+                        
+                        previewBox.appendChild(closeButton2);
+                        track.appendChild(previewBox);
+                   	});
+               	},
+               	error: function(request, status, error){
+                   	console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+               	}
+           	});
+	        
+	        function removeFile(fileToRemove) { 
+	            const newDataTransfer = new DataTransfer();
+	            Array.from(dataTransfer.files).forEach((file) => {
+	                if (file !== fileToRemove) {
+	                    newDataTransfer.items.add(file);
+	                }
+	            });
+	            event.target.files = newDataTransfer.files;
+
+	            let currentX2 = parseInt($(track).css("transform").split(",")[4]) || 0;
+	            let previewCount2 = track.querySelectorAll(".preview-box2").length;
+				
+	            if (currentX2 !== 0) {
+	            	currentX2 = currentX2 + 208; 
+	                $(track).css("transform", "translateX(" + currentX2 + "px)"); 
+	            }
+	        }
+
 	        editQuill.root.innerHTML = board_content; 
 	        editModal.style.display = "block";
 	    });
@@ -477,31 +576,73 @@
 	    $("span#closeModalButton").click(function() {
 	    	editModal.style.display = "none";
 	    	editQuill.setText('');
+	    	$(".carousel-track2").empty();
         });
 
         $(window).click(function(e) {
             if (e.target == editModal) {
             	editModal.style.display = "none";
             	editQuill.setText('');
+            	$(".carousel-track2").empty();
             }
         });
 	 	
+        // 글 수정하기 ㅇㅇ
         $("button#edit-update").click(function() {
 			const boardContent = editQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
-			//alert(boardContent);
-
+			
+			const board_no = $("input[name='board_no']").val();
+			const fk_member_id = $("input[name='fk_member_id']").val();
+			const board_content = $("input[name='board_content']").val();
+			const board_visibility = $("input[name='board_visibility']").val();
+			//console.log(board_visibility);
+	        
 			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
 		        alert("내용을 입력해주세요.");
 		        editQuill.root.innerHTML = board_content;
 		        return;
-		    }
-			else {
-				alert("글이 성공적으로 수정되었습니다.");
+		    } else {
+			 	const fileNoList = [];
+				 
+				const previewBoxes = document.querySelectorAll(".preview-box2");
+			 	previewBoxes.forEach((previewBox, index) => {
+		            const childrenWithoutCloseButton = Array.from(previewBox.children).filter(child => !child.classList.contains('close-btn'));
+		            
+		            childrenWithoutCloseButton.forEach((childElement, childIndex) => {
+		                const fileNo = childElement.dataset.fileNo;
+		                console.log("fileNo" + fileNo);	// 남아있는 사진들 (= 삭제하면 안 되는 파일들)
+		                if (fileNo) {
+		                    fileNoList.push(fileNo);  
+		                }
+		            });
+		        });
+			 	console.log("수정하기 버튼 클릭함" + fileNoList);
+			 	
+			 	
+			 	$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/editBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"board_no": board_no,
+						   "fk_member_id": fk_member_id,
+						   "board_content": board_content,
+						   "board_visibility": board_visibility,
+						   "fileNoList": fileNoList},
+					success: function(json) {
+						if(json.n == 1) {
+							alert("게시글이 수정되었습니다.");
+						}
+					},
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+			 	
 				
-				const frm = document.editFrm;
-		      	frm.method = "post";
-		      	frm.action = "<%= ctxPath%>/board/editBoard";
-		      	frm.submit();
+			 	//const frm = document.editFrm;
+		      	//frm.method = "post";
+		      	//frm.action = "<%= ctxPath%>/board/editBoardFile";
+		      	//frm.submit();
 			}
 		});
         
@@ -645,7 +786,7 @@
         	    });
 
         	    reactionData.sort((a, b) => b.reaction_count - a.reaction_count);
-        	    console.log(reactionData);
+        	    //console.log(reactionData);
         	}
         });
 		
@@ -839,7 +980,7 @@
         });
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// Modal 이미지 미리보기
+		// Modal 이미지 미리보기 
 		$("button#prevBtn").click(function() {
 			if (currentX < 0) {
 				currentX += 208;
@@ -861,7 +1002,26 @@
 			}
 		});
 		
+		$("button#prevBtn2").click(function() {
+			if (currentX2 < 0) {
+				currentX2 += 208;
+				$(".carousel-track2").css("transform", "translateX(" + currentX2 + "px)");
+				currentPreviewBox2--;
+			}
+		});
 		
+		$("button#nextBtn2").click(function() {
+			const previewCountMax = document.querySelector(".carousel-track2").querySelectorAll(".preview-box2").length;
+			//alert(previewCountMax + " " + currentPreviewBox2);
+			
+			if (previewCountMax > (currentPreviewBox2 + 2)) {
+				currentX2 -= 208;
+				$(".carousel-track2").css("transform", "translateX(" + currentX2 + "px)");
+				currentPreviewBox2++;
+			} else {
+				alert("끝까지 확인하셨습니다.");
+			}
+		});
 		///////////////////////////////////////////////////////////////////////////////////////// 
 		// 게시글 시간
 		$(".time").each(function () {
@@ -1113,7 +1273,7 @@
     	});
     	
     	
-    	// ㅇㅇ
+    	// 이미지, 비디오 크게보기
     	$(".file-preview-button").click(function() {
     		
     		const file_target_no = $(this).closest(".px-0").find("input[name='preview-board-no']").val();
@@ -1125,8 +1285,16 @@
     	        dataType: 'json',
     	        data: {"file_target_no": file_target_no},
     	        success: function(response) {
-    	            const filevoList = response.filevoList;
-    	            console.log(filevoList);
+    	            let filevoList = response.filevoList;
+    	            //console.log(filevoList);
+    	            
+    	            // 확장자 필터링 (이미지, 비디오만 크게 볼 수 있도록)
+    	            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'mp4', 'avi', 'mov', 'wmv', 'flv'];
+    	            filevoList = filevoList.filter(file => {
+    	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
+    	                return allowedExtensions.includes(fileExtension);
+    	            });
+    	            //console.log(filevoList);
     	            
     	            const imageModal = document.getElementById("imageModal");
     	            imageModal.style.display = "block";
@@ -1138,10 +1306,23 @@
     	            
     	            function showImage(index) {
     	                imageContainer.innerHTML = "";
-    	                const img = document.createElement('img');
-    	                img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
-    	                img.classList.add('modal-image');
-    	                imageContainer.appendChild(img);
+    	                const file = filevoList[index];
+    	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
+    	                
+    	                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension)) {
+		                    const img = document.createElement('img');
+		                    img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+		                    img.classList.add('modal-image');
+		                    imageContainer.appendChild(img);
+		                } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', ''].includes(fileExtension)) {
+		                    const video = document.createElement('video');
+		                    video.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+		                    video.classList.add('modal-video');
+		                    video.controls = true;
+		                    imageContainer.appendChild(video);
+		                } else {
+		                    imageContainer.innerHTML = "<p>지원되지 않는 파일 형식입니다.</p>";
+		                }
     	            }
     	            
     	            if (filevoList.length > 0) {
@@ -1168,7 +1349,6 @@
     	    });
     	});
     	
-    	
     	$("span#closeModalButton").click(function() {
     		imageModal.style.display = "none";
         });
@@ -1179,12 +1359,10 @@
             }
         });
     	
-    	
-    	
     });
-    
-    
-    // 글 작성에서 첨부파일 미리보기 ㅇㅇ
+   
+   
+    // 이미지 미리보기
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1196,12 +1374,11 @@
         }
         
         //console.log(files);
-
         //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
         	
-        	console.log(file);
+        	//console.log(file);
         	
             if (file.type.startsWith("image/") || 
             	file.type.startsWith("video/") || 
@@ -1293,7 +1470,7 @@
 
                 reader.readAsDataURL(file);
             } else {
-                alert("이미지와 비디오 파일만 업로드할 수 있습니다.");
+                alert("지원하지 않는 파일 형식입니다.");
             }
         });
 
@@ -1341,11 +1518,175 @@
             }
         }
 
-
         event.target.files = dataTransfer.files;
-        console.log(files);
+        //console.log(files);
     }
     
+    
+ 	// 이미지 미리보기(수정) 
+    function previewImage2(event) {
+    	
+        const files = event.target.files;
+        const track = document.querySelector(".carousel-track2");
+
+        //console.log(track);
+        
+        track.innerHTML = '';
+        
+        if (!track) {
+            console.error("미리보기 요소를 찾을 수 없습니다.");
+            return;
+        }
+        
+        console.log(files);
+        //const dataTransfer = new DataTransfer(); 
+
+        Array.from(files).forEach((file) => { 
+        	
+        	//console.log(file);
+        	const dataTransfer = new DataTransfer();
+        	
+            if (file.type.startsWith("image/") || 
+            	file.type.startsWith("video/") || 
+                file.type === "application/pdf" || 
+                file.type === "application/msword" || 
+                file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || 
+                file.type === "text/plain" || 
+                file.type === "text/csv") {
+                const reader = new FileReader();
+				
+                
+                reader.onload = function (e) {
+                    const previewBox = document.createElement("div");
+                    previewBox.className = "preview-box2";
+
+                    let mediaElement;
+                    if (file.type.startsWith("image/")) {
+                        mediaElement = document.createElement("img");
+                        mediaElement.src = e.target.result;
+                        mediaElement.alt = file.name;
+                    } else if (file.type.startsWith("video/")) {
+                        mediaElement = document.createElement("video");
+                        mediaElement.src = e.target.result;
+                        mediaElement.controls = true;  
+                        mediaElement.alt = file.name;
+                    } else if (file.type === "application/pdf") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/msword" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                    	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                            				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                            				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                            				   + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+					         				   + file.name + "</span></div>";
+                    } else if (file.type === "text/plain" || file.type === "text/csv") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+        				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                							   + file.name + "</span></div>";
+                    }
+					
+                    const closeButton2 = document.createElement("div");
+                    closeButton2.className = "close-btn";
+                    closeButton2.innerText = "×";
+
+                    closeButton2.addEventListener("click", () => {
+                        previewBox.remove();
+                        removeFile(file);
+                        togglePrevButton();
+                    });
+
+                    previewBox.appendChild(mediaElement);
+                    previewBox.appendChild(closeButton2);
+                    track.appendChild(previewBox);
+
+                    dataTransfer.items.add(file);
+
+                    togglePrevButton();
+                    updateCarouselPosition();
+                    
+                };
+
+                reader.onerror = function () {
+                    console.error("파일 읽기 오류 발생");
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("지원하지 않는 파일 형식입니다.");
+            }
+        });
+
+        
+        function removeFile(fileToRemove) { 
+            const newDataTransfer = new DataTransfer();
+            Array.from(dataTransfer.files).forEach((file) => {
+                if (file !== fileToRemove) {
+                    newDataTransfer.items.add(file);
+                }
+            });
+            event.target.files = newDataTransfer.files;
+
+            let currentX2 = parseInt($(track).css("transform").split(",")[4]) || 0;
+            let previewCount2 = track.querySelectorAll(".preview-box2").length;
+			
+            if (currentX2 !== 0) {
+            	currentX2 = currentX2 + 208; 
+                $(track).css("transform", "translateX(" + currentX2 + "px)"); 
+            }
+        }
+
+
+        function togglePrevButton() {
+            const previewCount2 = track.querySelectorAll(".preview-box2").length;
+            if (previewCount2 === 0) {
+                prevBtn2.style.display = "none";
+                nextBtn2.style.display = "none";
+            } else if (previewCount2 < 4) {
+            	prevBtn2.style.display = "block";
+            	nextBtn2.style.display = "none";
+            } else {
+            	prevBtn2.style.display = "block";
+            	nextBtn2.style.display = "block";
+            }
+        }
+
+        function updateCarouselPosition() {  
+            const previewCount2 = track.querySelectorAll(".preview-box2").length;
+            if (previewCount2 > 3) {
+            	currentX2 = parseInt($(track).css("transform").split(",")[4]) || 0;
+            	currentX2 = currentX2 - 208; 
+                $(track).css("transform", "translateX(" + currentX2 + "px)");
+                currentPreviewBox2++;
+            }
+        }
+
+        event.target.files = dataTransfer.files;
+        //console.log(files);
+    }
     
  	// 긴 글 더보기 처리
     function toggleContent() {
@@ -1354,7 +1695,6 @@
         var button = document.getElementById('toggleButton');
         button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
     }    
-
 
 </script>
 
@@ -1512,7 +1852,7 @@
 	             
 
 		            	
-						<!-- 첨부파일 미리보기 ㅇㅇ -->
+						<!-- 첨부파일 미리보기 -->
 	                    <div class="px-0">
 		            		<input type="text" name="preview-board-no" class="preview-board-no" value="${boardvo.board_no}">
 						    <div class="file-image">
@@ -1807,7 +2147,7 @@
                
                 
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
-        <!-- 글 작성 Modal ㅇㅇ -->
+        <!-- 글 작성 Modal -->
         <div id="writeModal" class="modal">
             <div class="modal-content">
                 <div class="content-top">
@@ -1855,10 +2195,10 @@
 	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
 							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
 							</svg>
-                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-image').click();">
 								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
 							</svg>
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-attachment').click();">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-image').click();">
 							  <path d="M3 3v15a3 3 0 003 3h9v-6h6V3zm9 8H6v-1h6zm6-3H6V7h12zm-2 8h5l-5 5z"></path>
 							</svg>
 	                    </div>
@@ -1869,9 +2209,9 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*" onchange="previewImage(event)" multiple/>
-				            <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>
-				            <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*, .pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
+				            <!--  <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>-->
+				            <!-- <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>-->
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
@@ -1910,7 +2250,7 @@
 					</div>
 					
 				    <!-- 이미지 미리보기 영역 -->
-					<div id="carousel-container2">
+					<div id="carousel-container2"> 
 					    <button id="prevBtn2" class="carousel-btn">〈</button>
 					
 					    <div id="image-preview-container2">
@@ -1923,11 +2263,14 @@
 					
                     <div class="ql-category">
 	                    <div>
-	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
+	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image2').click();">
 							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
 							</svg>
-                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-image2').click();">
 								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
+							</svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-image2').click();">
+							  <path d="M3 3v15a3 3 0 003 3h9v-6h6V3zm9 8H6v-1h6zm6-3H6V7h12zm-2 8h5l-5 5z"></path>
 							</svg>
 	                    </div>
 						<div>
@@ -1938,9 +2281,7 @@
 				            <input type="hidden" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
-				            <input type="file" name="board_video" id="file-video" style="display:none;" />
-				            <input type="file" name="board_attachment" id="file-attachment" style="display:none;" />
+				            <input type="file" name="attach" id="file-image2" style="display:none;" accept="image/*, video/*, .pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage2(event)" multiple/>
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->

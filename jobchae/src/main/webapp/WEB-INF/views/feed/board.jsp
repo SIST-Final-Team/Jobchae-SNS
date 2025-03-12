@@ -631,6 +631,7 @@
 					success: function(json) {
 						if(json.n == 1) {
 							alert("게시글이 수정되었습니다.");
+							location.reload();
 						}
 					},
 			        error: function(request, status, error){
