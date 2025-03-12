@@ -1,6 +1,8 @@
 package com.spring.app.board.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -441,7 +443,25 @@ public class ApiBoardController {
 		paraMap.put("file_target_no", file_target_no);
 		List<FileVO> filevoList = service.selectFileList(paraMap);
 		
-		for (FileVO filevo : filevoList) {
+		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "mp4", "avi", "mov", "mkv");
+
+		// Iterator 사용하여 리스트에서 안전하게 제거
+	    Iterator<FileVO> iterator = filevoList.iterator();
+	    while (iterator.hasNext()) {
+	        FileVO filevo = iterator.next();
+	        String fileName = filevo.getFile_name();
+	        
+	        // 확장자 추출
+	        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+	        
+	        if (!allowedExtensions.contains(fileExtension)) {
+	            iterator.remove(); // 안전하게 리스트에서 제거
+	        }
+	    }
+	    
+	    // 필터링된 결과 확인
+	    System.out.println("=== 최종 필터링된 파일 목록 ===");
+	    for (FileVO filevo : filevoList) {
 	        System.out.println("File Name: " + filevo.getFile_name());
 	    }
 		
