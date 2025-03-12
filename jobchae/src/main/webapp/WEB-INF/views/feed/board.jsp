@@ -576,6 +576,7 @@
 	    $("span#closeModalButton").click(function() {
 	    	editModal.style.display = "none";
 	    	editQuill.setText('');
+	    	$(".carousel-track2").empty();
         });
 
         $(window).click(function(e) {

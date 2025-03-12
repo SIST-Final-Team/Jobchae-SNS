@@ -1018,6 +1018,7 @@ img.modal-img {
 .more-btn {
     display: none;
     margin-top: 10px;
+    cursor: pointer;
 }
 .board-content-container.expanded .board-content {
     display: block;
