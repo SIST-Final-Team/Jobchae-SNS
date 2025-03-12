@@ -1143,7 +1143,15 @@
     	        dataType: 'json',
     	        data: {"file_target_no": file_target_no},
     	        success: function(response) {
-    	            const filevoList = response.filevoList;
+    	            let filevoList = response.filevoList;
+    	            //console.log(filevoList);
+    	            
+    	            // 확장자 필터링 (이미지, 비디오만 크게 볼 수 있도록)
+    	            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'mp4', 'avi', 'mov', 'wmv', 'flv'];
+    	            filevoList = filevoList.filter(file => {
+    	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
+    	                return allowedExtensions.includes(fileExtension);
+    	            });
     	            //console.log(filevoList);
     	            
     	            const imageModal = document.getElementById("imageModal");
@@ -1159,22 +1167,12 @@
     	                const file = filevoList[index];
     	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
     	                
-    	                
-    	                console.log(filevoList[index].file_name);
-    	                //console.log("<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name);
-
-    	                
-    	                //const img = document.createElement('img');
-    	                //img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
-    	                //img.classList.add('modal-image');
-    	                //imageContainer.appendChild(img);
-    	                
     	                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension)) {
 		                    const img = document.createElement('img');
 		                    img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
 		                    img.classList.add('modal-image');
 		                    imageContainer.appendChild(img);
-		                } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'xlsx'].includes(fileExtension)) {
+		                } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', ''].includes(fileExtension)) {
 		                    const video = document.createElement('video');
 		                    video.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
 		                    video.classList.add('modal-video');

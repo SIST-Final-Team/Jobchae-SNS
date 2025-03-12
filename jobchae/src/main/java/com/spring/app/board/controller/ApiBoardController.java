@@ -443,27 +443,21 @@ public class ApiBoardController {
 		paraMap.put("file_target_no", file_target_no);
 		List<FileVO> filevoList = service.selectFileList(paraMap);
 		
-		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "mp4", "avi", "mov", "mkv");
+		/*
+		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp", "svg", "mp4", "avi", "mov", "wmv", "mkv", "flv");
 
-		// Iterator 사용하여 리스트에서 안전하게 제거
 	    Iterator<FileVO> iterator = filevoList.iterator();
 	    while (iterator.hasNext()) {
 	        FileVO filevo = iterator.next();
 	        String fileName = filevo.getFile_name();
 	        
-	        // 확장자 추출
 	        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 	        
 	        if (!allowedExtensions.contains(fileExtension)) {
-	            iterator.remove(); // 안전하게 리스트에서 제거
+	            iterator.remove(); 
 	        }
 	    }
-	    
-	    // 필터링된 결과 확인
-	    System.out.println("=== 최종 필터링된 파일 목록 ===");
-	    for (FileVO filevo : filevoList) {
-	        System.out.println("File Name: " + filevo.getFile_name());
-	    }
+	    */
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("filevoList", filevoList);
