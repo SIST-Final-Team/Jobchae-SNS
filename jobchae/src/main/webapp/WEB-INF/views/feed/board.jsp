@@ -474,8 +474,8 @@
                         const fileExtension = file.file_name.split('.').pop().toLowerCase();
                         let mediaElement;
 						
-                        //console.log(file.file_no);
-                        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension)) {
+                        console.log("파일번호:" + file.file_no + "   파일확장자:" + fileExtension);
+                        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) {
                             mediaElement = document.createElement("img");
                             mediaElement.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;
                             mediaElement.classList.add("preview-image");
@@ -541,7 +541,7 @@
                             //togglePrevButton();
                         });
 
-                        previewBox.appendChild(mediaElement);
+                        
                         previewBox.appendChild(closeButton2);
                         track.appendChild(previewBox);
                    	});
@@ -600,8 +600,7 @@
 		        alert("내용을 입력해주세요.");
 		        editQuill.root.innerHTML = board_content;
 		        return;
-		    }
-			else {
+		    } else {
 			 	const fileNoList = [];
 				 
 				const previewBoxes = document.querySelectorAll(".preview-box2");
@@ -610,12 +609,15 @@
 		            
 		            childrenWithoutCloseButton.forEach((childElement, childIndex) => {
 		                const fileNo = childElement.dataset.fileNo;
+		                console.log("fileNo" + fileNo);	// 남아있는 사진들 (= 삭제하면 안 되는 파일들)
 		                if (fileNo) {
 		                    fileNoList.push(fileNo);  
 		                }
 		            });
 		        });
-		        
+			 	console.log("수정하기 버튼 클릭함" + fileNoList);
+			 	
+			 	
 			 	$.ajax({
 					url: '${pageContext.request.contextPath}/api/board/editBoard',
 					type: 'post',
@@ -628,16 +630,18 @@
 					success: function(json) {
 						if(json.n == 1) {
 							alert("게시글이 수정되었습니다.");
-							const frm = document.editFrm;
-					      	frm.method = "post";
-					      	frm.action = "<%= ctxPath%>/board/editBoardFile";
-					      	frm.submit();
 						}
 					},
 			        error: function(request, status, error){
 						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
 				 	}
 				});
+			 	
+				
+			 	//const frm = document.editFrm;
+		      	//frm.method = "post";
+		      	//frm.action = "<%= ctxPath%>/board/editBoardFile";
+		      	//frm.submit();
 			}
 		});
         
@@ -1518,13 +1522,15 @@
     }
     
     
- 	// 이미지 미리보기(수정) ㅇㅇ
+ 	// 이미지 미리보기(수정) 
     function previewImage2(event) {
     	
         const files = event.target.files;
         const track = document.querySelector(".carousel-track2");
 
-        console.log(track);
+        //console.log(track);
+        
+        track.innerHTML = '';
         
         if (!track) {
             console.error("미리보기 요소를 찾을 수 없습니다.");
@@ -1537,6 +1543,7 @@
         Array.from(files).forEach((file) => { 
         	
         	//console.log(file);
+        	const dataTransfer = new DataTransfer();
         	
             if (file.type.startsWith("image/") || 
             	file.type.startsWith("video/") || 
@@ -1679,8 +1686,6 @@
         event.target.files = dataTransfer.files;
         //console.log(files);
     }
-    
-    
     
  	// 긴 글 더보기 처리
     function toggleContent() {

@@ -212,11 +212,11 @@ public class BoardController {
 					file_name = fileManager.doFileUpload(bytes, file_original_name, path);	// 첨부파일 업로드
 					file_size = file.getSize();
 					
-					System.out.println("파일명 : " + file_name);
+					//System.out.println("파일명 : " + file_name);
 					
 					Map<String, String> paraMap = new HashMap<>();
 					paraMap.put("board_no", board_no);
-					paraMap.put("file_name", file_name);
+					paraMap.put("file_name", file_name != null ? file_name : "");
 					paraMap.put("file_original_name", file_original_name);
 					paraMap.put("file_size", String.valueOf(file_size));
 					

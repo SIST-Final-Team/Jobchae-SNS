@@ -459,8 +459,10 @@ public class ApiBoardController {
 	// 게시글 수정
 	@PostMapping("editBoard")
 	@ResponseBody
-	public Map<String, Object> editBoard(HttpServletRequest request, @RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, @RequestParam List<String> fileNoList, ModelAndView mav) {
-
+	public Map<String, Object> editBoard(HttpServletRequest request, @RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, @RequestParam(required = false) List<String> fileNoList, ModelAndView mav) {
+		
+		//fileNoList는 삭제하면 안 되는 파일들
+		
 		//System.out.println("board_no : " + board_no);
 		//System.out.println("fk_member_id : " + fk_member_id);
 		//System.out.println("board_content : " + board_content);
@@ -472,32 +474,32 @@ public class ApiBoardController {
 		paraMap.put("fk_member_id", fk_member_id);
 		paraMap.put("board_content", board_content);
 		paraMap.put("board_visibility", board_visibility);
-		int n = service.editBoard(paraMap);
+		int n = service.editBoard(paraMap); 
 		
 		List<FileVO> filevoList = service.selectFileList2(board_no);
-		for (FileVO file : filevoList) {
-	        System.out.println("file_no: " + file.getFile_no());
-	    }
 		
-		// 삭제할 파일 목록 찾기
-	    List<String> deleteFileList = new ArrayList<>();
-	    for (FileVO file : filevoList) {
-	        String fileNo = String.valueOf(file.getFile_no());
-	        if (!fileNoList.contains(fileNo)) { 
-	            deleteFileList.add(fileNo);
-	        }
-	    }
-	    
-	    int n2 = 1;
-	    if (!deleteFileList.isEmpty()) {
-	        n2 *= service.deleteFiles(deleteFileList);
-	    }
-	    
-	    if (n * n2 != 1) {
-			mav.addObject("message", "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
-			mav.addObject("loc", "javascript:history.back()");
-			mav.setViewName("msg");
+		if (fileNoList != null) {
+			// 삭제할 파일 목록 찾기
+		    List<String> deleteFileList = new ArrayList<>();
+		    for (FileVO file : filevoList) {
+		        String fileNo = String.valueOf(file.getFile_no());
+		        if (!fileNoList.contains(fileNo)) { 
+		            deleteFileList.add(fileNo);
+		        }
+		    }
+		    
+		    int n2 = 1;
+		    if (!deleteFileList.isEmpty()) {
+		        n2 *= service.deleteFiles(deleteFileList);
+		    }
+		    
+		    if (n * n2 != 1) {
+				mav.addObject("message", "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+				mav.addObject("loc", "javascript:history.back()");
+				mav.setViewName("msg");
+			}
 		}
+		
 	    
 		Map<String, Object> map = new HashMap<>();
 		map.put("n", n);
