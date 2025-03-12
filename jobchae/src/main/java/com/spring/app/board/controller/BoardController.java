@@ -189,7 +189,7 @@ public class BoardController {
 		
 		try {
 			
-			if (attach != null) {	// 이미지 첨부했을 경우
+			if (attach != null && attach.length > 0) {	// 이미지 첨부했을 경우
 				
 				// WAS 절대경로 알아오기
 				HttpSession session = mrequest.getSession();
@@ -199,9 +199,6 @@ public class BoardController {
 				//C:\git\Jobchae-SNS\jobchae\src\main\webapp\resources\files\board
 				
 				//System.out.println("attach.length : " + attach.length);
-
-				//int n = service.add(paraMap);
-				//String file_target_no = paraMap.get("board_no");	// 채번
 				
 				for (MultipartFile file : attach) {
 					String file_name = "";		
@@ -212,7 +209,7 @@ public class BoardController {
 					file_name = fileManager.doFileUpload(bytes, file_original_name, path);	// 첨부파일 업로드
 					file_size = file.getSize();
 					
-					//System.out.println("파일명 : " + file_name);
+					//System.out.println("파일명 : " + file.getOriginalFilename());
 					
 					Map<String, String> paraMap = new HashMap<>();
 					paraMap.put("board_no", board_no);

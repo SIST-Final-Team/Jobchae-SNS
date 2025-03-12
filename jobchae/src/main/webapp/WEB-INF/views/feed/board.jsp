@@ -463,7 +463,7 @@
                data: {"file_target_no": board_no},
                success: function(response) {
                		let filevoList = response.filevoList;
-                   	console.log(filevoList);
+                   	//console.log(filevoList);
                    
                    	let mediaElement;
                    	
@@ -474,7 +474,7 @@
                         const fileExtension = file.file_name.split('.').pop().toLowerCase();
                         let mediaElement;
 						
-                        console.log("파일번호:" + file.file_no + "   파일확장자:" + fileExtension);
+                        //console.log("파일번호:" + file.file_no + "   파일확장자:" + fileExtension);
                         if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) {
                             mediaElement = document.createElement("img");
                             mediaElement.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;
@@ -610,14 +610,13 @@
 		            
 		            childrenWithoutCloseButton.forEach((childElement, childIndex) => {
 		                const fileNo = childElement.dataset.fileNo;
-		                console.log("fileNo" + fileNo);	// 남아있는 사진들 (= 삭제하면 안 되는 파일들)
+		                //console.log("fileNo" + fileNo);	// 남아있는 사진들 (= 삭제하면 안 되는 파일들)
 		                if (fileNo) {
 		                    fileNoList.push(fileNo);  
 		                }
 		            });
 		        });
-			 	console.log("수정하기 버튼 클릭함" + fileNoList);
-			 	
+			 	//console.log("수정하기 버튼 클릭함" + fileNoList);
 			 	
 			 	$.ajax({
 					url: '${pageContext.request.contextPath}/api/board/editBoard',
@@ -639,11 +638,19 @@
 				 	}
 				});
 			 	
-				
-			 	//const frm = document.editFrm;
-		      	//frm.method = "post";
-		      	//frm.action = "<%= ctxPath%>/board/editBoardFile";
-		      	//frm.submit();
+			 	const imageFiles = document.getElementById("file-image2").files;
+			 	console.log("디버깅 파일 개수:", imageFiles.length);
+			 	for (let i = 0; i < imageFiles.length; i++) {
+			 	    console.log(`파일 ${i + 1}:`, imageFiles[i].name);
+			 	}
+			 	
+			 	if (imageFiles.length != 0) {
+			 		const frm = document.editFrm;
+			      	frm.method = "post";
+			      	frm.action = "<%= ctxPath%>/board/editBoardFile";
+			      	frm.submit(); 
+			 	}
+			 	
 			}
 		});
         
@@ -1524,7 +1531,7 @@
     }
     
     
- 	// 이미지 미리보기(수정) 
+ 	// 이미지 미리보기(수정)  ㅇㅇ
     function previewImage2(event) {
     	
         const files = event.target.files;
@@ -1532,19 +1539,16 @@
 
         //console.log(track);
         
-        track.innerHTML = '';
-        
         if (!track) {
             console.error("미리보기 요소를 찾을 수 없습니다.");
             return;
         }
         
-        console.log(files);
         //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
         	
-        	//console.log(file);
+        	//console.log("파일 업로드 했음 " + file.name);
         	const dataTransfer = new DataTransfer();
         	
             if (file.type.startsWith("image/") || 
@@ -1557,8 +1561,7 @@
                 file.type === "text/plain" || 
                 file.type === "text/csv") {
                 const reader = new FileReader();
-				
-                
+
                 reader.onload = function (e) {
                     const previewBox = document.createElement("div");
                     previewBox.className = "preview-box2";
@@ -1685,8 +1688,13 @@
             }
         }
 
-        event.target.files = dataTransfer.files;
-        //console.log(files);
+        //event.target.files = dataTransfer.files;
+        //console.log("어떤게 업로드 됐을까나~~?");
+        /*
+        Array.from(dataTransfer.files).forEach(file => {
+            console.log(file.name);  
+        });
+        */
     }
     
  	// 긴 글 더보기 처리
