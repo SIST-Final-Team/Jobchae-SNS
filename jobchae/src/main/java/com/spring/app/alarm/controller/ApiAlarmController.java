@@ -31,7 +31,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value="api/alarm/")
-@CrossOrigin(origins = "http://192.168.0.2:5500")
+@CrossOrigin(origins = "*")
 public class ApiAlarmController {
 
 	private final SimpMessagingTemplate messagingTemplate;
@@ -50,9 +50,12 @@ public class ApiAlarmController {
 	@PutMapping("updateAlarmRead/{notification_no}")
 	public ResponseEntity<AlarmVO> updateAlarmRead(@PathVariable String notification_no){
 		//TODO
+		MemberVO member = new MemberVO();
+		member.setMember_id("user001");
+		AlarmVO alarm = alarmService.updateAlarmRead(member, notification_no);
+		ResponseEntity<AlarmVO> response = new ResponseEntity<>(alarm, HttpStatus.OK);
 
-
-		return null;
+		return response;
 	}
 	
 //	알람 입력 메서드
@@ -63,7 +66,7 @@ public class ApiAlarmController {
 		user001.setMember_id("user001");
 		try {
 			//알림 삽입
-			AlarmVO alarm = alarmService.insertAlarm(user001, AlarmVO.NotificationType.FOLLOWER_POST);
+			AlarmVO alarm = alarmService.insertAlarm(user001, AlarmVO.NotificationType.COMMENT);
 
 			//알림을 구독하고 있는 사용자에게 알림 전송
 			messagingTemplate.convertAndSend("/topic/alarm", alarm);
@@ -81,7 +84,7 @@ public class ApiAlarmController {
 	
 //	알람 삭제 메서드
 	@DeleteMapping("deleteAlarm/{notificationNo}")
-	public ResponseEntity<AlarmVO> deleteAlarm(@PathVariable String notification_no){
+	public ResponseEntity<AlarmVO> deleteAlarm(@PathVariable String notificationNo){
 		//TODO 미완성
 
 		ResponseEntity<AlarmVO> response = null;
@@ -89,7 +92,7 @@ public class ApiAlarmController {
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
 		try {
-			AlarmVO deletedAlarm = alarmService.deleteAlarm(user001,notification_no);
+			AlarmVO deletedAlarm = alarmService.deleteAlarm(user001,notificationNo);
 			response = ResponseEntity.ok(deletedAlarm);
 			return response;
 		}
@@ -101,12 +104,12 @@ public class ApiAlarmController {
 	
 //	알림 조회 메서드
 	@GetMapping("selectAlarmList/{pageNumber}")
-	public ResponseEntity<Map> selectAlarmList(@PathVariable String pageNo){
+	public ResponseEntity<Map> selectAlarmList(@PathVariable String pageNumber){
 
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
-		int pageNumber = Integer.parseInt(pageNo);
-		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNumber);
+		int pageNo = Integer.parseInt(pageNumber);
+		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNo);
 //		logger.info("alarmList: " + resultMap);
 		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
 		return response;
