@@ -250,11 +250,12 @@ public class BoardService_imple implements BoardService {
 	}
 
 	// 반응 많은 순 상위 1~3개 추출하기
-	//@Override
-	//public List<String> getReactionCountsByBoard(String board_no) {
-		//List<String> reaction_top3List = dao.getReactionCountsByBoard(board_no);
-		//return reaction_top3List;
-	//}
+	@Override
+	public Map<String, String> getTopReactionsForBoard(String board_no) {
+		Map<String, String> topReactionsList = dao.getTopReactionsForBoard(board_no);
+		return topReactionsList;
+	}
+	
 
 	
 

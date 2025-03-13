@@ -277,4 +277,34 @@
 		values(seq_file_no.nextVal, #{board_no}, 'board', #{file_name}, #{file_original_name}, #{file_size}, default)
 	</insert>
 	
+	
+	
+	<!-- 반응 많은 순 상위 1~3개 추출하기 -->
+	<resultMap type="HashMap" id="topReactionCountsMap">
+	    <result property="reaction_status_1" column="reaction_status_1" javaType="String" />
+	    <result property="reaction_status_2" column="reaction_status_2" javaType="String" />
+	    <result property="reaction_status_3" column="reaction_status_3" javaType="String"/>
+	    <result property="reaction_status_4" column="reaction_status_4" javaType="String"/>
+	    <result property="reaction_status_5" column="reaction_status_5" javaType="String"/>
+	    <result property="reaction_status_6" column="reaction_status_6" javaType="String"/>
+  	</resultMap>
+	<select id="getTopReactionsForBoard" parameterType="String" resultMap="topReactionCountsMap">
+		select 
+		    count(case when r.reaction_status = '1' then 1 end) as reaction_status_1,
+		    count(case when r.reaction_status = '2' then 1 end) as reaction_status_2,
+		    count(case when r.reaction_status = '3' then 1 end) as reaction_status_3,
+		    count(case when r.reaction_status = '4' then 1 end) as reaction_status_4,
+		    count(case when r.reaction_status = '5' then 1 end) as reaction_status_5,
+		    count(case when r.reaction_status = '6' then 1 end) as reaction_status_6
+		from 
+		    tbl_reaction r
+		join 
+		    tbl_board b
+		    on r.reaction_target_no = b.board_no
+		where 
+		    b.board_no = #{board_no}
+	</select>	
+	
+	
+	
 </mapper>

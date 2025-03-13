@@ -108,10 +108,11 @@ public interface BoardService {
 	// 파일 첨수 (수정)
 	int editBoardWithFiles(Map<String, String> paraMap);
 
-
 	// 반응 많은 순 상위 1~3개 추출하기
-	//List<String> getReactionCountsByBoard(String board_no);
+	Map<String, String> getTopReactionsForBoard(String board_no);
 
+
+	
 
 
 }

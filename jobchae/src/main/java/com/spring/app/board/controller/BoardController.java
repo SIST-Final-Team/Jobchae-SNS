@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -76,9 +77,30 @@ public class BoardController {
 	        boardvo.setCountFollow(String.valueOf(followerCount)); 
 	        //System.out.println("boardvo.getCountFollow() " + boardvo.getCountFollow());
 	        
-	        // 반응 많은 순 상위 1~3개 추출하기
-	        //List<String> reactionCounts = service.getReactionCountsByBoard(board_no);
-	        //System.out.println("board_no Reaction Counts: " + reactionCounts);
+	        // 반응 많은 순 상위 1~3개 추출하기 시작
+	        Map<String, String> topReactionsList = service.getTopReactionsForBoard(board_no);
+	        
+	        // 예시로 첫 번째 상태인 1의 반응 개수를 출력
+	        //System.out.println(topReactionsList);
+	        
+	        
+	        List<Map.Entry<String, String>> entryList = new ArrayList<>(topReactionsList.entrySet());
+	        
+	        // 값 기준으로 내림차순 정렬 (String을 Integer로 변환하여 비교)
+	        entryList = entryList.stream()
+	        	    .filter(entry -> Integer.parseInt(entry.getValue()) != 0)  
+	        	    .sorted((entry1, entry2) -> Integer.compare(Integer.parseInt(entry2.getValue()), Integer.parseInt(entry1.getValue())))  
+	        	    .collect(Collectors.toList());
+	        
+	        // 상위 1~3개만 추출
+	        Map<String, String> topReactionList = entryList.stream()
+	            .limit(3)  
+	            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+	        boardvo.setTopReactionList(topReactionList);
+	        
+	        //System.out.println(boardvo.getTopReactionList());
+	        // 반응 많은 순 상위 1~3개 추출하기 끝
 	        
 	        // 댓글 수 구하기
 	        int countComment = service.getCommentCount(board_no);
@@ -92,11 +114,13 @@ public class BoardController {
 		// 피드별 반응 개수 조회하기
 		List<Map<String, String>> reactionCountList = service.getReactionCount();
 		
-		//for (Map<String, String> map : reactionCountList) {
-		    //String reactionTargetNo = (String) map.get("reaction_target_no"); 
-		    //String reactionCount = (String) map.get("reaction_count"); 
-		    //System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
-		//}
+		/*
+		for (Map<String, String> map : reactionCountList) {
+			String reactionTargetNo = (String) map.get("reaction_target_no"); 
+		    String reactionCount = (String) map.get("reaction_count"); 
+		    System.out.println("reaction_target_no: " + reactionTargetNo + ", reaction_count: " + reactionCount);
+		}
+		*/
 		
 		// 댓글 조회하기
         List<CommentVO> commentvoList = service.getAllComments();
