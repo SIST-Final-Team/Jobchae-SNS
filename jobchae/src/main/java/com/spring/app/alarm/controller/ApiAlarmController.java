@@ -31,6 +31,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value="api/alarm/")
+@CrossOrigin(origins = "http://192.168.0.2:5500")
 public class ApiAlarmController {
 
 	private final SimpMessagingTemplate messagingTemplate;
@@ -47,9 +48,11 @@ public class ApiAlarmController {
 	
 //	알람 읽음 변경 메서드
 	@PutMapping("updateAlarmRead/{notification_no}")
-	public String updateAlarmRead(@PathVariable String notification_no){
+	public ResponseEntity<AlarmVO> updateAlarmRead(@PathVariable String notification_no){
 		//TODO
-		return "updateAlarmRead";
+
+
+		return null;
 	}
 	
 //	알람 입력 메서드
@@ -60,7 +63,7 @@ public class ApiAlarmController {
 		user001.setMember_id("user001");
 		try {
 			//알림 삽입
-			AlarmVO alarm = alarmService.insertAlarm(user001, AlarmVO.NotificationType.COMMENT);
+			AlarmVO alarm = alarmService.insertAlarm(user001, AlarmVO.NotificationType.FOLLOWER_POST);
 
 			//알림을 구독하고 있는 사용자에게 알림 전송
 			messagingTemplate.convertAndSend("/topic/alarm", alarm);
@@ -98,15 +101,17 @@ public class ApiAlarmController {
 	
 //	알림 조회 메서드
 	@GetMapping("selectAlarmList/{pageNumber}")
-	public ResponseEntity<Map> selectAlarmList(@PathVariable int pageNumber){
+	public ResponseEntity<Map> selectAlarmList(@PathVariable String pageNo){
 
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
+		int pageNumber = Integer.parseInt(pageNo);
 		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNumber);
 //		logger.info("alarmList: " + resultMap);
 		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
 		return response;
 	}
+
 	
 //	시퀀스 조회 메서드
 //	@GetMapping("seq")

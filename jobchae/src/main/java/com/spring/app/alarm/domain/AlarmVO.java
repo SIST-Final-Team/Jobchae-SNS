@@ -3,6 +3,7 @@ package com.spring.app.alarm.domain;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.spring.app.member.domain.MemberVO;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class AlarmVO {
 
 	public static enum NotificationType{
-		COMMENT, CHAT, FOLLOW, FOLLOWER_POST
+		COMMENT, CHAT, FOLLOW, FOLLOWER_POST, LIKE
 	}
 	
 	@Id
@@ -19,13 +20,16 @@ public class AlarmVO {
 	
 	@NotBlank
 	private String memberId;//	 fk_member_id VARCHAR2(20) NOT NULL, /* 회원 아이디 */
+
+//	@NotNull
+//	private MemberVO memberVO;
 	
 	@NotNull
 	private NotificationType notificationType;//	 notification_type NUMBER(1) NOT NULL, /* 유형 , 댓글 알림:1, 채팅 알림:2, 팔로우 알림:3, 팔로워 게시물 알림: 4*/
 	
 	@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-	private Date notification_registerDate = new Date();//	 notification_register_date DATE DEFAULT sysdate NOT NULL, /* 등록일자 , 기본값 sysdate */
+	private Date notificationRegisterDate = new Date();//	 notification_register_date DATE DEFAULT sysdate NOT NULL, /* 등록일자 , 기본값 sysdate */
 
 
 	// -1: 삭제상태, 0: 읽지 않음, 1: 알림 확인 상태, 2:읽음
@@ -61,12 +65,12 @@ public class AlarmVO {
 		this.notificationType = notificationType;
 	}
 
-	public Date getNotification_registerDate() {
-		return notification_registerDate;
+	public Date getNotificationRegisterDate() {
+		return notificationRegisterDate;
 	}
 
-	public void setNotification_registerDate(Date notification_registerDate) {
-		this.notification_registerDate = notification_registerDate;
+	public void setNotificationRegisterDate(Date notification_registerDate) {
+		this.notificationRegisterDate = notification_registerDate;
 	}
 
 	public int getNotificationIsRead() {

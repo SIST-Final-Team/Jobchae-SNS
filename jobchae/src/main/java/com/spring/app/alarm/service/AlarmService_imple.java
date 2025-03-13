@@ -82,13 +82,12 @@ public class AlarmService_imple implements AlarmService{
 		//TODO 나중에 더 할것이 있는지  조회
 		//한 페이지에 보여줄 알림 수
 		final int pageSize = 10;
-		pageNumber = 0;
 		//페이징 처리
 		Pageable pageAble = PageRequest.of(pageNumber, pageSize);
 		logger.info("memberId : " + member.getMember_id());
 
 		//알림 리스트 조회
-		Slice<AlarmVO> alarmList = alarmDAO.findByMemberId(member.getMember_id(), pageAble);
+		Slice<AlarmVO> alarmList = alarmDAO.findByMemberIdOrderByNotificationRegisterDateDesc(member.getMember_id(), pageAble);
 		logger.info("alarmList: " + alarmList);
 		//다음 페이지가 있는지 확인
 		boolean hasNext = alarmList.hasNext();

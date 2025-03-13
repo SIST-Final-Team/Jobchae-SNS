@@ -51,33 +51,33 @@ public class CompanyVO {
 
     @NotBlank
     @Column(name = "company_name", nullable = false, length = 50)
-    String companyName;
+    private String companyName;
 
     @Column(name = "company_website", length = 2083)
-    String companyWebsite;
+    private String companyWebsite;
 
     @NotNull
     @Column(name = "company_size", nullable = false)
-    int companySize;
+    private int companySize;
 
     @NotNull
     @Column(name = "company_type", nullable = false)
-    int companyType;
+    private int companyType;
 
     @Column(name = "company_logo", length = 200)
-    String companyLogo;
+    private String companyLogo;
 
     @Column(name = "company_explain", length = 2000)
-    String companyExplain;
+    private String companyExplain;
 
     @NotNull
     @Column(name = "company_register_date", nullable = false)
-    Date companyRegisterDate = new Date();
+    private Date companyRegisterDate = new Date();
 
     @NotNull
     @Range(min =1, max = 2)
     @Column(name = "company_status", nullable = false, length = 1)
-    int companyStatus = 1;
+    private int companyStatus = 1;
 
     public CompanyVO(){};
 

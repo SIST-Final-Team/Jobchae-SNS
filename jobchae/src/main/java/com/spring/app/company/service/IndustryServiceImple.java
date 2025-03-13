@@ -4,7 +4,9 @@ import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.model.IndustryDAO;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IndustryServiceImple implements IndustryService{
@@ -60,5 +62,18 @@ public class IndustryServiceImple implements IndustryService{
 
         return industryVOList;
     }
+
+    //검색할 때 나오는 업종 리스트
+//    @Override
+//    public List<IndustryVO> selectIndustryListByNumber() {
+//        //TODO : 나중에 코드 보강 필요
+//        Long industryNum = Long.parseLong(industryNo);
+//        Optional<IndustryVO> industries = industryDAO.findById(industryNum);
+//
+//        List<IndustryVO> industryVOList = industries.stream().toList();
+//
+//
+//        return industryVOList;
+//    }
 
 }
