@@ -1281,11 +1281,11 @@
     	});
     	
     	
-    	// 이미지, 비디오 크게보기
+    	// 이미지, 비디오 크게보기 ㅇㅇ
     	$(".file-preview-button").click(function() {
     		
     		const file_target_no = $(this).closest(".px-0").find("input[name='preview-board-no']").val();
-    	    //alert(file_target_no);
+    	    //console.log(file_target_no);
     	    
     	    $.ajax({
     	        url: '${pageContext.request.contextPath}/api/board/selectFileList',
@@ -1294,15 +1294,14 @@
     	        data: {"file_target_no": file_target_no},
     	        success: function(response) {
     	            let filevoList = response.filevoList;
-    	            //console.log(filevoList);
+    	            //console.log(filevoList.length);
     	            
     	            // 확장자 필터링 (이미지, 비디오만 크게 볼 수 있도록)
-    	            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'mp4', 'avi', 'mov', 'wmv', 'flv'];
+    	            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp', 'mp4', 'avi', 'mov', 'wmv', 'flv'];
     	            filevoList = filevoList.filter(file => {
     	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
     	                return allowedExtensions.includes(fileExtension);
     	            });
-    	            //console.log(filevoList);
     	            
     	            const imageModal = document.getElementById("imageModal");
     	            imageModal.style.display = "block";
@@ -1317,7 +1316,7 @@
     	                const file = filevoList[index];
     	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
     	                
-    	                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension)) {
+    	                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) {
 		                    const img = document.createElement('img');
 		                    img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
 		                    img.classList.add('modal-image');
@@ -1333,7 +1332,7 @@
 		                }
     	            }
     	            
-    	            if (filevoList.length > 0) {
+    	            if (filevoList.length >= 0) {
     	                showImage(currentIndex);
     	            }
     	            
