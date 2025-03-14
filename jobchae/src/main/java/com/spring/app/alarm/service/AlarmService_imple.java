@@ -3,7 +3,10 @@ package com.spring.app.alarm.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.spring.app.company.service.create.InsertNotification;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
@@ -28,11 +31,18 @@ public class AlarmService_imple implements AlarmService{
 	Validator validator;
 
 	private static final Logger logger = LoggerFactory.getLogger(AlarmService_imple.class);
-	
+
+	Map<AlarmVO.NotificationType, InsertNotification> insertNotificationMap;
+
+	// 생성자 주입
+	@Autowired
+	public AlarmService_imple(List<InsertNotification> sender) {
+		this.insertNotificationMap = sender.stream().collect(Collectors.toMap(InsertNotification::NotificationType, Function.identity()));
+	}
 	
 //	알람 삽입
 	@Override
-	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type) {
+	public AlarmVO insertAlarm2(MemberVO member, AlarmVO.NotificationType type) {
 
 		//알림 객체 생성
 		AlarmVO alarm = new AlarmVO();
@@ -54,6 +64,8 @@ public class AlarmService_imple implements AlarmService{
 		return result;
 	}
 
+	//알림 삽입
+	@Override
 //	알림 시퀀스 번호 추출
 //	@Override
 //	public int selectSeq() {

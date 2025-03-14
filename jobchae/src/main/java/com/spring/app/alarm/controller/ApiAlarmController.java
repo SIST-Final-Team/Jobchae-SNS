@@ -66,7 +66,7 @@ public class ApiAlarmController {
 		user001.setMember_id("user001");
 		try {
 			//알림 삽입
-			AlarmVO alarm = alarmService.insertAlarm(user001, AlarmVO.NotificationType.COMMENT);
+			AlarmVO alarm = alarmService.insertAlarm2(user001, AlarmVO.NotificationType.COMMENT);
 
 			//알림을 구독하고 있는 사용자에게 알림 전송
 			messagingTemplate.convertAndSend("/topic/alarm", alarm);

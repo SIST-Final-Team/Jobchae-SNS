@@ -9,7 +9,10 @@ import com.spring.app.member.domain.MemberVO;
 public interface AlarmService {
 
 	//알림 삽입
-	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type);
+	public AlarmVO insertAlarm2(MemberVO member, AlarmVO.NotificationType type);
+
+	//알림 삽입
+	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type, String targetId);
 	
 	//알림 seq 조회
 	//selectKey로 필요가 없어졌음

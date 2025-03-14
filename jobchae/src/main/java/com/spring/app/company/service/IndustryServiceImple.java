@@ -1,5 +1,6 @@
 package com.spring.app.company.service;
 
+import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.model.IndustryDAO;
 import com.spring.app.company.service.create.InsertNotification;
@@ -10,22 +11,22 @@ import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class IndustryServiceImple implements IndustryService{
 
     IndustryDAO industryDAO;
-    Map<String, InsertNotification> insertNotificationMap;
+    Map<AlarmVO.NotificationType, InsertNotification> insertNotificationMap;
 
-    @Autowired
-    public IndustryServiceImple(List<InsertNotification> sender) {
-        sender.stream().colect
-    }
+
 
     // 생성자 주입
     public IndustryServiceImple(IndustryDAO industryDAO) {
         this.industryDAO = industryDAO;
     }
+
 
     // 업종 번호로 업종 정보 조회
     public IndustryVO selectIndustryByNo(Long industry_no) {
