@@ -20,6 +20,18 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
       type="text/javascript"
       src="<%=ctxPath%>/js/main-header/header.js"
     ></script>
+
+    <%-- 검색 --%>
+    
+    <script
+      type="text/javascript"
+    >
+      let ctxPathForSearch = "<%=ctxPath%>";
+    </script>
+    <script
+      type="text/javascript"
+      src="<%=ctxPath%>/js/main-header/search.js"
+    ></script>
   </head>
   <body class="bg-stone-100">
     <nav
@@ -27,24 +39,28 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
     >
       <div class="h-full text-center flex">
         <!-- 로고 -->
-        <div class="h-full w-25 flex-1 text-left">
-          <a href="" class="h-full w-25">
+        <div class="h-full flex-1 text-left md:mr-8 lg:mr-0">
+          <a href="" class="h-full w-20">
             <img
               src="${pageContext.request.contextPath}/images/LinkedIn_icon.svg"
-              class="h-3/4 mt-1.5 w-25  object-contain"
+              class="h-3/4 mt-1.5 object-contain"
           /></a>
         </div>
         <!-- 검색상자 -->
-        <div id="searchBox" class="h-9 ml-4 mt-2 h-full text-left">
+        <div id="searchBox" class="h-9 ml-4 mt-2 h-full text-left hidden lg:block lg:w-70! xl:w-[24rem]! xl:mr-33">
           <div id="searchInput" class="flex rounded-sm h-3/4">
-            <div id="SearchIconDiv" class="h-full">🔍</div>
-            <div id="SearchInputDiv" class="h-full">
+            <div id="SearchIconDiv" class="h-full flex items-center! justify-center"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div id="SearchInputDiv" class="h-full flex items-center!">
+            <form name="searchForm">
               <input
                 type="text"
-                name="globalSearch"
+                name="searchWord"
                 placeholder="검색"
                 class="h-full"
+                value="${requestScope.searchWord}"
+                autocomplete="off"
               />
+            </form>
             </div>
           </div>
           <div id="SearchResultBox" class="hidden rounded-md">

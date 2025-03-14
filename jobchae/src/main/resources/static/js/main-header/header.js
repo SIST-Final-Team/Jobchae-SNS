@@ -88,15 +88,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const htmlResultListFirst = `
     <ul class="SearchBoxDropDown">
         <li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11">🔍</div>
+          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
           <div class="SearchBoxDropDown w-10/11">122</div>
         </li>
         <li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11">🔍</div>
+          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
           <div class="SearchBoxDropDown w-10/11">1234</div>
         </li>
         <li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11">🔍</div>
+          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
           <div class="SearchBoxDropDown w-10/11">12345</div>
         </li>
       </ul>`;
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let htmlResultListSecond = `<ul class="SearchBoxDropDown" id="searchBoxMenuRecentSecond">`;
   data.forEach((item) => {
     htmlResultListSecond += `<li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11">🔍</div>
+          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
           <div class="SearchBoxDropDown w-10/11">${item["num"]}</div>
         </li>`;
     resultListCount++;
@@ -195,8 +195,10 @@ document.addEventListener("DOMContentLoaded", function () {
     SearchBoxButton.textContent = "모두 보기";
     searchBoxMenuRecentPage.innerHTML = html_recentPage;
     searchBoxMenuRecent.innerHTML = htmlResultListFirst;
-    document
-      .querySelector("#searchBoxMenuRecentSecond")
-      .classList.remove("h-80", "overflow-auto");
+    if(document.querySelector("#searchBoxMenuRecentSecond") != null) {
+      document
+        .querySelector("#searchBoxMenuRecentSecond")
+        .classList.remove("h-80", "overflow-auto");
+    }
   }
 });

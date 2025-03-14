@@ -260,7 +260,7 @@
                     <ul class="space-y-4 px-8">
                         <li>
                             <label for="skill_name" class="text-gray-500">보유기술 *</label><br>
-                            <input type="text" name="skill_name" id="skill_name"
+                            <input type="text" name="skill_name" id="skill_name" placeholder="보유기술 입력"
                                 data-target-url="/api/member/skill/search"
                                 data-search-type="skill_name"
                                 data-result-name="fk_skill_no"
