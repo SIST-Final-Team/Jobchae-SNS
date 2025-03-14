@@ -1052,26 +1052,26 @@
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 댓글 
+		// 댓글
 		$(".comment-options").click(function(event) {
-			event.stopPropagation();
-			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
-			$(".options-dropdown2").not(dropdown).hide(); 
+	        event.stopPropagation();  
+	        let dropdown = $(this).closest(".comment").find(".options-dropdown2");
+	        $(".options-dropdown2").not(dropdown).hide(); 
 	        dropdown.toggle(); 
-		});
+	    });
 		
 		$(document).click(function () {
 	        $(".options-dropdown2").hide();
 	    });
 		
+		// 댓글창 토글
 		$(".button-board-action-comment").click(function() { 
 			var commentInputContainer = $(this).closest('div').next('.commentDiv');
 			//console.log(commentInputContainer);
 			commentInputContainer.slideToggle();
 		});
 
-		// ㅇㅇ
-
+		// 댓글 작성 ㅇㅇ
 		$(".comment-submit-button").click(function() {
 			const fk_board_no = $(this).closest('.comment-profile').find('input[type="hidden"]').first().val();
 			//alert(fk_board_no);
@@ -1144,11 +1144,11 @@
 			//}
 		});
 		
-		// 댓글 삭제
+		// 댓글 삭제 ㅇㅇ
 		$(".comment-delete").click(function() {
-			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val();  
+			const fk_board_no = $(this).closest('.comment').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val();  
 			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
 		
 			if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
@@ -2210,8 +2210,6 @@
 									
 									<c:forEach var="commentvo" items="${boardvo.commentvoList}"> 
 									
-									
-										
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
@@ -2221,15 +2219,14 @@
 									                <div class="header">
 									                    <div class="user-info">
 									                        <span class="username">${commentvo.member_name}</span>
-									                        
 									                        <c:if test="${boardvo.fk_member_id == commentvo.fk_member_id}">
 										                        <span class="author-badge">글쓴이</span>
 									                        </c:if>
-									                        
 									                        <span class="time" data-time="${commentvo.comment_register_date}"></span>
+									                        
 									                    </div>
 									                    <div class="more-button">
-									                        <i class="fas fa-ellipsis-h"></i>
+									                        <button class="comment-options">...</button>
 									                    </div>
 									                </div>
 									                <!-- 
@@ -2245,7 +2242,28 @@
 									                    <span class="action-separator"></span>
 									                    <button class="action-button reply">답장 · 댓글 1</button>
 									                </div>
-									                
+									                    
+									                <input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
+													<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
+													<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
+													<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
+														    
+									                <!-- 댓글 드롭다운 -->
+									                <c:if test="${membervo.member_id == commentvo.fk_member_id}">
+											            <div class="options-dropdown2">
+											                <ul>
+												                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+												                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
+											                </ul>
+										            	</div> 
+													</c:if>
+													<c:if test="${membervo.member_id != commentvo.fk_member_id}">
+											            <div class="options-dropdown2">
+											                <ul>
+												                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
+											                </ul>
+										            	</div> 
+													</c:if>
 									                
 									                <!-- 답글 -->
 									                <c:if test="${not empty commentvo.replyCommentsList}">
@@ -2267,7 +2285,7 @@
 											                                <span class="time" data-time="${replyComment.comment_register_date}"></span>
 											                            </div>
 											                            <div class="more-button">
-											                                <i class="fas fa-ellipsis-h"></i>
+											                                <button class="comment-options" style="">...</button>
 											                            </div>
 											                        </div>
 											                        <!-- 
@@ -2283,6 +2301,22 @@
 											                            <span class="action-separator"></span>
 											                            <button class="action-button reply">답장</button>
 											                        </div>
+											                        
+											                        <c:if test="${membervo.member_id == replyComment.fk_member_id}">
+															            <div class="options-dropdown2">
+															                <ul>
+																                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+																                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
+															                </ul>
+														            	</div> 
+																	</c:if>
+																	<c:if test="${membervo.member_id != replyComment.fk_member_id}">
+															            <div class="options-dropdown2">
+															                <ul>
+																                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
+															                </ul>
+														            	</div> 
+																	</c:if>
 											                    </div>
 											                </div> <!-- div.comment child-comment 끝 -->
 									                	
@@ -2291,6 +2325,10 @@
 									                
 								                </div> <!-- div.content 끝 -->
 									        </div> <!-- div.comment parent-comment 끝 -->
+									        
+									        
+									        
+									        
 									</c:forEach>
 						        </div> <!-- div.comment-container 끝 -->
 		                    </c:if>
