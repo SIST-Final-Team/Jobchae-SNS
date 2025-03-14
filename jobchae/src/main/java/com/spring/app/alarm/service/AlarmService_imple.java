@@ -66,6 +66,11 @@ public class AlarmService_imple implements AlarmService{
 
 	//알림 삽입
 	@Override
+	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type, String targetId) {
+		return null;
+	}
+
+
 //	알림 시퀀스 번호 추출
 //	@Override
 //	public int selectSeq() {
