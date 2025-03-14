@@ -2,16 +2,25 @@ package com.spring.app.company.service;
 
 import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.model.IndustryDAO;
+import com.spring.app.company.service.create.InsertNotification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class IndustryServiceImple implements IndustryService{
 
     IndustryDAO industryDAO;
+    Map<String, InsertNotification> insertNotificationMap;
+
+    @Autowired
+    public IndustryServiceImple(List<InsertNotification> sender) {
+        sender.stream().colect
+    }
 
     // 생성자 주입
     public IndustryServiceImple(IndustryDAO industryDAO) {

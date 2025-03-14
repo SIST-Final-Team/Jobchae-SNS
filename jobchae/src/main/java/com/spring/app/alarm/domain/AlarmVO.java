@@ -6,9 +6,15 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spring.app.member.domain.MemberVO;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Getter
+@Setter
+@ToString
 @Document(collection = "notification")
 public class AlarmVO {
 
@@ -22,7 +28,7 @@ public class AlarmVO {
 	@NotBlank
 	private String memberId;//	 fk_member_id VARCHAR2(20) NOT NULL, /* 회원 아이디 */
 
-
+	@NotNull
 	private Map<String, String> MemberInfo;
 
 	private String targetMemberId;
@@ -49,51 +55,4 @@ public class AlarmVO {
 
 	private String targetURL;
 
-	public String getNotificationNo() {
-		return notificationNo;
-	}
-
-	public void setNotificationNo(String notificationNo) {
-		this.notificationNo = notificationNo;
-	}
-
-	public String getMemberId() {
-		return memberId;
-	}
-
-	public void setMemberId(String memberId) {
-		this.memberId = memberId;
-	}
-
-	public NotificationType getNotificationType() {
-		return notificationType;
-	}
-
-	public void setNotificationType(NotificationType notificationType) {
-		this.notificationType = notificationType;
-	}
-
-	public Date getNotificationRegisterDate() {
-		return notificationRegisterDate;
-	}
-
-	public void setNotificationRegisterDate(Date notification_registerDate) {
-		this.notificationRegisterDate = notification_registerDate;
-	}
-
-	public int getNotificationIsRead() {
-		return notificationIsRead;
-	}
-
-	public void setNotificationIsRead(int notificationIsRead) {
-		this.notificationIsRead = notificationIsRead;
-	}
-
-	public String getTargetURL() {
-		return targetURL;
-	}
-
-	public void setTargetURL(String targetURL) {
-		this.targetURL = targetURL;
-	}
 }

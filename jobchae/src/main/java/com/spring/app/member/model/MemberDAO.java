@@ -144,7 +144,7 @@ public interface MemberDAO {
 	
 	/**
 	 * 한 회원의 보유기술 모두 조회
-	 * @param login_member_id: 로그인한 회원 아이디, member_id: 조회대상 회원 아이디
+	 * @param login_member_id: 로그인한 회원 아이디, member_id: 조회대상 회원 아이디W
 	 * @return
 	 */
 	List<MemberSkillVO> getMemberSkillListByMemberId(Map<String, String> paraMap);
@@ -152,6 +152,9 @@ public interface MemberDAO {
 	// 회원 보유기술 등록, 삭제
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
+
+	//연규영이 추가 아이디로 정보 가져오기
+	MemberVO getAlarmMemberInfoByMemberId(String member_id);
 
 	
 
