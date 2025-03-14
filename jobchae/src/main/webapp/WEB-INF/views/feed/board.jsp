@@ -1054,11 +1054,21 @@
 		///////////////////////////////////////////////////////////////////////////////////////// 
 		// 댓글
 		$(".comment-options").click(function(event) {
-	        event.stopPropagation();  
-	        let dropdown = $(this).closest(".comment").find(".options-dropdown2");
-	        $(".options-dropdown2").not(dropdown).hide(); 
-	        dropdown.toggle(); 
-	    });
+		    event.stopPropagation();  
+		
+		    let isParent = $(this).closest(".comment").hasClass("parent-comment"); // 부모댓글인지 자식댓글인지 구분하기 위함!
+		
+		    if (isParent) {
+		        let dropdown = $(this).closest(".parent-comment").find("> .content > .options-dropdown2");  
+		        $(".options-dropdown2").not(dropdown).hide(); 
+		        dropdown.toggle(); 
+		    } else {
+		        let dropdown = $(this).closest(".child-comment").find("> .content > .options-dropdown2"); 
+		        $(".options-dropdown2").not(dropdown).hide(); 
+		        dropdown.toggle();
+		    }
+		});
+
 		
 		$(document).click(function () {
 	        $(".options-dropdown2").hide();
