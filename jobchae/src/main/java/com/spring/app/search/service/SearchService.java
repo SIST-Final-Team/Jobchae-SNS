@@ -8,7 +8,7 @@ import com.spring.app.search.domain.SearchCompanyVO;
 import com.spring.app.search.domain.SearchMemberVO;
 
 public interface SearchService {
-	
+
 	/**
 	 * 게시물 검색 결과 가져오기
 	 * @param paraMap
@@ -20,7 +20,7 @@ public interface SearchService {
 	 * @return
 	 */
 	List<SearchBoardVO> searchBoardByContent(Map<String, String> paraMap);
-	
+
 	/**
 	 * 게시물 검색 결과 개수 가져오기
 	 * @param paraMap
@@ -32,7 +32,7 @@ public interface SearchService {
 	 * @return
 	 */
 	int totalSearchBoardByContent(Map<String, String> paraMap);
-	
+
 	/**
 	 * 회원 검색 결과 가져오기
 	 * @param paraMap
@@ -44,8 +44,8 @@ public interface SearchService {
 	 * start: 시작 번호, end: 끝 번호
 	 * @return
 	 */
-	List<SearchMemberVO> searchMemberByName(Map<String, Object> paraMap);
 
+	List<SearchMemberVO> searchMemberByName(Map<String, Object> paraMap);
 	/**
 	 * 기업 검색 결과 가져오기
 	 * @param paraMap

@@ -156,6 +156,5 @@ public class ApiSearchController {
 		
 		return service.searchCompanyByName(params);
 	}
-	
 
 }
