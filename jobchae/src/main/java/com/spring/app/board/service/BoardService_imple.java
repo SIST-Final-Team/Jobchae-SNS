@@ -62,11 +62,11 @@ public class BoardService_imple implements BoardService {
 	}
 	
 	// 글 수정
-	@Override
-	public int editBoard(Map<String, String> paraMap) {
-		int n = dao.editBoard(paraMap);
-		return n;
-	}
+	//@Override
+	//public int editBoard(Map<String, String> paraMap) {
+	//	int n = dao.editBoard(paraMap);
+	//	return n;
+	//}
 
 	// 게시물 반응
 	@Override
@@ -183,6 +183,69 @@ public class BoardService_imple implements BoardService {
 	@Override
 	public int getCommentCount(String board_no) {
 		int n = dao.getCommentCount(board_no);
+		return n;
+	}
+
+	// 댓글 삭제하기
+	@Override
+	public int deleteComment(Map<String, String> paraMap) {
+		int n = dao.deleteComment(paraMap);
+		return n;
+	}
+
+	// 댓글 수정하기
+	@Override
+	public int editComment(Map<String, String> paraMap) {
+		int n = dao.editComment(paraMap);
+		return n;
+	}
+
+	// 관심없음 등록하기
+	@Override
+	public int ignoredBoard(Map<String, String> paraMap) {
+		int n = dao.ignoredBoard(paraMap);
+		return n;
+	}
+
+	// 대댓글 등록하기
+	@Override
+	public int addCommentReply(Map<String, String> paraMap) {
+		int n = dao.addCommentReply(paraMap);
+		return n;
+	}
+
+	// 파일 조회하기
+	@Override
+	public List<FileVO> selectFileList(Map<String, String> paraMap) {
+		List<FileVO> filevoList = dao.selectFileList(paraMap);
+		return filevoList;
+	}
+
+	// 게시글 수정
+	@Override
+	public int editBoard(Map<String, String> paraMap) {
+		int n = dao.editBoard(paraMap);
+		return n;
+	}
+
+	
+	@Override
+	public List<FileVO> selectFileList2(String board_no) {
+		List<FileVO> filevoList = dao.selectFileList2(board_no);
+		return filevoList;
+	}
+
+	// 게시글 수정 (첨부파일 삭제)
+	@Override
+	public int deleteFiles(List<String> deleteFileList) {
+		int n = dao.deleteFiles(deleteFileList);
+		return n;
+	}
+
+	// 파일 첨수 (수정)
+	@Override
+	public int editBoardWithFiles(Map<String, String> paraMap) {
+		int n = dao.editBoardWithFiles(paraMap);
 		return n;
 	}
 

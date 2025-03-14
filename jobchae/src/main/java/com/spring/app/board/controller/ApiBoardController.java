@@ -1,6 +1,9 @@
 package com.spring.app.board.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.board.domain.BoardVO;
 import com.spring.app.board.service.BoardService;
+import com.spring.app.common.FileManager;
 import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.reaction.domain.ReactionVO;
@@ -30,6 +35,9 @@ public class ApiBoardController {
 
 	@Autowired
 	BoardService service;
+	
+	@Autowired  
+	private FileManager fileManager; 
 	
 	// 글 삭제
 	@PostMapping("deleteBoard")
@@ -340,6 +348,167 @@ public class ApiBoardController {
 		int n = service.addComment(paraMap);
 		
 		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	// 댓글 삭제하기
+	@PostMapping("deleteComment")
+	@ResponseBody
+	public Map<String, Integer> deleteComment(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_no) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("comment_no : " + comment_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("comment_no", comment_no);
+		int n = service.deleteComment(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
+	// 댓글 수정하기
+	@PostMapping("editComment")
+	@ResponseBody
+	public Map<String, Integer> editComment(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_no, @RequestParam String comment_content) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("comment_no : " + comment_no);
+		//System.out.println("comment_content : " + comment_content);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("comment_no", comment_no);
+		paraMap.put("comment_content", comment_content);
+		int n = service.editComment(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
+	// 관심없음 등록하기
+	@PostMapping("ignoredBoard")
+	@ResponseBody
+	public Map<String, Integer> ignoredBoard(HttpServletRequest request, @RequestParam String fk_member_id, @RequestParam String fk_board_no) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		int n = service.ignoredBoard(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
+	// 대댓글 등록하기
+	@PostMapping("addCommentReply")
+	@ResponseBody
+	public Map<String, Integer> addCommentReply(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_content, @RequestParam String comment_no) {
+
+		//System.out.println("fk_board_no : " + fk_board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("comment_content : " + comment_content);
+		//System.out.println("comment_no : " + comment_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fk_board_no", fk_board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("comment_content", comment_content);
+		paraMap.put("comment_no", comment_no);
+		int n = service.addCommentReply(paraMap);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		return map; 
+	}
+	
+	
+	// 파일 조회하기
+	@PostMapping("selectFileList")
+	@ResponseBody
+	public Map<String, Object> selectFileList(HttpServletRequest request, @RequestParam String file_target_no) {
+
+		//System.out.println("file_target_no : " + file_target_no);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("file_target_no", file_target_no);
+		List<FileVO> filevoList = service.selectFileList(paraMap);
+		
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("filevoList", filevoList);
+		return map; 
+	}
+	
+	
+	// 게시글 수정
+	@PostMapping("editBoard")
+	@ResponseBody
+	public Map<String, Object> editBoard(HttpServletRequest request, @RequestParam String board_no, @RequestParam String fk_member_id, @RequestParam String board_content, @RequestParam String board_visibility, @RequestParam(required = false) List<String> fileNoList, ModelAndView mav) {
+		
+		//fileNoList는 삭제하면 안 되는 파일들
+		
+		//System.out.println("board_no : " + board_no);
+		//System.out.println("fk_member_id : " + fk_member_id);
+		//System.out.println("board_content : " + board_content);
+		//System.out.println("board_visibility : " + board_visibility);
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("board_no", board_no);
+		paraMap.put("fk_member_id", fk_member_id);
+		paraMap.put("board_content", board_content);
+		paraMap.put("board_visibility", board_visibility);
+		int n = service.editBoard(paraMap); 
+		
+		List<FileVO> filevoList = service.selectFileList2(board_no);
+		
+		int n2 = 1;
+		
+		if (fileNoList != null) {
+			// 삭제할 파일 목록 찾기
+		    List<String> deleteFileList = new ArrayList<>();
+		    for (FileVO file : filevoList) {
+		        String fileNo = String.valueOf(file.getFile_no());
+		        if (!fileNoList.contains(fileNo)) { 
+		            deleteFileList.add(fileNo);
+		        }
+		    }
+		    if (!deleteFileList.isEmpty()) {
+		        n2 *= service.deleteFiles(deleteFileList);
+		    }
+		} else {	// 첨부파일을 다 삭제하려는 경우
+			List<String> deleteFileList = new ArrayList<>();
+		    for (FileVO file : filevoList) {
+		        deleteFileList.add(String.valueOf(file.getFile_no()));
+		    }
+		    
+		    if (!deleteFileList.isEmpty()) {
+		    	n2 *= service.deleteFiles(deleteFileList);
+		    }
+		}
+		
+		if (n * n2 != 1) {
+			mav.addObject("message", "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("msg");
+		}
+		
+		Map<String, Object> map = new HashMap<>();
 		map.put("n", n);
 		return map; 
 	}
