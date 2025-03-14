@@ -106,6 +106,20 @@ public class BoardController {
 	        int countComment = service.getCommentCount(board_no);
 	        boardvo.setCountComment(String.valueOf(countComment));
 	        //System.out.println("countComment : " + countComment);
+	        
+	        // 댓글 조회하기
+	        //System.out.println(board_no);
+	        List<CommentVO> commentvoList = service.getAllComments(board_no);
+	        for (CommentVO commentvo : commentvoList) {
+	        	// 답글 조회하기
+	        	List<CommentVO> replyCommentsList = service.getRelplyComments(commentvo.getComment_no());
+	        	commentvo.setReplyCommentsList(replyCommentsList);
+	        	
+	        	for (CommentVO reply : commentvo.getReplyCommentsList()) {
+	                System.out.println("대댓글: " + reply.getComment_content());
+	            }
+	        }
+	        boardvo.setCommentvoList(commentvoList);
 		}
 		
 		// 반응 조회하기
@@ -122,14 +136,13 @@ public class BoardController {
 		}
 		*/
 		
-		// 댓글 조회하기
-        List<CommentVO> commentvoList = service.getAllComments();
 		
+        
 		mav.addObject("boardvoList", boardvoList);
 		mav.addObject("membervo", membervo);
 		mav.addObject("reactionvoList", reactionvoList);
 		mav.addObject("reactionCountList", reactionCountList);
-		mav.addObject("commentvoList", commentvoList);
+		//mav.addObject("commentvoList", commentvoList);
 		
 		mav.setViewName("feed/board");
 		

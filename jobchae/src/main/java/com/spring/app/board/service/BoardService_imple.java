@@ -174,8 +174,8 @@ public class BoardService_imple implements BoardService {
 
 	// 댓글 조회하기
 	@Override
-	public List<CommentVO> getAllComments() {
-		List<CommentVO> commentvoList = dao.getAllComments();
+	public List<CommentVO> getAllComments(String board_no) {
+		List<CommentVO> commentvoList = dao.getAllComments(board_no);
 		return commentvoList;
 	}
 
@@ -254,6 +254,13 @@ public class BoardService_imple implements BoardService {
 	public Map<String, String> getTopReactionsForBoard(String board_no) {
 		Map<String, String> topReactionsList = dao.getTopReactionsForBoard(board_no);
 		return topReactionsList;
+	}
+
+	// 답글 조회하기
+	@Override
+	public List<CommentVO> getRelplyComments(String comment_no) {
+		List<CommentVO> replyCommentsList = dao.getRelplyComments(comment_no);
+		return replyCommentsList;
 	}
 	
 

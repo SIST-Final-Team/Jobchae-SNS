@@ -200,7 +200,7 @@
         
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
-    	$(".comment-input-container").hide();
+    	$(".commentDiv").hide();
 		
     	// 긴 글 더보기 처리
 		var content = document.getElementById('boardContent'); 
@@ -587,7 +587,7 @@
             }
         });
 	 	
-        // 글 수정하기 ㅇㅇ
+        // 글 수정하기 
         $("button#edit-update").click(function() {
 			const boardContent = editQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			
@@ -1031,14 +1031,8 @@
 			}
 		});
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 게시글 시간
+		// 게시글, 댓글 시간
 		$(".time").each(function () {
-	        const timeString = $(this).attr("data-time");
-	        $(this).text(timeAgo(timeString));
-	    });
-
-		// 댓글 시간
-		$(".comment-date").each(function () {
 	        const timeString = $(this).attr("data-time");
 	        $(this).text(timeAgo(timeString));
 	    });
@@ -1071,28 +1065,32 @@
 	    });
 		
 		$(".button-board-action-comment").click(function() { 
-			var commentInputContainer = $(this).closest('div').next('.comment-input-container');
+			var commentInputContainer = $(this).closest('div').next('.commentDiv');
 			//console.log(commentInputContainer);
 			commentInputContainer.slideToggle();
 		});
 
+		// ㅇㅇ
 
 		$(".comment-submit-button").click(function() {
-			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
-			//alert("클릭" + fk_board_no);
+			const fk_board_no = $(this).closest('.comment-profile').find('input[type="hidden"]').first().val();
+			//alert(fk_board_no);
 			
 			const fk_member_id = document.getElementById("loginuserID").value;
+			//alert(fk_member_id);
 			
-			const comment_content = $(this).closest('.comment-input-container').find('#commentInput').val().trim(); 
+			const comment_content = $(this).closest('.comment-profile').find('#commentInput').val().trim(); 
 			//alert(comment_content);
 			
-			const mentionedNameText = $('#mentionedName').text().trim();
-			//alert(mentionedNameText);
 			
-			const comment_no = $("input[name='hidden-comment-reply-no']").val();
+			// 대댓글 관련
+			//const mentionedNameText = $('#mentionedName').text().trim();
+			//alert(mentionedNameText);
+			//const comment_no = $("input[name='hidden-comment-reply-no']").val();
 			//alert(comment_no);
 			
-			if (mentionedNameText !== "") { // 대댓글이라면
+			//if (mentionedNameText !== "") { // 대댓글이라면
+				/*
 				if (comment_content == "") {
 					alert("댓글 내용을 입력해주세요.");
 					$(this).closest('.comment-input-container').find('#commentInput').val('');
@@ -1119,9 +1117,9 @@
 					});
 				}
 			} else {
-				if (comment_content == "") {
+				*/if (comment_content == "") {
 					alert("댓글 내용을 입력해주세요.");
-					$(this).closest('.comment-input-container').find('#commentInput').val('');
+					$(this).closest('.comment-profile').find('#commentInput').val('');
 					return;
 				} else {
 					$.ajax({
@@ -1133,7 +1131,7 @@
 							   "comment_content" : comment_content},
 						success: function(json) {
 							if(json.n == 1) {
-								$(this).closest('.comment-input-container').find('#commentInput').val('');
+								$(this).closest('.comment-profile').find('#commentInput').val('');
 								alert("댓글이 등록되었습니다.");
 								location.reload();
 							}
@@ -1143,7 +1141,7 @@
 					 	}
 					});
 				}
-			}
+			//}
 		});
 		
 		// 댓글 삭제
@@ -1268,7 +1266,7 @@
 		});
 
     
-    	// 대댓글 
+    	// 대댓글  
     	$(".reply-button").click(function() {
     		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
     		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
@@ -1530,7 +1528,7 @@
     }
     
     
- 	// 이미지 미리보기(수정)  ㅇㅇ
+ 	// 이미지 미리보기(수정) 
     function previewImage2(event) {
     	
         const files = event.target.files;
@@ -1948,35 +1946,35 @@
                                     	<c:forEach var="reactionCount" items="${reactionCountList}">
 	                                		<c:if test="${reactionCount.reaction_count > 0 and boardvo.board_no == reactionCount.reaction_target_no}">
 	                                			
-	                                					<div class="reaction-images">
-	                                			<c:forEach var="entry" items="${boardvo.topReactionList}">
-	                                				<c:if test="${entry.key.startsWith('reaction_status_') and entry.value != '0'}">
-
-															<c:choose>
-																<c:when test="${entry.key == 'reaction_status_1'}">
-																	<img src="<%= ctxPath%>/images/emotion/like_small.svg"/>				
-																</c:when>
-																<c:when test="${entry.key == 'reaction_status_2'}">
-			                                        				<img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-																</c:when>
-																<c:when test="${entry.key == 'reaction_status_3'}">
-																	<img src="<%= ctxPath%>/images/emotion/support_small.svg"/>
-																</c:when>
-																<c:when test="${entry.key == 'reaction_status_4'}">
-																	<img src="<%= ctxPath%>/images/emotion/love_small.svg"/>
-																</c:when>
-																<c:when test="${entry.key == 'reaction_status_5'}">
-																	<img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-																</c:when>
-																<c:when test="${entry.key == 'reaction_status_6'}">
-																	<img src="<%= ctxPath%>/images/emotion/funny_small.svg"/>
-																</c:when>
-															</c:choose>	                                					
-
-	                                				</c:if>
-	                                			</c:forEach>
-	                                		
-	                                					</div>
+                                					<div class="reaction-images">
+			                                			<c:forEach var="entry" items="${boardvo.topReactionList}">
+			                                				<c:if test="${entry.key.startsWith('reaction_status_') and entry.value != '0'}">
+		
+																	<c:choose>
+																		<c:when test="${entry.key == 'reaction_status_1'}">
+																			<img src="<%= ctxPath%>/images/emotion/like_small.svg"/>				
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_2'}">
+					                                        				<img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_3'}">
+																			<img src="<%= ctxPath%>/images/emotion/support_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_4'}">
+																			<img src="<%= ctxPath%>/images/emotion/love_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_5'}">
+																			<img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_6'}">
+																			<img src="<%= ctxPath%>/images/emotion/funny_small.svg"/>
+																		</c:when>
+																	</c:choose>	                                					
+		
+			                                				</c:if>
+		                                			</c:forEach>
+                               					</div>
+                               					
 		                                        <span id="reactionCount" value="${boardvo.board_no}">
 													${reactionCount.reaction_count}
 			                                    </span>
@@ -2086,6 +2084,8 @@
 	                        </ul>
 	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    
+	                    
+	                    <!--  
 	                    <div class="comment-input-container" id="commentInputContainer">
 	                    	<div class="comment-profile">
 	                    		<input type="hidden" value="${boardvo.board_no}" />
@@ -2109,8 +2109,10 @@
 	                    		</div>
 	                    	</div>
 	                    	
-	                    	<ul class="comment-list"> 
-	                    		<c:if test="${not empty commentvoList}">
+	                    	-->
+	                    	<!-- 
+	                    	<ul class="comment-list"> <!-- ㅇㅇ -->
+	                    		<!--<c:if test="${not empty commentvoList}">
 		                    		<c:forEach var="commentvo" items="${commentvoList}">  
 		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
 			                    			<li class="comment-item">
@@ -2124,7 +2126,7 @@
 														
 														<span class="comment-author">${commentvo.member_name}</span>
 														<!--<span class="comment-relationship">팔로워 0명</span>-->
-														<span class="comment-date" data-time="${commentvo.comment_register_date}">5일</span> 
+														<!-- <span class="comment-date" data-time="${commentvo.comment_register_date}"></span> 
 														<button class="comment-options">...</button>
 													</div>
 													<div class="comment-text">
@@ -2147,6 +2149,7 @@
 												</div>     
 												
 												<!-- 옵션 드롭다운 메뉴 -->
+												<!--  
 												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
 										            <div class="options-dropdown2">
 										                <ul>
@@ -2163,17 +2166,142 @@
 									            	</div> 
 												</c:if>
 												<!-- div.options-dropdown 끝 -->
+												<!-- 
 				                    		</li>
 				                    		
 			                    		</c:if>
 		                    		</c:forEach>
 	                    		</c:if>
-	                    	</ul>
+	                    	</ul>-->
 	                    	
 	                    	
 	                    	
-	                    </div> <!-- div.comment-input-container 끝 -->
-
+	                    <!-- </div>--> <!-- div.comment-input-container 끝 -->
+	                    
+	                    <div class="commentDiv">
+		                    <div class="comment-profile">
+	                    		<input type="hidden" value="${boardvo.board_no}" />
+	                    		
+		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
+		                    	<div class="comment-input" >
+		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
+							        <input type="text" placeholder="댓글 남기기" id="commentInput">
+						            <button class="comment-submit-button">댓글</button>
+						            <input type="hidden" name="hidden-comment-reply-no" value="" />
+							    </div>	
+	                    	</div>
+		                    
+		                    <!-- 댓글이 있을때만 정렬 표시 -->
+		                    <c:if test="${not empty boardvo.commentvoList}">
+		                    	<div class="comment-list-container">
+		                    		<div class="comment-sort">
+		                    			<select id="sortOption">
+							                <option value="recent">최신순</option>
+							                <option value="relevant">관련순</option>
+							            </select>
+		                    		</div>
+		                    	</div>
+		                    </c:if>
+		                    
+		                    <!-- 댓글이 있을때만 댓글 목록 표시 ㅇㅇ -->
+		                    <c:if test="${not empty boardvo.commentvoList}">
+			                    <div class="comment-container">
+									
+									
+									<c:forEach var="commentvo" items="${boardvo.commentvoList}"> 
+									
+									
+										
+											<div class="comment parent-comment"> <!-- 부모 댓글 -->
+											
+									            <div class="profile">
+									                <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진">
+									            </div>
+									            <div class="content">
+									                <div class="header">
+									                    <div class="user-info">
+									                        <span class="username">${commentvo.member_name}</span>
+									                        
+									                        <c:if test="${boardvo.fk_member_id == commentvo.fk_member_id}">
+										                        <span class="author-badge">글쓴이</span>
+									                        </c:if>
+									                        
+									                        <span class="time" data-time="${commentvo.comment_register_date}"></span>
+									                    </div>
+									                    <div class="more-button">
+									                        <i class="fas fa-ellipsis-h"></i>
+									                    </div>
+									                </div>
+									                <!-- 
+									                <div class="user-title">
+									                    Maxwell Leadership Certified Team Member - Speaker, Trainer, and Co...
+									                </div>
+									                -->
+									                <div class="comment-text">${commentvo.comment_content}</div>
+									                <div class="actions">
+									                    <button class="action-button like">
+									                        <i class="fas fa-heart"></i> 추천 · 1
+									                    </button>
+									                    <span class="action-separator"></span>
+									                    <button class="action-button reply">답장 · 댓글 1</button>
+									                </div>
+									                
+									                
+									                <!-- 답글 -->
+									                <c:if test="${not empty commentvo.replyCommentsList}">
+									                
+									                	<c:forEach var="replyComment" items="${commentvo.replyCommentsList}"> 
+									                	
+									                		<div class="comment child-comment"> 
+											                    <div class="profile">
+											                        <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진">
+											                    </div>
+											                    <div class="content">
+											                        <div class="header">
+											                            <div class="user-info">
+											                                <span class="username">${replyComment.member_name}</span>
+											                                <a href="#" class="linkedin-icon"><i class="fab fa-linkedin-in"></i></a>
+											                                <c:if test="${boardvo.fk_member_id == replyComment.fk_member_id}">
+														                        <span class="author-badge">글쓴이</span>
+													                        </c:if>
+											                                <span class="time" data-time="${replyComment.comment_register_date}"></span>
+											                            </div>
+											                            <div class="more-button">
+											                                <i class="fas fa-ellipsis-h"></i>
+											                            </div>
+											                        </div>
+											                        <!-- 
+											                        <div class="user-title">
+											                            Founder & CEO, WisdomQuant | Building AI-first careers throug...
+											                        </div>
+											                        -->
+											                        <div class="comment-text">${replyComment.comment_content}</div>
+											                        <div class="actions">
+											                            <button class="action-button like">
+											                                <i class="fas fa-heart"></i> 추천 · 1
+											                            </button>
+											                            <span class="action-separator"></span>
+											                            <button class="action-button reply">답장</button>
+											                        </div>
+											                    </div>
+											                </div> <!-- div.comment child-comment 끝 -->
+									                	
+									                	</c:forEach>
+									                </c:if>
+									                
+								                </div> <!-- div.content 끝 -->
+									        </div> <!-- div.comment parent-comment 끝 -->
+									</c:forEach>
+						        </div> <!-- div.comment-container 끝 -->
+		                    </c:if>
+	                    </div>
+						
+						
+						
+						
+						
+						
+						
                     </div>
                	</c:forEach>
            	</div> <!-- div#update 끝 -->

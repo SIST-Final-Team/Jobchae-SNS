@@ -195,12 +195,13 @@
 		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, seq_comment_no.currval, default, default)
 	</insert>
 	
-	<!-- 댓글 조회하기 -->
-	<select id="getAllComments" resultType="CommentVO">
+	<!-- 부모댓글 조회하기 -->
+	<select id="getAllComments" parameterType="String" resultType="CommentVO">
 		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
 		from tbl_comment c
 		join tbl_member m
 		on c.fk_member_id = m.member_id
+		where c.fk_board_no = #{board_no} and c.comment_depth = 0
 		order by c.comment_register_date desc
 	</select>
 	
@@ -306,5 +307,14 @@
 	</select>	
 	
 	
+	<!-- 답글 조회하기 -->
+	<select id="getRelplyComments" parameterType="String" resultType="CommentVO">
+		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
+		from tbl_comment c
+		join tbl_member m
+		on c.fk_member_id = m.member_id
+		where c.comment_parent_no = #{comment_no} and c.comment_depth = 1
+		order by c.comment_register_date desc
+	</select>
 	
 </mapper>

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.spring.app.comment.domain.CommentVO;
 import com.spring.app.file.domain.FileVO;
 
 public class BoardVO {
@@ -34,7 +35,15 @@ public class BoardVO {
 	private String countComment;
 	
 	private Map<String, String> topReactionList;
-	
+	private List<CommentVO> commentvoList;
+
+	public List<CommentVO> getCommentvoList() {
+		return commentvoList;
+	}
+
+	public void setCommentvoList(List<CommentVO> commentvoList) {
+		this.commentvoList = commentvoList;
+	}
 
 	public Map<String, String> getTopReactionList() {
 		return topReactionList;

@@ -82,7 +82,7 @@ public interface BoardDAO {
 	int addComment(Map<String, String> paraMap);
 
 	// 댓글 조회하기
-	List<CommentVO> getAllComments();
+	List<CommentVO> getAllComments(String board_no);
 
 	// 댓글 수 구하기
 	int getCommentCount(String board_no);
@@ -114,6 +114,9 @@ public interface BoardDAO {
 
 	// 반응 많은 순 상위 1~3개 추출하기
 	Map<String, String> getTopReactionsForBoard(String board_no);
+
+	// 답글 조회하기
+	List<CommentVO> getRelplyComments(String comment_no);
 	
 		
 

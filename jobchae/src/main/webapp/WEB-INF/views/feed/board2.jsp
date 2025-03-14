@@ -1947,14 +1947,40 @@
 	                                
                                     	<c:forEach var="reactionCount" items="${reactionCountList}">
 	                                		<c:if test="${reactionCount.reaction_count > 0 and boardvo.board_no == reactionCount.reaction_target_no}">
-		                                		<div class="reaction-images">
-													<img src="<%= ctxPath%>/images/emotion/like_small.svg"/>
-			                                        <img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
-			                                        <img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
-		                                        </div>
+	                                			
+                                					<div class="reaction-images">
+			                                			<c:forEach var="entry" items="${boardvo.topReactionList}">
+			                                				<c:if test="${entry.key.startsWith('reaction_status_') and entry.value != '0'}">
+		
+																	<c:choose>
+																		<c:when test="${entry.key == 'reaction_status_1'}">
+																			<img src="<%= ctxPath%>/images/emotion/like_small.svg"/>				
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_2'}">
+					                                        				<img src="<%= ctxPath%>/images/emotion/celebrate_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_3'}">
+																			<img src="<%= ctxPath%>/images/emotion/support_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_4'}">
+																			<img src="<%= ctxPath%>/images/emotion/love_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_5'}">
+																			<img src="<%= ctxPath%>/images/emotion/insightful_small.svg"/>
+																		</c:when>
+																		<c:when test="${entry.key == 'reaction_status_6'}">
+																			<img src="<%= ctxPath%>/images/emotion/funny_small.svg"/>
+																		</c:when>
+																	</c:choose>	                                					
+		
+			                                				</c:if>
+		                                			</c:forEach>
+                               					</div>
+                               					
 		                                        <span id="reactionCount" value="${boardvo.board_no}">
 													${reactionCount.reaction_count}
 			                                    </span>
+			                                    
 	                                		</c:if>
 								        </c:forEach>
 								        

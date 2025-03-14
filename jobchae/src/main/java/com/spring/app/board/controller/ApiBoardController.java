@@ -189,9 +189,9 @@ public class ApiBoardController {
 	        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
 	    // 콘솔에 출력
-	    sortedReactionCounts.forEach((key, value) -> 
-	        System.out.println("Reaction Type: " + key + ", Count: " + value)
-	    );
+	    //sortedReactionCounts.forEach((key, value) -> 
+	    //    System.out.println("Reaction Type: " + key + ", Count: " + value)
+	    //);
 	    
 		return reactionCounts;
 	}
