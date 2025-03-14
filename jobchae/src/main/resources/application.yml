@@ -40,6 +40,10 @@ spring: # 주의할 점은 내용작성시 들여쓰기 내어쓰기시 공백�
     properties:
       hibernate:
         format_sql: true #쿼리를 보기좋게 출력
+  
+  output: #VScode에서 로그 색상 설정
+    ansi:
+      enabled: always
 
 mybatis: #mybatis 설정
   mapper-locations: mybatis/mapper/**/*.xml          #src/main/resources 아래 폴더속에 매퍼파일을 생성

@@ -20,9 +20,11 @@
 		<result property="board_is_delete" column="board_is_delete"/>
 		<result property="member_id" column="member_id"/>
 		<result property="member_name" column="member_name"/>
+		<result property="member_profile" column="member_profile"/>
 		<result property="commentCount" column="commentCount"/>
 		<result property="reactionCount" column="reactionCount"/>
 		<result property="embedCount" column="embedCount"/>
+		<result property="followerCount" column="followerCount"/>
 		<result property="reactionStatusList" column="reactionStatusList"/>
 	    
 	    <collection property="fileList" ofType="FileVO">
@@ -41,31 +43,32 @@
 		from
 		(
 			select rownum as rno, board_no, fk_member_id, board_content, board_visibility, board_comment_allowed, board_register_date
-					, board_parent_no, board_group_no, board_depth, board_is_delete, member_id, member_name
-					, file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+					, board_parent_no, board_group_no, board_depth, board_is_delete, member_id, member_name, member_profile
 					, commentCount
 					, reactionCount
 					, embedCount
 					, reactionStatusList
-		        <!-- 팔로우 -->
+					, followerCount
+		        <!-- 팔로우 여부 표시 -->
 		        <if test="login_member_id != null">
 					, isFollow
 		        </if>
 			from
 			(
-		        select b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name, m.member_birth
-		                , file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+		        select DISTINCT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date
+				        , b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name, m.member_profile
 						, NVL(c.comment_count, 0) AS commentCount
 						, NVL(r.reaction_count, 0) AS reactionCount
 						, NVL(e.embed_count, 0) AS embedCount
 						, reactionStatusList
-		        <!-- 팔로우 -->
+					 	, NVL(follower_count, 0) as followerCount
+		        <!-- 팔로우 여부 표시 -->
 		        <if test="login_member_id != null">
-					, NVL2(following_id, '1', '0') as isFollow
+					, NVL2(f.following_id, '1', '0') as isFollow
 		        </if>
 		        from tbl_board b
 				join tbl_member m on b.fk_member_id = m.member_id
-		        <!-- 팔로우 -->
+		        <!-- 팔로우 여부 표시 -->
 		        <if test="login_member_id != null">
 					left join
 					(
@@ -75,6 +78,14 @@
 					) f
 					on m.member_id = f.following_id
 		        </if>
+		        <!-- 팔로워 수 -->
+				left join
+				(
+					select following_id, count(*) as follower_count
+					from tbl_follow
+					group by following_id
+				) fc
+				on m.member_id = fc.following_id
 				left join
 				(
 					select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
@@ -101,7 +112,7 @@
 				left join
 				(
 					SELECT reaction_target_no,
-					       LISTAGG(reaction_status, ', ') WITHIN GROUP (ORDER BY reaction_count DESC) AS reactionStatusList
+					       LISTAGG(reaction_status, ',') WITHIN GROUP (ORDER BY reaction_count DESC) AS reactionStatusList
 					FROM (
 					    SELECT reaction_target_no, 
 					           reaction_status,
@@ -127,21 +138,393 @@
 		        <!-- 검색어 -->
 		        and b.board_content like '%'|| #{searchWord} ||'%'
 		        <!-- 작성일자 최근 30일, 7일, 1일 -->
-		        <if test="board_register_date != null">
-		            and b.board_register_date &gt;= sysdate - #{board_register_date}
+		        <if test="searchDate != null">
+		            and b.board_register_date &gt;= sysdate - #{searchDate}
 		        </if>
 		        <!-- 이미지가 첨부된 게시글 -->
-		        <if test='searchFileType == "image"'>
+		        <if test='searchContentType == "image"'>
 		            and SUBSTR(file_name, INSTR(file_name, '.', -1) + 1) in ('jpg', 'jpeg', 'png', 'gif', 'webp')
 		        </if>
 		        <!-- 동영상이 첨부된 게시글 -->
-		        <if test='searchFileType == "video"'>
+		        <if test='searchContentType == "video"'>
 		            and SUBSTR(file_name, INSTR(file_name, '.', -1) + 1) in ('mp4')
 		        </if>
 		        order by b.board_register_date desc
+			)
+		) b
+		left join
+		(
+			select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+			from tbl_file
+			where file_target_type = 'board'
+		) fi
+		on b.board_no = fi.file_target_no
+		where rno BETWEEN #{start} AND #{end}
+		order by b.board_register_date desc
+    </select>
+
+
+	
+    <select id="totalSearchBoardByContent" parameterType="HashMap" resultType="int">
+			select count(*)
+			from
+			(
+		        select DISTINCT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name, m.member_birth
+						, NVL(c.comment_count, 0) AS commentCount
+						, NVL(r.reaction_count, 0) AS reactionCount
+						, NVL(e.embed_count, 0) AS embedCount
+						, reactionStatusList
+					 	, NVL(follower_count, 0) as followerCount
+		        <!-- 팔로우 여부 표시 -->
+		        <if test="login_member_id != null">
+					, NVL2(f.following_id, '1', '0') as isFollow
+		        </if>
+		        from tbl_board b
+				join tbl_member m on b.fk_member_id = m.member_id
+		        <!-- 팔로우 여부 표시 -->
+		        <if test="login_member_id != null">
+					left join
+					(
+						select following_id
+						from tbl_follow
+						where follower_id = #{login_member_id}
+					) f
+					on m.member_id = f.following_id
+		        </if>
+		        <!-- 팔로워 수 -->
+				left join
+				(
+					select following_id, count(*) as follower_count
+					from tbl_follow
+					group by following_id
+				) fc
+				on m.member_id = fc.following_id
+				left join
+				(
+					select file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date
+					from tbl_file
+					where file_target_type = 'board'
+				) fi
+				on b.board_no = fi.file_target_no
+				left join
+				(
+					select fk_board_no, count(*) as comment_count
+					from tbl_comment
+					group by fk_board_no
+				) c
+				on b.board_no = c.fk_board_no
+				left join
+				(
+					select reaction_target_no, count(*) as reaction_count
+					from tbl_reaction
+					where reaction_target_type = 'board'
+					group by reaction_target_no
+				) r
+				on b.board_no = r.reaction_target_no
+				<!-- 반응 목록 상위 3개 시작 -->
+				left join
+				(
+					SELECT reaction_target_no,
+					       LISTAGG(reaction_status, ',') WITHIN GROUP (ORDER BY reaction_count DESC) AS reactionStatusList
+					FROM (
+					    SELECT reaction_target_no, 
+					           reaction_status,
+					           COUNT(*) AS reaction_count,
+					           ROW_NUMBER() OVER (PARTITION BY reaction_target_no ORDER BY COUNT(*) DESC) AS row_num
+					    FROM tbl_reaction
+					    WHERE reaction_target_type = 'board'
+					    GROUP BY reaction_target_no, reaction_status
+					) t
+					WHERE row_num &lt;= 3
+					GROUP BY reaction_target_no
+				) rs
+				on b.board_no = rs.reaction_target_no
+				<!-- 반응 목록 상위 3개 끝 -->
+				left join
+				(
+					select board_parent_no, count(*) as embed_count
+					from tbl_board
+					group by board_parent_no
+				) e
+				on b.board_no = e.board_parent_no
+		        where b.board_is_delete = 0
+		        <!-- 검색어 -->
+		        and b.board_content like '%'|| #{searchWord} ||'%'
+		        <!-- 작성일자 최근 30일, 7일, 1일 -->
+		        <if test="searchDate != null">
+		            and b.board_register_date &gt;= sysdate - #{searchDate}
+		        </if>
+		        <!-- 이미지가 첨부된 게시글 -->
+		        <if test='searchContentType == "image"'>
+		            and SUBSTR(file_name, INSTR(file_name, '.', -1) + 1) in ('jpg', 'jpeg', 'png', 'gif', 'webp')
+		        </if>
+		        <!-- 동영상이 첨부된 게시글 -->
+		        <if test='searchContentType == "video"'>
+		            and SUBSTR(file_name, INSTR(file_name, '.', -1) + 1) in ('mp4')
+		        </if>
+		        order by b.board_register_date desc
+			)
+    </select>
+	
+    
+    <select id="searchMemberByName" parameterType="HashMap" resultType="SearchMemberVO">
+    	select *
+		from
+		(
+			select rownum as rno, member_id, fk_region_no, member_name, member_birth
+				, member_register_date, member_is_company, member_profile
+				, member_background_img, member_hire_status
+		    <!-- 팔로우 여부 표시 -->
+		    <if test="login_member_id != null">
+				, isFollow
+		    </if>
+				, member_career_company
+				, school_name
+				, skill_name
+				, region_name
+				, follower_count
+			from
+			(
+				select member_id, m.fk_region_no, member_name, member_birth
+				     , member_register_date, member_is_company, member_profile
+					 , member_background_img, member_hire_status
+		        <!-- 팔로우 여부 표시 -->
+		        <if test="login_member_id != null">
+					 , NVL2(f.following_id, '1', '0') as isFollow
+		        </if>
+					 , mc.member_career_company
+					 , me.school_name
+					 , msk.skill_name
+					 , r.region_name
+					 , NVL(follower_count, 0) as follower_count
+				from tbl_member m
+				left join tbl_region r
+				on m.fk_region_no = r.region_no
+				<!-- 마지막 글 작성일을 기준으로 정렬하기 위함 -->
+				left join
+				(
+					select fk_member_id, max(board_register_date) as last_board_register_date
+					from tbl_board
+					group by fk_member_id
+				) b
+				on m.member_id = b.fk_member_id
+		        <!-- 팔로우 여부 표시 -->
+		        <if test="login_member_id != null">
+		        	<if test="follow == null">
+						left join
+		        	</if>
+		        	<if test="follow == 1">
+						join
+		        	</if>
+					(
+						select following_id
+						from tbl_follow
+						where follower_id = #{login_member_id}
+					) f
+					on m.member_id = f.following_id
+		        </if>
+		        <!-- 팔로워 수 -->
+				left join
+				(
+					select following_id, count(*) as follower_count
+					from tbl_follow
+					group by following_id
+				) fc
+				on m.member_id = fc.following_id
+				<!-- 현재 회사 목록 시작 -->
+				<if test="arr_fk_company_no != null">
+					join
+				</if>
+				<if test="arr_fk_company_no == null">
+					left join
+				</if>
+				(
+					select mc.fk_member_id, LISTAGG(cast(member_career_company as varchar2(100)), ',') WITHIN GROUP (ORDER BY member_career_startdate ASC) AS member_career_company
+					from tbl_member_career mc
+					left join tbl_company c
+					on mc.fk_company_no = c.company_no
+					where mc.member_career_is_current = 1
+					<if test="arr_fk_company_no != null">
+						and fk_company_no in
+						<foreach collection="arr_fk_company_no" index="i" open="(" separator="," close=")">
+							'${arr_fk_company_no[i]}'
+						</foreach>
+					</if>
+					group by mc.fk_member_id
+				) mc
+				on m.member_id = mc.fk_member_id
+				<!-- 현재 회사 목록 끝 -->
+				<!-- 현재 학력 목록 시작 -->
+				<if test="arr_fk_school_no != null">
+					join
+				</if>
+				<if test="arr_fk_school_no == null">
+					left join
+				</if>
+				(
+					select me.fk_member_id, LISTAGG(cast(school_name as varchar2(100)), ',') WITHIN GROUP (ORDER BY member_education_startdate ASC) AS school_name
+					from tbl_member_education me
+					left join tbl_school s
+					on me.fk_school_no = s.school_no
+					where me.member_education_enddate &gt; SYSDATE
+					<if test="arr_fk_school_no != null">
+						and fk_school_no in
+						<foreach collection="arr_fk_school_no" index="i" open="(" separator="," close=")">
+							'${arr_fk_school_no[i]}'
+						</foreach>
+					</if>
+					group by me.fk_member_id
+				) me
+				on m.member_id = me.fk_member_id
+				<!-- 현재 학력 목록 끝 -->
+				<!-- 보유기술 목록 시작 -->
+				<if test="arr_fk_skill_no != null">
+					join
+				</if>
+				<if test="arr_fk_skill_no == null">
+					left join
+				</if>
+				(
+					select fk_member_id, LISTAGG(cast(skill_name as varchar2(100)), ',') WITHIN GROUP (ORDER BY skill_name ASC) AS skill_name
+					from tbl_member_skill msk
+					left join tbl_skill sk
+					on msk.fk_skill_no = sk.skill_no
+					<if test="arr_fk_skill_no != null">
+						where fk_skill_no in
+						<foreach collection="arr_fk_skill_no" index="i" open="(" separator="," close=")">
+							'${arr_fk_skill_no[i]}'
+						</foreach>
+					</if>
+					group by fk_member_id, fk_skill_no
+				) msk
+				on m.member_id = msk.fk_member_id
+				<!-- 보유기술 목록 끝 -->
+				where member_status = 1
+				and member_name like '%' || #{searchWord} || '%'
+				<!-- 지역 -->
+				<if test="arr_fk_region_no != null">
+					and m.fk_region_no in
+					<foreach collection="arr_fk_region_no" index="i" open="(" separator="," close=")">
+						'${arr_fk_region_no[i]}'
+					</foreach>
+				</if>
+				<!-- 정렬기준 -->
+				<if test='searchSortBy == null || searchSortBy == "follower_count"'>
+					order by NVL(follower_count, 0) desc
+				</if>
+				<if test='searchSortBy == "last_board_register_date"'>
+					order by NVL(last_board_register_date, to_date('1900', 'yyyy')) desc
+				</if>
+			)
+		)
+		where rno BETWEEN #{start} AND #{end}
+    </select>
+    
+    <select id="searchCompanyByName" parameterType="HashMap" resultType="SearchCompanyVO">
+    	select *
+		from
+		(
+			select rownum as rno, company_no, fk_member_id, fk_industry_no, fk_region_no
+				, company_name, company_website, company_size
+				, company_type, company_logo, company_explain
+				, company_register_date, company_status
+				, industry_name
+				, region_name
+			from
+			(
+				select company_no, fk_member_id, fk_industry_no, fk_region_no
+					, company_name, company_website, company_size
+					, company_type, company_logo, company_explain
+					, company_register_date, company_status
+					, i.industry_name
+					, r.region_name
+				from tbl_company c
+				left join tbl_region r
+				on c.fk_region_no = r.region_no
+				left join tbl_industry i
+				on c.fk_industry_no = i.industry_no
+				where company_status = 1
+				and company_name like '%' || #{searchWord} || '%'
+				<!-- 업종 -->
+				<if test="arr_fk_industry_no != null">
+					and fk_industry_no in
+					<foreach collection="arr_fk_industry_no" index="i" open="(" separator="," close=")">
+						'${arr_fk_industry_no[i]}'
+					</foreach>
+				</if>
+				<!-- 지역 -->
+				<if test="arr_fk_region_no != null">
+					and fk_region_no in
+					<foreach collection="arr_fk_region_no" index="i" open="(" separator="," close=")">
+						'${arr_fk_region_no[i]}'
+					</foreach>
+				</if>
+				<!-- 회사 규모 -->
+				<if test="arr_company_size != null">
+					and company_size in
+					<foreach collection="arr_company_size" index="i" open="(" separator="," close=")">
+						'${arr_company_size[i]}'
+					</foreach>
+				</if>
+				order by company_name ASC
 			)
 		)
 		where rno BETWEEN #{start} AND #{end}
     </select>
 
+	<!-- 보유기술 일련번호로 보유기술 목록 가져오기 -->
+	<resultMap type="HashMap" id="skillMap">
+		<id property="skill_no" column="skill_no" javaType="String"/>
+		<result property="skill_name" column="skill_name" javaType="String"/>
+	</resultMap>
+	<select id="getSkillListBySkillNo" parameterType="ArrayList" resultMap="skillMap">
+		select skill_no, skill_name
+		from tbl_skill
+		where skill_no in
+		<foreach collection="skill_noList" index="i" open="(" separator="," close=")">
+			'${skill_noList[i]}'
+		</foreach>
+	</select>
+
+	<!-- 회사 일련번호로 회사 목록 가져오기 -->
+	<resultMap type="HashMap" id="companyMap">
+		<id property="company_no" column="company_no" javaType="String"/>
+		<result property="company_name" column="company_name" javaType="String"/>
+	</resultMap>
+	<select id="getCompanyListByCompanyNo" parameterType="ArrayList" resultMap="companyMap">
+		select company_no, company_name
+		from tbl_company
+		where company_no in
+		<foreach collection="company_noList" index="i" open="(" separator="," close=")">
+			'${company_noList[i]}'
+		</foreach>
+	</select>
+
+	<!-- 지역 일련번호로 지역 목록 가져오기 -->
+	<resultMap type="HashMap" id="regionMap">
+		<id property="region_no" column="region_no" javaType="String"/>
+		<result property="region_name" column="region_name" javaType="String"/>
+	</resultMap>
+	<select id="getRegionListByRegionNo" parameterType="ArrayList" resultMap="regionMap">
+		select region_no, region_name
+		from tbl_region
+		where region_no in
+		<foreach collection="region_noList" index="i" open="(" separator="," close=")">
+			'${region_noList[i]}'
+		</foreach>
+	</select>
+
+	<!-- 업종 일련번호로 업종 목록 가져오기 -->
+	<resultMap type="HashMap" id="industryMap">
+		<id property="industry_no" column="industry_no" javaType="String"/>
+		<result property="industry_name" column="industry_name" javaType="String"/>
+	</resultMap>
+	<select id="getIndustryListByIndustryNo" parameterType="ArrayList" resultMap="industryMap">
+		select industry_no, industry_name
+		from tbl_industry
+		where industry_no in
+		<foreach collection="industry_noList" index="i" open="(" separator="," close=")">
+			'${industry_noList[i]}'
+		</foreach>
+	</select>
 </mapper>

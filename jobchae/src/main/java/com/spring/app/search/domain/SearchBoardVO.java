@@ -2,8 +2,6 @@ package com.spring.app.search.domain;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.spring.app.file.domain.FileVO;
 
 public class SearchBoardVO {
@@ -23,11 +21,13 @@ public class SearchBoardVO {
 	// select용
 	private String member_id;      // 회원 아이디
 	private String member_name;	   // 회원명
+	private String member_profile; // 회원 프로필
 	private List<FileVO> fileList; // 첨부 파일 목록
 	
 	///////////////////////////////////////////////////////////
 	// 검색 전용
 	private String reactionStatusList; // 반응 목록
+	private String followerCount;  // 팔로워 수
 	private String isFollow;       // 팔로우 여부
 	private String commentCount;   // 댓글 수
 	private String reactionCount;  // 반응 수
@@ -48,6 +48,15 @@ public class SearchBoardVO {
 	public void setMember_name(String member_name) {
 		this.member_name = member_name;
 	}
+	
+	public String getMember_profile() {
+		return member_profile;
+	}
+
+	public void setMember_profile(String member_profile) {
+		this.member_profile = member_profile;
+	}
+
 	public List<FileVO> getFileList() {
 		return fileList;
 	}
@@ -177,6 +186,14 @@ public class SearchBoardVO {
 
 	public void setReactionStatusList(String reactionStatusList) {
 		this.reactionStatusList = reactionStatusList;
+	}
+
+	public String getFollowerCount() {
+		return followerCount;
+	}
+
+	public void setFollowerCount(String followerCount) {
+		this.followerCount = followerCount;
 	}
 
 }

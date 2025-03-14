@@ -653,7 +653,7 @@ function searchAutocomplete(inputEl) {
         success: function (json) {
             // console.log(JSON.stringify(json));
 
-            let v_html = '<div class="absolute suggest bg-white rounded-lg drop-shadow-lg z-999"><ul>';
+            let v_html = '<div class="absolute suggest bg-white rounded-lg drop-shadow-lg max-h-50 z-999 overflow-y-auto"><ul>';
             if (json.length == 0) {
                 v_html += '<li class="hover:bg-gray-100 p-2">검색 결과가 없습니다.</li>';
             }

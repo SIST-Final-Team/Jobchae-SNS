@@ -26,6 +26,8 @@
 		<typeAlias type="com.spring.app.follow.domain.FollowEntity" alias="FollowEntity"/>
 		
 		<typeAlias type="com.spring.app.search.domain.SearchBoardVO" alias="SearchBoardVO"/>
+		<typeAlias type="com.spring.app.search.domain.SearchMemberVO" alias="SearchMemberVO"/>
+		<typeAlias type="com.spring.app.search.domain.SearchCompanyVO" alias="SearchCompanyVO"/>
 	</typeAliases>
 
 </configuration>
