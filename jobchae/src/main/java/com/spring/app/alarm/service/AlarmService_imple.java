@@ -94,6 +94,19 @@ public class AlarmService_imple implements AlarmService{
 		//값을 저장
 		List<AlarmVO> list = alarmList.getContent();
 
+		//알림이 존재하면 상태를 변경
+		if(!list.isEmpty()) {
+			//알림의 상태를 확인만 한 상태로 변경
+			if(updateAlarmRead(list)){
+				logger.info("알림 상태 변경 성공");
+			}
+			else {
+				//알림 상태 변경이 안되면 예외 발생
+				throw new RuntimeException("알림 상태 변경 실패");
+			}
+		}
+
+
 		//알림의 상태를 확인만 한 상태로 변경
 		list.forEach(alarm ->{
 			alarm.setNotificationIsRead(1);
@@ -116,6 +129,19 @@ public class AlarmService_imple implements AlarmService{
 		AlarmVO result = alarmDAO.save(existAlarm);
 
 		return result;
+	}
+
+	//알림 읽음 처리
+	@Override
+	public boolean updateAlarmRead(List<AlarmVO> alarmList) {
+
+		//알림의 상태를 확인만 한 상태로 변경
+		alarmList.forEach(alarm -> {
+			alarm.setNotificationIsRead(1);
+		});
+		List<AlarmVO> result = alarmDAO.saveAll(alarmList);
+		//TODO 나중에 좀더 자세히 수정
+        return !result.isEmpty();
 	}
 
 }

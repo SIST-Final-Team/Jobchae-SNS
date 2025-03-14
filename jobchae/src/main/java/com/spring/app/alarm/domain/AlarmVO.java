@@ -1,6 +1,7 @@
 package com.spring.app.alarm.domain;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spring.app.member.domain.MemberVO;
@@ -21,8 +22,15 @@ public class AlarmVO {
 	@NotBlank
 	private String memberId;//	 fk_member_id VARCHAR2(20) NOT NULL, /* 회원 아이디 */
 
-//	@NotNull
-//	private MemberVO memberVO;
+
+	private Map<String, String> MemberInfo;
+
+	private String targetMemberId;
+
+	private Map<String, String> TargetMember;
+
+	private String notificationContent;
+
 	
 	@NotNull
 	private NotificationType notificationType;//	 notification_type NUMBER(1) NOT NULL, /* 유형 , 댓글 알림:1, 채팅 알림:2, 팔로우 알림:3, 팔로워 게시물 알림: 4*/

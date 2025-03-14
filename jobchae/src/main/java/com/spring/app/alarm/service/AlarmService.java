@@ -23,4 +23,7 @@ public interface AlarmService {
 	
 	//알림 읽음 처리
 	public AlarmVO updateAlarmRead(MemberVO member, String notification_no);
+
+	//알림 읽음 처리
+	public boolean updateAlarmRead(List<AlarmVO> alarmList);
 }
