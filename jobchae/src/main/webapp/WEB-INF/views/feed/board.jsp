@@ -10,7 +10,7 @@
 %>    
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
 
-<%--<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/css/feed/board.css" />--%>
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/css/feed/board.css" />
 
 <!-- Quill 에디터 CSS 추가 -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -18,32 +18,215 @@
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
 <style type="text/tailwindcss">
+        html {
+            font-size: 0.9rem;
+        }
+        .h1 {
+            @apply text-[1.35rem] font-bold;
+        }
+        .border-normal {
+            @apply border-1 border-gray-300 rounded-lg bg-white;01
+        }
+        .border-search-board {
+            @apply border-1 border-gray-300 rounded-lg bg-white;
+
+            &>div:not(:last-child) {
+                @apply border-b-4 border-gray-200 space-y-2;
+            }
+
+            &>div:not(.py-0) {
+                @apply py-4;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+        .border-board {
+            @apply space-y-4;
+
+            &>div {
+                @apply border-1 border-gray-300 rounded-lg space-y-2 bg-white;
+            }
+
+            &>div {
+                @apply pt-4;
+                @apply pb-2;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+        .nav-selected {
+            @apply relative before:inline-block before:absolute before:w-0.5 before:h-10 before:bg-green-800 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
+        }
+        .nav {
+            @apply list-none pb-2 [&>li]:px-4 [&>li]:hover:bg-gray-100 [&>li]:cursor-pointer [&>li>a]:block [&>li>a]:py-2;
+        }
+        .border-list {
+            @apply my-0.5 space-y-4 py-4;
+            @apply first:border-1 first:border-gray-300 first:rounded-t-lg;
+            @apply not-first:border-1 not-first:border-gray-300;
+            @apply last:border-1 last:border-gray-300 last:rounded-b-lg;
+        }
+        .button-gray:not(.button-selected) {
+            @apply border-1 rounded-full border-gray-400 px-3 py-0.5 font-bold text-gray-700 text-lg;
+            @apply hover:bg-gray-100 hover:inset-ring-1 hover:inset-ring-gray-400 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .button-orange:not(.button-selected) {
+            @apply border-1 rounded-full border-orange-500 px-3 py-0.5 font-bold text-orange-500 text-lg;
+            @apply hover:bg-gray-100 hover:inset-ring-1 hover:inset-ring-orange-500 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .button-selected {
+            @apply border-1 border-orange-400 rounded-full px-3 py-0.5 font-bold text-white text-lg bg-orange-400;
+            @apply hover:bg-orange-500 hover:border-orange-500 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .board-member-profile {
+            @apply flex gap-4;
+
+            /* 프로필 이미지 */
+            div:first-child>a>img {
+                @apply w-15 h-15 object-cover;
+            }
+
+            div:nth-child(2) span {
+                @apply block text-gray-600 text-sm;
+            }
+
+            div:nth-child(2) span:first-child {
+                @apply font-bold text-lg text-black;
+            }
+
+            /* 프로필 정보 및 팔로우 버튼 */
+            div:nth-child(3) {
+                @apply flex items-start;
+
+                button {
+                    @apply px-4 py-1 text-lg rounded-full;
+                }
+
+                button:hover {
+                    @apply bg-gray-100 cursor-pointer;
+                }
+
+                /* 팔로우 버튼 */
+                .follow-button {
+                    @apply text-orange-500 font-bold;
+                }
+                
+                /* 팔로우 버튼 */
+                .unfollow-button {
+                    @apply text-black;
+                }
+            }
+        }
+
+        .file-image {
+            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5;
+
+            :hover {
+                @apply cursor-pointer;
+            }
+
+            button:first-child {
+                @apply max-h-[50rem] m-auto col-span-3;
+            }
+            button:not(:first-child) {
+                @apply m-auto;
+            }
+            
+            button:not(:first-child)>img {
+                @apply object-cover aspect-[3/2];
+            }
+            button.more-image {
+                @apply relative;
+            }
+            button.more-image>img {
+                @apply brightness-50;
+            }
+            button.more-image>span {
+                @apply absolute text-white;
+                @apply top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2;
+            }
+        }
+
+        .reaction-images {
+            @apply flex items-center;
+            img {
+                @apply w-6 rounded-full border-2 border-white;
+            }
+            img:not(img:last-child) {
+                @apply -mr-2;
+            }
+        }
+
+        .button-underline {
+            @apply flex hover:cursor-pointer hover:underline hover:text-orange-500;
+        }
+
+        .button-board-action {
+            @apply w-full h-10 rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        }
+
+		.button-board-attach {
+            @apply w-full h-10 rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        }
 
 </style>
     
 <script type="text/javascript">
     
 	let currentX = 0;
+	let currentX2 = 0;
 	let uploadedFiles = [];
 	let boardList = $(".feed-item");
+	let currentPreviewBox = 1; 
+	let currentPreviewBox2 = 1; 
+	let dataTransfer = new DataTransfer(); 
 	
     $(document).ready(function() {
         
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
     	$(".comment-input-container").hide();
-    	
-	    	
+		
+    	// 긴 글 더보기 처리
+		var content = document.getElementById('boardContent'); 
+        var button = document.getElementById('toggleButton');
+        
+        if (content && button) { 
+	        if (content.scrollHeight > content.clientHeight) {
+	            button.style.display = 'block'; 
+	        } else {
+	            button.style.display = 'none'; 
+	        }
+        } 
+        
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성 Modal 
         const writeModal = document.getElementById("writeModal");
         const editModal = document.getElementById("editModal");
         const rangeModal = document.getElementById("rangeModal");
         const reactionModal = document.getElementById("reactionModal");
+        const ignoredModal = document.getElementById("ignoredModal");
+        const imageModal = document.getElementById("imageModal");
         writeModal.style.display = "none";
         editModal.style.display = "none";
         rangeModal.style.display = "none";
         reactionModal.style.display = "none";
+        ignoredModal.style.display = "none";
+        imageModal.style.display = "none";
         
         
         
@@ -75,16 +258,19 @@
         	writeModal.style.display = "none";
         	writeQuill.setText('');
         	$(".carousel-track").empty();
+        	prevBtn.style.display = "none";
+            nextBtn.style.display = "none";
         });
 
-        $(window).click(function(e) {
+        $(window).click(function(e) { 
             if (e.target == writeModal) {
             	writeModal.style.display = "none";
             	writeQuill.setText('');
             	$(".carousel-track").empty();
+            	prevBtn.style.display = "none";
+                nextBtn.style.display = "none";
             }
         });
-        
         
 		/////////////////////////////////////////////////////////////////////////////////////////
      	// Quill 에디터
@@ -147,7 +333,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성
+		// 글 작성 
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -158,9 +344,11 @@
 		        return;
 		    }
 			else {
-				const files = document.getElementById("file-image").files;
-				console.log("업로드된 파일들: ", files);
-				
+				const imageFiles = document.getElementById("file-image").files;
+    		    if (imageFiles.length === 0) {
+    		        document.getElementById("file-image").remove();
+    		    }
+    		    
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
 		      	frm.method = "post";
@@ -243,9 +431,10 @@
 	    });
 	 	
 		/////////////////////////////////////////////////////////////////////////////////////////
-	 	// 글 수정
+	 	// 글 수정 
 		let board_content = "";
 	    $(".edit-post").click(function () {
+	    	const track = document.querySelector(".carousel-track2");
 	        const board_no = $(this).attr("value");
 	        const visibilityOrigin = $(".board-visibility-origin").val();
 	        board_content = $(this).closest('.board-member-profile').find(".board-content").val();
@@ -267,6 +456,119 @@
             //alert("board-visibility-origin 값: " + visibilityOrigin);
 	        //alert("board_content : " + board_content);  
 	        
+	        $.ajax({
+               url: '${pageContext.request.contextPath}/api/board/selectFileList',
+               type: 'post',
+               dataType: 'json',
+               data: {"file_target_no": board_no},
+               success: function(response) {
+               		let filevoList = response.filevoList;
+                   	//console.log(filevoList);
+                   
+                   	let mediaElement;
+                   	
+                   	filevoList.forEach(file => {
+                   		const previewBox = document.createElement("div");
+                       	previewBox.className = "preview-box2";
+                       	
+                        const fileExtension = file.file_name.split('.').pop().toLowerCase();
+                        let mediaElement;
+						
+                        //console.log("파일번호:" + file.file_no + "   파일확장자:" + fileExtension);
+                        if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) {
+                            mediaElement = document.createElement("img");
+                            mediaElement.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;
+                            mediaElement.classList.add("preview-image");
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['mp4', 'avi', 'mov', 'wmv', 'flv'].includes(fileExtension)) {
+                            mediaElement = document.createElement("video");
+                            mediaElement.src = "<%= ctxPath%>/resources/files/board/" + file.file_name;
+                            mediaElement.classList.add("preview-video");
+                            mediaElement.controls = true;
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['pdf'].includes(fileExtension)) {
+                            mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon"; 
+                            mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                     + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                     + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                     + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['doc', 'docx'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon"; 
+                            mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                     + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                     + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                     + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['xlsx'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon";
+                        	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                				   + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        } else if (['pptx'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon";
+                            mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+    					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+    					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+    					         				   + file.file_original_name + "</span></div>";
+                        } else if (['text', 'csv'].includes(fileExtension)) {
+                        	mediaElement = document.createElement("div");
+                            mediaElement.className = "file-icon";
+            				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                    							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                    							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                    							   + file.file_original_name + "</span></div>";
+                            mediaElement.dataset.fileNo = file.file_no;
+                        }
+
+                        if (mediaElement) {
+                            previewBox.appendChild(mediaElement);
+                        }
+                        
+                        const closeButton2 = document.createElement("div");
+                        closeButton2.className = "close-btn";
+                        closeButton2.innerText = "×";
+
+                        closeButton2.addEventListener("click", () => {
+                            previewBox.remove();
+                            removeFile(file);
+                            //togglePrevButton();
+                        });
+
+                        
+                        previewBox.appendChild(closeButton2);
+                        track.appendChild(previewBox);
+                   	});
+               	},
+               	error: function(request, status, error){
+                   	console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+               	}
+           	});
+	        
+	        function removeFile(fileToRemove) { 
+	            const newDataTransfer = new DataTransfer();
+	            Array.from(dataTransfer.files).forEach((file) => {
+	                if (file !== fileToRemove) {
+	                    newDataTransfer.items.add(file);
+	                }
+	            });
+	            event.target.files = newDataTransfer.files;
+
+	            let currentX2 = parseInt($(track).css("transform").split(",")[4]) || 0;
+	            let previewCount2 = track.querySelectorAll(".preview-box2").length;
+				
+	            if (currentX2 !== 0) {
+	            	currentX2 = currentX2 + 208; 
+	                $(track).css("transform", "translateX(" + currentX2 + "px)"); 
+	            }
+	        }
+
 	        editQuill.root.innerHTML = board_content; 
 	        editModal.style.display = "block";
 	    });
@@ -274,31 +576,81 @@
 	    $("span#closeModalButton").click(function() {
 	    	editModal.style.display = "none";
 	    	editQuill.setText('');
+	    	$(".carousel-track2").empty();
         });
 
         $(window).click(function(e) {
             if (e.target == editModal) {
             	editModal.style.display = "none";
             	editQuill.setText('');
+            	$(".carousel-track2").empty();
             }
         });
 	 	
+        // 글 수정하기 ㅇㅇ
         $("button#edit-update").click(function() {
 			const boardContent = editQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
-			//alert(boardContent);
-
+			
+			const board_no = $("input[name='board_no']").val();
+			const fk_member_id = $("input[name='fk_member_id']").val();
+			const board_content = $("input[name='board_content']").val();
+			const board_visibility = $("input[name='board_visibility']").val();
+			//console.log(board_visibility);
+	        
 			if (boardContent === "<p></p><p></p>" || boardContent === "<p></p>" || boardContent === "") {
 		        alert("내용을 입력해주세요.");
 		        editQuill.root.innerHTML = board_content;
 		        return;
-		    }
-			else {
-				alert("글이 성공적으로 수정되었습니다.");
-				
-				const frm = document.editFrm;
-		      	frm.method = "post";
-		      	frm.action = "<%= ctxPath%>/board/editBoard";
-		      	frm.submit();
+		    } else {
+			 	const fileNoList = [];
+				 
+				const previewBoxes = document.querySelectorAll(".preview-box2");
+			 	previewBoxes.forEach((previewBox, index) => {
+		            const childrenWithoutCloseButton = Array.from(previewBox.children).filter(child => !child.classList.contains('close-btn'));
+		            
+		            childrenWithoutCloseButton.forEach((childElement, childIndex) => {
+		                const fileNo = childElement.dataset.fileNo;
+		                //console.log("fileNo" + fileNo);	// 남아있는 사진들 (= 삭제하면 안 되는 파일들)
+		                if (fileNo) {
+		                    fileNoList.push(fileNo);  
+		                }
+		            });
+		        });
+			 	//console.log("수정하기 버튼 클릭함" + fileNoList);
+			 	
+			 	$.ajax({
+					url: '${pageContext.request.contextPath}/api/board/editBoard',
+					type: 'post',
+					dataType: 'json',
+					data: {"board_no": board_no,
+						   "fk_member_id": fk_member_id,
+						   "board_content": board_content,
+						   "board_visibility": board_visibility,
+						   "fileNoList": fileNoList},
+					success: function(json) {
+						if(json.n == 1) {
+							alert("게시글이 수정되었습니다.");
+							location.reload();
+						}
+					},
+			        error: function(request, status, error){
+						console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+				 	}
+				});
+			 	
+			 	const imageFiles = document.getElementById("file-image2").files;
+			 	console.log("디버깅 파일 개수:", imageFiles.length);
+			 	for (let i = 0; i < imageFiles.length; i++) {
+			 	    console.log(`파일 ${i + 1}:`, imageFiles[i].name);
+			 	}
+			 	
+			 	if (imageFiles.length != 0) {
+			 		const frm = document.editFrm;
+			      	frm.method = "post";
+			      	frm.action = "<%= ctxPath%>/board/editBoardFile";
+			      	frm.submit(); 
+			 	}
+			 	
 			}
 		});
         
@@ -442,7 +794,7 @@
         	    });
 
         	    reactionData.sort((a, b) => b.reaction_count - a.reaction_count);
-        	    console.log(reactionData);
+        	    //console.log(reactionData);
         	}
         });
 		
@@ -636,22 +988,57 @@
         });
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// Modal 이미지 미리보기
+		// Modal 이미지 미리보기 
 		$("button#prevBtn").click(function() {
 			if (currentX < 0) {
 				currentX += 208;
 				$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+				currentPreviewBox--;
 			}
 		});
 		
 		$("button#nextBtn").click(function() {
-			currentX -= 208;
-			$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+			const previewCountMax = document.querySelector(".carousel-track").querySelectorAll(".preview-box").length;
+			//alert(previewCountMax);
+			
+			if (previewCountMax > (currentPreviewBox + 2)) {
+				currentX -= 208;
+				$(".carousel-track").css("transform", "translateX(" + currentX + "px)");
+				currentPreviewBox++;
+			} else {
+				alert("끝까지 확인하셨습니다.");
+			}
 		});
 		
+		$("button#prevBtn2").click(function() {
+			if (currentX2 < 0) {
+				currentX2 += 208;
+				$(".carousel-track2").css("transform", "translateX(" + currentX2 + "px)");
+				currentPreviewBox2--;
+			}
+		});
 		
-		
+		$("button#nextBtn2").click(function() {
+			const previewCountMax = document.querySelector(".carousel-track2").querySelectorAll(".preview-box2").length;
+			//alert(previewCountMax + " " + currentPreviewBox2);
+			
+			if (previewCountMax > (currentPreviewBox2 + 2)) {
+				currentX2 -= 208;
+				$(".carousel-track2").css("transform", "translateX(" + currentX2 + "px)");
+				currentPreviewBox2++;
+			} else {
+				alert("끝까지 확인하셨습니다.");
+			}
+		});
+		///////////////////////////////////////////////////////////////////////////////////////// 
+		// 게시글 시간
 		$(".time").each(function () {
+	        const timeString = $(this).attr("data-time");
+	        $(this).text(timeAgo(timeString));
+	    });
+
+		// 댓글 시간
+		$(".comment-date").each(function () {
 	        const timeString = $(this).attr("data-time");
 	        $(this).text(timeAgo(timeString));
 	    });
@@ -671,7 +1058,7 @@
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 댓글
+		// 댓글 
 		$(".comment-options").click(function(event) {
 			event.stopPropagation();
 			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
@@ -683,10 +1070,10 @@
 	        $(".options-dropdown2").hide();
 	    });
 		
-		$(".button-board-action-comment").click(function() { // ㅇㅇ
-			var commentItem = $(this).parent(".comment-item");
-			console.log(commentItem);
-			commentItem.find(".comment-input-container").toggle();
+		$(".button-board-action-comment").click(function() { 
+			var commentInputContainer = $(this).closest('div').next('.comment-input-container');
+			//console.log(commentInputContainer);
+			commentInputContainer.slideToggle();
 		});
 
 
@@ -699,22 +1086,84 @@
 			const comment_content = $(this).closest('.comment-input-container').find('#commentInput').val().trim(); 
 			//alert(comment_content);
 			
-			if (comment_content == "") {
-				alert("댓글 내용을 입력해주세요.");
-				$(this).closest('.comment-input-container').find('#commentInput').val('');
-				return;
+			const mentionedNameText = $('#mentionedName').text().trim();
+			//alert(mentionedNameText);
+			
+			const comment_no = $("input[name='hidden-comment-reply-no']").val();
+			//alert(comment_no);
+			
+			if (mentionedNameText !== "") { // 대댓글이라면
+				if (comment_content == "") {
+					alert("댓글 내용을 입력해주세요.");
+					$(this).closest('.comment-input-container').find('#commentInput').val('');
+					return;
+				} else {
+					$.ajax({
+						url: '${pageContext.request.contextPath}/api/board/addCommentReply',
+						type: 'post',
+						dataType: 'json',
+						data: {"fk_board_no": fk_board_no,
+							   "fk_member_id": fk_member_id,
+							   "comment_content" : comment_content,
+							   "comment_no": comment_no},
+						success: function(json) {
+							if(json.n == 1) {
+								$(this).closest('.comment-input-container').find('#commentInput').val('');
+								alert("댓글이 등록되었습니다.");
+								location.reload();
+							}
+				        },
+				        error: function(request, status, error){
+							console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+					 	}
+					});
+				}
 			} else {
+				if (comment_content == "") {
+					alert("댓글 내용을 입력해주세요.");
+					$(this).closest('.comment-input-container').find('#commentInput').val('');
+					return;
+				} else {
+					$.ajax({
+						url: '${pageContext.request.contextPath}/api/board/addComment',
+						type: 'post',
+						dataType: 'json',
+						data: {"fk_board_no": fk_board_no,
+							   "fk_member_id": fk_member_id,
+							   "comment_content" : comment_content},
+						success: function(json) {
+							if(json.n == 1) {
+								$(this).closest('.comment-input-container').find('#commentInput').val('');
+								alert("댓글이 등록되었습니다.");
+								location.reload();
+							}
+				        },
+				        error: function(request, status, error){
+							console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+					 	}
+					});
+				}
+			}
+		});
+		
+		// 댓글 삭제
+		$(".comment-delete").click(function() {
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val();  
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+		
+			if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
 				$.ajax({
-					url: '${pageContext.request.contextPath}/api/board/addComment',
+					url: '${pageContext.request.contextPath}/api/board/deleteComment',
 					type: 'post',
 					dataType: 'json',
 					data: {"fk_board_no": fk_board_no,
 						   "fk_member_id": fk_member_id,
-						   "comment_content" : comment_content},
+						   "comment_no" : comment_no},
 					success: function(json) {
 						if(json.n == 1) {
-							$(this).closest('.comment-input-container').find('#commentInput').val('');
-							alert("댓글이 등록되었습니다.");
+							alert("댓글이 삭제되었습니다.");
 							location.reload();
 						}
 			        },
@@ -724,10 +1173,205 @@
 				});
 			}
 		});
-	
-	});
+
+		$(".comment-edit").click(function() { 
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			
+			const originalText = $(this).closest('.comment-item').find('.comment-content-text').text(); 
+			const editText = $(this).closest('.comment-item').find('#edit-input').val();
+		    //alert(originalText + " " + editText);
+		    
+		    $(this).closest('.comment-item').find('.comment-content-text').hide();
+		    $(this).closest('.comment-item').find('#comment-edit-input').show();
+		});
+
+		$(".comment-edit-button").click(function() { 
+			const comment_content = $(this).closest('.comment-item').find('#edit-input').val();
+			//alert(comment_content);
+			
+			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/editComment',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_board_no": fk_board_no,
+					   "fk_member_id": fk_member_id,
+					   "comment_no" : comment_no,
+					   "comment_content" : comment_content},
+				success: function(json) {
+					if(json.n == 1) {
+						$(this).closest('.comment-item').find('.comment-content-text').show();
+					    $(this).closest('.comment-item').find('#comment-edit-input').hide();
+						alert("댓글이 수정되었습니다.");
+						location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+		});
+		
+		
+		// 관심없음
+		$(".interest-none").click(function() {
+			const fk_member_id = document.getElementById("loginuserID").value;
+			const fk_board_no = $(this).attr("value");
+			//alert(fk_member_id + " " + fk_board_no)
+			
+	    	$("input[name='ignored_fk_board_no']").val(fk_board_no);
+	    	//alert($("input[name='ignored_fk_board_no']").val());
+	    	
+	    	$("input[name='reason']").first().prop("checked", true);
+			ignoredModal.style.display = "block";
+			
+		});
+		
+		$("span#closeModalButton").click(function() {
+			ignoredModal.style.display = "none";
+        });
+		
+		$(window).click(function(e) {
+            if (e.target == ignoredModal) {
+            	ignoredModal.style.display = "none";
+            }
+        });
+		
+		$("#saveIgnored").click(function() {
+			const fk_member_id = document.getElementById("loginuserID").value;
+			const fk_board_no = $("input[name='ignored_fk_board_no']").val()
+			//alert(fk_member_id + " " + fk_board_no)
+			
+			$.ajax({
+				url: '${pageContext.request.contextPath}/api/board/ignoredBoard',
+				type: 'post',
+				dataType: 'json',
+				data: {"fk_member_id": fk_member_id,
+					   "fk_board_no": fk_board_no},
+				success: function(json) {
+					if(json.n == 1) {
+						alert("관심없음 설정이 되었습니다.");
+						location.reload();
+					}
+		        },
+		        error: function(request, status, error){
+					console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+			 	}
+			});
+		});
+
     
+    	// 대댓글 
+    	$(".reply-button").click(function() {
+    		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
+    		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
+    		const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+    		alert(board_no + " " + member_name + " " + comment_no);
+    		
+    		$("input[name='hidden-comment-reply-no']").val(comment_no);
+    		
+    		$("#mentionedName").text(member_name);
+    	});
+    	
+    	
+    	// 이미지, 비디오 크게보기 ㅇㅇ
+    	$(".file-preview-button").click(function() {
+    		
+    		const file_target_no = $(this).closest(".px-0").find("input[name='preview-board-no']").val();
+    	    //console.log(file_target_no);
+    	    
+    	    $.ajax({
+    	        url: '${pageContext.request.contextPath}/api/board/selectFileList',
+    	        type: 'post',
+    	        dataType: 'json',
+    	        data: {"file_target_no": file_target_no},
+    	        success: function(response) {
+    	            let filevoList = response.filevoList;
+    	            //console.log(filevoList.length);
+    	            
+    	            // 확장자 필터링 (이미지, 비디오만 크게 볼 수 있도록)
+    	            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp', 'mp4', 'avi', 'mov', 'wmv', 'flv'];
+    	            filevoList = filevoList.filter(file => {
+    	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
+    	                return allowedExtensions.includes(fileExtension);
+    	            });
+    	            
+    	            const imageModal = document.getElementById("imageModal");
+    	            imageModal.style.display = "block";
+    	            
+    	            const imageContainer = document.getElementById('image-container');
+    	            imageContainer.innerHTML = "";
+    	            
+    	            let currentIndex = 0;
+    	            
+    	            function showImage(index) {
+    	                imageContainer.innerHTML = "";
+    	                const file = filevoList[index];
+    	                const fileExtension = file.file_name.split('.').pop().toLowerCase();
+    	                
+    	                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(fileExtension)) {
+		                    const img = document.createElement('img');
+		                    img.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+		                    img.classList.add('modal-image');
+		                    imageContainer.appendChild(img);
+		                } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', ''].includes(fileExtension)) {
+		                    const video = document.createElement('video');
+		                    video.src = "<%= ctxPath%>/resources/files/board/" + filevoList[index].file_name;
+		                    video.classList.add('modal-video');
+		                    video.controls = true;
+		                    imageContainer.appendChild(video);
+		                } else {
+		                    imageContainer.innerHTML = "<p>지원되지 않는 파일 형식입니다.</p>";
+		                }
+    	            }
+    	            
+    	            if (filevoList.length >= 0) {
+    	                showImage(currentIndex);
+    	            }
+    	            
+    	            $("#chevron-left-medium").off().on("click", function() {
+    	                if (currentIndex > 0) {
+    	                    currentIndex--;
+    	                    showImage(currentIndex);
+    	                }
+    	            });
+    	            
+    	            $("#chevron-right-medium").off().on("click", function() {
+    	                if (currentIndex < filevoList.length - 1) {
+    	                    currentIndex++;
+    	                    showImage(currentIndex);
+    	                }
+    	            });
+    	        },
+    	        error: function(request, status, error){
+    	            console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+    	        }
+    	    });
+    	});
+    	
+    	$("span#closeModalButton").click(function() {
+    		imageModal.style.display = "none";
+        });
+    	
+    	$(window).click(function(e) { 
+            if (e.target == imageModal) {
+            	imageModal.style.display = "none";
+            }
+        });
+    	
+    });
+   
+   
+    // 이미지 미리보기
     function previewImage(event) {
+    	
         const files = event.target.files;
         const track = document.querySelector(".carousel-track");
 
@@ -735,13 +1379,26 @@
             console.error("미리보기 요소를 찾을 수 없습니다.");
             return;
         }
+        
+        //console.log(files);
+        //const dataTransfer = new DataTransfer(); 
 
-        const dataTransfer = new DataTransfer(); 
-
-        Array.from(files).forEach((file) => {
-            if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+        Array.from(files).forEach((file) => { 
+        	
+        	//console.log(file);
+        	
+            if (file.type.startsWith("image/") || 
+            	file.type.startsWith("video/") || 
+                file.type === "application/pdf" || 
+                file.type === "application/msword" || 
+                file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || 
+                file.type === "text/plain" || 
+                file.type === "text/csv") {
                 const reader = new FileReader();
-
+				
+                
                 reader.onload = function (e) {
                     const previewBox = document.createElement("div");
                     previewBox.className = "preview-box";
@@ -756,8 +1413,43 @@
                         mediaElement.src = e.target.result;
                         mediaElement.controls = true;  
                         mediaElement.alt = file.name;
+                    } else if (file.type === "application/pdf") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/msword" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                    	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                            				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                            				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                            				   + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+					         				   + file.name + "</span></div>";
+                    } else if (file.type === "text/plain" || file.type === "text/csv") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+        				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                							   + file.name + "</span></div>";
                     }
-
+					
                     const closeButton = document.createElement("div");
                     closeButton.className = "close-btn";
                     closeButton.innerText = "×";
@@ -766,7 +1458,6 @@
                         previewBox.remove();
                         removeFile(file);
                         togglePrevButton();
-                        updateCarouselPosition();
                     });
 
                     previewBox.appendChild(mediaElement);
@@ -777,6 +1468,7 @@
 
                     togglePrevButton();
                     updateCarouselPosition();
+                    
                 };
 
                 reader.onerror = function () {
@@ -785,11 +1477,12 @@
 
                 reader.readAsDataURL(file);
             } else {
-                alert("이미지와 비디오 파일만 업로드할 수 있습니다.");
+                alert("지원하지 않는 파일 형식입니다.");
             }
         });
 
-        function removeFile(fileToRemove) {
+        
+        function removeFile(fileToRemove) { 
             const newDataTransfer = new DataTransfer();
             Array.from(dataTransfer.files).forEach((file) => {
                 if (file !== fileToRemove) {
@@ -797,7 +1490,16 @@
                 }
             });
             event.target.files = newDataTransfer.files;
+
+            let currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
+            let previewCount = track.querySelectorAll(".preview-box").length;
+			
+            if (currentX !== 0) {
+                currentX = currentX + 208; 
+                $(track).css("transform", "translateX(" + currentX + "px)"); 
+            }
         }
+
 
         function togglePrevButton() {
             const previewCount = track.querySelectorAll(".preview-box").length;
@@ -813,20 +1515,194 @@
             }
         }
 
-        function updateCarouselPosition() {
+        function updateCarouselPosition() {  
             const previewCount = track.querySelectorAll(".preview-box").length;
             if (previewCount > 3) {
                 currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
-                currentX = currentX - 208;
+                currentX = currentX - 208; 
                 $(track).css("transform", "translateX(" + currentX + "px)");
+                currentPreviewBox++;
             }
         }
 
         event.target.files = dataTransfer.files;
+        //console.log(files);
     }
     
     
+ 	// 이미지 미리보기(수정)  ㅇㅇ
+    function previewImage2(event) {
+    	
+        const files = event.target.files;
+        const track = document.querySelector(".carousel-track2");
 
+        //console.log(track);
+        
+        if (!track) {
+            console.error("미리보기 요소를 찾을 수 없습니다.");
+            return;
+        }
+        
+        //const dataTransfer = new DataTransfer(); 
+
+        Array.from(files).forEach((file) => { 
+        	
+        	//console.log("파일 업로드 했음 " + file.name);
+        	const dataTransfer = new DataTransfer();
+        	
+            if (file.type.startsWith("image/") || 
+            	file.type.startsWith("video/") || 
+                file.type === "application/pdf" || 
+                file.type === "application/msword" || 
+                file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || 
+                file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" || 
+                file.type === "text/plain" || 
+                file.type === "text/csv") {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const previewBox = document.createElement("div");
+                    previewBox.className = "preview-box2";
+
+                    let mediaElement;
+                    if (file.type.startsWith("image/")) {
+                        mediaElement = document.createElement("img");
+                        mediaElement.src = e.target.result;
+                        mediaElement.alt = file.name;
+                    } else if (file.type.startsWith("video/")) {
+                        mediaElement = document.createElement("video");
+                        mediaElement.src = e.target.result;
+                        mediaElement.controls = true;  
+                        mediaElement.alt = file.name;
+                    } else if (file.type === "application/pdf") {
+                        mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/pdf.png' alt='Pdf' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/msword" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon"; 
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                                                 + "<img src='<%= ctxPath%>/images/feed/word.png' alt='Word' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                                                 + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                                                 + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                    	mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                            				   + "<img src='<%= ctxPath%>/images/feed/excel.png' alt='Excel' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                            				   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                            				   + file.name + "</span></div>";
+                    } else if (file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+                        mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+					         				   + "<img src='<%= ctxPath%>/images/feed/powerpoint.png' alt='Powerpoint' style='width: 64px; height: 64px; opacity: 0.3;'>"
+					         				  + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+					         				   + file.name + "</span></div>";
+                    } else if (file.type === "text/plain" || file.type === "text/csv") {
+                    	mediaElement = document.createElement("div");
+                        mediaElement.className = "file-icon";
+        				mediaElement.innerHTML = "<div style='position: relative; width: 64px; height: 64px;'>" 
+                							   + "<img src='<%= ctxPath%>/images/feed/txt.png' alt='Etc' style='width: 64px; height: 64px; opacity: 0.3;'>"
+                							   + "<span style='position: absolute; text-align: center; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 170px; font-weight: bold; white-space: normal; word-wrap: break-word; margin-left: 5px; margin-right: 5px; color: black; font-size: 14px;'>"
+                							   + file.name + "</span></div>";
+                    }
+					
+                    const closeButton2 = document.createElement("div");
+                    closeButton2.className = "close-btn";
+                    closeButton2.innerText = "×";
+
+                    closeButton2.addEventListener("click", () => {
+                        previewBox.remove();
+                        removeFile(file);
+                        togglePrevButton();
+                    });
+
+                    previewBox.appendChild(mediaElement);
+                    previewBox.appendChild(closeButton2);
+                    track.appendChild(previewBox);
+
+                    dataTransfer.items.add(file);
+
+                    togglePrevButton();
+                    updateCarouselPosition();
+                    
+                };
+
+                reader.onerror = function () {
+                    console.error("파일 읽기 오류 발생");
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert("지원하지 않는 파일 형식입니다.");
+            }
+        });
+
+        
+        function removeFile(fileToRemove) { 
+            const newDataTransfer = new DataTransfer();
+            Array.from(dataTransfer.files).forEach((file) => {
+                if (file !== fileToRemove) {
+                    newDataTransfer.items.add(file);
+                }
+            });
+            event.target.files = newDataTransfer.files;
+
+            let currentX2 = parseInt($(track).css("transform").split(",")[4]) || 0;
+            let previewCount2 = track.querySelectorAll(".preview-box2").length;
+			
+            if (currentX2 !== 0) {
+            	currentX2 = currentX2 + 208; 
+                $(track).css("transform", "translateX(" + currentX2 + "px)"); 
+            }
+        }
+
+
+        function togglePrevButton() {
+            const previewCount2 = track.querySelectorAll(".preview-box2").length;
+            if (previewCount2 === 0) {
+                prevBtn2.style.display = "none";
+                nextBtn2.style.display = "none";
+            } else if (previewCount2 < 4) {
+            	prevBtn2.style.display = "block";
+            	nextBtn2.style.display = "none";
+            } else {
+            	prevBtn2.style.display = "block";
+            	nextBtn2.style.display = "block";
+            }
+        }
+
+        function updateCarouselPosition() {  
+            const previewCount2 = track.querySelectorAll(".preview-box2").length;
+            if (previewCount2 > 3) {
+            	currentX2 = parseInt($(track).css("transform").split(",")[4]) || 0;
+            	currentX2 = currentX2 - 208; 
+                $(track).css("transform", "translateX(" + currentX2 + "px)");
+                currentPreviewBox2++;
+            }
+        }
+
+        //event.target.files = dataTransfer.files;
+        //console.log("어떤게 업로드 됐을까나~~?");
+        /*
+        Array.from(dataTransfer.files).forEach(file => {
+            console.log(file.name);  
+        });
+        */
+    }
+    
+ 	// 긴 글 더보기 처리
+    function toggleContent() {
+        var container = document.querySelector('.board-content-container');
+        container.classList.toggle('expanded');
+        var button = document.getElementById('toggleButton');
+        button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
+    }    
 
 </script>
 
@@ -876,6 +1752,7 @@
                         </div>
                     </div>
 
+					<!-- 
                     <hr class="border-gray-300 mx-4">
 
                     <div class="py-0">
@@ -897,7 +1774,7 @@
                                 </button>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
 			</div>
 			
@@ -972,51 +1849,57 @@
 					            </div> <!-- div.options-dropdown 끝 -->
 	                        </div>
 	                    </div>
+	                    
 	                    <!-- 글 내용 -->
-	                    <div>
-	                        <p>${boardvo.board_content}</p>
+	                    <div class="board-content-container">
+	                    	<div class="board-content" id="boardContent"> 
+		                        <p>${boardvo.board_content}</p>
+		                    </div>
+		                    <button id="toggleButton" class="more-btn" onclick="toggleContent()">더보기</button>
 	                    </div>
 	             
 
+		            	
 						<!-- 첨부파일 미리보기 -->
 	                    <div class="px-0">
+		            		<input type="text" name="preview-board-no" class="preview-board-no" value="${boardvo.board_no}">
 						    <div class="file-image">
 						        <!-- 5장 미만 -->
 						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() < 5}">
 						            <c:forEach var="file" items="${boardvo.fileList}">
-						                <button type="button">
+						                <button type="button" class="file-preview-button">
 						                    <!-- 파일 확장자 추출 -->
         									<c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
         									
         									<!-- 이미지 파일인 경우 -->
 									        <c:if test="${fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png' || fileExtension == 'gif' || fileExtension == 'bmp' || fileExtension == 'webp'}">
-									            <img src="<%= ctxPath%>/resources/files/${file.file_name}" />
+									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
 									        </c:if>
 									        
 									        <!-- 비디오 파일인 경우 -->
 									        <c:if test="${fileExtension == 'mp4' || fileExtension == 'avi' || fileExtension == 'mov' || fileExtension == 'mkv'}">
 									            <video width="100%" controls>
-									                <source src="<%= ctxPath%>/resources/files/${file.file_name}" type="video/mp4">
+									                <source src="<%= ctxPath%>/resources/files/board/${file.file_name}" type="video/mp4">
 									            </video>
 									        </c:if>
 						                </button>
 						            </c:forEach>
-						        </c:if>
+						        </c:if> <!-- 5장 미만 끝 -->
 						
 						        <!-- 5장 이상 -->
 						        <c:if test="${not empty boardvo.fileList and boardvo.fileList.size() >= 5}">
 						            <c:forEach var="file" items="${boardvo.fileList}" varStatus="status">
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
-						                    <button type="button">
-						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                    <button type="button" class="file-preview-button">
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                    </button>
 						                </c:if>
 						
 						                <!-- 4번째 이미지는 +n 형식으로 출력 -->
 						                <c:if test="${status.index == 3}">
-						                    <button type="button" class="more-image">
-						                        <img src="<%= ctxPath%>/resources/files/${file.file_name}"/>
+						                    <button type="button" class="more-image file-preview-button">
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 						                        <span class="flex items-center">
 						                            <span><i class="fa-solid fa-plus"></i></span>
 						                            <span class="text-4xl">${boardvo.fileList.size() - 3}</span>
@@ -1024,10 +1907,36 @@
 						                    </button>
 						                </c:if>
 						            </c:forEach>
-						        </c:if>
+						        </c:if> <!-- 5장 이상 끝 -->
+						        
 						    </div>
 						</div>
 	                    
+	                    <!-- 이미지/비디오가 아닌 파일들  -->
+	                    <c:if test="${not empty boardvo.fileList}">
+						    <c:set var="hasDocumentFile" value="false" />
+						    <c:forEach var="file" items="${boardvo.fileList}">
+						        <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						        <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						            <c:set var="hasDocumentFile" value="true" />
+						        </c:if>
+						    </c:forEach>
+						
+						    <!-- 문서 파일이 하나라도 있을 경우 다운로드 영역 출력 -->
+						    <c:if test="${hasDocumentFile}">
+						        <div class="file-download-container">
+						            <c:forEach var="file" items="${boardvo.fileList}">
+						                <c:set var="fileExtension" value="${file.file_name.substring(file.file_name.lastIndexOf('.') + 1)}" />
+						                <c:if test="${fileExtension == 'pdf' || fileExtension == 'doc' || fileExtension == 'docx' || fileExtension == 'xlsx' || fileExtension == 'pptx' || fileExtension == 'txt' || fileExtension == 'csv'}">
+						                    <div class="file-item">
+						                        <span class="file-icon">📄</span>
+						                        <a href="<%= ctxPath%>/resources/files/board/${file.file_name}" download="${file.file_original_name}" class="download-a">${file.file_original_name}</a>
+						                    </div>
+						                </c:if>
+						            </c:forEach>
+						        </div>
+						    </c:if>
+						</c:if>   
 	                    
 	                    
 	                    <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
@@ -1103,7 +2012,7 @@
 									        </c:if>
 								        </div>
 	                                </button>
-	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${boardvo.board_no}" style="">
+	                                <span class="reactions-menu reactions-menu--active reactions-menu--humor-enabled reactions-menu--v2" data-value="${boardvo.board_no}">
 									    <button aria-label="반응: 추천" class="reactions-menu__reaction-index reactions-menu__reaction" value="1" tabindex="-1" type="button">
 									      	<span class="reactions-menu__reaction-description">추천</span>
 									    	<img class="reactions-icon reactions-menu__icon reactions-icon__consumption--large data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/8fz8rainn3wh49ad6ef9gotj1" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="large">
@@ -1157,10 +2066,13 @@
 	                    		
 		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
 		                    	<div class="comment-input" >
+		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
 							        <input type="text" placeholder="댓글 남기기" id="commentInput">
 						            <button class="comment-submit-button">댓글</button>
+						            <input type="hidden" name="hidden-comment-reply-no" value="" />
 							    </div>	
 	                    	</div>
+	                    	
 	                    	
 	                    	<div class="comment-list-container">
 	                    		<div class="comment-sort">
@@ -1171,37 +2083,49 @@
 	                    		</div>
 	                    	</div>
 	                    	
-	                    	<ul class="comment-list"> <!-- ㅇㅇ -->
+	                    	<ul class="comment-list"> 
 	                    		<c:if test="${not empty commentvoList}">
 		                    		<c:forEach var="commentvo" items="${commentvoList}">  
 		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
 			                    			<li class="comment-item">
-												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>	  
+												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>
 												<div class="comment-content">
 													<div class="comment-info">
-														<input type="hidden" value="${commentvo.fk_board_no}">
-														<input type="hidden" value="${commentvo.comment_no}">
-														<input type="hidden" value="${commentvo.fk_member_id}">
+														<input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
+														<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
+														<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
+														<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
 														
 														<span class="comment-author">${commentvo.member_name}</span>
 														<!--<span class="comment-relationship">팔로워 0명</span>-->
-														<span class="comment-date">5일</span>
+														<span class="comment-date" data-time="${commentvo.comment_register_date}">5일</span> 
 														<button class="comment-options">...</button>
 													</div>
-													<div class="comment-text">${commentvo.comment_content}</div>
+													<div class="comment-text">
+													
+														<span class="comment-content-text">${commentvo.comment_content}</span>
+														
+														<div class="comment-input" id="comment-edit-input" style="display:none;" >
+															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
+															<button class="comment-edit-button">수정</button>
+														</div>
+													</div>
+													
 													<div class="comment-actions">
 														<button class="like-button">추천</button>
 									                    <span>|</span>
-									                    <button class="reply-button">답장</button>
+									                    <button class="reply-button">답장</button> 
 									                </div>
+									                
+									                
 												</div>     
 												
 												<!-- 옵션 드롭다운 메뉴 -->
 												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
 										            <div class="options-dropdown2">
 										                <ul>
-											                <li class="delete-post2" value="${boardvo.board_no}">댓글 삭제</li>
-											                <li class="delete-post2" value="${boardvo.board_no}">댓글 수정</li>
+											                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+											                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
 										                </ul>
 									            	</div> 
 												</c:if>
@@ -1279,10 +2203,10 @@
 	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
 							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
 							</svg>
-                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-image').click();">
 								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
 							</svg>
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-attachment').click();">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-image').click();">
 							  <path d="M3 3v15a3 3 0 003 3h9v-6h6V3zm9 8H6v-1h6zm6-3H6V7h12zm-2 8h5l-5 5z"></path>
 							</svg>
 	                    </div>
@@ -1293,8 +2217,9 @@
 				            <input type="hidden" name="fk_member_id" value="${membervo.member_id}" /> 	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*" onchange="previewImage(event)" multiple/>
-				            <!-- <input type="file" name="board_attachment" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" /> -->
+				            <input type="file" name="attach" id="file-image" style="display:none;" accept="image/*, video/*, .pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>
+				            <!--  <input type="file" name="attach" id="file-video" style="display:none;" accept="video/*" onchange="previewImage(event)" multiple/>-->
+				            <!-- <input type="file" name="attach" id="file-attachment" style="display:none;" accept=".pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage(event)" multiple/>-->
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
@@ -1310,11 +2235,11 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info2">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	
                         </div>
                         <div class="modal-name">
-                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	<!-- DB에서 가져오기 -->
-                            <span id="visibilityStatus2">전체공개</span>
+                            <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
+                            <span id="visibilityStatus2"></span>
                         </div>
                     </button>
                     <span class="close" id="closeModalButton">&times;</span>
@@ -1333,11 +2258,11 @@
 					</div>
 					
 				    <!-- 이미지 미리보기 영역 -->
-					<div id="carousel-container2">
+					<div id="carousel-container2"> 
 					    <button id="prevBtn2" class="carousel-btn">〈</button>
 					
 					    <div id="image-preview-container2">
-					        <div class="carousel-track">
+					        <div class="carousel-track2">
 					        </div>
 					    </div>
 					
@@ -1346,11 +2271,14 @@
 					
                     <div class="ql-category">
 	                    <div>
-	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image').click();">
+	                    	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="image-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="image" onclick="document.getElementById('file-image2').click();">
 							  	<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm1 13a1 1 0 01-.29.71L16 14l-2 2-6-6-4 4V7a1 1 0 011-1h14a1 1 0 011 1zm-2-7a2 2 0 11-2-2 2 2 0 012 2z"></path>
 							</svg>
-                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-video').click();">
+                    		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="video-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" type="video" onclick="document.getElementById('file-image2').click();">
 								<path d="M19 4H5a3 3 0 00-3 3v10a3 3 0 003 3h14a3 3 0 003-3V7a3 3 0 00-3-3zm-9 12V8l6 4z"></path>
+							</svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="sticky-note-medium" class="hidden-svg" aria-hidden="true" role="none" data-supported-dps="24x24" fill="currentColor" onclick="document.getElementById('file-image2').click();">
+							  <path d="M3 3v15a3 3 0 003 3h9v-6h6V3zm9 8H6v-1h6zm6-3H6V7h12zm-2 8h5l-5 5z"></path>
 							</svg>
 	                    </div>
 						<div>
@@ -1361,9 +2289,7 @@
 				            <input type="hidden" name="board_no" value="" />	
 				            <input type="hidden" name="board_content" value="" />
 				            <input type="hidden" name="board_visibility" value="" />
-				            <input type="file" name="board_image" id="file-image" style="display:none;" onchange="previewImage(event)" />
-				            <input type="file" name="board_video" id="file-video" style="display:none;" />
-				            <input type="file" name="board_attachment" id="file-attachment" style="display:none;" />
+				            <input type="file" name="attach" id="file-image2" style="display:none;" accept="image/*, video/*, .pdf,.doc,.docx,.xlsx,.pptx,.txt,.csv" onchange="previewImage2(event)" multiple/>
 			            </form>
 			        </div> <!-- div.ql-category 끝 -->
                 </div> <!-- div.content-bottom 끝 -->
@@ -1449,27 +2375,27 @@
 				<!-- 반응 카테고리 -->
 				<div class="reaction-tabs">
 					<button class="active" value="7">전체 <span id="reaction-all"></span></button>
-					<button value="1">
+					<button value="1" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-LIKE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/2uxqgankkcxm505qn812vqyss" alt="like" data-test-reactions-icon-type="LIKE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-like"></span>
 					</button>
-					<button value="2">
+					<button value="2" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-PRAISE data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/cm8d2ytayynyhw5ieaare0tl3" alt="celebrate" data-test-reactions-icon-type="PRAISE" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-praise"></span>
 					</button>
-					<button value="3">
+					<button value="3" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-APPRECIATION data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/e1vzxs43e7ryd6jfvu7naocd2" alt="support" data-test-reactions-icon-type="APPRECIATION" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-empathy"></span>
 					</button>
-					<button value="4">
+					<button value="4" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-EMPATHY data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/f58e354mjsjpdd67eq51cuh49" alt="love" data-test-reactions-icon-type="EMPATHY" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-appreciation"></span>
 					</button>
-					<button value="5">
+					<button value="5" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-INTEREST data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6gz02r6oxefigck4ye888wosd" alt="insightful" data-test-reactions-icon-type="INTEREST" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-interest"></span>
 					</button>
-					<button value="6">
+					<button value="6" class="reaction-modal-button">
 						<img class="reactions-icon social-details-reactors-tab__icon reactions-icon__consumption--medium data-test-reactions-icon-type-ENTERTAINMENT data-test-reactions-icon-theme-light" src="https://static.licdn.com/aero-v1/sc/h/6namow3mrvcg3dyuevtpfwjm0" alt="funny" data-test-reactions-icon-type="ENTERTAINMENT" data-test-reactions-icon-theme="light" data-test-reactions-icon-style="consumption" data-test-reactions-icon-size="medium"> 
 						<span id="reaction-entertainment"></span>
 					</button>
@@ -1481,6 +2407,66 @@
 	  	</div>
         <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
         
+        
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 관심없음 Modal -->
+	    <div id="ignoredModal" class="modal">
+		    <div class="modal-content" style="width: 600px; height: 400px;">
+	
+				<!-- 모달 헤더 -->
+				<div class="ignoredModal-header">
+					<input type="hidden" name="ignored_fk_board_no" value="">
+					
+					<h2>앞으로 표시하지 않기</h2>
+					<span class="close" id="closeModalButton">&times;</span>
+				</div>
+
+				<hr class="border-gray-300 mx-4">
+
+				<!--모달 내용 -->
+				<div class="ignoredModal-body">
+					<p>홈 개선에 도움이 필요한 이유를 알려주세요.</p>
+					<ul class="reason-list">
+					    <li><label><input type="radio" name="reason" value="writer"> 글쓴이에게 관심 없음</label></li>
+					    <li><label><input type="radio" name="reason" value="topic"> 이 주제에 관심 없음</label></li>
+					    <li><label><input type="radio" name="reason" value="too_much"> 관련 글을 너무 많이 봤음</label></li>
+					    <li><label><input type="radio" name="reason" value="seen_before"> 전에 이 글을 봤음</label></li>
+					    <li><label><input type="radio" name="reason" value="too_old"> 글이 너무 오래 됐음</label></li>
+					    <li><label><input type="radio" name="reason" value="etc"> 기타</label></li>
+					</ul>
+				</div>
+		    	
+		    	<div style="display: flex; justify-content: flex-end; margin-right: 20px;">
+			    	<button type="button" id="saveIgnored" class="save-btn">전송</button>
+		    	</div>
+		    	
+		    </div>
+		</div>    
+        <!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+
+
+		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+        <!-- 피드 사진 크게보기 Modal -->
+		<div id="imageModal" class="image-modal" style="text-align: center;">
+			<div class="image-modal-content">
+			
+				<span class="close" id="closeModalButton">&times;</span>
+				
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip" id="chevron-left-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
+				  <path d="M16 2L8.5 12 16 22h-2.5L6 12l7.5-10z"></path>
+				</svg>
+				
+				<div id="image-container"></div>
+				
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="rtl-flip modal-prev" id="chevron-right-medium" aria-hidden="true" role="none" data-supported-dps="24x24" fill="white">
+				  <path d="M10.5 2L18 12l-7.5 10H8l7.5-10L8 2z"></path>
+				</svg>
+				
+			</div>
+		</div>
+		<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+
+
 		<!-- 우측 광고 -->
         <div class="right-side col-span-4 h-full relative hidden lg:block">
             <div class="border-list sticky top-20 space-y-2 text-center relative bg-white">
