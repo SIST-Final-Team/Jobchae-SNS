@@ -264,7 +264,6 @@ $(document).ready(function() {
         const reportResultModal = document.getElementById('report-result-modal');     // 신고 결과 모달
         const closeReportModal = document.getElementById('close-report-result');       // 신고 모달 닫기 버튼
         const closeMenuOptions = document.getElementById('menu-options-close');       // 메뉴 모달 닫기 버튼
-        const closeMenuOptions2 = document.getElementById('menu-options-close-2');       // 메뉴 모달 닫기 버튼
         const submitButton = document.getElementById('submit-report');                // 신고 제출 버튼
         const closeResult = document.getElementById('result-close');                  // 모달 차단 버튼
          
@@ -288,13 +287,6 @@ $(document).ready(function() {
         closeMenuOptions.addEventListener('click', function () {
             menuOptions.classList.add('hidden');
         });
-        
-        
-        // 메뉴 모달 닫기 두번째
-        closeMenuOptions2.addEventListener('click', function () {
-            menuOptions.classList.add('hidden');
-        });
-
 
         // 신고 폼 제출 처리
         const reportForm = document.getElementById('report-form');  // 폼 요소 가져오기
@@ -853,7 +845,7 @@ dialog.dropdown::backdrop {
             </select>
 
             <label for="description" class="block font-medium mb-2">추가 설명 (선택)</label>
-            <textarea name="Additional_explanation" id="description" class="border rounded w-full px-3 py-2 mb-4" placeholder="신고 내용을 입력해주세요"></textarea>
+            <textarea name="Additional_explanation" id="description" class="border rounded w-full px-3 py-2 mb-4 resize-none" placeholder="신고 내용을 입력해주세요"></textarea>
 
             <div class="flex justify-end space-x-2">
        
@@ -876,7 +868,7 @@ dialog.dropdown::backdrop {
 	    <div class="bg-white rounded-lg w-130 h-40 p-6 relative">
 	        <h2 class="text-lg font-bold mb-4 border-b border-gray-300 pb-2 mb-4">신고해 주셔서 감사합니다.</h2>
 	        <!-- 닫기 버튼 (모달 상단 오른쪽) -->
-	        <button id="menu-options-close-2" class="absolute top-2 right-2 text-4xl text-gray-400 hover:text-gray-600">
+	        <button id="result-close" class="absolute top-2 right-2 text-4xl text-gray-400 hover:text-gray-600">
 	            &times;
 	        </button>
 	        <p class="text-sm text-gray-500">Jobchae 회원들과 플랫폼을 안전하게 유지하도록 도와주셔서 감사합니다.</p>
