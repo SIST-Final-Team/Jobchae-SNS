@@ -252,6 +252,97 @@ $(document).ready(function() {
 });
 
 </script>
+
+<!-- 신고기능 JavaScript(이진호) -->
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const reportButton = document.getElementById('report-btn');                   // 신고 버튼
+        const menuOptions = document.getElementById('menu-options');                  // 메뉴 모달
+        const profileReportButton = document.getElementById('profile-report-button'); // 프로필 신고 버튼
+        const reportModal = document.getElementById('report-modal');                  // 신고 모달
+        const reportResultModal = document.getElementById('report-result-modal');     // 신고 결과 모달
+        const closeReportModal = document.getElementById('close-report-result');       // 신고 모달 닫기 버튼
+        const closeMenuOptions = document.getElementById('menu-options-close');       // 메뉴 모달 닫기 버튼
+        const closeMenuOptions2 = document.getElementById('menu-options-close-2');       // 메뉴 모달 닫기 버튼
+        const submitButton = document.getElementById('submit-report');                // 신고 제출 버튼
+        const closeResult = document.getElementById('result-close');                  // 모달 차단 버튼
+         
+        // "신고" 버튼 클릭 시 메뉴 표시
+        reportButton.addEventListener('click', function () {
+            menuOptions.classList.remove('hidden');
+        });
+
+        // "프로필 항목 신고" 버튼 클릭 시 메뉴 -> 신고 모달 전환
+        profileReportButton.addEventListener('click', function () {
+            menuOptions.classList.add('hidden');
+            reportModal.classList.remove('hidden');
+        });
+
+        // 신고 모달 닫기
+        closeReportModal.addEventListener('click', function () {
+            reportModal.classList.add('hidden');
+        });
+
+        // 메뉴 모달 닫기
+        closeMenuOptions.addEventListener('click', function () {
+            menuOptions.classList.add('hidden');
+        });
+        
+        
+        // 메뉴 모달 닫기 두번째
+        closeMenuOptions2.addEventListener('click', function () {
+            menuOptions.classList.add('hidden');
+        });
+
+
+        // 신고 폼 제출 처리
+        const reportForm = document.getElementById('report-form');  // 폼 요소 가져오기
+        reportForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+
+        // 폼 데이터 가져오기
+        const formData = new FormData(reportForm);  // 'report-form' ID로 가져옴
+
+     // Ajax 요청 보내기 (세션 정보 포함)
+        fetch('/jobchae/member/reportPage', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'  // 쿠키를 포함하여 요청 전송
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 실패했습니다');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('서버 응답:', data);
+            if (data.success) {
+                reportModal.classList.add('hidden');
+                reportResultModal.classList.remove('hidden');
+            } else {
+                alert("신고에 실패했습니다. 다시 시도해주세요.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("에러가 발생했습니다. 다시 시도해주세요.");
+        });
+
+});
+
+// 결과 모달 닫기 처리
+closeResult.addEventListener('click', function () {
+    reportResultModal.classList.add('hidden');
+});
+   });
+
+</script>
+<!-- 신고기능 JavaScript 끝 (이진호) -->
+
+
+
 <style>
 dialog.dropdown::backdrop {
     background: transparent;
@@ -682,8 +773,118 @@ dialog.dropdown::backdrop {
                     <div class="flex space-x-2">
                         <button type="button" class="button-selected">활동 상태</button>
                         <button type="button" class="button-gray">리소스</button>
-                    </div>
-                </div>
+                        
+                        <!-- 신고기능 시작 (이진호)  -->
+                        <button id="report-btn" class="button-gray">신고/차단</button>
+
+<!-- 신고 선택 메뉴 -->
+<div id="menu-options" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center">
+    <div class="bg-white rounded-lg w-130 p-5 relative">
+        <!-- 닫기 버튼 (모달 상단 오른쪽) -->
+        <button id="menu-options-close" class="absolute top-2 right-2 text-4xl text-gray-400 hover:text-gray-600">
+            &times;
+        </button>
+
+        <!-- 신고/차단 버튼 -->
+        <h2 class="text-lg font-bold border-b border-gray-300 pb-2 mb-4">신고/차단</h2>
+        <p class="text-sm text-bold text-gray-500">메뉴 선택</p>
+
+        <ul class="space-y-2 mt-4">
+            <li>
+                <button class="block-button w-full text-left py-2 px-4 hover:bg-gray-200 rounded border-b border-gray-300">
+                   ${sessionScope.member_id}님 차단
+                    <i class="fa-solid fa-right-long ml-auto w-[18px] text-lg float-right"></i>
+                </button>
+            </li>
+            <li>
+                <button class="menu-button w-full text-left py-2 px-4 hover:bg-gray-200 rounded border-b border-gray-300">
+                   ${sessionScope.member_id}님 또는 계정 전체 신고
+                    <i class="fa-solid fa-right-long ml-auto w-[18px] text-lg float-right"></i>
+                </button>
+            </li>
+            <li>
+                <button id="profile-report-button" class="menu-button w-full text-left py-2 px-4 hover:bg-gray-200 rounded">
+                    프로필 항목 신고
+                    <i class="fa-solid fa-right-long ml-auto w-[18px] text-lg float-right"></i>
+                </button>
+            </li>
+        </ul>
+
+        <!-- 닫기 버튼 (하단 안내 버튼) -->
+        <button id="menu-options-close" class="mt-4 w-full bg-gray-200 rounded py-2 px-4 text-center text-sm leading-relaxed">
+            업데이트, 댓글, 메시지에 문제가 있는 경우, 신고 기능을 이용하세요.
+        </button>
+    </div>
+</div>
+
+
+<!-- 차단 모달 -->
+<div id="block-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center">
+    <div class="bg-white rounded-lg w-130 h-40 p-6 relative">
+        <h2 class="text-lg font-bold mb-4 border-b border-gray-300 pb-2 mb-4">차단하기</h2>
+        <!-- 닫기 버튼 (모달 상단 오른쪽) -->
+        <button id="result-close" class="absolute top-2 right-2 text-4xl text-gray-400 hover:text-gray-600">
+            &times;
+        </button>
+        <p class="text-lg text-gray-500 font-bold"> ${username}님을 차단하려고 합니다.</p>
+        <p class="text-sm text-gray-500"> 1촌이 삭제되고, 서로 주고 받은 보유기술 추천이나 추천서가 사라집니다.</p>
+    </div>
+</div>
+
+<!-- 신고 모달 -->
+<div id="report-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center">
+    <div class="bg-white rounded-lg w-130 p-6">
+        <h2 class="text-lg font-bold mb-4 border-b border-gray-300 pb-2 mb-4">신고하기</h2>
+
+
+        <!-- 신고 내용 입력 -->
+        <form action="/jobchae/member/reportPage" method="POST" id="report-form">
+            <input type="hidden" name="Fk_member_id" value="${currentUserId}">
+            <input type="hidden" name="Fk_reported_member_id" value="${profileUserId}">
+
+            <label for="reason" class="block font-medium mb-2">적용 정책 선택하기</label>
+            <select name="Report_type" id="reason" required class="border rounded w-full px-3 py-2 mb-4">
+                <option value="" disabled selected>사유를 선택해주세요</option>
+                <option value="1">잘못된정보</option>
+                <option value="2">사기</option>
+                <option value="3">불법제품및서비스</option>
+                <option value="4">성인물</option>
+                <option value="5">혐오조장발언</option>
+            </select>
+
+            <label for="description" class="block font-medium mb-2">추가 설명 (선택)</label>
+            <textarea name="Additional_explanation" id="description" class="border rounded w-full px-3 py-2 mb-4" placeholder="신고 내용을 입력해주세요"></textarea>
+
+            <div class="flex justify-end space-x-2">
+       
+               <!-- 취소 버튼 -->
+            <button type="button" id="close-report-result" class="close-button px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded">
+                취소
+            </button> 
+            
+                <!-- 신고 제출 -->
+                <button type="submit" id="submit-report" class="px-4 py-2 text-sm text-white bg-orange-500 hover:bg-orange-600 rounded">
+                    제출
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+	<!-- 신고 결과 모달 -->
+	<div id="report-result-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center">
+	    <div class="bg-white rounded-lg w-130 h-40 p-6 relative">
+	        <h2 class="text-lg font-bold mb-4 border-b border-gray-300 pb-2 mb-4">신고해 주셔서 감사합니다.</h2>
+	        <!-- 닫기 버튼 (모달 상단 오른쪽) -->
+	        <button id="menu-options-close-2" class="absolute top-2 right-2 text-4xl text-gray-400 hover:text-gray-600">
+	            &times;
+	        </button>
+	        <p class="text-sm text-gray-500">Jobchae 회원들과 플랫폼을 안전하게 유지하도록 도와주셔서 감사합니다.</p>
+	    </div>
+	</div>
+	<!-- 신고/차단 기능 끝 (이진호) -->
+  </div>
+</div>
 
                 <!-- 분석 -->
                 <div class="py-0!">

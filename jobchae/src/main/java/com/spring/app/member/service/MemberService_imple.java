@@ -29,6 +29,7 @@ import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.member.domain.ReportVO;
 import com.spring.app.member.model.MemberDAO;
 
 import jakarta.servlet.ServletContext;
@@ -704,6 +705,41 @@ public class MemberService_imple implements MemberService {
 	
 	
 	// === 김규빈 끝 === //
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	// === 이진호 시작 === //
+	
+
+	@Override
+	public boolean createReport(ReportVO report) {
+		
+	        try {
+	            // 신고 정보를 DB에 저장
+	            dao.createReport(report);
+	            return true;  // 성공적으로 신고가 처리됨
+	            
+	        } catch (Exception e) {
+	        	
+	            e.printStackTrace();  // 예외 발생 시 로그 출력
+	            
+	            return false;  // 신고 실패
+	        }
+	}
+
+
+
+
 }//end of class..
 
 

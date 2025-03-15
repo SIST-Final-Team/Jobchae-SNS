@@ -16,7 +16,6 @@
 	</select>
 	
 	
-	
 	<!-- 이메일 중복체크 -->
 	<select id="emailCheck" parameterType="String" resultType="String">
 		select member_email
@@ -470,4 +469,37 @@
 	
 	
 	<!-- === 김규빈 끝 === -->
+	
+	
+	
+	
+	<!-- === 이진호 시작 === -->
+	
+	
+	
+
+	<!-- 🚨 신고 기록 추가 🚨  --> 
+	<insert id="createReport" parameterType="ReportVO">
+   		 insert into tbl_report (report_no, fk_member_id, fk_reported_member_id, report_type, additional_explanation)
+   		 values (seq_report_no.nextval, #{fk_member_id}, #{fk_reported_member_id}, #{report_type}, #{additional_explanation})
+	</insert>
+
+
+<!--  🚨 신고 횟수 조회 🚨 
+	<select id="getReportedCount" resultType="int" parameterType="string">
+		select count(*)
+		from tbl_report
+		where fk_reported_member_id = #{reportedMemberId}
+	</select>
+
+	🚨 회원 정지 처리 🚨
+	<update id="banMember" parameterType="string">
+		update tbl_member
+		set member_status = 3
+		where member_id = #{reportedMemberId}
+	</update>
+ -->
+	<!-- === 이진호 끝 === -->
+	
+	
 </mapper>

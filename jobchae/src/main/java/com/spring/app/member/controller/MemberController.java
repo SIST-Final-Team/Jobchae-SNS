@@ -454,6 +454,40 @@ public class MemberController {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// =========================== 이진호 시작 =========================== //
+
+
+
+
+			@GetMapping("reportPage")
+			public ModelAndView reportPage(ModelAndView mav) {
+				mav.setViewName("/member/reportPage"); // view 단 페이지
+				return mav;
+			}
+		
+
+			
+		
+		
+
+		// =========================== 이진호 끝 =========================== //
+	
+	
+	
+	
+	
 }//end of class...
 
 

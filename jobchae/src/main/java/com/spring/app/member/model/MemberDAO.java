@@ -11,6 +11,7 @@ import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.member.domain.ReportVO;
 
 @Mapper
 public interface MemberDAO {
@@ -178,5 +179,32 @@ public interface MemberDAO {
 
 
 	// === 김규빈 끝 === //
+	
+	
+	
+	
+	
+	// === 이진호 시작 === //
+	
+
+	
+	// 🚨 신고 기록 추가 🚨
+	
+	void createReport(ReportVO report);
+
+	// 🚨 신고 횟수 조회 🚨
+	
+	int getReportedCount(String reportedMemberId);
+
+	// 🚨 회원 정지 처리 🚨
+	
+	void banMember(String reportedMemberId);
+
+	
+
+
+
+
+	// === 이진호 끝 === //
 	
 }//end of interface...
