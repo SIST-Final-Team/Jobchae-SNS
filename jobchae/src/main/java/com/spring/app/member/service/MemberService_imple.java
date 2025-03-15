@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-
+import com.spring.app.alarm.controller.AlarmController;
+import com.spring.app.alarm.model.AlarmDAO;
 import com.spring.app.common.AES256;
 import com.spring.app.common.FileManager;
 import com.spring.app.common.security.Sha256;
+import com.spring.app.config.AES256_Configuration;
 import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.member.domain.MemberCareerVO;
@@ -38,6 +40,12 @@ import jakarta.servlet.http.HttpSession;
 @Service
 public class MemberService_imple implements MemberService {
 
+    private final AlarmDAO alarmDAO;
+
+    private final AlarmController alarmController;
+
+    private final AES256_Configuration AES256_Configuration;
+
 	@Autowired
 	MemberDAO dao;
 
@@ -50,6 +58,13 @@ public class MemberService_imple implements MemberService {
 	
 	@Autowired
     private ServletContext servletContext;
+
+
+    MemberService_imple(AES256_Configuration AES256_Configuration, AlarmController alarmController, AlarmDAO alarmDAO) {
+        this.AES256_Configuration = AES256_Configuration;
+        this.alarmController = alarmController;
+        this.alarmDAO = alarmDAO;
+    }
 	
 	
 
@@ -560,7 +575,19 @@ public class MemberService_imple implements MemberService {
 	// 회원 한 명의 정보 조회
 	@Override
 	public MemberVO getMember(Map<String, String> paraMap) {
-		return dao.getMember(paraMap);
+		MemberVO memberVO = dao.getMember(paraMap);
+
+		// 복호화
+		try {
+			if(memberVO != null) {
+				memberVO.setMember_email(aes.decrypt(memberVO.getMember_email())); 		// 양방향
+				memberVO.setMember_tel(aes.decrypt(memberVO.getMember_tel())); 			// 양방향
+			}
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return memberVO;
 	}
 
 	// 회원 경력 1개 조회
@@ -646,6 +673,58 @@ public class MemberService_imple implements MemberService {
 	public int deleteMemberSkill(Map<String, String> paraMap) {
 		return dao.deleteMemberSkill(paraMap);
 	}
+
+	// 회원 프로필 배경 수정
+	@Override
+	public int updateMemberBackgroundImg(MemberVO memberVO) {
+		return dao.updateMemberBackgroundImg(memberVO);
+	}
+
+	// 회원 프로필 사진 수정
+	@Override
+	public int updateMemberProfile(MemberVO memberVO) {
+		return dao.updateMemberProfile(memberVO);
+	}
+
+	// 한 회원의 팔로워 수 가져오는 메소드
+	public int getFollowerCount(String member_id) {
+		return dao.getFollowerCount(member_id);
+	}
+
+	// 회원 정보 수정
+	@Override
+	public int updateMember(MemberVO memberVO) {
+		
+		// 암호화
+		try {
+			if(!"".equals(memberVO.getMember_passwd())){
+				memberVO.setMember_passwd(Sha256.encrypt(memberVO.getMember_passwd())); // 단방향
+			}
+			if(!"".equals(memberVO.getMember_passwd())){
+				memberVO.setMember_email(aes.encrypt(memberVO.getMember_email())); 		// 양방향
+			}
+			if(!"".equals(memberVO.getMember_passwd())){
+				memberVO.setMember_tel(aes.encrypt(memberVO.getMember_tel())); 			// 양방향
+			}
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+
+		int n = dao.updateMember(memberVO);
+		
+		// 복호화
+		try {
+			memberVO.setMember_email(aes.decrypt(memberVO.getMember_email())); 		// 양방향
+			memberVO.setMember_tel(aes.decrypt(memberVO.getMember_tel())); 			// 양방향
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+
+		return n;
+	}
+
+
+
 
 
 

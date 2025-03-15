@@ -209,7 +209,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
                 </ul>
               </li>
               <li class="pt-2 px-2 text-gray-500">
-                <a href="<%= ctxPath%>/member/logout">로그아웃</a>
+                <a href="<%= ctxPath%>/member/logout" class="hover:underline">로그아웃</a>
               </li>
             </ul>
           </div>

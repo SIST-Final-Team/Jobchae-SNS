@@ -62,7 +62,7 @@
        		   M.FK_REGION_NO,              -- 지역 일련번호
        		   MEMBER_PASSWD,               -- 비밀번호
        		   MEMBER_NAME,                 -- 성명
-       		   MEMBER_BIRTH,                -- 생년월일
+       		   to_char(MEMBER_BIRTH, 'yyyy-mm-dd') AS MEMBER_BIRTH, -- 생년월일
        		   MEMBER_EMAIL,                -- 이메일
        		   MEMBER_TEL,                  -- 전화번호
        		   MEMBER_REGISTER_DATE,        -- 가입일자 ,기본은 SYSDATE
@@ -72,7 +72,8 @@
        		   MEMBER_PROFILE,              -- 프로필 사진
        		   MEMBER_BACKGROUND_IMG,       -- 프로필 배경 사진
        		   MEMBER_HIRE_STATUS,          -- 고용상태 , 이직/구직중 : 1, 채용중 : 2, 프리랜서 활동중 : 3
-			   member_career_company        -- 회사명
+			   region_name,                 -- 지역명
+			   member_career_company,       -- 회사명
        		   school_name                  -- 학교명
 	   FROM TBL_MEMBER M
 	   LEFT JOIN (SELECT TRUNC(MONTHS_BETWEEN(SYSDATE, MAX(LOGIN_DATE))) AS lastlogingap, fk_member_id
@@ -467,7 +468,50 @@
 		where member_skill_no = #{member_skill_no} and fk_member_id = #{fk_member_id}
 	</delete>
 	<!-- === 회원 보유기술 끝 === -->
-	
-	
+
+	<!-- 회원 프로필 배경 수정 -->
+	<update id="updateMemberBackgroundImg" parameterType="MemberVO">
+		update tbl_member SET member_background_img = #{member_background_img}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 회원 프로필 사진 수정 -->
+	<update id="updateMemberProfile" parameterType="MemberVO">
+		update tbl_member SET member_profile = #{member_profile}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 팔로워 수 가져오기 -->
+	<select id="getFollowerCount" parameterType="String" resultType="int">
+		select count(*) AS followerCount
+		from tbl_follow
+		where following_id = #{member_id}
+	</select>
+
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE tbl_member SET member_id = member_id
+		<if test='member_passwd != ""'>
+			, member_passwd = #{member_passwd}
+			, member_passwdupdate_date = SYSDATE
+		</if>
+		<if test='member_name != ""'>
+			, member_name = #{member_name}
+		</if>
+		<if test='member_birth != ""'>
+			, member_birth = #{member_birth}
+		</if>
+		<if test='member_email != ""'>
+			, member_email = #{member_email}
+		</if>
+		<if test='member_tel != ""'>
+			, member_tel = #{member_tel}
+		</if>
+		<if test='fk_region_no != ""'>
+			, fk_region_no = #{fk_region_no}
+		</if>
+		WHERE member_id = #{member_id}
+	</update>
+
 	<!-- === 김규빈 끝 === -->
 </mapper>
