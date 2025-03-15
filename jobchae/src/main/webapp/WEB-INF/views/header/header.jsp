@@ -21,6 +21,12 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
       src="<%=ctxPath%>/js/main-header/header.js"
     ></script>
 
+    <!-- TailWind Script -->
+    <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
+    
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <%-- 검색 --%>
     
     <script
@@ -40,14 +46,19 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
       <div class="h-full text-center flex">
         <!-- 로고 -->
         <div class="h-full flex-1 text-left md:mr-8 lg:mr-0">
-          <a href="" class="h-full w-20">
+          <a href="${pageContext.request.contextPath}/index" class="h-full w-20">
             <img
-              src="${pageContext.request.contextPath}/images/LinkedIn_icon.svg"
-              class="h-3/4 mt-1.5 object-contain"
-          /></a>
+              src="${pageContext.request.contextPath}/images/logo/logo-horizontal.png"
+              class="h-3/4 mt-1.5 object-contain p-1 hidden xl:block"
+            />
+            <img
+              src="${pageContext.request.contextPath}/images/logo/logo.png"
+              class="h-3/4 mt-1.5 object-contain p-1 xl:hidden"
+            />
+          </a>
         </div>
         <!-- 검색상자 -->
-        <div id="searchBox" class="h-9 ml-4 mt-2 h-full text-left hidden lg:block lg:w-70! xl:w-[24rem]! xl:mr-33">
+        <div id="searchBox" class="h-9 ml-4 mt-2 h-full text-left hidden lg:block lg:w-70! xl:w-[24rem]! xl:-mr-5">
           <div id="searchInput" class="flex rounded-sm h-3/4">
             <div id="SearchIconDiv" class="h-full flex items-center! justify-center"><i class="fa-solid fa-magnifying-glass"></i></div>
             <div id="SearchInputDiv" class="h-full flex items-center!">
