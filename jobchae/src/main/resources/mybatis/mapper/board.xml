@@ -21,6 +21,9 @@
 		values(seq_file_no.nextVal, #{file_target_no}, 'board', #{file_name}, #{file_original_name}, #{file_size}, default)
 	</insert>
 	
+	
+	
+	
 	<!-- 로그인된 사용자의 정보 얻어오기 -->
 	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
 		select member_id, member_name, member_birth
@@ -28,45 +31,26 @@
 		where member_id = #{login_userid}
 	</select>
 	
+	
+	
+	
+	
 	<!-- 피드 조회하기 -->
 	<select id="getAllBoards" resultType="BoardVO" parameterType="HashMap">
-		<if test="sort != 'likes'">
-        	select b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name, m.member_birth
-	     	from tbl_board b
-	      	join tbl_member m on b.fk_member_id = m.member_id
-	      	left join tbl_follow f on m.member_id = f.following_id
-	      	where b.board_is_delete = 0 and (f.follower_id = #{login_userid} OR b.fk_member_id = #{login_userid})
-	      	order by b.board_register_date desc
-        </if>
-        
-        <if test="sort == 'likes'">
-		    select b.board_no, b.fk_member_id, b.board_content, b.board_visibility, b.board_comment_allowed, b.board_register_date, b.board_parent_no, b.board_group_no, b.board_depth, b.board_is_delete, m.member_id, m.member_name, m.member_birth, count(r.reaction_no) as reaction_count 
-			from tbl_board b
-			join tbl_member m on b.fk_member_id = m.member_id
-			left join tbl_follow f on m.member_id = f.following_id
-			left join tbl_reaction r on b.board_no = r.reaction_target_no 
-			    and r.reaction_target_type = 'board'  -- 게시글에 대한 반응만 집계
-			where b.board_is_delete = 0
-			and (f.follower_id = 'user001' or b.fk_member_id = 'user001')
-			group by 
-			    b.board_no, 
-			    b.fk_member_id, 
-			    b.board_content, 
-			    b.board_visibility, 
-			    b.board_comment_allowed, 
-			    b.board_register_date, 
-			    b.board_parent_no, 
-			    b.board_group_no, 
-			    b.board_depth, 
-			    b.board_is_delete, 
-			    m.member_id, 
-			    m.member_name,
-			    m.member_birth
-			order by reaction_count desc
-        </if>
+       	SELECT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, 
+		       b.board_comment_allowed, b.board_register_date, b.board_parent_no, 
+		       b.board_group_no, b.board_depth, b.board_is_delete, 
+		       m.member_id, m.member_name, m.member_birth
+		FROM tbl_board b
+		JOIN tbl_member m ON b.fk_member_id = m.member_id
+		LEFT JOIN tbl_follow f ON m.member_id = f.following_id
+		LEFT JOIN tbl_ignored i ON b.board_no = i.fk_board_no AND i.fk_member_id = #{login_userid}
+		WHERE b.board_is_delete = 0 
+		AND (f.follower_id = #{login_userid} OR b.fk_member_id = #{login_userid})
+		AND i.fk_board_no IS NULL  
+		ORDER BY b.board_register_date DESC
+
 	</select>
-
-
 
 	<!-- 각 피드별 파일 존재여부 검사 -->
 	<select id="getFiles" resultType="FileVO" parameterType="String">
@@ -82,11 +66,11 @@
 		where fk_member_id = #{fk_member_id} and board_no = #{board_no}
 	</update>	
 	
-	<!-- 글 수정 -->
+	<!-- 글 수정 
 	<update id="editBoard" parameterType="HashMap">
 		update tbl_board set board_content = #{board_content}, board_visibility = #{board_visibility}
 		where board_no = #{board_no} and fk_member_id = #{fk_member_id}	
-	</update>
+	</update>-->
 	
 	<!-- 게시물 반응 -->
 	<insert id="reactionBoard" parameterType="HashMap">
@@ -208,7 +192,7 @@
 	<!-- 댓글 등록하기 -->
 	<insert id="addComment" parameterType="HashMap">
 		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
-		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, #{fk_board_no}, default, default)
+		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, seq_comment_no.currval, default, default)
 	</insert>
 	
 	<!-- 댓글 조회하기 -->
@@ -217,6 +201,7 @@
 		from tbl_comment c
 		join tbl_member m
 		on c.fk_member_id = m.member_id
+		order by c.comment_register_date desc
 	</select>
 	
 	<!-- 댓글 수 구하기 -->
@@ -226,5 +211,70 @@
 		where fk_board_no = #{board_no}
 	</select>
 	
+	<!-- 댓글 삭제하기 -->
+	<delete id="deleteComment" parameterType="HashMap">
+		delete from tbl_comment
+		where fk_board_no = #{fk_board_no} and comment_no = #{comment_no} and fk_member_id = #{fk_member_id}
+	</delete>
+	
+	<!-- 댓글 수정하기 -->
+	<update id="editComment" parameterType="HashMap">
+		update tbl_comment set comment_content = #{comment_content}
+		where fk_board_no = #{fk_board_no} and comment_no = #{comment_no} and fk_member_id = #{fk_member_id}
+	</update>
+	
+	
+	<!-- 관심없음 등록하기 -->
+	<insert id="ignoredBoard" parameterType="HashMap">
+		insert into tbl_ignored(ignored_no, fk_member_id, fk_board_no, ignored_register_date)
+		values(seq_ignored_no.nextVal, #{fk_member_id}, #{fk_board_no}, default)
+	</insert>
+	
+	
+	<!-- 대댓글 등록하기 -->
+	<insert id="addCommentReply" parameterType="HashMap">
+		insert into tbl_comment(comment_no, fk_board_no, fk_member_id, comment_content, comment_parent_no, comment_group_no, comment_depth, comment_register_date)
+		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, #{comment_no}, #{comment_no}, 1, default)
+	</insert>
+	
+	
+	
+	<!-- 파일 조회하기 -->
+	<select id="selectFileList" parameterType="HashMap">
+		select file_no, file_target_no, file_name, file_original_name, file_size
+		from tbl_file
+		where file_target_no = #{file_target_no}
+	</select>
+	
+	
+	
+	<!-- 글 수정 -->
+	<update id="editBoard" parameterType="HashMap">
+		update tbl_board set board_content = #{board_content}, board_visibility = #{board_visibility}
+		where board_no = #{board_no} and fk_member_id = #{fk_member_id}	
+	</update>
+	
+	
+	<!-- 파일 조회하기 -->
+	<select id="selectFileList2" resultType="FileVO" parameterType="String">
+		select file_no, file_target_no, file_name, file_original_name, file_size
+		from tbl_file
+		where file_target_no = #{board_no}
+	</select>
+	
+	
+	<!-- 피일 삭제 (수정) -->
+	<delete id="deleteFiles" parameterType="java.util.List">
+		delete from tbl_file where file_no in
+		<foreach item="file_no" collection="list" open="(" separator="," close=")">
+	        #{file_no}
+	    </foreach>
+	</delete>
+	
+	<!-- 파일 첨수 (수정) -->
+	<insert id="editBoardWithFiles" parameterType="HashMap" >
+		insert into tbl_file(file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date)
+		values(seq_file_no.nextVal, #{board_no}, 'board', #{file_name}, #{file_original_name}, #{file_size}, default)
+	</insert>
 	
 </mapper>

@@ -233,6 +233,7 @@ span.category-name {
 
 .feed-post-name {
 	font-weight: bold;
+	margin-left: 1px;
 }
 
 .more-options {
@@ -359,7 +360,7 @@ div.modal {
 	margin-right: 15px;
 }
 
-#visibilityStatus {
+#visibilityStatus, #visibilityStatus2 {
 	padding-left: 18px;	
 }
 
@@ -450,7 +451,11 @@ img.modal-img {
     background-color: #357ABD; 
 }
 
-.reactions-menu {
+.button-board-action-reaction {
+	position: relative;	
+}
+
+.reactions-menu { /*ㅇㅇ*/
     display: none;
     position: absolute;
     z-index: 999;
@@ -459,6 +464,7 @@ img.modal-img {
     border-radius: 40px;
     width: 350px;
     height: 60px;
+    left: 37%;  
 }
 
 .reactions-menu__reaction {
@@ -494,6 +500,10 @@ img.modal-img {
     }
 }
 
+.reactions-menu__reaction {
+    transition: transform 0.3s ease-in-out; /* 전체 항목에 부드러운 변환 효과 적용 */
+}
+
 .button-board-action:hover + .reactions-menu,
 .reactions-menu:hover {
     display: block;
@@ -503,6 +513,12 @@ img.modal-img {
     transform: scale(1.7); 
     transition: transform 0.3s ease-in-out; 
     cursor: pointer;
+}
+
+/* 첫 번째 항목에 마우스를 올리면 나머지 항목들의 크기 줄이기 */
+.reactions-menu__reaction:nth-child(1):hover ~ .reactions-menu__reaction img {
+    transform: scale(0.7); /* 2~6번째 항목 크기 줄이기 */
+    transition: transform 0.3s ease-in-out; 
 }
 
 #image-medium, #video-medium, #sticky-note-medium {
@@ -581,7 +597,7 @@ img.modal-img {
     transition: background 0.3s;
 }
 
-#write-update:hover, #edit-update:hover, #saveRange:hover {
+#write-update:hover, #edit-update:hover, #saveRange:hover, #saveIgnored:hover {
     background: #084B99;
 }
 
@@ -603,6 +619,7 @@ img.modal-img {
     display: flex;
     transition: transform 0.5s ease; 
 }
+
 
 .preview-box {
     flex: 0 0 calc((640px - 16px) / 3); 
@@ -649,6 +666,15 @@ img.modal-img {
 	background: #f0f0f0;
 }
 
+
+
+
+
+
+
+
+
+
 /* ----- 반응 종류들?? 뜨게 하는 Modal ----- */
 .reactionmodal-content {
 	background-color: white;
@@ -671,6 +697,12 @@ img.modal-img {
 	justify-content: space-between;
 	align-items: center;
 	padding: 15px;
+}
+
+.reaction-modal-button {
+	display: flex; 
+	align-items: center; 
+	gap: 8px;
 }
 
 .reactionmodal-header h2 {
@@ -757,10 +789,6 @@ img.modal-img {
 	color: gray;
 	margin: 2px 0 0;
 }
-
-
-
-
 
 /* ----- 댓글 ----- */
 .comment-input-container {
@@ -889,9 +917,7 @@ img.modal-img {
 }
 
 
-
-
-
+/* 댓글 목록 */
 .options-dropdown2 {
     position: absolute;
     background: white;
@@ -920,3 +946,281 @@ img.modal-img {
     background: #f5f5f5;
     border-radius: 5px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.ignoredModal-header h2 {
+	font-size: 18px;
+	margin-bottom: 15px;
+	margin-left: 15px;
+}
+
+.ignoredModal-body {
+	margin-left: 15px;
+	margin-top: 15px;
+}
+
+.reason-list {
+    list-style: none;
+    padding: 0;
+}
+
+.reason-list li {
+    margin: 10px 0;
+}
+
+.reason-list input {
+    margin-right: 10px;
+}
+     
+#saveIgnored {
+	display: block;
+    width: 100px;
+    padding: 12px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+
+
+
+
+
+/* 게시글 5줄 이상 넘어가면 더보기 버튼 */
+.board-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.more-btn {
+    display: none;
+    margin-top: 10px;
+    cursor: pointer;
+}
+.board-content-container.expanded .board-content {
+    display: block;
+    -webkit-line-clamp: unset; 
+}
+
+.board-content-container.expanded #toggleButton {
+    display: block; 
+}
+
+
+
+
+
+
+.file-download-container {
+    text-align: left;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 98%;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+}
+
+.file-item:hover {
+	color: #4A90E2;
+	font-weight: bold;
+}
+
+.file-icon {
+    margin-right: 8px;
+}
+
+
+
+
+
+
+#image-container {
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.image-modal-content {
+    position: relative;
+    width: 800px;
+    height: 600px; 
+    margin: 6% auto; 
+    text-align: center;
+    background-color: #1C1F23; 
+    border-radius: 8px; 
+    padding: 20px; 
+    overflow:hidden;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;     
+}
+
+.modal-image {
+    display: block; 
+    width: 70%;       
+    height: 60%;      
+    object-fit: contain; 
+    margin: 0 auto;
+}
+
+#imageModal > .image-modal-content > .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white; 
+    font-size: 30px; 
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.chevron-icon {
+  fill: white;
+}
+
+#chevron-left-medium,
+#chevron-right-medium {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent; 
+  cursor: pointer;
+}
+
+#chevron-left-medium {
+  left: 20px;
+}
+
+#chevron-right-medium {
+  right: 20px;
+}
+
+
+
+.preview-board-no {
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 글 작성 Modal 이미지 미리보기 */
+#carousel-container2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;  
+    margin-bottom: 130px;
+}
+
+#image-preview-container2 {
+    overflow: hidden;  
+    width: 640px; 
+}
+
+.carousel-track2 {
+    display: flex;
+    transition: transform 0.5s ease; 
+}
+
+
+.preview-box2 {
+    flex: 0 0 calc((640px - 16px) / 3); 
+    height: 200px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; 
+    overflow: hidden; 
+}
+
+.preview-box2 img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; 
+}
+
+.preview-box2:hover {
+    cursor: pointer;
+    filter: brightness(0.7);
+}
+
+.close-btn {
+    position: absolute;
+    inset: 0; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    font-size: 60px; 
+    color: white; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.3s ease; 
+}
+
+.preview-box2:hover .close-btn {
+    opacity: 1; 
+    pointer-events: all; 
+}
+
+#prevBtn2:hover, #nextBtn2:hover {
+	background: #f0f0f0;
+}
+
+
+
+
+

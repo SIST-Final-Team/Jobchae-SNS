@@ -34,7 +34,7 @@ public interface BoardDAO {
 	int deleteFile(Map<String, String> paraMap);
 
 	// 글 수정
-	int editBoard(Map<String, String> paraMap);
+	//int editBoard(Map<String, String> paraMap);
 
 	// 게시물 반응
 	int reactionBoard(Map<String, String> paraMap);
@@ -87,6 +87,32 @@ public interface BoardDAO {
 	// 댓글 수 구하기
 	int getCommentCount(String board_no);
 
+	// 댓글 삭제하기
+	int deleteComment(Map<String, String> paraMap);
+
+	// 댓글 수정하기
+	int editComment(Map<String, String> paraMap);
+
+	// 관심없음 등록하기
+	int ignoredBoard(Map<String, String> paraMap);
+
+	// 대댓글 등록하기
+	int addCommentReply(Map<String, String> paraMap);
+
+	// 파일 조회하기
+	List<FileVO> selectFileList(Map<String, String> paraMap);
+	List<FileVO> selectFileList2(String board_no);
+
+	// 게시글 수정
+	int editBoard(Map<String, String> paraMap);
+
+	// 게시글 수정 (첨부파일 삭제)
+	int deleteFiles(List<String> deleteFileList);
+
+	// 파일 첨수 (수정)
+	int editBoardWithFiles(Map<String, String> paraMap);
+	
+		
 	// 반응 많은 순 상위 1~3개 추출하기
 	//List<String> getReactionCountsByBoard(String board_no);
 
