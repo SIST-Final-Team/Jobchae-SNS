@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
+<%-- === JSTL( Java Standard Tag Library) 사용하기 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -105,7 +107,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         <div
           class="h-full w-25 flex-none text-center opacity-50 hover:opacity-100"
         >
-          <a href="" class="text-sm"
+          <a href="${pageContext.request.contextPath}/index" class="text-sm"
             ><img
               src="${pageContext.request.contextPath}/images/house-solid.svg"
               class="h-2/5 m-auto mt-1.5 ml-auto justify-end"
@@ -168,33 +170,45 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
           />나▼
           <div
                   id="headerProfile"
-                  class="bg-white border-1 text-left rounded opacity-100 w-40 hidden"
+                  class="bg-white rounded-lg p-2 drop-shadow-lg text-left opacity-100 w-60 hidden"
           >
             <ul>
-              <li class="border-b-1 border-gray-300">
-                <div class="grid grid-cols-3 grid-rows-2">
-                  <div class="row-span-2">로고로고로고</div>
-                  <div id="headerProfileId" class="col-span-2">이름</div>
-                  <div id="headerProfileExplane" class="col-span-2">설명</div>
-                </div>
+              <li class="border-b-1 border-gray-300 pb-2">
+                <a href="${pageContext.request.contextPath}/member/profile/${sessionScope.loginuser.member_id}">
+                  <div class="flex items-center space-x-2 space-y-2">
+                    <div class="flex-none"><img src="${pageContext.request.contextPath}/resources/files/profile/${sessionScope.loginuser.member_profile}" class="w-15 h-15 rounded-full object-cover"/></div>
+                    <div class="flex-1">
+                      <div id="headerProfileId" class="font-bold">${sessionScope.loginuser.member_name}</div>
+                      <c:if test="${not empty sessionScope.loginuser.school_name}">
+                        <div id="headerProfileExplane" class="text-gray-700">${sessionScope.loginuser.school_name} 학생</div>
+                      </c:if>
+                      <c:if test="${not empty sessionScope.loginuser.member_career_company}">
+                        <div id="headerProfileExplane" class="text-gray-700">${sessionScope.loginuser.member_career_company}</div>
+                      </c:if>
+                    </div>
+                  </div>
+                </a>
+                <a href="${pageContext.request.contextPath}/member/profile/${sessionScope.loginuser.member_id}">
+                  <div><button class="button-orange w-full! text-sm!">프로필 보기</button></div>
+                </a>
               </li>
-              <li class="border-b-1 border-gray-300">
-                <span class="text-2xl font-semibold mb-4">계정</span>
-                <ul>
+              <li class="border-b-1 border-gray-300 p-2">
+                <span class="font-semibold mb-2 block">계정</span>
+                <ul class="space-y-2 text-gray-500">
                   <li>개인정보 설정</li>
                   <li>고객센터</li>
                   <li>언어</li>
                 </ul>
               </li>
-              <li class="border-b-1 border-gray-300">
-                <span class="text-2xl font-semibold mb-4">관리</span>
-                <ul>
+              <li class="border-b-1 border-gray-300 p-2">
+                <span class="font-semibold mb-2 block">관리</span>
+                <ul class="space-y-2 text-gray-500">
                   <li>글&활동</li>
                   <li>회사:<span>회사이름</span></li>
                   <li>채용공고 계정</li>
                 </ul>
               </li>
-              <li class="border-b-1 border-gray-300">
+              <li class="pt-2 px-2 text-gray-500">
                 <a href="<%= ctxPath%>/member/logout">로그아웃</a>
               </li>
             </ul>
