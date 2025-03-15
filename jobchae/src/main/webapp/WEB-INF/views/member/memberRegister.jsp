@@ -38,17 +38,74 @@ console.log('${pageContext.request.servletPath}');  // 파일명
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <%-- 직접 만든 CSS --%>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/member/memberRegister.css" />
+<%-- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/member/memberRegister.css" /> --%>
 
 
 <%-- 다음 우편번호 찾기 js 파일 --%>
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/member/memberRegister.js"></script>
 
+<!-- TailWind Script -->
+<script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
 
 
+<style type="text/tailwindcss">
+    .button-selected {
+        @apply border-1 border-orange-400 rounded-full px-3 py-0.5 font-bold text-white text-lg bg-orange-400;
+        @apply hover:bg-orange-500 hover:border-orange-500 transition-all duration-200;
+        @apply hover:cursor-pointer;
+    }
+    .button-cancel {
+        @apply rounded-full border-gray-400 px-3 py-0.5 text-gray-600 text-lg;
+        @apply hover:bg-gray-100 transition-all duration-200;
+        @apply hover:cursor-pointer;
+    }
+	h3 {
+		@apply text-lg py-2;
+	}
+	.searchWordSelected {
+		@apply bg-gray-100;
+	}
+	input#agree_checkbox,
+	input#member_career_is_current_checkbox {
+		zoom: 1.5;
+	}
+	
+    dialog::backdrop {
+        background:rgba(0, 0, 0, 0.6);
+    }
+	
+    /* 모달 애니메이션 */
+    .animate-slideDown {
+        animation: slideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .animate-slideUp {
+        animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.6, 1);
+    }
 
-<jsp:include page="/WEB-INF/views/common/bootstrap.jsp" />
+    @keyframes slideDown {
+        from {
+            transform: translateY(-20%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideUp {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(-20%);
+            opacity: 0;
+        }
+    }
+</style>
+
+<%-- <jsp:include page="/WEB-INF/views/common/bootstrap.jsp" /> --%>
 
 
 
@@ -60,185 +117,131 @@ console.log('${pageContext.request.servletPath}');  // 파일명
 </head>
 <body>
 
+    <!-- 헤더 -->
+	<jsp:include page="/WEB-INF/views/common/headerBeforeLogin.jsp" />
 
-
-<div class="container mt-5">
-
-        <h4 id="h4_1">회원가입</h4>
-
-        <form name="registerFrm" enctype="multipart/form-data">
-
-            <div class="row justify-content-center" id="register_menu">
-            
-            	<%-- 프로필 사진 --%>
-            	<div class="col-lg-4 col-md-7" style="text-align: center; position: relative; height: 200px;">
-            		<div class="icon" style="width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            			<img id="profile_img" src="${pageContext.request.contextPath}/images/no_profile.png">
-            			<label id="icon_label" class="icon_label icon" for="file_input_profile">
-                			<i class="fa-solid fa-camera-retro fa-2xl" style="margin:auto; font-size: 24px;"></i>
-                		</label>
-            		</div>
-            	</div>
-            	<div class="w-100"></div>
-            	<div class="col-lg-5 col-md-7">
-            		<%-- 파일 전송 input --%>
-                	<input type="file" id="file_input_profile" name="attach_member_profile" accept="image/*" style="display: none">
-            	</div>
-            	<div class="w-100"></div>
-
-
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">아이디&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7" style="position: relative; margin: 0px;">
-                    <input type="text" name="member_id" id="member_id" maxlength="16" class="requiredInfo underline"
-                        placeholder="영문소문자/숫자 4~16 자" />
-                    <%-- 아이디중복체크 --%>
-                    <button type="button" id="idcheck" class="checkbutton"
-                        style="position: absolute; right: 15px; display: inline-block;">아이디 중복검사</button>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100 mt-16">
+        <div class="w-full max-w-lg bg-white rounded-lg p-6 shadow-md my-4">
+            <h4 class="text-2xl font-semibold mb-6 text-center">회원가입</h4>
+    
+            <form name="registerFrm" enctype="multipart/form-data">
+                <!-- 프로필 사진 업로드 -->
+                <div class="flex flex-col items-center mb-4">
+                    <div class="relative w-32 h-32">
+                        <img id="profile_img" src="${pageContext.request.contextPath}/resources/files/profile/default/profile.png" class="w-full h-full rounded-full object-cover">
+                        <label for="file_input_profile" class="absolute bottom-0 right-0 bg-gray-700 p-2 rounded-full cursor-pointer">
+                            <i class="fa-solid fa-camera-retro text-white"></i>
+                        </label>
+                    </div>
+                    <input type="file" id="file_input_profile" name="attach_member_profile" accept="image/*" class="hidden">
                 </div>
-                <div class="w-100"></div>
-                <div id="idcheckResult" class="error col-lg-5 col-md-7 hide_Result"></div>
-                <div class="w-100"></div> <%-- 이거 한줄씩 추가하자 --%>
-                <div id="member_id_error" class="error col-lg-5 col-md-7"></div>
-                <div class="w-100"></div>
-
-                <%-- 비밀번호 --%>
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">비밀번호&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">
-                    <input type="password" name="member_passwd" id="member_passwd" maxlength="15" class="requiredInfo underline"
-                        placeholder="영문자/숫자/특수기호 조합하여 8~16글자" />
+    
+                <!-- 아이디 입력 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">아이디<span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="text" name="member_id" id="member_id" maxlength="16" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="영문소문자/숫자 4~16자">
+                        <button type="button" id="idcheck" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-orange-400 hover:underline cursor-pointer">중복검사</button>
+                    </div>
+                    <div id="idcheckResult" class="text-red-500 text-sm mt-1"></div>
+					<div id="member_id_error" class="text-red-500 text-sm mt-1"></div>
                 </div>
-                <div class="w-100"></div>
-                <div id="member_passwd_error" class="col-lg-5 col-md-7 error"></div>
-                <div class="w-100"></div>
-                <%-- 비밀번호 확인 --%>
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">비밀번호 확인&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">
-                    <input type="password" name="passwdcheck" id="passwdcheck" maxlength="15"
-                        class="requiredInfo underline" placeholder="비밀번호 확인" />
+    
+                <!-- 비밀번호 입력 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">비밀번호<span class="text-red-500">*</span></label>
+                    <input type="password" name="member_passwd" id="member_passwd" maxlength="15" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="8~16자 (영문, 숫자, 특수기호 조합)">
+                    <div id="member_passwd_error" class="text-red-500 text-sm mt-1"></div>
                 </div>
-                <div class="w-100"></div>
-                <div id="passwdcheckerror" class="col-lg-5 col-md-7 error"></div>
-                <div class="w-100"></div>
-
-                <%-- 이름 --%>
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">이름&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">
-                    <input type="text" name="member_name" id="member_name" maxlength="20" class="requiredInfo underline"
-                        placeholder="이름을 입력하세요." />
+    
+                <!-- 비밀번호 확인 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">비밀번호 확인<span class="text-red-500">*</span></label>
+                    <input type="password" name="passwdcheck" id="passwdcheck" maxlength="15" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="비밀번호 확인">
+                    <div id="passwdcheckerror" class="text-red-500 text-sm mt-1"></div>
                 </div>
-                <div class="w-100"></div>
-                <div id="member_name_error" class="col-lg-5 col-md-7 error"></div>
-                <div class="w-100"></div>
 
-                <%-- 생년월일 --%>
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">생년월일&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">
-                    <input type="text" name="member_birth" id="datepicker" maxlength="10" class="underline" />
+				<!-- 이름 -->
+				<div class="mb-4">
+					<label for="member_name" class="block text-sm font-medium text-gray-700">이름<span class="text-red-500">*</span></label>
+					<input type="text" name="member_name" id="member_name" maxlength="20" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="이름을 입력하세요." />
+					<div id="member_name_error" class="text-red-500 text-sm mt-1"></div>
+				</div>
+
+				<!-- 생년월일 -->
+				<div class="mb-4">
+					<label for="datepicker" class="block text-sm font-medium text-gray-700">생년월일<span class="text-red-500">*</span></label>
+					<input type="text" name="member_birth" id="datepicker" maxlength="10" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="YYYY-MM-DD" />
+					<div id="birtherror" class="text-red-500 text-sm mt-1"></div>
+				</div>
+
+				<!-- 이메일 -->
+				<div class="mb-4">
+					<label for="member_email" class="block text-sm font-medium text-gray-700">이메일<span class="text-red-500">*</span></label>
+					<div class="relative">
+						<input type="email" name="member_email" id="member_email" maxlength="60" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="이메일을 입력하세요." />
+						<button type="button" id="emailcheck" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm text-orange-400 hover:underline cursor-pointer">인증번호 발송</button>
+					</div>
+					<div id="emailCheckResult" class="text-red-500 text-sm mt-1 hide_Result"></div>
+					<div id="member_email_error" class="text-red-500 text-sm mt-1"></div>
+				</div>
+
+				<!-- 이메일 인증 -->
+				<div class="mb-4 hide_emailAuth hidden">
+					<label for="email_auth" class="block text-sm font-medium text-gray-700">인증번호<span class="text-red-500">*</span></label>
+					<div class="relative">
+						<input type="text" name="email_auth" id="email_auth" maxlength="60" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="발송된 인증번호를 입력하세요." />
+						<button type="button" id="btn_email_auth" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm text-orange-400 hover:underline cursor-pointer">인증번호 확인</button>
+					</div>
+					<div id="email_authResult" class="text-red-500 text-sm mt-1"></div>
+				</div>
+    
+                <!-- 연락처 입력 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">연락처<span class="text-red-500">*</span></label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="hp1" size="3" maxlength="3" value="010" readonly class="requiredInfo p-2 border border-gray-300 rounded-md w-1/3 text-center">
+                        <input type="text" id="hp2" size="4" maxlength="4" class="requiredInfo p-2 border border-gray-300 rounded-md w-1/3 text-center">
+                        <input type="text" id="hp3" size="4" maxlength="4" class="requiredInfo p-2 border border-gray-300 rounded-md w-1/3 text-center">
+                		<input type="hidden" name="member_tel" id="member_tel" size="6" maxlength="11" class="requiredInfo" />
+                    </div>
+                	<div id="telerror" class="text-red-500 text-sm mt-1"></div>
                 </div>
-                <div class="w-100"></div>
-                <div id="birtherror" class="col-lg-5 col-md-7 error"></div>
-                <div class="w-100"></div>
 
-                <%-- 이메일 --%>
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">이메일&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7" style="position: relative; margin: 0px;">
-                    <input type="email" name="member_email" id="member_email" maxlength="60" class="requiredInfo underline"
-                        placeholder="이메일을 입력하세요." />
-                    <%-- 이메일 중복체크 및 이메일 인증번호 발송 버튼 --%>
-                    <button type="button" id="emailcheck" class="checkbutton"
-                        style="position: absolute; right: 15px; display: inline-block;">인증번호 발송</button>
+				<!-- 지역 -->
+				<div class="mb-4">
+					<label for="region_name" class="block text-sm font-medium text-gray-700">지역<span class="text-red-500">*</span></label>
+					<input type="text" name="region_name" id="region_name" maxlength="200" class="requiredInfo mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="지역" 
+						autocomplete="off"/>
+					<input type="hidden" name="fk_region_no" id="fk_region_no" />
+					<div class="relative">
+						<div id="displayList" class="absolute top-0 w-full bg-white drop-shadow-lg rounded-lg mt-1 h-50 overflow-auto z-999"></div>
+					</div>
+					<div id="regionerror" class="text-red-500 text-sm mt-1"></div>
+				</div>
+    
+                <!-- 이용약관 동의 -->
+                <div class="mb-4 flex items-center">
+                    <input type="checkbox" id="agree_checkbox" class="text-sm accent-orange-600 opacity-60 mr-2 btn-open-modal" data-target-modal="Agree">
+                    <label for="agree_checkbox" class="hover:underline text-gray-700 cursor-pointer">이용약관 동의<span class="text-red-500">*</span></label>
                 </div>
-                <div class="w-100"></div>
-                <div id="emailCheckResult" class="error col-lg-5 col-md-7 hide_Result"></div>
-                <div class="w-100"></div>
-                <div id="member_email_error" class="error col-lg-5 col-md-7"></div>
-                <div class="w-100"></div>
-            
-                <%-- 이메일 인증 넣는 칸 --%>
-                <div class="col-lg-5 col-md-7 hide_emailAuth" style="margin: 3% 0 1% 0;">인증번호&nbsp;<span class="star">*</span></div>
-                <div class="w-100 hide_emailAuth"></div>
-                <div class="col-lg-5 col-md-7 hide_emailAuth" style="position: relative; margin: 0px;">
-                    <input type="text" name="email_auth" id="email_auth" maxlength="60" class="requiredInfo underline hide_emailAuth"
-                        placeholder="발송된 인증번호를 입력하세요." />
-                    <%-- 인증번호 체크버튼 --%>
-                    <button type="button" id="btn_email_auth" class="checkbutton hide_emailAuth"
-                        style="position: absolute; right: 15px; display: inline-block;">인증번호 확인</button>
-                </div>
-                <div class="w-100 hide_emailAuth"></div>
-                <div id="email_authResult" class="error col-lg-5 col-md-7 hide_emailAuth"></div> <%-- 인증번호 일치한지 아닌지 보여주는 칸 --%> 
-                <div class="w-100 hide_emailAuth"></div>
 
-                <%-- 연락처 (전화번호 다채우면 다음 칸으로 focus 되도록 설정하자!) --%>
-                <div class="col-lg-5 col-md-7" style="margin: 3% 0 1% 0;">연락처&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">
-                    <input type="text" id="hp1" size="6" maxlength="3" value="010" readonly
-                        class="telunderline" />&nbsp;-&nbsp;
-                    <input type="text" id="hp2" size="6" maxlength="4" class="telunderline requiredInfo" />&nbsp;-&nbsp;
-                    <input type="text" id="hp3" size="6" maxlength="4" class="telunderline requiredInfo" />
-                	
-                	<input type="hidden" name="member_tel" id="member_tel" size="6" maxlength="11" class="requiredInfo" />
-                </div>
-                <div class="w-100"></div>
-                <div id="telerror" class="col-lg-5 col-md-7 error"></div>
-                <div class="w-100" style="margin-bottom: 3%"></div>
+				<!-- 이용약관 동의 Modal -->
+				<dialog id="modalAgree"
+					class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+					<div class="modal-box w-full flex flex-col max-h-[calc(100vh-160px)] space-y-4">
+						<!-- 모달 상단부 -->
+						<div>
+							<button type="button"
+								class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+							<h1 class="text-2xl font-bold px-8">이용 약관</h1>
 
+							<hr class="border-gray-200 mt-4">
+						</div>
 
-                <%-- 지역 --%>
-                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">지역&nbsp;<span class="star">*</span></div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7">  
-                	<input type="text" name="region_name" id="region_name" size="40" maxlength="200" class="requiredInfo underline"
-                        placeholder="지역" />
-                    <input type="hidden" name="fk_region_no" id="fk_region_no" />
-                </div>
-                <div class="w-100"></div>
-                <div class="col-lg-5 col-md-7" style="margin: 0 0 1% 0;">
-                	<%-- === 검색어 입력시 자동글 완성하기 1 --%>
-					<div id="displayList" style="border:solid 1px gray; border-top:0px; height:100px; 
-						margin-top:-1px; margin-bottom:5px; overflow:auto;">
-  					</div>
-                </div>
-                <div class="w-100"></div>
-                <div id="regionerror" class="col-lg-5 col-md-7 error"></div>
-                <div class="w-100"></div>
-
-
-                <div style="margin: 1% 0 5% 0;"></div>
-
-                <div class="w-100"></div>
-                
-                <%-- 약관동의 체크박스 --%>
-                <div class="col-lg-5 col-md-7">
-                    <!-- Button trigger modal -->
-<!-- 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal_scrolling_2"> -->
-<!-- 		  			이용약관 -->
-<!-- 				</button> -->
-				<label for="agree_checkbox">이용약관&nbsp;<span class="star">*</span>&nbsp;&nbsp;
-					<input type="checkbox" id="agree_checkbox" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal_scrolling_2" />
-				</label>
-				
-				<!-- Modal -->
-				<!-- Modal 구성 요소는 현재 페이지 상단에 표시되는 대화 상자/팝업 창입니다. -->
-				<div class="modal fade" id="exampleModal_scrolling_2">
-		  			<div class="modal-dialog modal-dialog-scrollable modal-lg">
-		  			<!-- .modal-dialog-scrollable을 .modal-dialog에 추가하여 페이지 자체가 아닌 모달 내부에서만 스크롤할 수 있습니다. -->
-		    			<div class="modal-content">
-		      
-		      				<!-- Modal header -->
-		      				<div class="modal-header">
-		        				<h5 class="modal-title">Modal title</h5>
-		        				<button type="button" class="close" data-dismiss="modal">&times;</button>
-		      				</div>
-		      
-		      				<!-- Modal body -->
-		      				<div class="modal-body">
+						<!-- 모달 내용 -->
+						<div class="overflow-y-auto">
+							<div class="modal-body mx-4">
 		        				<h3>제 1 조 (목적)</h3>
                 				<p>
                 					이 약관은 쌍용강북교육센터(이하 "회사")가 제공하는 "자바프로그래밍과정" 관련 제반 서비스의 이용과 관련해 회사와 회원가족과의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
@@ -340,39 +343,34 @@ console.log('${pageContext.request.servletPath}');  // 파일명
 								<h3>부칙</h3>
 								<p>1. 이 약관은 2024년 1월 1부터 적용됩니다.</p>
                         	</div>
-		      
-		      				<!-- Modal footer -->
-		      				<div class="modal-footer">
-		        				<button type="button" class="btn btn-danger" data-dismiss="modal">취소</button>
-		        				<button type="button" id="btn_agree" class="btn btn-primary" data-dismiss="modal">약관 동의</button>
-		      				</div>
-		    			</div>
-		  			</div>
-				</div>
+						</div>
+
+						<!-- 모달 하단부 -->
+						<div>
+							<hr class="border-gray-200 mb-4">
+							<div class="flex justify-end items-center gap-2 px-4">
+								<div>
+									<button type="button" onclick="$('.btn-close-modal').click();" class="button-cancel">취소</button>
+								</div>
+								<div>
+									<button type="button" id="btn_agree" class="button-selected">약관 동의</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</dialog>
+    
+                <!-- 회원가입 버튼 -->
+                <div class="flex justify-between mt-6 gap-2">
+                    <button type="button" class="w-1/2 py-2 px-4 bg-gray-200 text-gray-800 font-semibold rounded-md hover:bg-gray-300 duration-200 hover:cursor-pointer" onclick="location.href='/'">취소</button>
+                    <button type="button" class="w-1/2 py-2 px-4 bg-orange-400 text-white font-semibold rounded-md hover:bg-orange-500 duration-200 hover:cursor-pointer" onclick="goRegister()">회원가입</button>
                 </div>
-                
-                
-                
-                <div class="w-100"></div>
-                
+            </form>
+        </div>
+    </div>
 
-                <div style="margin: 5% 0 5% 0;"></div>
-
-                <%-- 경력, 학력 입력 창 열기 버튼 --%>
-                <div class="col-lg-5 col-md-7">
-                    <input type="button" id="btn_register" class="btnstyle" onclick="goRegister()" value="회원가입" />
-                </div>
-                <div class="w-100"></div>
-                <div style="margin-bottom: 10%;"></div>
-
-			<%-- row 끝 --%>
-            </div>
-            
-
-        </form>
-
-</div>
-
+    <!-- 푸터 -->
+	<jsp:include page="/WEB-INF/views/common/footerBeforeLogin.jsp" />
 </body>
 </html>
 

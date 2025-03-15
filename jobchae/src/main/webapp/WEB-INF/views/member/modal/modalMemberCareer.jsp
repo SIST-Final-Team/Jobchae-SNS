@@ -23,13 +23,13 @@
                             data-target-url="/api/member/job/search"
                             data-search-type="job_name"
                             data-result-name="fk_job_no"
-                            class="input-search w-full border-1 rounded-sm p-1" />
+                            class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
                         <input type="hidden" name="fk_job_no" class="required"/>
                         <span class="hidden error text-red-600 text-sm">직종을 목록에서 선택하세요.</span>
                     </li>
                     <li>
                         <label for="member_career_type" class="text-gray-500">고용 형태 *</label><br>
-                        <select name="member_career_type" class="w-full border-1 rounded-sm p-1 required"
+                        <select name="member_career_type" class="w-full border-1 rounded-sm p-2 border-gray-400 required"
                             id="member_career_type">
                             <option value="0">선택하세요</option>
                             <option value="1">정규직</option>
@@ -50,7 +50,7 @@
                             data-target-url="/api/member/company/search"
                             data-search-type="company_name"
                             data-result-name="fk_company_no"
-                            class="input-search w-full border-1 rounded-sm p-1 required"/>
+                            class="input-search w-full border-1 rounded-sm p-2 border-gray-400 required"/>
                             <span class="hidden error text-red-600 text-sm">회사 또는 단체를 입력하세요.</span>
                         </div>
                         <input type="hidden" name="fk_company_no"/>
@@ -62,10 +62,10 @@
                     <li>
                         <label class="text-gray-500">시작일 *</label><br>
                         <div class="flex gap-4">
-                            <select id="member_career_startdate_year" class="select-date w-full border-1 rounded-sm p-1">
+                            <select id="member_career_startdate_year" class="select-date w-full border-1 rounded-sm p-2 border-gray-400">
                                 <option value="0">연도</option>
                             </select>
-                            <select id="member_career_startdate_month" class="select-date w-full border-1 rounded-sm p-1">
+                            <select id="member_career_startdate_month" class="select-date w-full border-1 rounded-sm p-2 border-gray-400">
                                 <option value="0">월</option>
                                 <option value="01">1월</option>
                                 <option value="02">2월</option>
@@ -88,11 +88,11 @@
                         <label class="text-gray-500">종료일 *</label><br>
                         <div class="flex gap-4">
                             <select id="member_career_enddate_year"
-                                class="select-date w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200">
+                                class="select-date w-full border-1 rounded-sm p-2 border-gray-400 disabled:border-0 disabled:bg-gray-200">
                                 <option value="0">연도</option>
                             </select>
                             <select id="member_career_enddate_month"
-                                class="select-date w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200">
+                                class="select-date w-full border-1 rounded-sm p-2 border-gray-400 disabled:border-0 disabled:bg-gray-200">
                                 <option value="0">월</option>
                                 <option value="01">1월</option>
                                 <option value="02">2월</option>
@@ -117,14 +117,14 @@
                             data-target-url="/api/member/region/search"
                             data-search-type="region_name"
                             data-result-name="fk_region_no"
-                            class="input-search w-full border-1 rounded-sm p-1" />
+                            class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
                         <input type="hidden" name="fk_region_no" class="required"/>
                         <span class="hidden error text-red-600 text-sm">지역을 목록에서 선택하세요.</span>
                     </li>
                     <li>
                         <label for="member_career_explain" class="text-gray-500">설명</label><br>
                         <textarea name="member_career_explain" id="member_career_explain"
-                            class="w-full h-40 border-1 rounded-sm p-1 resize-none"></textarea>
+                            class="w-full h-40 border-1 rounded-sm p-2 border-gray-400 resize-none"></textarea>
                     </li>
                 </ul>
             </form>

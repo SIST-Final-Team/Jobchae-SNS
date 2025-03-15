@@ -140,7 +140,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
 
     <%-- 회원 정보 수정 Modal --%>
     <dialog id="modalUpdateMember"
-        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-150">
         <div class="modal-box w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
             <!-- 모달 상단부 -->
             <div>
@@ -159,21 +159,21 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                         <li>
                             <label class="text-gray-500">비밀번호 *</label>
                             <input type="password" name="member_passwd" id="member_passwd" maxlength="15" 
-                                class="w-full border rounded-sm p-2" placeholder="영문자/숫자/특수기호 조합하여 8~16글자" />
+                                class="w-full border rounded-sm p-2 border-gray-400" placeholder="영문자/숫자/특수기호 조합하여 8~16글자" />
                             <div id="member_passwd_error" class="text-red-500 text-sm"></div>
                         </li>
                         <!-- 비밀번호 확인 -->
                         <li>
                             <label class="text-gray-500">비밀번호 확인 *</label>
                             <input type="password" name="passwdcheck" id="passwdcheck" maxlength="15" 
-                                class="w-full border rounded-sm p-2" placeholder="비밀번호 확인" />
+                                class="w-full border rounded-sm p-2 border-gray-400" placeholder="비밀번호 확인" />
                             <div id="passwdcheckerror" class="text-red-500 text-sm"></div>
                         </li>
                         <!-- 이름 -->
                         <li>
                             <label class="text-gray-500">이름 *</label>
                             <input type="text" name="member_name" id="member_name" maxlength="20" 
-                                class="w-full border rounded-sm p-2" placeholder="이름을 입력하세요."
+                                class="w-full border rounded-sm p-2 border-gray-400" placeholder="이름을 입력하세요."
                                 value="${sessionScope.loginuser.member_name}" />
                             <div id="member_name_error" class="text-red-500 text-sm"></div>
                         </li>
@@ -181,7 +181,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                         <li>
                             <label class="text-gray-500">생년월일 *</label>
                             <input type="date" id="member_birth" name="member_birth" min="1924-01-01" max="2025-03-15"
-                                class="w-full border rounded-sm p-2"
+                                class="w-full border rounded-sm p-2 border-gray-400"
                                 value="${sessionScope.loginuser.member_birth}" />
                             <div id="birtherror" class="text-red-500 text-sm"></div>
                         </li>
@@ -190,10 +190,10 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             <label class="text-gray-500">이메일 *</label>
                             <div class="relative">
                                 <input type="email" name="member_email" id="member_email" maxlength="60" 
-                                    class="w-full border rounded-sm p-2 pr-20" placeholder="이메일을 입력하세요."
+                                    class="w-full border rounded-sm p-2 pr-20 border-gray-400" placeholder="이메일을 입력하세요."
                                 value="${sessionScope.loginuser.member_email}" />
                                 <button type="button" id="emailcheck" 
-                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:cursor-pointer">인증번호 발송</button>
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:underline cursor-pointer">인증번호 발송</button>
                             </div>
                             <div id="emailCheckResult" class="text-red-500 text-sm"></div>
                             <div id="member_email_error" class="text-red-500 text-sm"></div>
@@ -203,9 +203,9 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             <label class="text-gray-500">인증번호 *</label>
                             <div class="relative">
                                 <input type="text" name="email_auth" id="email_auth" maxlength="60" 
-                                    class="w-full border rounded-sm p-2 pr-20" placeholder="발송된 인증번호를 입력하세요." />
+                                    class="w-full border rounded-sm p-2 pr-20 border-gray-400" placeholder="발송된 인증번호를 입력하세요." />
                                 <button type="button" id="btn_email_auth" 
-                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:cursor-pointer">인증번호 확인</button>
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:underline cursor-pointer">인증번호 확인</button>
                             </div>
                             <div id="email_authResult" class="text-red-500 text-sm"></div>
                         </li>
@@ -214,9 +214,9 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             <label class="text-gray-500">연락처 *</label>
                             <div class="flex items-center space-x-2">
                                 <input type="text" id="hp1" size="6" maxlength="3" value="010" readonly
-                                    class="w-18 border rounded-sm p-2 text-center" /><i class="fa-solid fa-minus text-[0.9rem]"></i>
-                                <input type="text" id="hp2" size="6" maxlength="4" class="w-18 border rounded-sm p-2 text-center" value="${fn:substring(sessionScope.loginuser.member_tel, 3, 7)}" /><i class="fa-solid fa-minus text-[0.9rem]"></i>
-                                <input type="text" id="hp3" size="6" maxlength="4" class="w-18 border rounded-sm p-2 text-center" value="${fn:substring(sessionScope.loginuser.member_tel, 7, 11)}" />
+                                    class="w-1/3 border rounded-sm p-2 text-center border-gray-400" />
+                                <input type="text" id="hp2" size="6" maxlength="4" class="w-1/3 border rounded-sm p-2 text-center border-gray-400" value="${fn:substring(sessionScope.loginuser.member_tel, 3, 7)}" />
+                                <input type="text" id="hp3" size="6" maxlength="4" class="w-1/3 border rounded-sm p-2 text-center border-gray-400" value="${fn:substring(sessionScope.loginuser.member_tel, 7, 11)}" />
                             </div>
                             <input type="hidden" name="member_tel" id="member_tel" maxlength="11" />
                             <div id="telerror" class="text-red-500 text-sm"></div>
@@ -229,7 +229,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                                 data-target-url="/api/member/region/search"
                                 data-search-type="region_name"
                                 data-result-name="fk_region_no"
-                                class="input-search w-full border-1 rounded-sm p-1" />
+                                class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
                             <input type="hidden" name="fk_region_no" class="required" value="${sessionScope.loginuser.fk_region_no}"/>
                             <span class="hidden error text-red-600 text-sm">지역을 목록에서 선택하세요.</span>
                         </li>
@@ -421,7 +421,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </c:if>
-                    <div class="text-end text-xl py-2">
+                    <div class="text-end text-xl py-2 min-h-14">
                         <c:if test="${sessionScope.loginuser.member_id == requestScope.memberId}">
                             <button type="button" class="btn-transparent btn-open-modal" data-target-modal="UpdateMember"><i class="fa-solid fa-pen"></i></button>
                         </c:if>
@@ -586,7 +586,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                         </c:forEach>
                     </div>
                     <c:if test="${empty requestScope.searchBoardVOList}">
-                        <div class="-mt-4 mb-4">
+                        <div class="-mt-8 mb-4">
                             <span class="font-bold">${requestScope.memberVO.member_name}님이 올린 업데이트가 없습니다.</span><br>
                             ${requestScope.memberVO.member_name}님이 올리는 최근 업데이트는 여기에 표시됩니다.
                         </div>

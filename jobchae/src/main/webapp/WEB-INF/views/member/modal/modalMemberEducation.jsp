@@ -19,17 +19,17 @@
                 <ul class="space-y-4 px-8">
                     <li>
                         <label for="school_name" class="text-gray-500">학교 *</label><br>
-                        <input type="text" name="school_name" id="school_name"
+                        <input type="text" name="school_name" id="school_name" placeholder="예: 서울대학교"
                             data-target-url="/api/member/school/search"
                             data-search-type="school_name"
                             data-result-name="fk_school_no"
-                            class="input-search w-full border-1 rounded-sm p-1" />
+                            class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
                         <input type="hidden" name="fk_school_no" class="required"/>
                         <span class="hidden error text-red-600 text-sm">학교를 선택하세요.</span>
                     </li>
                     <li>
                         <label for="member_education_degree" class="text-gray-500">학위 *</label><br>
-                        <select name="member_education_degree" class="w-full border-1 rounded-sm p-1 required"
+                        <select name="member_education_degree" class="w-full border-1 rounded-sm p-2 border-gray-400 required"
                             id="member_education_degree">
                             <option value="0">선택하세요</option>
                             <option value="1">중학교 졸업</option>
@@ -47,18 +47,18 @@
                             data-target-url="/api/member/major/search"
                             data-search-type="major_name"
                             data-result-name="fk_major_no"
-                            class="input-search w-full border-1 rounded-sm p-1" />
+                            class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
                         <input type="text" name="fk_major_no" class="hidden required" />
                         <span class="hidden error text-red-600 text-sm">전공을 선택하세요.</span>
                     </li>
                     <li>
                         <label class="text-gray-500">입학일 *</label><br>
                         <div class="flex gap-4">
-                            <select id="member_education_startdate_year" class="select-date w-full border-1 rounded-sm p-1">
+                            <select id="member_education_startdate_year" class="select-date w-full border-1 rounded-sm p-2 border-gray-400">
                                 <option value="0">연도</option>
                             </select>
                             <select id="member_education_startdate_month"
-                                class="select-date w-full border-1 rounded-sm p-1">
+                                class="select-date w-full border-1 rounded-sm p-2 border-gray-400">
                                 <option value="0">월</option>
                                 <option value="01">1월</option>
                                 <option value="02">2월</option>
@@ -81,11 +81,11 @@
                         <label class="text-gray-500">졸업일(예정) *</label><br>
                         <div class="flex gap-4">
                             <select id="member_education_enddate_year"
-                                class="select-date w-full border-1 rounded-sm p-1">
+                                class="select-date w-full border-1 rounded-sm p-2 border-gray-400">
                                 <option value="0">연도</option>
                             </select>
                             <select id="member_education_enddate_month"
-                                class="select-date w-full border-1 rounded-sm p-1">
+                                class="select-date w-full border-1 rounded-sm p-2 border-gray-400">
                                 <option value="0">월</option>
                                 <option value="01">1월</option>
                                 <option value="02">2월</option>
@@ -106,14 +106,14 @@
                     </li>
                     <li>
                         <label for="member_education_grade" class="text-gray-500">학점 *</label><br>
-                        <input type="number" name="member_education_grade" id="member_education_grade"
-                            class="w-full border-1 rounded-sm p-1 required" min=2.0 max=4.5/>
+                        <input type="number" name="member_education_grade" id="member_education_grade" placeholder="예: 3.5"
+                            class="w-full border-1 rounded-sm p-2 border-gray-400 required" min=2.0 max=4.5/>
                             <span class="hidden error text-red-600 text-sm">학점을 선택하세요.</span>
                     </li>
                     <li>
                         <label for="member_education_explain" class="text-gray-500">설명</label><br>
                         <textarea name="member_education_explain" id="member_education_explain"
-                            class="w-full h-40 border-1 rounded-sm p-1 resize-none"></textarea>
+                            class="w-full h-40 border-1 rounded-sm p-2 border-gray-400 resize-none"></textarea>
                     </li>
                 </ul>
             </form>

@@ -12,17 +12,17 @@
         </div>
 
         <!-- 모달 내용 -->
-        <div class="space-y-4 overflow-auto">
+        <div class="space-y-4 overflow-auto min-h-80">
             <div class="text-gray-500 px-8">* 필수</div>
             <form name="memberSkillForm">
                 <ul class="space-y-4 px-8">
                     <li>
                         <label for="skill_name" class="text-gray-500">보유기술 *</label><br>
-                        <input type="text" name="skill_name" id="skill_name"
+                        <input type="text" name="skill_name" id="skill_name" placeholder="예: 스프링 프레임워크"
                             data-target-url="/api/member/skill/search"
                             data-search-type="skill_name"
                             data-result-name="fk_skill_no"
-                            class="input-search w-full border-1 rounded-sm p-1" />
+                            class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
                         <input type="text" name="fk_skill_no" class="hidden" />
                     </li>
                 </ul>
