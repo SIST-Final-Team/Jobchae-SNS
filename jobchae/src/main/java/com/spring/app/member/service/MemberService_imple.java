@@ -314,9 +314,13 @@ public class MemberService_imple implements MemberService {
 		// 비밀번호 암호화 해서 넣어주자 
 		String new_member_passwd = Sha256.encrypt(paraMap.get("new_member_passwd"));
 		// 비밀번호 중복 확인
-		String reslut = dao.passwdExist(new_member_passwd);
+		
+		// 암호화한 비밀번호를 다시 맵에 넣어주자
+		paraMap.put("new_member_passwd", new_member_passwd);
+		
+		String result = dao.passwdExist(paraMap);
 		String loc = "";
-		if (reslut != null) { // 비밀번호가 일치하면(존재하면)
+		if (result != null) { // 비밀번호가 일치하면(존재하면)
 			
 			String message = "비밀번호가 기존 비밀번호와 일치합니다! 새로운 비밀번호를 입력해주세요.";
 			mav.addObject("message", message);
@@ -334,11 +338,8 @@ public class MemberService_imple implements MemberService {
 				mav.setViewName("common/msg");
 				return mav;
 			}
-		}//end of if (reslut != null) {}...
+		}//end of if (result != null) {}...
 		
-		
-		// 암호화한 비밀번호를 다시 맵에 넣어주자
-		paraMap.put("new_member_passwd", new_member_passwd);
 		// 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경
 		int n = dao.passwdUpdate(paraMap);
 		

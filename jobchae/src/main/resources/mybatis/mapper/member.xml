@@ -125,16 +125,16 @@
 	
 
 	<!-- 비밀번호 중복 확인  -->
-	<select id="passwdExist" parameterType="String" resultType="String">
+	<select id="passwdExist" parameterType="HashMap" resultType="String">
 		SELECT member_passwd
 		FROM tbl_member
-		WHERE member_passwd = #{new_member_passwd}
+		WHERE member_id = #{member_id} and member_passwd = #{new_member_passwd}
 	</select>
 	
 	
 	<!-- 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경 하고 비밀번호 변경날짜 갱신 -->
 	<update id="passwdUpdate" parameterType="HashMap">
-		UPDATE tbl_member SET member_passwd = #{new_member_passwd} AND member_passwdupdate_date = SYSDATE 
+		UPDATE tbl_member SET member_passwd = #{new_member_passwd}, member_passwdupdate_date = SYSDATE 
 		WHERE member_id = #{member_id}
 	</update>
 	
@@ -204,9 +204,9 @@
 			, member_is_company , member_profile, member_background_img, member_hire_status
 			, r.region_name, mc.member_career_company, s.school_name
 		from tbl_member m
-		join tbl_member_setting ms
+		left join tbl_member_setting ms
 		on m.member_id = ms.fk_member_id
-		join tbl_region r
+		left join tbl_region r
 		on m.fk_region_no = r.region_no
 		LEFT JOIN (SELECT member_career_company, fk_member_id
 					FROM TBL_MEMBER_CAREER

@@ -252,11 +252,7 @@ public class MemberController {
 	
 	// 비밀번호 찾기를 통해 비밀번호 변경으로 페이지 이동
 	@PostMapping("passwdFind")
-	public ModelAndView emailCheckOk_passwdFind(ModelAndView mav, HttpServletRequest request,@RequestParam Map<String, String> paraMap) {
-		
-		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
-		HttpSession session = request.getSession();
-		session.removeAttribute("emailCheckOk");
+	public ModelAndView passwdFind(ModelAndView mav, @RequestParam Map<String, String> paraMap) {
 		
 		mav.addObject("member_id", paraMap.get("member_id"));
 		mav.addObject("member_email", paraMap.get("member_email"));
