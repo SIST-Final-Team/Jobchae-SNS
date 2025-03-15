@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document</title>
 <!-- TailWind Script -->
-<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+<script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
 <!-- Font Awesome CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -277,8 +277,8 @@ dialog.dropdown::backdrop {
                     <li>
                         <div class="font-bold text-lg">JobChae 프로필</div>
                         <div>
-                            <a class="hover:underline text-orange-500 font-bold" href="http://localhost${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
-                                localhost${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
+                            <a class="hover:underline text-orange-500 font-bold" href="http://www.jobchae.kro.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
+                                www.jobchae.kro.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
                             </a>
                         </div>
                     </li>
@@ -1106,7 +1106,7 @@ dialog.dropdown::backdrop {
                 </div>
 
                 <!-- 관심분야 -->
-                <div class="py-0!">
+                <%-- <div class="py-0!">
                     <h1 class="h1 pt-4">관심분야</h1>
                     <div class="px-0">
                         <!-- 탭 -->
@@ -1184,7 +1184,7 @@ dialog.dropdown::backdrop {
                             <button type="button" class="button-more">학교 모두 표시 <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     </div>
-                </div>
+                </div> --%>
             </div>
         </div>
 
