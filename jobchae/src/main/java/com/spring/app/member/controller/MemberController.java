@@ -1,7 +1,9 @@
 package com.spring.app.member.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.common.FileManager;
 import com.spring.app.config.DefaultImageNames;
+import com.spring.app.history.domain.ProfileViewVO;
+import com.spring.app.history.service.HistoryService;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
@@ -41,7 +45,8 @@ public class MemberController {
 	@Autowired
 	MemberService service;
 	
-	
+	@Autowired
+	HistoryService historyService;
 	
 	@Autowired
 	FileManager fileManager; // 파일 관련 클래스
@@ -396,6 +401,19 @@ public class MemberController {
 			return mav;
 		}
 
+		// 로그인 했고, 자기 자신의 프로필 조회가 아니라면
+		if(loginuser != null && !loginuser.getMember_id().equals(memberId)) {
+			// 프로필 조회 기록 및 조회수 증가
+			ProfileViewVO profileViewVO = new ProfileViewVO();
+
+			profileViewVO.setMemberId(loginuser.getMember_id());
+			profileViewVO.setProfileViewMemberId(memberId);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			profileViewVO.setProfileViewRegisterDate(sdf.format(new Date()));
+
+			historyService.saveProfileView(profileViewVO);
+		}
+
 		paraMap.put("size", "3");
 		
 		List<MemberCareerVO> memberCareerVOList = service.getMemberCareerListByMemberId(paraMap);          // 회원 경력
@@ -505,6 +523,45 @@ public class MemberController {
 		return mav;
 	}
 	
+	// =========================== 김규빈 끝 =========================== //
+	
+
+	// =========================== 이진호 시작 =========================== //
+
+	@GetMapping("reportPage")
+	public ModelAndView reportPage(ModelAndView mav) {
+		mav.setViewName("member/reportPage"); // view 단 페이지
+		return mav;
+	}
+
+	@GetMapping("personalConnection")
+	public ModelAndView personalConee(ModelAndView mav) {
+	    mav.setViewName("member/personalConnection"); // view 단 페이지
+		return mav;
+	}
+
+	@GetMapping("personalConnection/{memberId}")
+	public ModelAndView profile(@PathVariable String memberId, ModelAndView mav) {
+		// 멤버 정보를 가져오기 위한 파라미터
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("member_id", memberId);
+
+		// 멤버 정보 가져오기
+		MemberVO memberVO = service.getMember(paraMap); 
+		
+		if (memberVO == null) {
+			mav.addObject("message", "비공개 프로필 또는 탈퇴한 회원입니다.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+
+		// 프로필 화면에 전달할 데이터
+		mav.addObject("memberVO", memberVO); // MemberVO 객체를 뷰로 전달
+
+		mav.setViewName("member/personalConnection");
+		return mav;
+	}
 	
 }//end of class...
 

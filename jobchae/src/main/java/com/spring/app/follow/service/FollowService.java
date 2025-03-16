@@ -15,4 +15,7 @@ public interface FollowService {
 
     // 팔로잉 목록 조회
     List<FollowEntity> getFollowing(String followerId);
+
+    // 팔로우 토글 
+	boolean toggleFollow(String followerId, String followingId);
 }

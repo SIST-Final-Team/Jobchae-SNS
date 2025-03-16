@@ -462,6 +462,8 @@ $(document).ready(function() {
 
                     $("#updateMore").removeClass("hidden");
                     $("#updateMoreNav").removeClass("hidden");
+
+                    getSearchBoardResult(searchWord);
                 }
                 else {
                     hasMore = false;
@@ -789,6 +791,7 @@ $(document).ready(function() {
                 else {
                     hasMore = false; // 더이상 불러올 목록이 없음
                 }
+
 
 				start += json.length;
                 requestLock = false;

@@ -469,6 +469,21 @@
 	</delete>
 	<!-- === 회원 보유기술 끝 === -->
 
+	<!-- 회원의 이름, 프로필 이미지 목록 조회 -->
+	<select id="getMemberListByMemberId" parameterType="ArrayList" resultType="MemberVO">
+		select member_id, member_birth, member_name, member_profile
+		from tbl_member m
+		where member_id in
+		<foreach collection="memberIdList" index="i" open="(" separator="," close=")">
+			'${memberIdList[i]}'
+		</foreach>
+		and member_status = 1
+		order by DECODE(member_id, 
+		<foreach collection="memberIdList" index="i" open="" separator="," close=")">
+			'${memberIdList[i]}',${i}
+		</foreach>
+	</select>
+
 	<!-- 회원 프로필 배경 수정 -->
 	<update id="updateMemberBackgroundImg" parameterType="MemberVO">
 		update tbl_member SET member_background_img = #{member_background_img}
@@ -523,4 +538,28 @@
 
 
 	<!-- === 연규영 끝 === -->
+
+	<!-- === 이진호 시작 === -->
+	<!-- 🚨 신고 기록 추가 🚨  --> 
+	<insert id="createReport" parameterType="ReportVO">
+   		 insert into tbl_report (report_no, fk_member_id, fk_reported_member_id, report_type, additional_explanation)
+   		 values (seq_report_no.nextval, #{fk_member_id}, #{fk_reported_member_id}, #{report_type}, #{additional_explanation})
+	</insert>
+
+
+<!--  🚨 신고 횟수 조회 🚨 
+	<select id="getReportedCount" resultType="int" parameterType="string">
+		select count(*)
+		from tbl_report
+		where fk_reported_member_id = #{reportedMemberId}
+	</select>
+
+	🚨 회원 정지 처리 🚨
+	<update id="banMember" parameterType="string">
+		update tbl_member
+		set member_status = 3
+		where member_id = #{reportedMemberId}
+-->
+
+	<!-- === 이진호 끝 === -->
 </mapper>

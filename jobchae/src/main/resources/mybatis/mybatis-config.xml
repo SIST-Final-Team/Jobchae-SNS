@@ -23,6 +23,7 @@
 		<typeAlias type="com.spring.app.member.domain.MemberSkillVO" alias="MemberSkillVO"/>
 		
 		<!-- 추가된 FollowEntity 즉, FollowVO 대신 Entity를 사용함. -->
+		<typeAlias type="com.spring.app.follow.domain.FollowEntity" alias="ReportVO"/>
 		<typeAlias type="com.spring.app.follow.domain.FollowEntity" alias="FollowEntity"/>
 		
 		<typeAlias type="com.spring.app.search.domain.SearchBoardVO" alias="SearchBoardVO"/>

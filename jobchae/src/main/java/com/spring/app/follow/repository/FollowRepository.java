@@ -3,9 +3,11 @@ package com.spring.app.follow.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.follow.domain.FollowEntity;
 
+@Transactional
 public interface FollowRepository extends JpaRepository<FollowEntity, String> {
 	
 	    List<FollowEntity> findByFollowingId(String followingId);  // 팔로워 목록 조회
@@ -13,6 +15,11 @@ public interface FollowRepository extends JpaRepository<FollowEntity, String> {
 	    List<FollowEntity> findByFollowerId(String followerId);  // 팔로잉 목록 조회
 	    
 	    void deleteByFollowerIdAndFollowingId(String followerId, String followingId);  // 팔로우 관계 삭제
-	}
+
+		FollowEntity findByFollowerIdAndFollowingId(String followerId, String followingId); // 팔로우 
+
+	
+
+}
 
 
