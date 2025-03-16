@@ -214,4 +214,17 @@ public class SearchController {
 
         return mav;
     }
+    
+    // 한 회원의 글 정보 가져오기
+    @GetMapping("board/member/{member_id}")
+    public ModelAndView getBoardByMemberId(HttpServletRequest request, ModelAndView mav, @PathVariable String member_id) {
+
+        // TODO: 검색 결과 수 가져오기
+
+        mav.addObject("member_id", member_id);
+        
+        mav.setViewName("search/getBoardByMemberId");
+
+        return mav;
+    }
 }

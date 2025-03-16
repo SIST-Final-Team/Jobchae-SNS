@@ -1,6 +1,8 @@
 package com.spring.app.history.service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -117,10 +119,22 @@ public class HistoryService_imple implements HistoryService {
     // 한 회원의 조회수 통계 조회
     @Override
     public List<ViewCountVO> findViewCountByMemberId(String memberId, String viewCountTargetType, String viewCountType) {
+        // 현재 날짜
+        LocalDate currentDate = LocalDate.now();
+        // 6일 전 날짜
+        LocalDate sixDaysAgo = currentDate.minusDays(6);
+
+        // 날짜 형식 설정 (yyyy-MM-dd)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
+        // 6일 전부터 현재까지의 날짜 범위 설정
+        String sixDaysAgoFormatted = sixDaysAgo.format(formatter);
+        String currentDateFormatted = currentDate.format(formatter);
 
         Query query = new Query(Criteria.where("viewCountTargetId").is(memberId)
             .and("viewCountTargetType").is(viewCountTargetType)
-            .and("viewCountType").is(viewCountType));
+            .and("viewCountType").is(viewCountType)
+            .and("viewCountRegisterDate").gte(sixDaysAgoFormatted).lte(currentDateFormatted));
 
         return mongoTemplate.find(query, ViewCountVO.class);
     }

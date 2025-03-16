@@ -596,18 +596,18 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     </div>
                     <div class="flex space-x-2">
                         
-                        <c:if test="${sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '0'}">
+                        <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '0'}">
                             <button type="button" class="follow-button button-orange" data-following-id="${requestScope.memberVO.member_id}"><i class='fa-solid fa-plus'></i>&nbsp;팔로우</button>
                         </c:if>
                         
-                        <c:if test="${sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '1'}">
+                        <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '1'}">
                             <button type="button" class="follow-button followed button-gray" data-following-id="${requestScope.memberVO.member_id}">팔로우 중</button>
                         </c:if>
 
                         <%-- <button type="button" class="button-selected">활동 상태</button>
                         <button type="button" class="button-gray">리소스</button> --%>
                         
-                        <c:if test="${sessionScope.loginuser.member_id != requestScope.memberVO.member_id}">
+                        <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id}">
                         <!-- 신고기능 시작 (이진호)  -->
                         <button id="report-btn" class="button-gray">신고/차단</button>
 
@@ -721,7 +721,8 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     </div>
                 </div>
 
-                <!-- 분석 -->
+                <!-- 분석 (본인 것만 조회 가능) -->
+                <c:if test="${sessionScope.loginuser.member_id == requestScope.memberVO.member_id}">
                 <div class="py-0!">
                     <h1 class="h1 pt-4">분석</h1>
                     <div class="flex space-x-2 pb-2 text-gray-800 text-center">
@@ -740,9 +741,12 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     </div>
                     <div class="px-0">
                         <hr class="border-gray-300">
-                        <button type="button" class="button-more">분석 모두 보기 <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="${pageContext.request.contextPath}/member/profile/view-count">
+                            <button type="button" class="button-more">분석 모두 보기 <i class="fa-solid fa-arrow-right"></i></button>
+                        </a>
                     </div>
                 </div>
+                </c:if>
 
                 <!-- 활동 -->
                 <div class="space-y-0 pb-0!">
@@ -861,7 +865,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <c:if test="${not empty requestScope.searchBoardVOList and requestScope.searchBoardVOList.size() > 2}">
                         <div class="px-0">
                             <hr class="border-gray-300">
-                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/member/profile/update/'+memberId">
+                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/search/board/member/'+memberId">
                                 활동 모두 보기 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
