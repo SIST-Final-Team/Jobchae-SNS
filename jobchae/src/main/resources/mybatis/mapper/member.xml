@@ -473,7 +473,8 @@
 
 	<!-- === 연규영 시작 === -->
 	<select id="getAlarmMemberInfoByMemberId" resultType="MemberVO">
-		select member_name, member_profile from tbl_member where member_id = #{member_id}
+		select member_id, member_birth, member_is_company ,member_name, member_profile
+		from tbl_member where member_id = #{member_id}
 	</select>
 
 

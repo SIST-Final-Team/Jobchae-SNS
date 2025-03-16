@@ -1,6 +1,9 @@
 package com.spring.app.alarm.controller;
 
+import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
+import com.spring.app.follow.repository.FollowRepository;
+import com.spring.app.follow.service.FollowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,10 @@ public class ApiAlarmController {
 
 	@Autowired
 	private AlarmService alarmService;
+
+	@Autowired
+	private FollowService followService;
+
 	@Autowired
 	public ApiAlarmController(SimpMessagingTemplate template) {
 		this.messagingTemplate = template;
@@ -113,6 +120,96 @@ public class ApiAlarmController {
 //		logger.info("alarmList: " + resultMap);
 		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
 		return response;
+	}
+
+	@GetMapping("testLike")
+	public ResponseEntity<AlarmVO> test() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardId("52");
+		alarmData.setBoardContent("<p>글이 어떻게</p>");
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.LIKE, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
+	@GetMapping("testComment")
+	public ResponseEntity<AlarmVO> test2() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setCommentId("69");
+		alarmData.setCommentContent("ㅇㅇ");
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.COMMENT, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
+	@GetMapping("testFollow")
+	public ResponseEntity<AlarmVO> test3() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.FOLLOW, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
+	@GetMapping("testFollowerPost")
+	public ResponseEntity<AlarmVO> test4() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+
+
+
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardId("52");
+		alarmData.setBoardContent("<p>글이 어떻게</p>");
+
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.FOLLOWER_POST, alarmData);
+
+		return ResponseEntity.ok(alarm);
 	}
 
 	

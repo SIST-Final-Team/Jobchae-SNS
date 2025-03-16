@@ -153,8 +153,7 @@ public interface MemberDAO {
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
 
-	//연규영이 추가 아이디로 정보 가져오기
-	MemberVO getAlarmMemberInfoByMemberId(String member_id);
+
 
 	
 
@@ -181,5 +180,8 @@ public interface MemberDAO {
 
 
 	// === 김규빈 끝 === //
+
+	//연규영이 추가 아이디로 정보 가져오기
+	MemberVO getAlarmMemberInfoByMemberId(String member_id);
 	
 }//end of interface...

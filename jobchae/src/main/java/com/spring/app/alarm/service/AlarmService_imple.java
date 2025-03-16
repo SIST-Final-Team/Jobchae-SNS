@@ -6,7 +6,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.spring.app.company.service.create.InsertNotification;
+import com.spring.app.alarm.domain.AlarmData;
+import com.spring.app.alarm.service.create.InsertNotification;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.alarm.model.AlarmDAO;
-import com.spring.app.alarm.model.AlarmMapper;
 import com.spring.app.member.domain.MemberVO;
 
 @Service
@@ -66,8 +66,15 @@ public class AlarmService_imple implements AlarmService{
 
 	//알림 삽입
 	@Override
-	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type, String targetId) {
-		return null;
+	public AlarmVO insertAlarm(MemberVO member, String targetId, AlarmVO.NotificationType type,AlarmData alarmData) {
+		InsertNotification sender = insertNotificationMap.get(type);
+
+		if(sender == null) {
+			throw new IllegalArgumentException("알림 타입이 존재하지 않습니다.");
+		}
+		AlarmVO alarmVO = sender.insertNotification(member, targetId, alarmData);
+
+		return alarmVO;
 	}
 
 

@@ -3,6 +3,7 @@ package com.spring.app.alarm.service;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.member.domain.MemberVO;
 
@@ -12,7 +13,7 @@ public interface AlarmService {
 	public AlarmVO insertAlarm2(MemberVO member, AlarmVO.NotificationType type);
 
 	//알림 삽입
-	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type, String targetId);
+	public AlarmVO insertAlarm(MemberVO member, String targetId, AlarmVO.NotificationType type, AlarmData alarmData);
 	
 	//알림 seq 조회
 	//selectKey로 필요가 없어졌음

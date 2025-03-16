@@ -35,8 +35,6 @@ public class AlarmVO {
 
 	private Map<String, String> TargetMember;
 
-	private String notificationContent;
-
 	
 	@NotNull
 	private NotificationType notificationType;//	 notification_type NUMBER(1) NOT NULL, /* 유형 , 댓글 알림:1, 채팅 알림:2, 팔로우 알림:3, 팔로워 게시물 알림: 4*/
@@ -51,8 +49,8 @@ public class AlarmVO {
 	@Min(value = -1, message = "notification_is_read must be greater than -1")
 	@Max(value = 2, message = "notification_is_read must be less than 2")
 	private int notificationIsRead = 0;//	 notification_is_read
-	
 
-	private String targetURL;
+	private AlarmData alarmData;
+
 
 }

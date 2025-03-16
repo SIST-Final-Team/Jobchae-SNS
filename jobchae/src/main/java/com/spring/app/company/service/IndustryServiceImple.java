@@ -3,16 +3,11 @@ package com.spring.app.company.service;
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.model.IndustryDAO;
-import com.spring.app.company.service.create.InsertNotification;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spring.app.alarm.service.create.InsertNotification;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class IndustryServiceImple implements IndustryService{
