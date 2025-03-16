@@ -25,7 +25,7 @@
             @apply text-[1.35rem] font-bold;
         }
         .border-normal {
-            @apply border-1 border-gray-300 rounded-lg bg-white;01
+            @apply border-1 border-gray-300 rounded-lg bg-white;
         }
         .border-search-board {
             @apply border-1 border-gray-300 rounded-lg bg-white;
@@ -1153,7 +1153,7 @@
 			}
 		});
 		
-		// 댓글 삭제 ㅇㅇ
+		// 댓글 삭제
 		$(".comment-delete").click(function() {
 			const isChildComment = $(this).closest('.child-comment').length > 0;
 
@@ -1191,27 +1191,34 @@
 			
 		});
 		
+		// 댓글 수정 ㅇㅇ
 		$(".comment-edit").click(function() { 
-			const fk_board_no = $(this).closest('.comment').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val();  
-			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
-			
-			const originalText = $(this).closest('.comment-item').find('.comment-content-text').text(); 
-			const editText = $(this).closest('.comment-item').find('#edit-input').val();
-		    //alert(originalText + " " + editText);
+		    const $comment = $(this).closest('.comment'); 
+		
+		    const fk_board_no = $comment.find('.hidden-board-no').val();  
+		    const fk_member_id = $comment.find('.hidden-member-id').val();  
+		    const comment_no = $comment.find('.hidden-comment-no').val();  
+		    //alert(fk_board_no + " " + fk_member_id + " " + comment_no);
 		    
-		    $(this).closest('.comment-item').find('.comment-content-text').hide();
-		    $(this).closest('.comment-item').find('#comment-edit-input').show();
+		    const originalText = $comment.find('.comment-content-text').text(); 
+		    const editText = $comment.find('#edit-input').val();
+		    
+		    $comment.find('.comment-content-text').hide();  
+		    $comment.find('#comment-edit-input').show();  
 		});
 
+
+		$(window).click(function(e) {
+			$comment.find('#comment-edit-input').hide();  
+        });
+
 		$(".comment-edit-button").click(function() { 
-			const comment_content = $(this).closest('.comment-item').find('#edit-input').val();
+			const comment_content = $(this).closest('.comment').find('#edit-input').val();
 			//alert(comment_content);
 			
-			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			const fk_board_no = $(this).closest('.comment').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val(); 
 			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
 			
 			$.ajax({
@@ -2108,100 +2115,7 @@
 	                        </ul>
 	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    
-	                    
-	                    <!--  
-	                    <div class="comment-input-container" id="commentInputContainer">
-	                    	<div class="comment-profile">
-	                    		<input type="hidden" value="${boardvo.board_no}" />
-	                    		
-		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
-		                    	<div class="comment-input" >
-		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
-							        <input type="text" placeholder="댓글 남기기" id="commentInput">
-						            <button class="comment-submit-button">댓글</button>
-						            <input type="hidden" name="hidden-comment-reply-no" value="" />
-							    </div>	
-	                    	</div>
-	                    	
-	                    	
-	                    	<div class="comment-list-container">
-	                    		<div class="comment-sort">
-	                    			<select id="sortOption">
-						                <option value="recent">최신순</option>
-						                <option value="relevant">관련순</option>
-						            </select>
-	                    		</div>
-	                    	</div>
-	                    	
-	                    	-->
-	                    	<!-- 
-	                    	<ul class="comment-list"> <!-- ㅇㅇ -->
-	                    		<!--<c:if test="${not empty commentvoList}">
-		                    		<c:forEach var="commentvo" items="${commentvoList}">  
-		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
-			                    			<li class="comment-item">
-												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>
-												<div class="comment-content">
-													<div class="comment-info">
-														<input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
-														<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
-														<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
-														<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
-														
-														<span class="comment-author">${commentvo.member_name}</span>
-														<!--<span class="comment-relationship">팔로워 0명</span>-->
-														<!-- <span class="comment-date" data-time="${commentvo.comment_register_date}"></span> 
-														<button class="comment-options">...</button>
-													</div>
-													<div class="comment-text">
-													
-														<span class="comment-content-text">${commentvo.comment_content}</span>
-														
-														<div class="comment-input" id="comment-edit-input" style="display:none;" >
-															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
-															<button class="comment-edit-button">수정</button>
-														</div>
-													</div>
-													
-													<div class="comment-actions">
-														<button class="like-button">추천</button>
-									                    <span>|</span>
-									                    <button class="reply-button">답장</button> 
-									                </div>
-									                
-									                
-												</div>     
-												
-												<!-- 옵션 드롭다운 메뉴 -->
-												<!--  
-												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
-										            <div class="options-dropdown2">
-										                <ul>
-											                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
-											                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
-										                </ul>
-									            	</div> 
-												</c:if>
-												<c:if test="${membervo.member_id != commentvo.fk_member_id}">
-										            <div class="options-dropdown2">
-										                <ul>
-											                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
-										                </ul>
-									            	</div> 
-												</c:if>
-												<!-- div.options-dropdown 끝 -->
-												<!-- 
-				                    		</li>
-				                    		
-			                    		</c:if>
-		                    		</c:forEach>
-	                    		</c:if>
-	                    	</ul>-->
-	                    	
-	                    	
-	                    	
-	                    <!-- </div>--> <!-- div.comment-input-container 끝 -->
-	                    
+	
 	                    <div class="commentDiv">
 		                    <div class="comment-profile">
 	                    		<input type="hidden" value="${boardvo.board_no}" />
@@ -2260,7 +2174,15 @@
 									                    Maxwell Leadership Certified Team Member - Speaker, Trainer, and Co...
 									                </div>
 									                -->
-									                <div class="comment-text">${commentvo.comment_content}</div>
+									                <div class="comment-text">
+														<span class="comment-content-text">${commentvo.comment_content}</span>
+														
+														<div class="comment-input" id="comment-edit-input" style="display:none;" >
+															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
+															<button class="comment-edit-button">수정</button>
+														</div>
+													</div>
+													
 									                <div class="actions">
 									                    <button class="action-button like">
 									                        <i class="fas fa-heart"></i> 추천 · 1
@@ -2268,7 +2190,17 @@
 									                    <span class="action-separator"></span>
 									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
-									                    
+									                
+									                <!-- ㅇㅇ 
+									                <div class="comment-text">
+														<span class="comment-content-text">${commentvo.comment_content}</span>
+														
+														<div class="comment-input" id="comment-edit-input" style="display:none;" >
+															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
+															<button class="comment-edit-button">수정</button>
+														</div>
+													</div>-->
+													    
 									                <input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
 													<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
 													<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
@@ -2320,7 +2252,14 @@
 											                            Founder & CEO, WisdomQuant | Building AI-first careers throug...
 											                        </div>
 											                        -->
-											                        <div class="comment-text">${replyComment.comment_content}</div>
+											                        <div class="comment-text">
+																		<span class="comment-content-text">${replyComment.comment_content}</span>
+																		
+																		<div class="comment-input" id="comment-edit-input" style="display:none;" >
+																			<input type="text" id="edit-input" value="${replyComment.comment_content}" style="width: 100%; "/>
+																			<button class="comment-edit-button">수정</button>
+																		</div>
+																	</div>
 											                        <div class="actions">
 											                            <button class="action-button like">
 											                                <i class="fas fa-heart"></i> 추천 · 1
