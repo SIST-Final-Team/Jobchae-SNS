@@ -726,15 +726,15 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                 <div class="py-0!">
                     <h1 class="h1 pt-4">분석</h1>
                     <div class="flex space-x-2 pb-2 text-gray-800 text-center">
-                            <a href="#" class="button-board-action space-x-2">
+                            <a href="${pageContext.request.contextPath}/member/profile/view-count#profileViewCount" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-user-group text-2xl"></i>
                                 <span class="font-bold text-lg">프로필 조회 <fmt:formatNumber value="${requestScope.viewCountSummary.profileViewCount}" pattern="#,###" /></span>
                             </a>
-                            <a href="#" class="button-board-action space-x-2">
+                            <a href="${pageContext.request.contextPath}/member/profile/view-count#boardViewCount" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-chart-simple text-2xl"></i>
                                 <span class="font-bold text-lg">업데이트 노출 <fmt:formatNumber value="${requestScope.viewCountSummary.boardViewCount}" pattern="#,###" /></span>
                             </a>
-                            <a href="#" class="button-board-action space-x-2">
+                            <a href="${pageContext.request.contextPath}/member/profile/view-count#searchProfileViewCount" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-magnifying-glass text-2xl"></i>
                                 <span class="font-bold text-lg">검색결과 노출 <fmt:formatNumber value="${requestScope.viewCountSummary.searchProfileViewCount}" pattern="#,###" /></span>
                             </a>

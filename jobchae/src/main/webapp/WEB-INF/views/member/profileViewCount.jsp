@@ -168,7 +168,7 @@ function getViewCount(name, resultContainerId, viewCountTargetType, viewCountTyp
             <div class="scroll-mt-22 border-board">
 
                 <!-- 프로필 조회 -->
-                <div id="profileViewCount">
+                <div id="profileViewCount" class="scroll-mt-20">
                     <div class="flex items-center">
                         <h1 class="h1 flex-1">프로필 조회</h1>
                     </div>
@@ -177,7 +177,7 @@ function getViewCount(name, resultContainerId, viewCountTargetType, viewCountTyp
                 </div>
 
                 <!-- 업데이트 노출 -->
-                <div id="boardViewCount">
+                <div id="boardViewCount" class="scroll-mt-20">
                     <div class="flex items-center">
                         <h1 class="h1 flex-1">업데이트 노출</h1>
                     </div>
@@ -186,7 +186,7 @@ function getViewCount(name, resultContainerId, viewCountTargetType, viewCountTyp
                 </div>
 
                 <!-- 검색결과 노출 -->
-                <div id="searchProfileViewCount">
+                <div id="searchProfileViewCount" class="scroll-mt-20">
                     <div class="flex items-center">
                         <h1 class="h1 flex-1">검색결과 노출</h1>
                     </div>
