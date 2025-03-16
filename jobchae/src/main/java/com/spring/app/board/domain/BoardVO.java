@@ -1,9 +1,11 @@
 package com.spring.app.board.domain;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.spring.app.comment.domain.CommentVO;
 import com.spring.app.file.domain.FileVO;
 
 public class BoardVO {
@@ -31,7 +33,25 @@ public class BoardVO {
 	private List<FileVO> fileList;
 	private String countFollow;
 	private String countComment;
+	
+	private Map<String, String> topReactionList;
+	private List<CommentVO> commentvoList;
 
+	public List<CommentVO> getCommentvoList() {
+		return commentvoList;
+	}
+
+	public void setCommentvoList(List<CommentVO> commentvoList) {
+		this.commentvoList = commentvoList;
+	}
+
+	public Map<String, String> getTopReactionList() {
+		return topReactionList;
+	}
+
+	public void setTopReactionList(Map<String, String> topReactionList) {
+		this.topReactionList = topReactionList;
+	}
 
 	public String getMember_id() {
 		return member_id;

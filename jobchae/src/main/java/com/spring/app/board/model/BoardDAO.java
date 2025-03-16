@@ -82,7 +82,7 @@ public interface BoardDAO {
 	int addComment(Map<String, String> paraMap);
 
 	// 댓글 조회하기
-	List<CommentVO> getAllComments();
+	List<CommentVO> getAllComments(String board_no);
 
 	// 댓글 수 구하기
 	int getCommentCount(String board_no);
@@ -111,10 +111,20 @@ public interface BoardDAO {
 
 	// 파일 첨수 (수정)
 	int editBoardWithFiles(Map<String, String> paraMap);
+
+	// 반응 많은 순 상위 1~3개 추출하기
+	Map<String, String> getTopReactionsForBoard(String board_no);
+
+	// 답글 조회하기
+	List<CommentVO> getRelplyComments(String comment_no);
+
+	// 댓글에 대한 답글 수 구하기
+	int getReplyCount(String comment_no);
+
+	// 부모 댓글 삭제시 자식 댓글도 삭제
+	int deleteReplyComment(Map<String, String> paraMap);
 	
 		
-	// 반응 많은 순 상위 1~3개 추출하기
-	//List<String> getReactionCountsByBoard(String board_no);
 
 
 }

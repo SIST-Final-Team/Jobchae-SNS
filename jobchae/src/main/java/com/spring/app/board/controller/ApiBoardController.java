@@ -189,9 +189,9 @@ public class ApiBoardController {
 	        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
 	    // 콘솔에 출력
-	    sortedReactionCounts.forEach((key, value) -> 
-	        System.out.println("Reaction Type: " + key + ", Count: " + value)
-	    );
+	    //sortedReactionCounts.forEach((key, value) -> 
+	    //    System.out.println("Reaction Type: " + key + ", Count: " + value)
+	    //);
 	    
 		return reactionCounts;
 	}
@@ -355,17 +355,30 @@ public class ApiBoardController {
 	// 댓글 삭제하기
 	@PostMapping("deleteComment")
 	@ResponseBody
-	public Map<String, Integer> deleteComment(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_no) {
+	public Map<String, Integer> deleteComment(HttpServletRequest request, @RequestParam String fk_board_no, @RequestParam String fk_member_id, @RequestParam String comment_no, @RequestParam String comment_depth) {
 
 		//System.out.println("fk_board_no : " + fk_board_no);
 		//System.out.println("fk_member_id : " + fk_member_id);
 		//System.out.println("comment_no : " + comment_no);
+		//System.out.println("comment_depth : " + comment_depth);
 		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("fk_board_no", fk_board_no);
-		paraMap.put("fk_member_id", fk_member_id);
-		paraMap.put("comment_no", comment_no);
-		int n = service.deleteComment(paraMap);
+		int n = 0;
+		if ("0".equals(comment_depth)) {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("fk_board_no", fk_board_no);
+			paraMap.put("fk_member_id", fk_member_id);
+			paraMap.put("comment_no", comment_no);
+			
+			service.deleteComment(paraMap);
+			n = 1;
+		} else {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("fk_board_no", fk_board_no);
+			paraMap.put("fk_member_id", fk_member_id);
+			paraMap.put("comment_no", comment_no);
+			n = service.deleteReplyComment(paraMap);
+			System.out.println(n);
+		}
 		
 		Map<String, Integer> map = new HashMap<>();
 		map.put("n", n);

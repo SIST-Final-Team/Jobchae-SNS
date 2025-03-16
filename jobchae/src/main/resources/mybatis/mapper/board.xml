@@ -26,7 +26,7 @@
 	
 	<!-- 로그인된 사용자의 정보 얻어오기 -->
 	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
-		select member_id, member_name, member_birth
+		select member_id, member_name, member_birth, member_profile
 		from tbl_member
 		where member_id = #{login_userid}
 	</select>
@@ -195,12 +195,13 @@
 		values(seq_comment_no.nextVal, #{fk_board_no}, #{fk_member_id}, #{comment_content}, default, seq_comment_no.currval, default, default)
 	</insert>
 	
-	<!-- 댓글 조회하기 -->
-	<select id="getAllComments" resultType="CommentVO">
+	<!-- 부모댓글 조회하기 -->
+	<select id="getAllComments" parameterType="String" resultType="CommentVO">
 		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
 		from tbl_comment c
 		join tbl_member m
 		on c.fk_member_id = m.member_id
+		where c.fk_board_no = #{board_no} and c.comment_depth = 0
 		order by c.comment_register_date desc
 	</select>
 	
@@ -211,10 +212,16 @@
 		where fk_board_no = #{board_no}
 	</select>
 	
-	<!-- 댓글 삭제하기 -->
+	<!-- 부모 댓글 삭제하기 (자식 댓글도 삭제됨) -->
 	<delete id="deleteComment" parameterType="HashMap">
 		delete from tbl_comment
-		where fk_board_no = #{fk_board_no} and comment_no = #{comment_no} and fk_member_id = #{fk_member_id}
+		where comment_group_no = #{comment_no}
+	</delete>
+	
+	<!-- 자식 댓글만 삭제 -->
+	<delete id="deleteReplyComment" parameterType="HashMap">
+		delete from tbl_comment
+		where fk_board_no = #{fk_board_no} and comment_no = #{comment_no} and comment_depth = 1
 	</delete>
 	
 	<!-- 댓글 수정하기 -->
@@ -276,5 +283,53 @@
 		insert into tbl_file(file_no, file_target_no, file_target_type, file_name, file_original_name, file_size, file_register_date)
 		values(seq_file_no.nextVal, #{board_no}, 'board', #{file_name}, #{file_original_name}, #{file_size}, default)
 	</insert>
+	
+	
+	
+	<!-- 반응 많은 순 상위 1~3개 추출하기 -->
+	<resultMap type="HashMap" id="topReactionCountsMap">
+	    <result property="reaction_status_1" column="reaction_status_1" javaType="String" />
+	    <result property="reaction_status_2" column="reaction_status_2" javaType="String" />
+	    <result property="reaction_status_3" column="reaction_status_3" javaType="String"/>
+	    <result property="reaction_status_4" column="reaction_status_4" javaType="String"/>
+	    <result property="reaction_status_5" column="reaction_status_5" javaType="String"/>
+	    <result property="reaction_status_6" column="reaction_status_6" javaType="String"/>
+  	</resultMap>
+	<select id="getTopReactionsForBoard" parameterType="String" resultMap="topReactionCountsMap">
+		select 
+		    count(case when r.reaction_status = '1' then 1 end) as reaction_status_1,
+		    count(case when r.reaction_status = '2' then 1 end) as reaction_status_2,
+		    count(case when r.reaction_status = '3' then 1 end) as reaction_status_3,
+		    count(case when r.reaction_status = '4' then 1 end) as reaction_status_4,
+		    count(case when r.reaction_status = '5' then 1 end) as reaction_status_5,
+		    count(case when r.reaction_status = '6' then 1 end) as reaction_status_6
+		from 
+		    tbl_reaction r
+		join 
+		    tbl_board b
+		    on r.reaction_target_no = b.board_no
+		where 
+		    b.board_no = #{board_no}
+	</select>	
+	
+	
+	<!-- 답글 조회하기 -->
+	<select id="getRelplyComments" parameterType="String" resultType="CommentVO">
+		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
+		from tbl_comment c
+		join tbl_member m
+		on c.fk_member_id = m.member_id
+		where c.comment_parent_no = #{comment_no} and c.comment_depth = 1
+		order by c.comment_register_date desc
+	</select>
+	
+	
+	<!-- 댓글에 대한 답글 수 구하기 -->
+	<select id="getReplyCount" parameterType="String">
+		select count(*) as replyCount
+		from tbl_comment
+		where comment_parent_no = #{comment_no} and comment_depth = 1
+	</select>
+	
 	
 </mapper>

@@ -174,8 +174,8 @@ public class BoardService_imple implements BoardService {
 
 	// 댓글 조회하기
 	@Override
-	public List<CommentVO> getAllComments() {
-		List<CommentVO> commentvoList = dao.getAllComments();
+	public List<CommentVO> getAllComments(String board_no) {
+		List<CommentVO> commentvoList = dao.getAllComments(board_no);
 		return commentvoList;
 	}
 
@@ -250,11 +250,33 @@ public class BoardService_imple implements BoardService {
 	}
 
 	// 반응 많은 순 상위 1~3개 추출하기
-	//@Override
-	//public List<String> getReactionCountsByBoard(String board_no) {
-		//List<String> reaction_top3List = dao.getReactionCountsByBoard(board_no);
-		//return reaction_top3List;
-	//}
+	@Override
+	public Map<String, String> getTopReactionsForBoard(String board_no) {
+		Map<String, String> topReactionsList = dao.getTopReactionsForBoard(board_no);
+		return topReactionsList;
+	}
+
+	// 답글 조회하기
+	@Override
+	public List<CommentVO> getRelplyComments(String comment_no) {
+		List<CommentVO> replyCommentsList = dao.getRelplyComments(comment_no);
+		return replyCommentsList;
+	}
+
+	// 댓글에 대한 답글 수 구하기
+	@Override
+	public int getReplyCount(String comment_no) {
+		int n = dao.getReplyCount(comment_no);
+		return n;
+	}
+
+	// 부모 댓글 삭제시 자식 댓글도 삭제
+	@Override
+	public int deleteReplyComment(Map<String, String> paraMap) {
+		int n = dao.deleteReplyComment(paraMap);
+		return n;
+	}
+	
 
 	
 

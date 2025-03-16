@@ -144,7 +144,7 @@ public interface MemberDAO {
 	
 	/**
 	 * 한 회원의 보유기술 모두 조회
-	 * @param login_member_id: 로그인한 회원 아이디, member_id: 조회대상 회원 아이디W
+	 * @param login_member_id: 로그인한 회원 아이디, member_id: 조회대상 회원 아이디
 	 * @return
 	 */
 	List<MemberSkillVO> getMemberSkillListByMemberId(Map<String, String> paraMap);
@@ -153,9 +153,33 @@ public interface MemberDAO {
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
 
+	/**
+	 * 회원 프로필 배경 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMemberBackgroundImg(MemberVO memberVO);
 
+	/**
+	 * 회원 프로필 사진 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMemberProfile(MemberVO memberVO);
 
-	
+	/**
+	 * 한 회원의 팔로워 수 가져오는 메소드
+	 * @param member_id
+	 * @return
+	 */
+	int getFollowerCount(String member_id);
+
+	/**
+	 * 회원 정보 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMember(MemberVO memberVO);
 
 	
 
@@ -180,8 +204,5 @@ public interface MemberDAO {
 
 
 	// === 김규빈 끝 === //
-
-	//연규영이 추가 아이디로 정보 가져오기
-	MemberVO getAlarmMemberInfoByMemberId(String member_id);
 	
 }//end of interface...

@@ -7,6 +7,10 @@ body {
     background-color: #F4F2EE;
 }
 
+#update {
+	margin-bottom: 100px;
+}
+
 div#container {
     width: 100vw;
     height: 100vh;
@@ -464,7 +468,7 @@ img.modal-img {
     border-radius: 40px;
     width: 350px;
     height: 60px;
-    left: 37%;  
+    left: 35%;  
 }
 
 .reactions-menu__reaction {
@@ -1018,6 +1022,7 @@ img.modal-img {
 .more-btn {
     display: none;
     margin-top: 10px;
+    cursor: pointer;
 }
 .board-content-container.expanded .board-content {
     display: block;
@@ -1140,4 +1145,86 @@ img.modal-img {
 .preview-board-no {
     display: none;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 글 작성 Modal 이미지 미리보기 */
+#carousel-container2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;  
+    margin-bottom: 130px;
+}
+
+#image-preview-container2 {
+    overflow: hidden;  
+    width: 640px; 
+}
+
+.carousel-track2 {
+    display: flex;
+    transition: transform 0.5s ease; 
+}
+
+
+.preview-box2 {
+    flex: 0 0 calc((640px - 16px) / 3); 
+    height: 200px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; 
+    overflow: hidden; 
+}
+
+.preview-box2 img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; 
+}
+
+.preview-box2:hover {
+    cursor: pointer;
+    filter: brightness(0.7);
+}
+
+.close-btn {
+    position: absolute;
+    inset: 0; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    font-size: 60px; 
+    color: white; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: opacity 0.3s ease; 
+}
+
+.preview-box2:hover .close-btn {
+    opacity: 1; 
+    pointer-events: all; 
+}
+
+#prevBtn2:hover, #nextBtn2:hover {
+	background: #f0f0f0;
+}
+
+
+
+
 

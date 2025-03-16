@@ -1,5 +1,7 @@
 package com.spring.app.comment.domain;
 
+import java.util.List;
+
 public class CommentVO {
 
 	private String comment_no;
@@ -14,19 +16,42 @@ public class CommentVO {
 	
 	// select용
 	private String member_name;
+	private List<CommentVO> replyCommentsList;
+	private String replyCount;
 	
+	
+	public String getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(String replyCount) {
+		this.replyCount = replyCount;
+	}
+
 	public String getMember_name() {
 		return member_name;
 	}
-
+	
 	public void setMember_name(String member_name) {
 		this.member_name = member_name;
 	}
 	
 	
+
 	
 	
 	
+	
+	
+	
+	public List<CommentVO> getReplyCommentsList() {
+		return replyCommentsList;
+	}
+
+	public void setReplyCommentsList(List<CommentVO> replyCommentsList) {
+		this.replyCommentsList = replyCommentsList;
+	}
+
 	public String getComment_no() {
 		return comment_no;
 	}

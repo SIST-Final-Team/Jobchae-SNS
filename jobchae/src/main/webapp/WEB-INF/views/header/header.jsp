@@ -165,7 +165,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
           class="h-full w-20 flex-none text-center border-r-1 border-gray-300 text-sm opacity-50 hover:opacity-100"
         >
           <img
-            src="${pageContext.request.contextPath}/images/no_profile_image.png"
+            src="${pageContext.request.contextPath}/resources/files/profile/${sessionScope.loginuser.member_profile}"
             class="h-2/5 m-auto mt-1.5 round-full"
           />나▼
           <div
@@ -209,7 +209,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
                 </ul>
               </li>
               <li class="pt-2 px-2 text-gray-500">
-                <a href="<%= ctxPath%>/member/logout">로그아웃</a>
+                <a href="<%= ctxPath%>/member/logout" class="hover:underline">로그아웃</a>
               </li>
             </ul>
           </div>
