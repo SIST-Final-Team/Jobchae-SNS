@@ -526,6 +526,13 @@ public class MemberController {
 
 		return mav;
 	}
+
+	@GetMapping("profile/view-count")
+	public ModelAndView requiredLogin_getMethodName(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		mav.setViewName("member/profileViewCount");
+		return mav;
+	}
+	
 	
 	// =========================== 김규빈 끝 =========================== //
 	

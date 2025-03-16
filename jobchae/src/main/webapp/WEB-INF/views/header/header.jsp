@@ -170,7 +170,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         >
           <img
             src="${pageContext.request.contextPath}/resources/files/profile/${sessionScope.loginuser.member_profile}"
-            class="h-2/5 m-auto mt-1.5 round-full"
+            class="h-2/5 aspect-square m-auto mt-1.5 rounded-full"
           />나▼
           <div
                   id="headerProfile"

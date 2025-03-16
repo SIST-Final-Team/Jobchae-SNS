@@ -572,6 +572,8 @@ public class ApiMemberController {
 		memberVO.setMember_id(loginuser.getMember_id());
 		
 		int n = service.updateMemberBackgroundImg(memberVO);
+
+		loginuser.setMember_background_img(memberVO.getMember_background_img()); // 로그인 세션 업데이트
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("result", n);
@@ -643,6 +645,8 @@ public class ApiMemberController {
 		memberVO.setMember_id(loginuser.getMember_id());
 		
 		int n = service.updateMemberProfile(memberVO);
+		
+		loginuser.setMember_profile(memberVO.getMember_profile()); // 로그인 세션 업데이트
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("result", n);

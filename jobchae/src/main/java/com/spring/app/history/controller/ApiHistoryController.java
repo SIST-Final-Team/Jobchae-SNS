@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.spring.app.config.AES256_Configuration;
 import com.spring.app.history.domain.ProfileViewVO;
@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RestController
-@RequestMapping(value="/history/*")
+@RequestMapping(value="/api/history/*")
 public class ApiHistoryController {
 
     private final AES256_Configuration AES256_Configuration;
@@ -86,8 +86,8 @@ public class ApiHistoryController {
 	}
 
 	@Operation(summary = "조회수 통계 조회", description = "한 회원의 조회수 통계 조회")
-	@GetMapping("view-count/{viewCountTargetType}/{viewCountType}")
-	public List<ViewCountVO> getViewCount(HttpServletRequest request, @PathVariable String viewCountTargetType, @PathVariable String viewCountType) {
+	@GetMapping("view-count")
+	public List<ViewCountVO> getViewCount(HttpServletRequest request, @RequestParam String viewCountTargetType, @RequestParam String viewCountType) {
 		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
