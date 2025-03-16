@@ -2164,7 +2164,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진">
+									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2242,7 +2242,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진">
+											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">
