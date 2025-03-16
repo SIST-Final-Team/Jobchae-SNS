@@ -42,6 +42,36 @@ request.getContextPath(); %>
       fetchCompanyInfo();
 
       const form = document.getElementById("deleteFrom");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const companyInput = document.createElement("input");
+        companyInput.setAttribute("type", "hidden");
+        companyInput.setAttribute("name", "companyNo");
+        companyInput.setAttribute("value", companyNo);
+        const memberIdInput = document.createElement("input");
+        memberIdInput.setAttribute("type", "hidden");
+        memberIdInput.setAttribute("name", "memberId");
+        memberIdInput.setAttribute("value", document.getElementById("member_id").textContent);
+
+        form.append(companyInput);
+        form.append(memberIdInput);
+
+        fetch(`<%= ctxPath%>/api/company/deleteCompany`, {
+          method: "DELETE",
+          body: new FormData(form)
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("삭제 성공");
+              window.location.href = `<%= ctxPath%>/board/feed`;
+            }
+          })
+          .catch((error) => {
+            alert("삭제 실패");
+          });
+      });
     </script>
   </body>
 </html>

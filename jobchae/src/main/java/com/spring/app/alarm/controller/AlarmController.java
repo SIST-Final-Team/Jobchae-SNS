@@ -35,7 +35,7 @@ public class AlarmController {
 	@GetMapping("test3")
 	public String alarmTest(){
 
-		return "header/header";
+		return "Alarm/alarmPage";
 	}
 
 	

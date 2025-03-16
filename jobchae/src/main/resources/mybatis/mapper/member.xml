@@ -514,4 +514,13 @@
 	</update>
 
 	<!-- === 김규빈 끝 === -->
+
+	<!-- === 연규영 시작 === -->
+	<select id="getAlarmMemberInfoByMemberId" resultType="MemberVO">
+		select member_id, member_birth, member_is_company ,member_name, member_profile
+		from tbl_member where member_id = #{member_id}
+	</select>
+
+
+	<!-- === 연규영 끝 === -->
 </mapper>

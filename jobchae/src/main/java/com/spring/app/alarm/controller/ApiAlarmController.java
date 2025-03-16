@@ -1,6 +1,9 @@
 package com.spring.app.alarm.controller;
 
+import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
+import com.spring.app.follow.repository.FollowRepository;
+import com.spring.app.follow.service.FollowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +34,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value="api/alarm/")
+@CrossOrigin(origins = "*")
 public class ApiAlarmController {
 
 	private final SimpMessagingTemplate messagingTemplate;
 
 	@Autowired
 	private AlarmService alarmService;
+
+	@Autowired
+	private FollowService followService;
+
 	@Autowired
 	public ApiAlarmController(SimpMessagingTemplate template) {
 		this.messagingTemplate = template;
@@ -47,9 +55,14 @@ public class ApiAlarmController {
 	
 //	알람 읽음 변경 메서드
 	@PutMapping("updateAlarmRead/{notification_no}")
-	public String updateAlarmRead(@PathVariable String notification_no){
+	public ResponseEntity<AlarmVO> updateAlarmRead(@PathVariable String notification_no){
 		//TODO
-		return "updateAlarmRead";
+		MemberVO member = new MemberVO();
+		member.setMember_id("user001");
+		AlarmVO alarm = alarmService.updateAlarmRead(member, notification_no);
+		ResponseEntity<AlarmVO> response = new ResponseEntity<>(alarm, HttpStatus.OK);
+
+		return response;
 	}
 	
 //	알람 입력 메서드
@@ -60,7 +73,7 @@ public class ApiAlarmController {
 		user001.setMember_id("user001");
 		try {
 			//알림 삽입
-			AlarmVO alarm = alarmService.insertAlarm(user001, AlarmVO.NotificationType.COMMENT);
+			AlarmVO alarm = alarmService.insertAlarm2(user001, AlarmVO.NotificationType.COMMENT);
 
 			//알림을 구독하고 있는 사용자에게 알림 전송
 			messagingTemplate.convertAndSend("/topic/alarm", alarm);
@@ -78,7 +91,7 @@ public class ApiAlarmController {
 	
 //	알람 삭제 메서드
 	@DeleteMapping("deleteAlarm/{notificationNo}")
-	public ResponseEntity<AlarmVO> deleteAlarm(@PathVariable String notification_no){
+	public ResponseEntity<AlarmVO> deleteAlarm(@PathVariable String notificationNo){
 		//TODO 미완성
 
 		ResponseEntity<AlarmVO> response = null;
@@ -86,7 +99,7 @@ public class ApiAlarmController {
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
 		try {
-			AlarmVO deletedAlarm = alarmService.deleteAlarm(user001,notification_no);
+			AlarmVO deletedAlarm = alarmService.deleteAlarm(user001,notificationNo);
 			response = ResponseEntity.ok(deletedAlarm);
 			return response;
 		}
@@ -98,15 +111,107 @@ public class ApiAlarmController {
 	
 //	알림 조회 메서드
 	@GetMapping("selectAlarmList/{pageNumber}")
-	public ResponseEntity<Map> selectAlarmList(@PathVariable int pageNumber){
+	public ResponseEntity<Map> selectAlarmList(@PathVariable String pageNumber){
 
 		MemberVO user001 = new MemberVO();
 		user001.setMember_id("user001");
-		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNumber);
+		int pageNo = Integer.parseInt(pageNumber);
+		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNo);
 //		logger.info("alarmList: " + resultMap);
 		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
 		return response;
 	}
+
+	@GetMapping("testLike")
+	public ResponseEntity<AlarmVO> test() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardId("52");
+		alarmData.setBoardContent("<p>글이 어떻게</p>");
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.LIKE, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
+	@GetMapping("testComment")
+	public ResponseEntity<AlarmVO> test2() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setCommentId("69");
+		alarmData.setCommentContent("ㅇㅇ");
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.COMMENT, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
+	@GetMapping("testFollow")
+	public ResponseEntity<AlarmVO> test3() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.FOLLOW, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
+	@GetMapping("testFollowerPost")
+	public ResponseEntity<AlarmVO> test4() {
+
+		//현재 로그인된 사람
+		MemberVO member = new MemberVO();
+		member.setMember_id("user002");
+		member.setMember_name("user002");
+		member.setMember_birth("1995-10-20");
+		member.setMember_profile("profile");
+
+
+
+		//받는 사람
+		String targetId = "user001";
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardId("52");
+		alarmData.setBoardContent("<p>글이 어떻게</p>");
+
+
+		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.FOLLOWER_POST, alarmData);
+
+		return ResponseEntity.ok(alarm);
+	}
+
 	
 //	시퀀스 조회 메서드
 //	@GetMapping("seq")

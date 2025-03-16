@@ -1,20 +1,27 @@
 package com.spring.app.company.service;
 
+import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.company.domain.IndustryVO;
 import com.spring.app.company.model.IndustryDAO;
+import com.spring.app.alarm.service.create.InsertNotification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class IndustryServiceImple implements IndustryService{
 
     IndustryDAO industryDAO;
+    Map<AlarmVO.NotificationType, InsertNotification> insertNotificationMap;
+
+
 
     // 생성자 주입
     public IndustryServiceImple(IndustryDAO industryDAO) {
         this.industryDAO = industryDAO;
     }
+
 
     // 업종 번호로 업종 정보 조회
     public IndustryVO selectIndustryByNo(Long industry_no) {
@@ -60,5 +67,18 @@ public class IndustryServiceImple implements IndustryService{
 
         return industryVOList;
     }
+
+    //검색할 때 나오는 업종 리스트
+//    @Override
+//    public List<IndustryVO> selectIndustryListByNumber() {
+//        //TODO : 나중에 코드 보강 필요
+//        Long industryNum = Long.parseLong(industryNo);
+//        Optional<IndustryVO> industries = industryDAO.findById(industryNum);
+//
+//        List<IndustryVO> industryVOList = industries.stream().toList();
+//
+//
+//        return industryVOList;
+//    }
 
 }

@@ -3,7 +3,11 @@ package com.spring.app.alarm.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.spring.app.alarm.domain.AlarmData;
+import com.spring.app.alarm.service.create.InsertNotification;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
@@ -16,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.alarm.model.AlarmDAO;
-import com.spring.app.alarm.model.AlarmMapper;
 import com.spring.app.member.domain.MemberVO;
 
 @Service
@@ -28,11 +31,18 @@ public class AlarmService_imple implements AlarmService{
 	Validator validator;
 
 	private static final Logger logger = LoggerFactory.getLogger(AlarmService_imple.class);
-	
+
+	Map<AlarmVO.NotificationType, InsertNotification> insertNotificationMap;
+
+	// 생성자 주입
+	@Autowired
+	public AlarmService_imple(List<InsertNotification> sender) {
+		this.insertNotificationMap = sender.stream().collect(Collectors.toMap(InsertNotification::NotificationType, Function.identity()));
+	}
 	
 //	알람 삽입
 	@Override
-	public AlarmVO insertAlarm(MemberVO member, AlarmVO.NotificationType type) {
+	public AlarmVO insertAlarm2(MemberVO member, AlarmVO.NotificationType type) {
 
 		//알림 객체 생성
 		AlarmVO alarm = new AlarmVO();
@@ -53,6 +63,20 @@ public class AlarmService_imple implements AlarmService{
 		
 		return result;
 	}
+
+	//알림 삽입
+	@Override
+	public AlarmVO insertAlarm(MemberVO member, String targetId, AlarmVO.NotificationType type,AlarmData alarmData) {
+		InsertNotification sender = insertNotificationMap.get(type);
+
+		if(sender == null) {
+			throw new IllegalArgumentException("알림 타입이 존재하지 않습니다.");
+		}
+		AlarmVO alarmVO = sender.insertNotification(member, targetId, alarmData);
+
+		return alarmVO;
+	}
+
 
 //	알림 시퀀스 번호 추출
 //	@Override
@@ -82,18 +106,30 @@ public class AlarmService_imple implements AlarmService{
 		//TODO 나중에 더 할것이 있는지  조회
 		//한 페이지에 보여줄 알림 수
 		final int pageSize = 10;
-		pageNumber = 0;
 		//페이징 처리
 		Pageable pageAble = PageRequest.of(pageNumber, pageSize);
 		logger.info("memberId : " + member.getMember_id());
 
 		//알림 리스트 조회
-		Slice<AlarmVO> alarmList = alarmDAO.findByMemberId(member.getMember_id(), pageAble);
+		Slice<AlarmVO> alarmList = alarmDAO.findByMemberIdOrderByNotificationRegisterDateDesc(member.getMember_id(), pageAble);
 		logger.info("alarmList: " + alarmList);
 		//다음 페이지가 있는지 확인
 		boolean hasNext = alarmList.hasNext();
 		//값을 저장
 		List<AlarmVO> list = alarmList.getContent();
+
+		//알림이 존재하면 상태를 변경
+		if(!list.isEmpty()) {
+			//알림의 상태를 확인만 한 상태로 변경
+			if(updateAlarmRead(list)){
+				logger.info("알림 상태 변경 성공");
+			}
+			else {
+				//알림 상태 변경이 안되면 예외 발생
+				throw new RuntimeException("알림 상태 변경 실패");
+			}
+		}
+
 
 		//알림의 상태를 확인만 한 상태로 변경
 		list.forEach(alarm ->{
@@ -117,6 +153,19 @@ public class AlarmService_imple implements AlarmService{
 		AlarmVO result = alarmDAO.save(existAlarm);
 
 		return result;
+	}
+
+	//알림 읽음 처리
+	@Override
+	public boolean updateAlarmRead(List<AlarmVO> alarmList) {
+
+		//알림의 상태를 확인만 한 상태로 변경
+		alarmList.forEach(alarm -> {
+			alarm.setNotificationIsRead(1);
+		});
+		List<AlarmVO> result = alarmDAO.saveAll(alarmList);
+		//TODO 나중에 좀더 자세히 수정
+        return !result.isEmpty();
 	}
 
 }
