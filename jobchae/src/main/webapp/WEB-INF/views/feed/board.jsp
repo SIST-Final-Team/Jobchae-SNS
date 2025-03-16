@@ -1840,7 +1840,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="#"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
+	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
