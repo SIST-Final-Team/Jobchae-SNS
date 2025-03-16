@@ -1248,14 +1248,14 @@ img.modal-img {
 .comment-container {
     max-width: 600px;
     margin: 0 auto;
-    position: relative; /* VERY IMPORTANT: 기준 위치 설정! */
+    position: relative; 
 }
 
 .thread-line {
-    position: absolute; /* VERY IMPORTANT: 절대 위치 설정! */
-    top: 0;           /* VERY IMPORTANT: 컨테이너 상단부터 */
-    bottom: 0;        /* VERY IMPORTANT: 컨테이너 하단까지 */
-    left: 30px;        /* 선의 시작 위치 조정 (프로필 이미지 중앙) */
+    position: absolute; 
+    top: 0;           
+    bottom: 0;       
+    left: 30px;      
     width: 1px;
     background-color: #d9d9d9;
 }
@@ -1270,8 +1270,8 @@ img.modal-img {
     padding-right: 12px;
     margin-bottom: 2px;
     display: flex;
-    position: relative; /* 내부 요소 position 기준 */
-    margin-left: 0; /* 댓글 들여쓰기 제거 */
+    position: relative; 
+    margin-left: 0; 
 }
 
 

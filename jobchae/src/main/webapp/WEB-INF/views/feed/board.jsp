@@ -1296,6 +1296,12 @@
     		$("#mentionedName").text(member_name);
     	});
     	
+    	// 멘션 후 backspace 누르면 멘션 지워지도록
+    	$("#commentInput").keydown(function(e) {
+    		if (e.key === "Backspace" && $(this).val() === "") {
+    			$("#mentionedName").text("");
+    		}
+    	});
     	
     	// 이미지, 비디오 크게보기
     	$(".file-preview-button").click(function() {
@@ -2299,7 +2305,7 @@
 											                        <div class="header">
 											                            <div class="user-info">
 											                                <span class="username">${replyComment.member_name}</span>
-											                                <a href="#" class="linkedin-icon"><i class="fab fa-linkedin-in"></i></a>
+											                                <!-- <a href="#" class="linkedin-icon"><i class="fab fa-linkedin-in"></i></a>-->
 											                                <c:if test="${boardvo.fk_member_id == replyComment.fk_member_id}">
 														                        <span class="author-badge">글쓴이</span>
 													                        </c:if>
