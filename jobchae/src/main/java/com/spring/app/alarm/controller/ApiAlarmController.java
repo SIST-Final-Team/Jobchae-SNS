@@ -2,6 +2,7 @@ package com.spring.app.alarm.controller;
 
 import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
+import com.spring.app.follow.domain.FollowEntity;
 import com.spring.app.follow.repository.FollowRepository;
 import com.spring.app.follow.service.FollowService;
 import org.slf4j.Logger;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import com.spring.app.alarm.service.AlarmService;
 import com.spring.app.member.domain.MemberVO;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
 
 // 예를 들어, user001에게 개인 알림을 보내고자 한다면:
 //messagingTemplate.convertAndSendToUser(
@@ -187,7 +190,7 @@ public class ApiAlarmController {
 	}
 
 	@GetMapping("testFollowerPost")
-	public ResponseEntity<AlarmVO> test4() {
+	public ResponseEntity<List<AlarmVO>> test4() {
 
 		//현재 로그인된 사람
 		MemberVO member = new MemberVO();
@@ -199,17 +202,24 @@ public class ApiAlarmController {
 
 
 		//받는 사람
-		String targetId = "user001";
+
+		List<FollowEntity> followerList = new ArrayList<>();
+//		followerList.addAll(List.of("user001", "user003", "dltnstls89"));
+		followerList = followService.getFollowers(member.getMember_id());
+
 
 		//알림 데이터
 		AlarmData alarmData = new AlarmData();
 		alarmData.setBoardId("52");
 		alarmData.setBoardContent("<p>글이 어떻게</p>");
+		List<AlarmVO> alarmList = new ArrayList<>();
 
+		followerList.stream().forEach(follow -> {
+			AlarmVO alarm = alarmService.insertAlarm(member, follow.getFollowerId(), AlarmVO.NotificationType.FOLLOWER_POST, alarmData);
+			alarmList.add(alarm);
+		});
 
-		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.FOLLOWER_POST, alarmData);
-
-		return ResponseEntity.ok(alarm);
+		return ResponseEntity.ok(alarmList);
 	}
 
 	

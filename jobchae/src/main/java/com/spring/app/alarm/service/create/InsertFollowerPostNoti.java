@@ -21,7 +21,7 @@ public class InsertFollowerPostNoti implements InsertNotification {
     @Override
     public AlarmVO insertNotification(MemberVO memberVO, String TargetId, AlarmData alarmData) {
         AlarmVO alarmVO = new AlarmVO();
-        MemberVO targetMember = memberDAO.getAlarmMemberInfoByMemberId(memberVO.getMember_id());
+        MemberVO targetMember = memberDAO.getAlarmMemberInfoByMemberId(TargetId);
 
         // 알림 타입 설정
         alarmVO.setNotificationType(AlarmVO.NotificationType.FOLLOWER_POST);
@@ -41,6 +41,8 @@ public class InsertFollowerPostNoti implements InsertNotification {
                 "member_name", targetMember.getMember_name(),
                 "member_profile", targetMember.getMember_profile());
         alarmVO.setMemberInfo(MemberInfo);
+
+        alarmVO.setAlarmData(alarmData);
 
         AlarmVO result = alarmDAO.save(alarmVO);
 
