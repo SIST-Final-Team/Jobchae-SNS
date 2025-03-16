@@ -1083,20 +1083,20 @@
 
 		// 댓글 작성
 		$(".comment-submit-button").click(function() {
+			
+			const $commentContainer = $(this).closest('.comment');
+			
+			
 			const fk_board_no = $(this).closest('.comment-profile').find('input[type="hidden"]').first().val();
-			//alert(fk_board_no);
-			
 			const fk_member_id = document.getElementById("loginuserID").value;
-			//alert(fk_member_id);
-			
 			const comment_content = $(this).closest('.comment-profile').find('#commentInput').val().trim(); 
-			//alert(comment_content);
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_content);
 			
 			
 			// 대댓글 관련
 			const mentionedNameText = $('#mentionedName').text().trim();
 			const comment_no = $("input[name='hidden-comment-reply-no']").val();
-			//alert(mentionedNameText + " " + comment_no);
+			alert(mentionedNameText + " " + comment_no);
 			
 			if (mentionedNameText !== "") { // 대댓글이라면
 				
@@ -1293,15 +1293,26 @@
 
     
     	// 대댓글
-    	$(".reply").click(function() {
-    		const board_no = $(this).closest('.comment').find('.hidden-board-no').val(); 
-    	    const member_name = $(this).closest('.comment').find('.hidden-member_name').val(); 
-    	    const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val(); 
-    		//alert(board_no + " " + member_name + " " + comment_no);
-    		
-    		$("input[name='hidden-comment-reply-no']").val(comment_no);
-    		$("#mentionedName").text(member_name);
-    	});
+		$(".reply").click(function() {
+		    const $commentContainer = $(this).closest('.comment'); 
+		
+		    const board_no = $commentContainer.find('.hidden-board-no').val(); 
+		    const member_name = $commentContainer.find('.hidden-member_name').val(); 
+		    
+		    
+		    // 부모 댓글인지 자식 댓글인지 구분
+		    if ($commentContainer.hasClass('parent-comment')) {
+		    	const comment_no = $commentContainer.find('.hidden-comment-no').val(); 
+			    $("input[name='hidden-comment-reply-no']").val(comment_no);
+			    $("#mentionedName").text(member_name);
+		    } else if ($commentContainer.hasClass('child-comment')) {
+		        const comment_no = $commentContainer.find('.hidden-parent_comment_no').val(); 
+			    $("input[name='hidden-comment-reply-no']").val(comment_no);
+			    $("#mentionedName").text(member_name);
+		    }
+		    
+		});
+
     	
     	// 멘션 후 backspace 누르면 멘션 지워지도록
     	$("#commentInput").keydown(function(e) {
@@ -2273,6 +2284,7 @@
 																	<input type="hidden" value="${replyComment.fk_member_id}" class="hidden-member-id">
 																	<input type="hidden" value="${replyComment.member_name}" class="hidden-member_name">
 																	<input type="hidden" value="${replyComment.comment_depth}" class="hidden-comment_depth">
+																	<input type="hidden" value="${commentvo.comment_no}" class="hidden-parent_comment_no">
 													
 											                        <c:if test="${membervo.member_id == replyComment.fk_member_id}">
 															            <div class="options-dropdown2">
