@@ -12,9 +12,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Getter
-@Setter
-@ToString
+
 @Document(collection = "notification")
 public class AlarmVO {
 
@@ -52,5 +50,75 @@ public class AlarmVO {
 
 	private AlarmData alarmData;
 
+	public String getNotificationNo() {
+		return notificationNo;
+	}
 
+	public void setNotificationNo(String notificationNo) {
+		this.notificationNo = notificationNo;
+	}
+
+	public String getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+
+	public Map<String, String> getMemberInfo() {
+		return MemberInfo;
+	}
+
+	public void setMemberInfo(Map<String, String> memberInfo) {
+		MemberInfo = memberInfo;
+	}
+
+	public String getTargetMemberId() {
+		return targetMemberId;
+	}
+
+	public void setTargetMemberId(String targetMemberId) {
+		this.targetMemberId = targetMemberId;
+	}
+
+	public Map<String, String> getTargetMember() {
+		return TargetMember;
+	}
+
+	public void setTargetMember(Map<String, String> targetMember) {
+		TargetMember = targetMember;
+	}
+
+	public NotificationType getNotificationType() {
+		return notificationType;
+	}
+
+	public void setNotificationType(NotificationType notificationType) {
+		this.notificationType = notificationType;
+	}
+
+	public Date getNotificationRegisterDate() {
+		return notificationRegisterDate;
+	}
+
+	public void setNotificationRegisterDate(Date notificationRegisterDate) {
+		this.notificationRegisterDate = notificationRegisterDate;
+	}
+
+	public int getNotificationIsRead() {
+		return notificationIsRead;
+	}
+
+	public void setNotificationIsRead(int notificationIsRead) {
+		this.notificationIsRead = notificationIsRead;
+	}
+
+	public AlarmData getAlarmData() {
+		return alarmData;
+	}
+
+	public void setAlarmData(AlarmData alarmData) {
+		this.alarmData = alarmData;
+	}
 }
