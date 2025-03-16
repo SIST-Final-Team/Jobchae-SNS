@@ -6,11 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.spring.app.config.AES256_Configuration;
 import com.spring.app.history.domain.ProfileViewVO;
 import com.spring.app.history.domain.SearchHistoryVO;
+import com.spring.app.history.domain.ViewCountVO;
 import com.spring.app.history.service.HistoryService;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.service.MemberService;
@@ -80,6 +82,22 @@ public class ApiHistoryController {
 			else {
 				return new ArrayList<>();
 			}
+		}
+	}
+
+	@Operation(summary = "조회수 통계 조회", description = "한 회원의 조회수 통계 조회")
+	@GetMapping("view-count/{viewCountTargetType}/{viewCountType}")
+	public List<ViewCountVO> getViewCount(HttpServletRequest request, @PathVariable String viewCountTargetType, @PathVariable String viewCountType) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		
+		// 로그인 여부 확인
+		if(loginuser == null) {
+			return new ArrayList<>();
+		}
+		else {
+			return service.findViewCountByMemberId(loginuser.getMember_id(), viewCountTargetType, viewCountType);
 		}
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.common.FileManager;
 import com.spring.app.config.DefaultImageNames;
 import com.spring.app.history.domain.ProfileViewVO;
+import com.spring.app.history.domain.ViewCountVO;
 import com.spring.app.history.service.HistoryService;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
@@ -430,12 +431,15 @@ public class MemberController {
 
 		List<SearchBoardVO> searchBoardVOList = searchService.searchBoardByContent(searchBoardParaMap); // 작성글 목록
 
+		Map<String, String> viewCountSummary = historyService.findViewCountSummaryByMemberId(memberId); // 조회수 통계
+
 		mav.addObject("memberVO", memberVO);							 // 회원 정보
 		mav.addObject("memberCareerVOList", memberCareerVOList);		 // 회원 경력
 		mav.addObject("memberEducationVOList", memberEducationVOList); // 회원 학력
 		mav.addObject("memberSkillVOList", memberSkillVOList);		 // 회원 보유스킬
 		mav.addObject("followerCount", followerCount);                 // 팔로워 수
 		mav.addObject("searchBoardVOList", searchBoardVOList);         // 작성글 목록
+		mav.addObject("viewCountSummary", viewCountSummary);           // 조회수 통계
 
 		mav.setViewName("/member/profile");
 		

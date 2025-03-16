@@ -69,7 +69,7 @@ public class MemberVO {
 	private String member_career_company; // 회사명
 	private String school_name;			  // 학교명
 	private String region_name;           // 지역명
-	
+	private String isFollow;              // 팔로우 했는지 여부
 	
 	
 	
@@ -98,6 +98,14 @@ public class MemberVO {
 
 	public void setSchool_name(String school_name) {
 		this.school_name = school_name;
+	}
+
+	public String getIsFollow() {
+		return isFollow;
+	}
+
+	public void setIsFollow(String isFollow) {
+		this.isFollow = isFollow;
 	}
 
 

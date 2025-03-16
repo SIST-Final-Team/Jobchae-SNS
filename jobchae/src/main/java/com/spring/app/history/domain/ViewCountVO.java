@@ -9,57 +9,69 @@ import jakarta.validation.constraints.NotBlank;
 public class ViewCountVO {
 
     @Id
-    private String countNo;           // 조회수 일련번호
+    private String viewCountNo;           // 조회수 일련번호
 
     @NotBlank
-    private String countTargetId;     // 타겟 일련번호(또는 회원 아이디)
+    private String viewCountTargetId;     // 타겟 일련번호(또는 회원 아이디)
     
     @NotBlank
-    private String countTargetType;   // 타겟 유형 // 게시물: board, 채용공고: recruit, 프로필: profile
+    private String viewCountTargetType;   // 타겟 유형 // 게시물: board, 채용공고: recruit, 프로필: profile
     
     @NotBlank
-    private String countType;         // 유형 // 조회수: 1, 클릭: 2
+    private String viewCountType;         // 유형 // 조회수: 1, 클릭: 2
     
     @NotBlank
-    private String countRegisterDate; // 등록일자
+    private long viewCount;             // 조회수
+    
+    @NotBlank
+    private String viewCountRegisterDate; // 등록일자
 
-    public String getCountNo() {
-        return countNo;
+    public String getViewCountNo() {
+        return viewCountNo;
     }
 
-    public void setCountNo(String countNo) {
-        this.countNo = countNo;
+    public void setViewCountNo(String viewCountNo) {
+        this.viewCountNo = viewCountNo;
     }
 
-    public String getCountTargetId() {
-        return countTargetId;
+    public String getViewCountTargetId() {
+        return viewCountTargetId;
     }
 
-    public void setCountTargetId(String countTargetId) {
-        this.countTargetId = countTargetId;
+    public void setViewCountTargetId(String viewCountTargetId) {
+        this.viewCountTargetId = viewCountTargetId;
     }
 
-    public String getCountTargetType() {
-        return countTargetType;
+    public String getViewCountTargetType() {
+        return viewCountTargetType;
     }
 
-    public void setCountTargetType(String countTargetType) {
-        this.countTargetType = countTargetType;
+    public void setViewCountTargetType(String viewCountTargetType) {
+        this.viewCountTargetType = viewCountTargetType;
     }
 
-    public String getCountType() {
-        return countType;
+    public String getViewCountType() {
+        return viewCountType;
     }
 
-    public void setCountType(String countType) {
-        this.countType = countType;
+    public void setViewCountType(String viewCountType) {
+        this.viewCountType = viewCountType;
     }
 
-    public String getCountRegisterDate() {
-        return countRegisterDate;
+    public long getViewCount() {
+        return viewCount;
     }
 
-    public void setCountRegisterDate(String countRegisterDate) {
-        this.countRegisterDate = countRegisterDate;
+    public void setViewCount(long viewCount) {
+        this.viewCount = viewCount;
     }
+
+    public String getViewCountRegisterDate() {
+        return viewCountRegisterDate;
+    }
+
+    public void setViewCountRegisterDate(String viewCountRegisterDate) {
+        this.viewCountRegisterDate = viewCountRegisterDate;
+    }
+
 }
