@@ -914,12 +914,13 @@
 				data: {"reaction_target_no": reaction_target_no,
 					   "reaction_status" : "7"},
 				success: function(json) {
-					//console.log(json.membervo);
+					console.log(json.membervo);
 					$(".reaction-list").empty();
 					
 					json.membervo.forEach(function(member) {
 						let member_name = member.member_name;
-						var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+						let member_profile = member.member_profile
+						var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 		        		$(".reaction-list").append(html);
 					});
 		        },
@@ -974,8 +975,9 @@
 						$(".reaction-list").empty();
 						
 						json.membervo.forEach(function(member) {
-							let member_name = member.member_name; //여기
-							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+							let member_name = member.member_name; 
+							let member_profile = member.member_profile
+							var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 			        		$(".reaction-list").append(html);
 						});
 			        },
@@ -1209,7 +1211,7 @@
 
 
 		$(window).click(function(e) {
-			$comment.find('#comment-edit-input').hide();  
+			//$comment.find('#comment-edit-input').hide();  
         });
 
 		$(".comment-edit-button").click(function() { 
@@ -1840,7 +1842,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="#"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
+	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -2164,7 +2166,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진">
+									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2242,7 +2244,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진">
+											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">

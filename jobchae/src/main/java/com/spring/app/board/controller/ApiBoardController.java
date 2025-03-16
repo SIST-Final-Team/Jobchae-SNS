@@ -219,10 +219,12 @@ public class ApiBoardController {
 		paraMap.put("reaction_status", reaction_status);
 
 		List<MemberVO> reaction_membervoList = service.getReactionMembers(paraMap);
+		
 		/*
 		for (MemberVO member : reaction_membervoList) {
 		    System.out.println("Member ID: " + member.getMember_id());
 		    System.out.println("Member Name: " + member.getMember_name());
+		    System.out.println("Member Profile: " + member.getMember_profile());
 		    System.out.println("-------------------------------");
 		}
 		*/

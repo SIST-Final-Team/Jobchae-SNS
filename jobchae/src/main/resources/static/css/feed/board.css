@@ -459,6 +459,17 @@ img.modal-img {
 	position: relative;	
 }
 
+
+
+
+
+
+
+
+
+
+
+/* ㅇㅇ */
 .reactions-menu { /*ㅇㅇ*/
     display: none;
     position: absolute;
@@ -505,7 +516,7 @@ img.modal-img {
 }
 
 .reactions-menu__reaction {
-    transition: transform 0.3s ease-in-out; /* 전체 항목에 부드러운 변환 효과 적용 */
+    transition: transform 0.3s ease-in-out; 
 }
 
 .button-board-action:hover + .reactions-menu,
@@ -519,19 +530,37 @@ img.modal-img {
     cursor: pointer;
 }
 
-/* 첫 번째 항목에 마우스를 올리면 나머지 항목들의 크기 줄이기 */
-.reactions-menu__reaction:nth-child(1):hover ~ .reactions-menu__reaction img {
-    transform: scale(0.7); /* 2~6번째 항목 크기 줄이기 */
-    transition: transform 0.3s ease-in-out; 
+.reactions-menu__reaction:not(:hover) img {
+	transform: scale(0.8);
+    transition: transform 0.3s ease-in-out;
 }
+
 
 #image-medium, #video-medium, #sticky-note-medium {
 	cursor: pointer;
 }
 
+.reactions-menu__reaction-description {
+    background-color: black; 
+    color: white;
+    font-family: sans-serif; 
+    font-size: 13px; 
+    padding: 4px 8px; 
+    border-radius: 12px; 
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); 
+    white-space: nowrap;
+    top: 50px;
+    display: none;
+}
+
+
+
+
+
+
+
+
 /* 허용범위 Modal */
-
-
 #rangeModal > .modal-content {
 	background: white;
     padding: 2rem;

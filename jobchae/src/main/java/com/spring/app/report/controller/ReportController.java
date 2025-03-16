@@ -19,7 +19,7 @@ import com.spring.app.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/report/*") // 기본 URL 경로 설정
+@RequestMapping("/api/report/*") // 기본 URL 경로 설정
 public class ReportController {
 
     @Autowired

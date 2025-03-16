@@ -188,7 +188,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
             const formData = new FormData(reportForm);  // 'report-form' ID로 가져옴
 
             // Ajax 요청 보내기 (세션 정보 포함)
-            fetch(ctxPath+'/report/member', {
+            fetch(ctxPath+'/api/report/member', {
                 method: 'POST',
                 body: formData,
                 credentials: 'include'  // 쿠키를 포함하여 요청 전송

@@ -16,7 +16,7 @@ import com.spring.app.follow.domain.FollowEntity;
 import com.spring.app.follow.service.FollowService;
 
 @RestController
-@RequestMapping("/follow") 
+@RequestMapping("/api/follow") 
 public class ApiFollowController {
 
     @Autowired
