@@ -137,7 +137,7 @@
 				on b.board_no = e.board_parent_no
 		        where b.board_is_delete = 0
 		        <!-- 검색어 -->
-		        and b.board_content like '%'|| #{searchWord} ||'%'
+		        and (b.board_content like '%'|| #{searchWord} ||'%' or m.member_name like '%' || #{searchWord} || '%')
 		        <!-- 작성자 아이디 -->
 		        <if test="authorMemberId != null">
 		            and b.fk_member_id = #{authorMemberId}
@@ -536,4 +536,12 @@
 			'${industry_noList[i]}'
 		</foreach>
 	</select>
+
+	<!-- 회원 1명의 글 번호 목록 가져오기 -->
+    <select id="getBoardNoByMemberId" parameterType="HashMap" resultType="String">
+		select board_no
+		from tbl_board
+		where board_is_delete = 0 and fk_member_id = #{member_id}
+		order by board_register_date desc
+    </select>
 </mapper>

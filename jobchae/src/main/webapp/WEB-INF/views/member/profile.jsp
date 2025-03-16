@@ -727,15 +727,15 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <div class="flex space-x-2 pb-2 text-gray-800 text-center">
                             <a href="#" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-user-group text-2xl"></i>
-                                <span class="font-bold text-lg">프로필 조회 0</span>
+                                <span class="font-bold text-lg">프로필 조회 <fmt:formatNumber value="${requestScope.viewCountSummary.profileViewCount}" pattern="#,###" /></span>
                             </a>
                             <a href="#" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-chart-simple text-2xl"></i>
-                                <span class="font-bold text-lg">업데이트 노출 48</span>
+                                <span class="font-bold text-lg">업데이트 노출 <fmt:formatNumber value="${requestScope.viewCountSummary.boardViewCount}" pattern="#,###" /></span>
                             </a>
                             <a href="#" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-magnifying-glass text-2xl"></i>
-                                <span class="font-bold text-lg">검색결과 노출 3</span>
+                                <span class="font-bold text-lg">검색결과 노출 <fmt:formatNumber value="${requestScope.viewCountSummary.searchProfileViewCount}" pattern="#,###" /></span>
                             </a>
                     </div>
                     <div class="px-0">
