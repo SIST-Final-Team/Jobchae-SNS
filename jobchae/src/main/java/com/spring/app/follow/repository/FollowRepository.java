@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.spring.app.follow.domain.FollowEntity;
 
 @Transactional
-public interface FollowRepository extends JpaRepository<FollowEntity, String> {
+public interface FollowRepository extends JpaRepository<FollowEntity, Long> {
 	
 	    List<FollowEntity> findByFollowingId(String followingId);  // 팔로워 목록 조회
 	    
@@ -19,7 +19,6 @@ public interface FollowRepository extends JpaRepository<FollowEntity, String> {
 		FollowEntity findByFollowerIdAndFollowingId(String followerId, String followingId); // 팔로우 
 
 	
-
 }
 
 

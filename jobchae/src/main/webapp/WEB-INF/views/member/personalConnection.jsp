@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<jsp:include page="/WEB-INF/views/header/header.jsp" />
-
+<%
+    String ctxPath = request.getContextPath();
+%>    
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document</title>
@@ -13,6 +16,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+
 
 <head>
 
@@ -55,116 +60,180 @@
         @apply bg-gray-100 cursor-pointer;
     }
   </style>
-  <script>
-    const buttons = document.querySelectorAll(".tab-btn");
-
-    buttons.forEach((button) => {
-      button.addEventListener("click", function () {
-        buttons.forEach((btn) => btn.classList.remove("border-green-800", "text-green-700"));
-        this.classList.add("border-green-800", "text-green-700");
-      });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const modal = document.getElementById("default-modal");
-      const openBtn = document.querySelector("[data-modal-toggle='default-modal']");
-      const closeBtns = document.querySelectorAll("[data-modal-hide='default-modal']");
-
-      // 모달 열기
-      openBtn.addEventListener("click", function () {
-        modal.classList.remove("hidden");
-        modal.classList.add("flex"); // 중앙 정렬을 위해 flex 추가
-      });
-
-      // 모달 닫기 (X 버튼 & 바깥 클릭)
-      closeBtns.forEach((btn) => {
-        btn.addEventListener("click", function () {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-        });
-      });
-
-      // 바깥 영역 클릭 시 닫기
-      modal.addEventListener("click", function (event) {
-        if (event.target === modal) {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-        }
-      });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const modalButton = document.querySelector("[data-modal-target='default-modal']");
-      const modal = document.getElementById("default-modal");
-      const loadingSpinner = document.getElementById("loading-spinner");
-      const modalContent = document.getElementById("modal-content");
-
-      modalButton.addEventListener("click", function () {
-        // 모달을 보이게 설정 (초기 상태에서 hidden 제거하고 flex로 표시)
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-
-        // 로딩 스피너 보이기
-        loadingSpinner.classList.remove("hidden");
-
-        // 콘텐츠 숨기기
-        modalContent.classList.add("hidden");
-
-        // 1초 후에 콘텐츠 표시하고 로딩 스피너 숨기기
-        setTimeout(() => {
-          loadingSpinner.classList.add("hidden");
-          modalContent.classList.remove("hidden");
-        }, 1000); // 1초 후에 모달 콘텐츠 표시
-      });
-
-      // 모달을 닫는 버튼에 클릭 이벤트 추가
-      document.querySelectorAll("[data-modal-hide='default-modal']").forEach(button => {
-        button.addEventListener("click", function () {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-        });
-      });
-    });
-  </script>
-  
   
 
 <script>
+window.addEventListener("DOMContentLoaded", function() {
+  const profilesContainer = document.getElementById("profiles");
 
-  // 세션에서 로그인한 사용자 아이디를 가져옴
-  const followerId = '${sessionScope.userId}';  // 현재 로그인한 사용자 아이디
-  const followingId = '${sessionScope.followingId}';  ///
-
-  function toggleFollow() {
-    const followBtn = document.getElementById("followBtn");
-    
-    // 팔로우 상태일 때
-    if (followBtn.innerText === "팔로우") {
-      // 팔로우 API 요청
-      fetch(`/follow/toggle?follower_id=${followerId}&following_id=${followingId}`, {
-        method: 'POST'
-      }).then(response => {
-        if (response.ok) {
-          // 버튼 텍스트 변경
-          followBtn.innerHTML = '<i class="fa-solid fa-minus"></i> 언팔로우';
-        }
-      });
-    } else {  // 언팔로우 상태일 때
-      // 언팔로우 API 요청
-      fetch(`/follow/toggle?follower_id=${followerId}&following_id=${followingId}`, {
-        method: 'POST'
-      }).then(response => {
-        if (response.ok) {
-          // 버튼 텍스트 변경
-          followBtn.innerHTML = '<i class="fa-solid fa-plus"></i> 팔로우';
-        }
-      });
-    }
+  // 프로필 컨테이너가 존재하는지 확인
+  if (!profilesContainer) {
+    console.error("프로필 컨테이너를 찾을 수 없습니다.");
+    return;
   }
-  
+
+  const profiles = Array.from(profilesContainer.children); // 카드들을 배열로 변환
+
+  // 랜덤 정렬 함수
+  function shuffleArray(array) {
+    const copiedArray = [...array]; // 원본 배열을 복사
+    return copiedArray.sort(() => Math.random() - 0.5);
+  }
+
+  // 배열을 랜덤하게 섞기
+  const shuffledProfiles = shuffleArray(profiles);
+
+  // 정렬된 프로필을 다시 컨테이너에 추가
+  profilesContainer.innerHTML = ""; // 기존 프로필 내용 초기화
+  shuffledProfiles.forEach(profile => {
+    profilesContainer.appendChild(profile); // 섞인 프로필 순서대로 추가
+  });
+});
 </script>
 
 
+<script> 
+document.addEventListener("DOMContentLoaded", function () {
+	  // 탭 버튼 클릭 시 스타일 변경
+	  const buttons = document.querySelectorAll(".tab-btn");
+	  buttons.forEach((button) => {
+	    button.addEventListener("click", function () {
+	      buttons.forEach((btn) => btn.classList.remove("border-green-800", "text-green-700"));
+	      this.classList.add("border-green-800", "text-green-700");
+	    });
+	  });
+	
+	  // 모달 관련 변수
+	  const modal = document.getElementById("default-modal");
+	  const openBtn = document.querySelector("[data-modal-toggle='default-modal']");
+	  const closeBtns = document.querySelectorAll("[data-modal-hide='default-modal']");
+	  const loadingSpinner = document.getElementById("loading-spinner");
+	  const modalContent = document.getElementById("modal-content");
+	
+	  // 모달 열기
+	  openBtn.addEventListener("click", function () {
+	    modal.classList.remove("hidden");
+	    modal.classList.add("flex"); // 중앙 정렬을 위해 flex 추가
+	    loadingSpinner.classList.remove("hidden");
+	    modalContent.classList.add("hidden");
+	
+	    // 1초 후에 콘텐츠 표시하고 로딩 스피너 숨기기
+	    setTimeout(() => {
+	      loadingSpinner.classList.add("hidden");
+	      modalContent.classList.remove("hidden");
+	    }, 1000);
+	  });
+	
+	  // 모달 닫기 (X 버튼 & 바깥 클릭)
+	  closeBtns.forEach((btn) => {
+	    btn.addEventListener("click", function () {
+	      modal.classList.add("hidden");
+	      modal.classList.remove("flex");
+	    });
+	  });
+	
+	  // 바깥 영역 클릭 시 모달 닫기
+	  modal.addEventListener("click", function (event) {
+	    if (event.target === modal) {
+	      modal.classList.add("hidden");
+	      modal.classList.remove("flex");
+	    }
+	  });
+	});
+
+</script>
+
+<script>
+//페이지 로드 후 실행
+document.addEventListener('DOMContentLoaded', function () {
+    const followButton = document.getElementById('followButton');
+    if (!followButton) {
+        console.error('followButton 요소를 찾을 수 없습니다.');
+        return;
+    }
+
+    // followerId와 followingId 가져오기
+    const followerId = followButton.getAttribute('data-follower-id');
+    const followingId = followButton.getAttribute('data-following-id');
+
+    // 확인용 로그
+    console.log(`followerId: ${followerId}, followingId: ${followingId}`);
+
+    // 팔로우 상태 확인 (followerId가 없으면 실행 안 함)
+    if (followerId) {
+        checkFollowStatus(followerId, followingId);
+    } else {
+        console.warn('followerId가 없습니다. 로그인 여부를 확인하세요.');
+    }
+});
+</script>
+
+  <script>
+        function toggleFollow(button) {
+            if (button.classList.contains('button-orange')) {
+                // 팔로우 → 언팔로우 전환
+                button.classList.remove('button-orange');
+                button.classList.add('button-gray');
+                button.innerHTML = '<i class="fa-solid fa-minus"></i> 언팔로우';
+            } else {
+                // 언팔로우 → 팔로우 전환
+                button.classList.remove('button-gray');
+                button.classList.add('button-orange');
+                button.innerHTML = '<i class="fa-solid fa-plus"></i> 팔로우';
+            }
+        }
+        
+        function removeProfile(button) {
+            // 버튼의 부모 요소인 <li>를 찾아서 삭제
+            let profileItem = button.closest("li");
+            if (profileItem) {
+                profileItem.remove(); // 요소 삭제
+            }
+        }
+        
+        
+    </script>
+    
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+	  const profilesContainer = document.getElementById("profiles");
+
+	  // 프로필 컨테이너가 존재하는지 확인
+	  if (!profilesContainer) {
+	    console.error("프로필 컨테이너를 찾을 수 없습니다.");
+	    return;
+	  }
+
+	  const profiles = Array.from(profilesContainer.children); // 카드들을 배열로 변환
+
+	  // 랜덤 정렬 함수
+	  function shuffleArray(array) {
+	    const copiedArray = [...array]; // 원본 배열을 복사
+	    return copiedArray.sort(() => Math.random() - 0.5); // 섞기
+	  }
+
+	  // 배열을 랜덤하게 섞기
+	  const shuffledProfiles = shuffleArray(profiles);
+
+	  // 정렬된 프로필을 다시 컨테이너에 추가
+	  profilesContainer.innerHTML = ""; // 기존 프로필 내용 초기화
+	  shuffledProfiles.forEach(profile => {
+	    profilesContainer.appendChild(profile); // 섞인 프로필 순서대로 추가
+	  });
+	});
+</script>
+
+<script>
+// 프로필 카드 삭제 함수
+function removeProfileCard(button) {
+  // button이 클릭된 위치에서 부모 카드 요소를 찾음
+  const card = button.closest('.card');
+  
+  if (card) {
+    card.remove(); // 해당 카드를 삭제
+  }
+}
+</script>
 
 
 </head>
@@ -205,127 +274,141 @@
         <!-- 모달창 카드 선택 안 -->
           
         <!-- 탑스토리 -->
+        
+        
         <div class="px-2 py-4">
 
           <div class="mx-auto px-2 grid grid-cols-3 gap-4 mt-5">
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
-              </div>
-            </div>
+     
 
             <div class="card border-normal col-span-1">
               <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
-
+                 <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+                 <i class="fa-solid fa-xmark text-white"></i>
+                 </button>
+                <img src="<%= ctxPath%>/resources/files/profile/스크린샷 2025-03-17 044624.png" alt="배경이미지" class="h-24! w-full object-cover" />
               </figure>
               <div class="avatar">
                 <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                  <img src="<%= ctxPath%>/resources/files/profile/Urgot.png" />
                 </div>
               </div>
               <div class="card-body p-4!">
                 <h2 class="card-title">이진호</h2>
-                <p>백수</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <p>우르곳의 신</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
 
             <div class="card border-normal col-span-1">
               <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+                 <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                <img src="<%= ctxPath%>/resources/files/2025031115411213833956965000.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
 
               </figure>
               <div class="avatar">
                 <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" alt="배경이미지" class="h-16! w-full object-cover" />
                 </div>
               </div>
               <div class="card-body p-4!">
                 <h2 class="card-title">김규빈</h2>
-                <p>데이터 엔지니어</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <p>백엔드 개발자</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
 
             <div class="card border-normal col-span-1">
               <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+              </figure>
+              <div class="avatar">
+                <div class="w-18 rounded-full -mt-12 ml-4">
+                  <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" />
+                </div>
+              </div>
+              <div class="card-body p-4!">
+                <h2 class="card-title">홍길동</h2>
+                <p>데이터 엔지니어</p>
+                <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
+              </div>
+            </div>
+
+            <div class="card border-normal col-span-1">
+              <figure>
+                 <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
 
               </figure>
               <div class="avatar">
                 <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                  <img src="<%= ctxPath%>/resources/files/profile/eomjh.png" />
+                </div>
+              </div>
+              <div class="card-body p-4!">
+                <h2 class="card-title">엄정화</h2>
+                <p>가수</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
+              </div>
+            </div>
+
+            <div class="card border-normal col-span-1">
+              <figure>
+                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+              </figure>
+              <div class="avatar">
+                <div class="w-18 rounded-full -mt-12 ml-4">
+                  <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" />
+                </div>
+              </div>
+              <div class="card-body p-4!">
+                <h2 class="card-title">이철수</h2>
+                <p>데이터 분석가</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
+              </div>
+            </div>
+            
+                  <div class="card border-normal col-span-1">
+              <figure>
+                 <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+              </figure>
+              <div class="avatar">
+                <div class="w-18 rounded-full -mt-12 ml-4">
+                  <img src="<%= ctxPath%>/resources/files/profile/202503161203481125313654737599.webp" />
                 </div>
               </div>
               <div class="card-body p-4!">
                 <h2 class="card-title">박채은</h2>
-                <p>데이터 엔지니어</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <p>쌍용교육센터</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
-
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">김진성</h2>
-                <p>AI 엔지니어</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
-              </figure>
-              <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">조원재</h2>
-                <p>데이터 분석가</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
@@ -454,201 +537,228 @@
         </div>
 
         <div class="px-4 border border-gray-300 rounded-lg pt-4 border-normal">
-          <span class="flex-1">1촌 신청(1<!--나중에 신청이 들어온 수 만큼 증가-->)</span>
+          <span class="flex-1">1촌 신청</span>
           <div class="pt-2">
               <ul>
                   <li class="border-t-1! border-gray-300! py-2 flex items-center">
                       <a href="#" class="flex flex-1">
                           <div>
-                              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" class="aspect-square w-15 object-cover rounded-full"/>
+                             <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" alt="배경이미지" class="h-16! w-full object-cover" />
                           </div>
                           <div class="flex-1 ml-4">
-                            <div class="font-bold hover:underline">Samsung Memory Marketing Director</div>
-                            <div class="text-gray-600">Hwaseong</div>
+                            <div class="font-bold hover:underline">백엔드 개발자</div>
+                            <div class="text-gray-600">김영희</div>
                           </div>
                       </a>
                       <div class="text-right">
-                        <button type="button" class="py-2 text-sm btn-bold rounded-full!">
-                          건너뛰기
-                        </button>
-                        <button type="button" class="px-4 py-2 text-sm button-orange">
-                          수락
-                        </button>
+                        <button type="button" class="py-2 text-sm btn-bold rounded-full!" onclick="removeProfile(this)">
+				        건너뛰기
+				      </button>
+				      <button type="button" class="px-4 py-2 text-sm button-orange" onclick="removeProfile(this)">
+				        수락
+				      </button>
                       </div>
                   </li>
                   <li class="border-t-1! border-gray-300! py-2 flex items-center">
                       <a href="#" class="flex flex-1">
                           <div>
-                              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" class="aspect-square w-15 object-cover rounded-full"/>
+                              <img src="<%= ctxPath%>/resources/files/profile/Squidward.png" class="aspect-square w-15 object-cover rounded-full"/>
                           </div>
                           <div class="flex-1 ml-4">
-                            <div class="font-bold hover:underline">Samsung Memory Marketing Director</div>
-                            <div class="text-gray-600">Hwaseong</div>
+                            <div class="font-bold hover:underline">징징이</div>
+                            <div class="text-gray-600">이준영</div>
                           </div>
                       </a>
                       <div class="text-right">
-                        <button type="button" class="py-2 text-sm btn-bold rounded-full!">
-                          건너뛰기
-                        </button>
-                        <button type="button" class="px-4 py-2 text-sm button-orange">
-                          수락
-                        </button>        
+                        <button type="button" class="py-2 text-sm btn-bold rounded-full!" onclick="removeProfile(this)">
+				        건너뛰기
+				      </button>
+				      <button type="button" class="px-4 py-2 text-sm button-orange" onclick="removeProfile(this)">
+				        수락
+				      </button>   
                   </li>
                   <li class="border-t-1! border-gray-300! py-2 flex items-center">
                       <a href="#" class="flex flex-1">
                           <div>
-                              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" class="aspect-square w-15 object-cover rounded-full"/>
+                              <img src="<%= ctxPath%>/resources/files/profile/KartRider.png" class="aspect-square w-15 object-cover rounded-full"/>
                           </div>
                           <div class="flex-1 ml-4">
-                            <div class="font-bold hover:underline">Samsung Memory Marketing Director</div>
-                            <div class="text-gray-600">Hwaseong</div>
+                            <div class="font-bold hover:underline">카트의 신</div>
+                            <div class="text-gray-600">이진호짱123</div>
                           </div>
                       </a>
                       <div class="text-right">
-                        <button type="button" class="py-2 text-sm btn-bold rounded-full!">
-                          건너뛰기
-                        </button>
-                        <button type="button" class="px-4 py-2 text-sm button-orange">
-                          수락
-                        </button>
+                        <button type="button" class="py-2 text-sm btn-bold rounded-full!" onclick="removeProfile(this)">
+				        건너뛰기
+				      </button>
+				      <button type="button" class="px-4 py-2 text-sm button-orange" onclick="removeProfile(this)">
+				        수락
+				      </button>
                       </div>
                   </li>
               </ul>
           </div>
       </div>
 
-        <!-- 예를 든 예시임 나중에 DB에 추가할 것 !!-->
-
-        <!-- 탑스토리 -->
-        <div class="border-normal px-2 py-2">
-
-          <div class="flex justify-between items-center">
-            <h2 class="pl-2">LinkedIn 탑스토리</h2>
-
-            <button type="button" data-modal-target="default-modal" data-modal-toggle="default-modal"
-              class="btn-bold px-2!">
-              모두 표시
-            </button>
-          </div>
 
 
-          <div class="mx-auto px-2 grid grid-cols-3 gap-4 my-2">
+     		 <!-- 탑스토리 -->
+			<div class="border-normal px-2 py-2">
+			  <div class="flex justify-between items-center">
+			    <h2 class="pl-2">LinkedIn 탑스토리</h2>
+			    <button type="button" data-modal-target="default-modal" data-modal-toggle="default-modal"
+			      class="btn-bold px-2!">
+			      모두 표시
+			    </button>
+			  </div>
+			
+			  <!-- 프로필들을 담을 컨테이너 -->
+			  <div id="profiles" class="mx-auto px-2 grid grid-cols-3 gap-4 my-2">
             <div class="card border-normal col-span-1">
               <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+               <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <div class="avatar">
                 <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/html/주소짤.jpg" alt="주소짤" class="h-24! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">이진호</h2>
-                <p>백수</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">김규빈</h2>
-                <p>데이터 엔지니어</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                 <a href="http://localhost/jobchae/member/profile/codms1"><img src="<%= ctxPath%>/resources/files/profile/202503161203481125313654737599.webp" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4!">
                 <h2 class="card-title">박채은</h2>
-                <p>데이터 분석가</p>
+                <p>쌍용교육센터</p>
                 <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
                 </div>
               </div>
             </div>
-
-            <div class="card border-normal col-span-1">
+     
+              <div class="card border-normal col-span-1">
               <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+                 <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+               <img src="<%= ctxPath%>/resources/files/profile/KartRiderService_imple.png" alt="배경이미지" class="h-16! w-full object-cover" />
+              </figure>
+              <div class="avatar">
+                <div class="w-18 rounded-full -mt-12 ml-4">
+                 <a href="#"><img src="<%= ctxPath%>/resources/files/profile/KartRider.png" style="border-radius: 50%;" /></a>
+                </div>
+              </div>
+              <div class="card-body p-4!">
+                <h2 class="card-title">이진호짱123</h2>
+                <p>카트의 신</p>
+                <div class="card-actions justify-center">
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
+                </div>
+              </div>
+            </div>
+            
+            
+            
+              <div class="card border-normal col-span-1">
+              <figure>
+                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+                  <i class="fa-solid fa-xmark text-white"></i>
+                  </button>
+              <img src="<%= ctxPath%>/resources/files/profile/SquidwardHouse.png" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <div class="avatar">
                 <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                 <a href="#"><img src="<%= ctxPath%>/resources/files/profile/Squidward.png" style="border-radius: 50%;" /></a>
                 </div>
+
               </div>
               <div class="card-body p-4!">
-                <h2 class="card-title">김진성</h2>
-                <p>AI 엔지니어</p>
+                <h2 class="card-title">이준영</h2>
+                <p>징징이</p>
                 <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                 </button>
                 </div>
               </div>
             </div>
-
-            <div class="card border-normal col-span-1">
+              
+ 
+              <div class="card border-normal col-span-1">
               <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
+                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+              <img src="<%= ctxPath%>/resources/files/2025031115411213833956965000.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <div class="avatar">
                 <div class="w-18 rounded-full -mt-12 ml-4">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4!">
-                <h2 class="card-title">조원재</h2>
-                <p>데이터 분석가</p>
+                <h2 class="card-title">김규빈</h2>
+                <p>백엔드 개발자</p>
                 <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
+                </div>
+              </div>
+            </div>
+            
+            
+            
+              <div class="card border-normal col-span-1">
+              <figure>
+               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+
+              </figure>
+              <div class="avatar">
+                <div class="w-18 rounded-full -mt-12 ml-4">
+                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
+                </div>
+              </div>
+              <div class="card-body p-4!">
+                <h2 class="card-title">연규영</h2>
+                <p>AI 전문가</p>
+                <div class="card-actions justify-center">
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
+                </div>
+              </div>
+            </div>
+           
+              <div class="card border-normal col-span-1">
+              <figure>
+                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+      <i class="fa-solid fa-xmark text-white"></i>
+    </button>
+                 <img src="<%= ctxPath%>/resources/files/profile/스크린샷 2025-03-17 044624.png" alt="배경이미지" class="h-16! w-full object-cover" />
+
+              </figure>
+              <div class="avatar">
+                <div class="w-18 rounded-full -mt-12 ml-4">
+                 <a href="#"><img src="<%= ctxPath%>/resources/files/profile/Urgot.png" style="border-radius: 50%;" /></a>
+                </div>
+              </div>
+              <div class="card-body p-4!">
+                <h2 class="card-title">이진호</h2>
+                <p>우르곳의 신</p>
+                <div class="card-actions justify-center">
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
                 </div>
               </div>
             </div>
@@ -668,165 +778,163 @@
           <div class="mx-auto px-2 grid grid-cols-4 gap-2 mt-5">
             <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <h2 class="card-title justify-center">김영희</h2>
+                <p>프로그래머</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+               <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="http://localhost/jobchae/member/profile/user001"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <h2 class="card-title justify-center">박민수</h2>
+                <p>삼성전자</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+               <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
+                <h2 class="card-title justify-center">최지훈</h2>
                 <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+               <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/eomjh.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <h2 class="card-title justify-center">엄정화</h2>
+                <p>가수</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+              <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
+                <h2 class="card-title justify-center">김영희</h2>
                 <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+              <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <h2 class="card-title justify-center">김규빈</h2>
+                <p>LG전자</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+               <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                <h2 class="card-title justify-center">최지훈</h2>
+                <p>SW 개발자</p>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
             
-            <div class="card border-normal col-span-1 relative">
+               <div class="card border-normal col-span-1 relative">
               <figure>
-                <img src="/240502-Gubi-Showroom-London-003-Print.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
               <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
               <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">연규영</h2>
+                <h2 class="card-title justify-center">김철수</h2>
                 <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                  <button type="button" class="button-orange w-full"><i class="fa-solid fa-plus"></i> 팔로우</button>
-                </div>
+                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+                    <i class="fa-solid fa-plus"></i> 팔로우
+                </button>
               </div>
             </div>
-          </div>
-        </div>
         <!-- 맞춤 추천 끝 -->
 
       </div>
