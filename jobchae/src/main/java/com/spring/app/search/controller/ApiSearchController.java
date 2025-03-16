@@ -131,20 +131,21 @@ public class ApiSearchController {
 		}
 		
 		// 업종 일련번호 배열
-		if(params.get("arr_fk_industry_no") != null) {
-			String[] arr_fk_industry_no = ((String) params.get("arr_fk_industry_no")).split("\\,");
+		if(params.get("fk_industry_no") != null) {
+			String[] arr_fk_industry_no = ((String) params.get("fk_industry_no")).split("\\,");
 			params.put("arr_fk_industry_no", arr_fk_industry_no);
 		}
 		
 		// 회사 규모 배열
-		if(params.get("arr_company_size") != null) {
-			String[] arr_company_size = ((String) params.get("arr_company_size")).split("\\,");
+		if(params.get("company_size") != null) {
+			String[] arr_company_size = ((String) params.get("company_size")).split("\\,");
 			params.put("arr_company_size", arr_company_size);
 		}
 		
+		// TODO : SQL에 지역 추가하기
 		// 지역 일련번호 배열
-		if(params.get("arr_fk_region_no") != null) {
-			String[] arr_fk_region_no = ((String) params.get("arr_fk_region_no")).split("\\,");
+		if(params.get("fk_region_no") != null) {
+			String[] arr_fk_region_no = ((String) params.get("fk_region_no")).split("\\,");
 			params.put("arr_fk_region_no", arr_fk_region_no);
 		}
 		

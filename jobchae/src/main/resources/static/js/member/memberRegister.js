@@ -22,8 +22,6 @@ const contextPath = sessionStorage.getItem("contextpath");
 
 $(document).ready(function () {
 
-    // 모달 애니메이션 추가
-    $("dialog.modal").addClass("animate-slideDown");
 
     // 사진 첨부
     $("img#profile_img").on("click", function (e) {
@@ -368,11 +366,11 @@ $(document).ready(function () {
             // 마지막 전화번호 4자리가 정규표현식에 위배된 경우 
             $(e.target).val("");
             // $(e.target).focus();
-            $(`#telerror`).html("휴대폰 형식이 아닙니다.");
+            $(`telerror`).html("휴대폰 형식이 아닙니다.");
         }
         else {
             // 마지막 전화번호 4자리가 정규표현식에 맞는 경우
-            $(`#telerror`).html("");
+            $(`telerror`).html("");
             $("input#member_tel").val($("input#hp1").val() + $("input#hp2").val() + $("input#hp3").val()); // 만들어라
             // console.log("전화번호 완성 => ", $("input#member_tel").val());
             
@@ -759,30 +757,10 @@ $(document).ready(function () {
 
         $("input#agree_checkbox").prop("checked", true); // 체크
 
-        $(".btn-close-modal").click();
-
     });//end of $("button#btn_agree").on("click", function (e) {}...
 
     // ====================================================================================================================== //
 
-    // 모달 열기
-    $(document).on("click", ".btn-open-modal", function () {
-        openModal(this);
-    });
-
-    // 취소 버튼 또는 X 버튼으로 모달 닫기
-    $(".btn-close-modal").on("click", function (e) {
-        dialog = $(this).parent().parent().parent()[0];
-        $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
-        $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
-
-        // 애니메이션이 끝난 후 모달 닫기
-        setTimeout(() => {
-            dialog.close();
-            $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
-            $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
-        }, 300);
-    });
 
 });// end $(document).ready(function(){})----------------------
 
@@ -896,7 +874,7 @@ function ajax_search() {
             // === 검색어 입력시 자동글 완성하기
             if (json.length > 0) {
                 // 검색된 데이터가 있는 경우
-                let v_html = `<ul>`;
+                let v_html = `<ul style="list-style:none; padding: 0; margin-left: 0;">`;
 
                 $.each(json, function (index, item) {
                     const word = item.region_name;
@@ -911,9 +889,9 @@ function ajax_search() {
 
                     const len = $("input[name='region_name']").val().length;
 
-                    result = word.substring(0, idx) + "<span class='text-orange-500'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
+                    result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
 
-                    v_html += `<li name='result${li_id}' class='result p-2 rounded-lg cursor-pointer hover:bg-gray-100 duration-200'>${result}${no_result}</li>`;
+                    v_html += `<li style='cursor:pointer;' name='result${li_id}' class='result'>${result}${no_result}</li>`;
 
                 });// end of $.each(json, function(index, item) {})-------------------
 
@@ -922,7 +900,7 @@ function ajax_search() {
                 $("div#displayList").html(v_html).show(); // 보여줘라
 
             } else {
-                $("div#displayList").html("<div class='p-2'>검색된 값이 없습니다.</div>").show();
+                $("div#displayList").html("검색된 값이 없습니다.").show();
             }//end of if (json.length > 0) {}...
 
         },
@@ -936,12 +914,6 @@ function ajax_search() {
 
 
 
-// 약관 동의 모달 띄우기
-function openModal(btnEl) {
-    const targetModal = $(btnEl).data("target-modal");
-    const modalId = "#modal" + targetModal;
-    $(modalId)[0].showModal();
-}
 
 
 

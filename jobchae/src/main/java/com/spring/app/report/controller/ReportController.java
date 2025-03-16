@@ -3,6 +3,7 @@ package com.spring.app.report.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hibernate.validator.internal.util.logging.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import com.spring.app.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/member/profile/{userld}") // 기본 URL 경로 설정
+@RequestMapping("/member/reportPage") // 기본 URL 경로 설정
 public class ReportController {
 
     @Autowired

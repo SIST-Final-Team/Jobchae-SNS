@@ -13,24 +13,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.FileManager;
+import com.spring.app.common.mail.FuncMail;
+import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.config.DefaultImageNames;
+import com.spring.app.file.domain.FileVO;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.service.MemberService;
-import com.spring.app.search.domain.SearchBoardVO;
-import com.spring.app.search.service.SearchService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -45,9 +50,6 @@ public class MemberController {
 	
 	@Autowired
 	FileManager fileManager; // 파일 관련 클래스
-
-	@Autowired
-	SearchService searchService;
 	
 	
 	// 회원가입 폼 페이지 요청
@@ -250,7 +252,11 @@ public class MemberController {
 	
 	// 비밀번호 찾기를 통해 비밀번호 변경으로 페이지 이동
 	@PostMapping("passwdFind")
-	public ModelAndView passwdFind(ModelAndView mav, @RequestParam Map<String, String> paraMap) {
+	public ModelAndView emailCheckOk_passwdFind(ModelAndView mav, HttpServletRequest request,@RequestParam Map<String, String> paraMap) {
+		
+		// 여기까지 왔다면 이메일 인증여부 통과했으니 삭제
+		HttpSession session = request.getSession();
+		session.removeAttribute("emailCheckOk");
 		
 		mav.addObject("member_id", paraMap.get("member_id"));
 		mav.addObject("member_email", paraMap.get("member_email"));
@@ -389,36 +395,17 @@ public class MemberController {
 
 		MemberVO memberVO = service.getMember(paraMap);	// 회원 정보
 
-		if(memberVO == null) {
-			mav.addObject("message", "비공개 프로필 또는 탈퇴한 회원입니다.");
-			mav.addObject("loc", "javascript:history.back()");
-			mav.setViewName("common/msg");
-			return mav;
-		}
-
 		paraMap.put("size", "3");
 		
 		List<MemberCareerVO> memberCareerVOList = service.getMemberCareerListByMemberId(paraMap);          // 회원 경력
 		List<MemberEducationVO> memberEducationVOList = service.getMemberEducationListByMemberId(paraMap); // 회원 학력
 		List<MemberSkillVO> memberSkillVOList = service.getMemberSkillListByMemberId(paraMap);             // 회원 보유스킬
 
-		int followerCount = service.getFollowerCount(memberId); // 팔로워 수
-
-		Map<String, String> searchBoardParaMap = new HashMap<>();
-		searchBoardParaMap.put("authorMemberId", memberId);
-		searchBoardParaMap.put("searchWord", "");
-		searchBoardParaMap.put("start", "1");
-		searchBoardParaMap.put("end", "3");
-
-		List<SearchBoardVO> searchBoardVOList = searchService.searchBoardByContent(searchBoardParaMap); // 작성글 목록
-
 		mav.addObject("memberVO", memberVO);							 // 회원 정보
 		mav.addObject("memberCareerVOList", memberCareerVOList);		 // 회원 경력
 		mav.addObject("memberEducationVOList", memberEducationVOList); // 회원 학력
 		mav.addObject("memberSkillVOList", memberSkillVOList);		 // 회원 보유스킬
-		mav.addObject("followerCount", followerCount);                 // 팔로워 수
-		mav.addObject("searchBoardVOList", searchBoardVOList);         // 작성글 목록
-
+		
 		mav.setViewName("/member/profile");
 		
 		return mav;
@@ -465,45 +452,40 @@ public class MemberController {
 		return mav;
 	}// end of public ModelAndView profileMemberSkill(ModelAndView mav)------
 	
-	@PostMapping("memberUpdate")
-	public ModelAndView updateMember(HttpServletRequest request, ModelAndView mav, MemberVO memberVO) {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// =========================== 이진호 시작 =========================== //
 
-		int n = service.updateMember(memberVO);
 
-		if(n == 1) {
 
-			HttpSession session = request.getSession();
-			MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
 
-			if(!"".equals(memberVO.getMember_name())) {
-				loginuser.setMember_name(memberVO.getMember_name());
+			@GetMapping("reportPage")
+			public ModelAndView reportPage(ModelAndView mav) {
+				mav.setViewName("/member/reportPage"); // view 단 페이지
+				return mav;
 			}
-			if(!"".equals(memberVO.getMember_birth())) {
-				loginuser.setMember_birth(memberVO.getMember_birth());
-			}
-			if(!"".equals(memberVO.getMember_email())) {
-				loginuser.setMember_email(memberVO.getMember_email());
-			}
-			if(!"".equals(memberVO.getMember_tel())) {
-				loginuser.setMember_tel(memberVO.getMember_tel());
-			}
-			if(!"".equals(memberVO.getFk_region_no())) {
-				loginuser.setFk_region_no(memberVO.getFk_region_no());
-			}
-			if(!"".equals(memberVO.getRegion_name())) {
-				loginuser.setRegion_name(memberVO.getRegion_name());
-			}
+		
 
-			mav.setViewName("redirect:/member/profile/"+memberVO.getMember_id());
-		}
-		else {
-			mav.addObject("message", "회원정보 수정을 실패했습니다.");
-			mav.addObject("loc", "javascript:history.back()");
-			mav.setViewName("common/msg");
-		}
+			
+		
+		
 
-		return mav;
-	}
+		// =========================== 이진호 끝 =========================== //
+	
+	
+	
 	
 	// =========================== 이진호 시작 =========================== //
 
