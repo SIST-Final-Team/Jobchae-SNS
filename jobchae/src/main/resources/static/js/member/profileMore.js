@@ -5,19 +5,16 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
 
 $(document).ready(function () {
 
-    // 모달 애니메이션 추가
-    $("dialog.modal").addClass("animate-slideDown");
-
     // select 태그에 연도 표시
     const currentYear = new Date().getFullYear();
-    for(let i=currentYear; i>=1925; i--) {
+    for(let i=1925; i<=currentYear; i++) {
         $("#member_career_startdate_year").append('<option value="'+i+'">'+i+'</option>');
         $("#member_career_enddate_year").append('<option value="'+i+'">'+i+'</option>');
         $("#member_education_startdate_year").append('<option value="'+i+'">'+i+'</option>');
         $("#member_education_enddate_year").append('<option value="'+i+'">'+i+'</option>');
     }
     const endYear = currentYear + 20;
-    for(let i=endYear; i>=currentYear+1; i--) {
+    for(let i=currentYear+1; i<=endYear; i++) {
         $("#member_education_enddate_year").append('<option value="'+i+'">'+i+'</option>');
     }
 
@@ -49,16 +46,7 @@ $(document).ready(function () {
 
     // 취소 버튼 또는 X 버튼으로 모달 닫기
     $(".btn-close-modal").on("click", function (e) {
-        dialog = $(this).parent().parent().parent()[0];
-        $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
-        $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
-
-        // 애니메이션이 끝난 후 모달 닫기
-        setTimeout(() => {
-            dialog.close();
-            $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
-            $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
-        }, 300);
+        $(this).parent().parent().parent()[0].close();
     });
 
     // 검색어가 바뀔 때 0.5초 후 검색

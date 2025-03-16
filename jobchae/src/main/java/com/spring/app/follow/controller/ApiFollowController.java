@@ -16,25 +16,26 @@ import com.spring.app.follow.domain.FollowEntity;
 import com.spring.app.follow.service.FollowService;
 
 @RestController
-@RequestMapping("/follow")
-public class FollowController {
+@RequestMapping("/follow") 
+public class ApiFollowController {
 
     @Autowired
     private FollowService followService;
 
     // 팔로우 등록
-    @PostMapping("/follow")
+    @PostMapping
     public ResponseEntity<FollowEntity> follow(@RequestParam String followerId, @RequestParam String followingId) {
         FollowEntity followEntity = followService.follow(followerId, followingId);
-        return new ResponseEntity<>(followEntity, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(followEntity);
     }
 
     // 언팔로우
-    @DeleteMapping("/unfollow")
+    @DeleteMapping
     public ResponseEntity<Void> unfollow(@RequestParam String followerId, @RequestParam String followingId) {
         followService.unfollow(followerId, followingId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
+
 
     // 팔로워 목록 조회
     @GetMapping("/followers")
@@ -47,4 +48,18 @@ public class FollowController {
     public List<FollowEntity> getFollowing(@RequestParam String followerId) {
         return followService.getFollowing(followerId);
     }
+    
+	 // 팔로우/언팔로우 상태 토글
+	    @PostMapping("/toggle")
+	    public ResponseEntity<String> toggleFollow(@RequestParam String followerId, @RequestParam String followingId) {
+        boolean isFollowed = followService.toggleFollow(followerId, followingId);
+
+        // 상태에 따른 응답
+        if (isFollowed) {
+            return ResponseEntity.ok("팔로우되었습니다.");
+        } else {
+            return ResponseEntity.ok("언팔로우되었습니다.");
+        }
+    }
+    
 }

@@ -137,10 +137,6 @@
 		        where b.board_is_delete = 0
 		        <!-- 검색어 -->
 		        and b.board_content like '%'|| #{searchWord} ||'%'
-		        <!-- 작성자 아이디 -->
-		        <if test="authorMemberId != null">
-		            and b.fk_member_id = #{authorMemberId}
-		        </if>
 		        <!-- 작성일자 최근 30일, 7일, 1일 -->
 		        <if test="searchDate != null">
 		            and b.board_register_date &gt;= sysdate - #{searchDate}

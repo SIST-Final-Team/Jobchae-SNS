@@ -19,18 +19,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-import com.spring.app.alarm.controller.AlarmController;
-import com.spring.app.alarm.model.AlarmDAO;
+
 import com.spring.app.common.AES256;
 import com.spring.app.common.FileManager;
 import com.spring.app.common.security.Sha256;
-import com.spring.app.config.AES256_Configuration;
 import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.member.domain.ReportVO;
 import com.spring.app.member.model.MemberDAO;
 
 import jakarta.servlet.ServletContext;
@@ -39,12 +38,6 @@ import jakarta.servlet.http.HttpSession;
 
 @Service
 public class MemberService_imple implements MemberService {
-
-    private final AlarmDAO alarmDAO;
-
-    private final AlarmController alarmController;
-
-    private final AES256_Configuration AES256_Configuration;
 
 	@Autowired
 	MemberDAO dao;
@@ -58,13 +51,6 @@ public class MemberService_imple implements MemberService {
 	
 	@Autowired
     private ServletContext servletContext;
-
-
-    MemberService_imple(AES256_Configuration AES256_Configuration, AlarmController alarmController, AlarmDAO alarmDAO) {
-        this.AES256_Configuration = AES256_Configuration;
-        this.alarmController = alarmController;
-        this.alarmDAO = alarmDAO;
-    }
 	
 	
 
@@ -329,13 +315,9 @@ public class MemberService_imple implements MemberService {
 		// 비밀번호 암호화 해서 넣어주자 
 		String new_member_passwd = Sha256.encrypt(paraMap.get("new_member_passwd"));
 		// 비밀번호 중복 확인
-		
-		// 암호화한 비밀번호를 다시 맵에 넣어주자
-		paraMap.put("new_member_passwd", new_member_passwd);
-		
-		String result = dao.passwdExist(paraMap);
+		String reslut = dao.passwdExist(new_member_passwd);
 		String loc = "";
-		if (result != null) { // 비밀번호가 일치하면(존재하면)
+		if (reslut != null) { // 비밀번호가 일치하면(존재하면)
 			
 			String message = "비밀번호가 기존 비밀번호와 일치합니다! 새로운 비밀번호를 입력해주세요.";
 			mav.addObject("message", message);
@@ -353,8 +335,11 @@ public class MemberService_imple implements MemberService {
 				mav.setViewName("common/msg");
 				return mav;
 			}
-		}//end of if (result != null) {}...
+		}//end of if (reslut != null) {}...
 		
+		
+		// 암호화한 비밀번호를 다시 맵에 넣어주자
+		paraMap.put("new_member_passwd", new_member_passwd);
 		// 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경
 		int n = dao.passwdUpdate(paraMap);
 		
@@ -575,19 +560,7 @@ public class MemberService_imple implements MemberService {
 	// 회원 한 명의 정보 조회
 	@Override
 	public MemberVO getMember(Map<String, String> paraMap) {
-		MemberVO memberVO = dao.getMember(paraMap);
-
-		// 복호화
-		try {
-			if(memberVO != null) {
-				memberVO.setMember_email(aes.decrypt(memberVO.getMember_email())); 		// 양방향
-				memberVO.setMember_tel(aes.decrypt(memberVO.getMember_tel())); 			// 양방향
-			}
-		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
-			e.printStackTrace();
-		}
-		
-		return memberVO;
+		return dao.getMember(paraMap);
 	}
 
 	// 회원 경력 1개 조회
@@ -790,6 +763,41 @@ public class MemberService_imple implements MemberService {
 	
 	
 	// === 김규빈 끝 === //
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	// === 이진호 시작 === //
+	
+
+	@Override
+	public boolean createReport(ReportVO report) {
+		
+	        try {
+	            // 신고 정보를 DB에 저장
+	            dao.createReport(report);
+	            return true;  // 성공적으로 신고가 처리됨
+	            
+	        } catch (Exception e) {
+	        	
+	            e.printStackTrace();  // 예외 발생 시 로그 출력
+	            
+	            return false;  // 신고 실패
+	        }
+	}
+
+
+
+
 }//end of class..
 
 

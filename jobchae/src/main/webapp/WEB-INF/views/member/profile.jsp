@@ -1,13 +1,228 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
 
-<%-- TailWind 사용자 정의 CSS --%>
-<jsp:include page="/WEB-INF/views/member/profileTailwind.jsp" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<!-- TailWind Script -->
+<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+<!-- Font Awesome CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+<style type="text/tailwindcss">
+        html {
+            font-size: 0.9rem;
+        }
+        body {
+            background-color: rgb(244, 242, 238);
+        }
+        dialog::backdrop {
+            background:rgba(0, 0, 0, 0.6);
+        }
+        .h1 {
+            @apply text-[1.35rem] font-bold;
+        }
+        .border-normal {
+            @apply border-1 border-gray-300 rounded-lg bg-white;
+        }
+        .border-search-board {
+            @apply border-1 border-gray-300 rounded-lg bg-white;
+
+            &>li:not(:last-child) {
+                @apply border-b-4 border-gray-200;
+            }
+
+            &>li {
+                @apply space-y-2;
+            }
+
+            &>li:not(.py-0) {
+                @apply pt-4 pb-2;
+            }
+            
+            &>li>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+        .border-board {
+            @apply space-y-4;
+
+            &>div {
+                @apply border-1 border-gray-300 rounded-lg bg-white;
+            }
+
+            &>div:not(.space-y-0) {
+                @apply space-y-2;
+            }
+
+            &>div:not(.py-0) {
+                @apply pt-4;
+                @apply pb-2;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+
+            .button-more {
+                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            }
+        }
+        .border-search-member {
+            @apply border-1 border-gray-300 rounded-lg bg-white;
+
+            &>div:not(:last-child) {
+                @apply border-b-1 border-gray-300 space-y-2;
+            }
+
+            &>div:not(.py-0) {
+                @apply py-4;
+            }
+            
+            &>div>*:not(.px-0) {
+                @apply px-4;
+            }
+        }
+        .button-more {
+            @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+        }
+        .nav-selected {
+            @apply relative before:inline-block before:absolute before:w-0.5 before:h-10 before:bg-green-800 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
+        }
+        .nav {
+            @apply list-none pb-2 [&>li]:px-4 [&>li]:hover:bg-gray-100 [&>li]:cursor-pointer [&>li>a]:block [&>li>a]:py-2;
+        }
+        .border-list {
+            @apply my-0.5 space-y-4 py-4 bg-white;
+            @apply first:border-1 first:border-gray-300 first:rounded-t-lg;
+            @apply not-first:border-1 not-first:border-gray-300;
+            @apply last:border-1 last:border-gray-300 last:rounded-b-lg;
+        }
+        .button-gray:not(.button-selected) {
+            @apply border-1 rounded-full border-gray-400 px-3 py-0.5 font-bold text-gray-700 text-lg;
+            @apply hover:bg-gray-100 hover:inset-ring-1 hover:inset-ring-gray-400 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .button-orange:not(.button-selected) {
+            @apply border-1 rounded-full border-orange-500 px-3 py-0.5 font-bold text-orange-500 text-lg;
+            @apply hover:bg-gray-100 hover:inset-ring-1 hover:inset-ring-orange-500 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .button-selected {
+            @apply border-1 border-orange-400 rounded-full px-3 py-0.5 font-bold text-white text-lg bg-orange-400;
+            @apply hover:bg-orange-500 hover:border-orange-500 transition-all duration-200;
+            @apply hover:cursor-pointer;
+        }
+        .board-member-profile {
+            @apply flex gap-4;
+
+            /* 프로필 이미지 */
+            div:first-child>a>img {
+                @apply w-15 h-15 object-cover;
+            }
+
+            div:nth-child(2) span {
+                @apply block text-gray-600 text-sm;
+            }
+
+            div:nth-child(2) span:first-child {
+                @apply font-bold text-lg text-black;
+            }
+
+            /* 프로필 정보 및 팔로우 버튼 */
+            div:nth-child(3) {
+                @apply flex items-start;
+
+                button {
+                    @apply px-4 py-1 text-lg rounded-full;
+                }
+
+                button:hover {
+                    @apply bg-gray-100 cursor-pointer;
+                }
+
+                /* 팔로우 버튼 */
+                .follow-button {
+                    @apply text-orange-500 font-bold;
+                }
+                
+                /* 팔로우 버튼 */
+                .unfollow-button {
+                    @apply text-black;
+                }
+            }
+        }
+
+        .file-image {
+            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5;
+
+            :hover {
+                @apply cursor-pointer;
+            }
+
+            button:first-child {
+                @apply max-h-[50rem] m-auto col-span-3;
+            }
+            button:not(:first-child) {
+                @apply m-auto;
+            }
+            
+            button:not(:first-child)>img {
+                @apply object-cover aspect-[3/2];
+            }
+            button.more-image {
+                @apply relative;
+            }
+            button.more-image>img {
+                @apply brightness-50;
+            }
+            button.more-image>span {
+                @apply absolute text-white;
+                @apply top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2;
+            }
+        }
+        
+        .reaction-images {
+            @apply flex items-center;
+            img {
+                @apply w-6 rounded-full border-2 border-white;
+            }
+            img:not(img:last-child) {
+                @apply -mr-2;
+            }
+        }
+
+        .button-underline {
+            @apply flex hover:cursor-pointer hover:underline hover:text-orange-500;
+        }
+
+        .hover-underline {
+            @apply hover:cursor-pointer hover:underline hover:text-orange-500;
+        }
+
+        .button-board-action {
+            @apply w-full h-10 flex items-center justify-center rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        }
+        button {
+            @apply hover:cursor-pointer;
+        }
+        
+        .btn-transparent {
+            @apply px-4 py-1 text-lg rounded-full;
+        }
+
+        .btn-transparent:hover {
+            @apply bg-gray-100 cursor-pointer;
+        }
+    </style>
 
 <script type="text/javascript">
     const memberId = '${requestScope.memberId}'; // 조회 대상 회원 아이디
@@ -33,109 +248,90 @@ $(document).ready(function() {
         }
     });
 
-    // 이미지 미리보기
-	$(document).on("change", "input.img_file", function(e) {
-		const inputFileEl = $(e.target).get(0);
-	    const previewEl = $(inputFileEl).parent().find(".preview"); // 미리보기 element
+});
 
-	    if (inputFileEl.files && inputFileEl.files[0]) { // 파일을 업로드한 경우
+</script>
 
-	        const fileType = inputFileEl.files[0].type; // "image/jpeg", "image/png", ...
-	        const reg = /image\/(jpeg|png|webp)$/; // 확장자가 이미지인지 확인하기 위한 regex
+<!-- 신고기능 JavaScript(이진호) -->
+<script>
 
-	        if(!reg.test(fileType)){ // 확장자가 이미지가 아닌 경우
-                alert('이미지 파일만 업로드 가능합니다.\n .jpeg .png, .webp');
-	            inputFileEl.value = ""; // input 비우기
-                return;
-            }
-
-	        const limitSize = 5 * 1024 * 1024; // 5mb 크기 제한을 위한 변수
-
-            const uploadSize = inputFileEl.files[0].size;
-
-	        if (limitSize < uploadSize) { // 이미지 크기가 5mb 이상인 경우
-                alert('5MB 미만 이미지만 업로드가 가능합니다.');
-	            inputFileEl.value = ""; // input 비우기
-                return;
-            }
-
-			// 이미지 파일을 로드해서 미리보기에 표시
-            const fileReader = new FileReader();
-			
-			fileReader.readAsDataURL(inputFileEl.files[0]);
-            fileReader.onload = function() { 
-				$(previewEl).attr("src", fileReader.result);
-            };
-	    } else { // 파일을 업로드하지 않은 경우
-	        $(previewEl).attr("src", "${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_background_img}"); // 미리보기 이미지 되돌리기
-        }
-	});
-
-    // 프로필 배경 이미지 수정
-    $("#submitProfileBackground").on("click", function(){
-        const profileBackgroundForm = document.profileBackgroundForm;
-        const data = new FormData(profileBackgroundForm);
-        $("#submitProfileBackground").prop("disabled", true);
-
-        $.ajax({
-            url: ctxPath+"/api/member/member-background-img",
-            data: data,
-            enctype: 'multipart/form-data',
-            type: "put",
-            dataType: "json",
-            processData: false,
-            contentType: false,
-            success: function (json) {
-                if(json.result=="1"){
-                    $("#submitProfileBackground").prop("disabled", false);
-                    location.reload();
-                }
-                else {
-                    alert("프로필 배경 수정을 실패했습니다.");
-                }
-            },
-            error: function(request, status, error){
-                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-            }
+    document.addEventListener('DOMContentLoaded', function () {
+        const reportButton = document.getElementById('report-btn');                   // 신고 버튼
+        const menuOptions = document.getElementById('menu-options');                  // 메뉴 모달
+        const profileReportButton = document.getElementById('profile-report-button'); // 프로필 신고 버튼
+        const reportModal = document.getElementById('report-modal');                  // 신고 모달
+        const reportResultModal = document.getElementById('report-result-modal');     // 신고 결과 모달
+        const closeReportModal = document.getElementById('close-report-result');       // 신고 모달 닫기 버튼
+        const closeMenuOptions = document.getElementById('menu-options-close');       // 메뉴 모달 닫기 버튼
+        const submitButton = document.getElementById('submit-report');                // 신고 제출 버튼
+        const closeResult = document.getElementById('result-close');                  // 모달 차단 버튼
+         
+        // "신고" 버튼 클릭 시 메뉴 표시
+        reportButton.addEventListener('click', function () {
+            menuOptions.classList.remove('hidden');
         });
-    });
 
-    // 프로필 이미지 수정
-    $("#submitProfile").on("click", function(){
-        const profileForm = document.profileForm;
-        const data = new FormData(profileForm);
-        $("#submitProfile").prop("disabled", true);
-
-        $.ajax({
-            url: ctxPath+"/api/member/member-profile",
-            data: data,
-            enctype: 'multipart/form-data',
-            type: "put",
-            dataType: "json",
-            processData: false,
-            contentType: false,
-            success: function (json) {
-                if(json.result=="1"){
-                    $("#submitProfile").prop("disabled", false);
-                    location.reload();
-                }
-                else {
-                    alert("프로필 배경 수정을 실패했습니다.");
-                }
-            },
-            error: function(request, status, error){
-                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-            }
+        // "프로필 항목 신고" 버튼 클릭 시 메뉴 -> 신고 모달 전환
+        profileReportButton.addEventListener('click', function () {
+            menuOptions.classList.add('hidden');
+            reportModal.classList.remove('hidden');
         });
-    });
+
+        // 신고 모달 닫기
+        closeReportModal.addEventListener('click', function () {
+            reportModal.classList.add('hidden');
+        });
+
+        // 메뉴 모달 닫기
+        closeMenuOptions.addEventListener('click', function () {
+            menuOptions.classList.add('hidden');
+        });
+
+        // 신고 폼 제출 처리
+        const reportForm = document.getElementById('report-form');  // 폼 요소 가져오기
+        reportForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+
+        // 폼 데이터 가져오기
+        const formData = new FormData(reportForm);  // 'report-form' ID로 가져옴
+
+     // Ajax 요청 보내기 (세션 정보 포함)
+        fetch('/jobchae/member/reportPage', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'  // 쿠키를 포함하여 요청 전송
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 실패했습니다');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('서버 응답:', data);
+            if (data.success) {
+                reportModal.classList.add('hidden');
+                reportResultModal.classList.remove('hidden');
+            } else {
+                alert("신고에 실패했습니다. 다시 시도해주세요.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("에러가 발생했습니다. 다시 시도해주세요.");
+        });
 
 });
 
-const oldMemberEmail = "${sessionScope.loginuser.member_email}"; // 회원정보 수정시 자신의 이메일인지 체크하기 위함
-sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // js 사용하기 위한 contextPath
-</script>
+// 결과 모달 닫기 처리
+closeResult.addEventListener('click', function () {
+    reportResultModal.classList.add('hidden');
+});
+   });
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/member/memberUpdate.js"></script>
+</script>
+<!-- 신고기능 JavaScript 끝 (이진호) -->
+
 
 <!-- 신고기능 JavaScript(이진호) -->
 <script>
@@ -234,192 +430,11 @@ closeResult.addEventListener('click', function () {
                 <hr class="border-gray-200 mt-4">
             </div>
 
-            <!-- 모달 내용 -->
-            <div class="space-y-4 overflow-auto px-8">
-                <form name="updateMemberForm">
-                    <input type="hidden" name="member_id" value="${sessionScope.loginuser.member_id}"/>
-                    <ul class="space-y-4">
-                        <!-- 비밀번호 -->
-                        <li>
-                            <label class="text-gray-500">비밀번호 *</label>
-                            <input type="password" name="member_passwd" id="member_passwd" maxlength="15" 
-                                class="w-full border rounded-sm p-2 border-gray-400" placeholder="영문자/숫자/특수기호 조합하여 8~16글자" />
-                            <div id="member_passwd_error" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 비밀번호 확인 -->
-                        <li>
-                            <label class="text-gray-500">비밀번호 확인 *</label>
-                            <input type="password" name="passwdcheck" id="passwdcheck" maxlength="15" 
-                                class="w-full border rounded-sm p-2 border-gray-400" placeholder="비밀번호 확인" />
-                            <div id="passwdcheckerror" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 이름 -->
-                        <li>
-                            <label class="text-gray-500">이름 *</label>
-                            <input type="text" name="member_name" id="member_name" maxlength="20" 
-                                class="w-full border rounded-sm p-2 border-gray-400" placeholder="이름을 입력하세요."
-                                value="${sessionScope.loginuser.member_name}" />
-                            <div id="member_name_error" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 생년월일 -->
-                        <li>
-                            <label class="text-gray-500">생년월일 *</label>
-                            <input type="date" id="member_birth" name="member_birth" min="1924-01-01" max="2025-03-15"
-                                class="w-full border rounded-sm p-2 border-gray-400"
-                                value="${sessionScope.loginuser.member_birth}" />
-                            <div id="birtherror" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 이메일 -->
-                        <li>
-                            <label class="text-gray-500">이메일 *</label>
-                            <div class="relative">
-                                <input type="email" name="member_email" id="member_email" maxlength="60" 
-                                    class="w-full border rounded-sm p-2 pr-20 border-gray-400" placeholder="이메일을 입력하세요."
-                                value="${sessionScope.loginuser.member_email}" />
-                                <button type="button" id="emailcheck" 
-                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:underline cursor-pointer">인증번호 발송</button>
-                            </div>
-                            <div id="emailCheckResult" class="text-red-500 text-sm"></div>
-                            <div id="member_email_error" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 이메일 인증번호 입력 -->
-                        <li class="hidden hide_emailAuth" id="emailAuthSection">
-                            <label class="text-gray-500">인증번호 *</label>
-                            <div class="relative">
-                                <input type="text" name="email_auth" id="email_auth" maxlength="60" 
-                                    class="w-full border rounded-sm p-2 pr-20 border-gray-400" placeholder="발송된 인증번호를 입력하세요." />
-                                <button type="button" id="btn_email_auth" 
-                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-orange-400 hover:underline cursor-pointer">인증번호 확인</button>
-                            </div>
-                            <div id="email_authResult" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 연락처 -->
-                        <li>
-                            <label class="text-gray-500">연락처 *</label>
-                            <div class="flex items-center space-x-2">
-                                <input type="text" id="hp1" size="6" maxlength="3" value="010" readonly
-                                    class="w-1/3 border rounded-sm p-2 text-center border-gray-400" />
-                                <input type="text" id="hp2" size="6" maxlength="4" class="w-1/3 border rounded-sm p-2 text-center border-gray-400" value="${fn:substring(sessionScope.loginuser.member_tel, 3, 7)}" />
-                                <input type="text" id="hp3" size="6" maxlength="4" class="w-1/3 border rounded-sm p-2 text-center border-gray-400" value="${fn:substring(sessionScope.loginuser.member_tel, 7, 11)}" />
-                            </div>
-                            <input type="hidden" name="member_tel" id="member_tel" maxlength="11" />
-                            <div id="telerror" class="text-red-500 text-sm"></div>
-                        </li>
-                        <!-- 지역 -->
-                        <li>
-                            <label for="region_name" class="text-gray-500">지역 *</label><br>
-                            <input type="text" name="region_name" id="member_region_name"
-                                value="${sessionScope.loginuser.region_name}"
-                                data-target-url="/api/member/region/search"
-                                data-search-type="region_name"
-                                data-result-name="fk_region_no"
-                                class="input-search w-full border-1 rounded-sm p-2 border-gray-400" />
-                            <input type="hidden" name="fk_region_no" class="required" value="${sessionScope.loginuser.fk_region_no}"/>
-                            <span class="hidden error text-red-600 text-sm">지역을 목록에서 선택하세요.</span>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-
-            <!-- 모달 하단부 -->
-            <div>
-                <hr class="border-gray-200 mb-4">
-                <div class="flex justify-end items-center px-4">
-                    <button type="button" id="submitUpdateMember" class="button-selected" onclick="goUpdate()">저장</button>
-                </div>
-            </div>
-        </div>
-    </dialog>
-
-    <!-- 프로필 배경 이미지 수정 Modal -->
-    <dialog id="modalProfileBackground"
-        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
-        <div class="modal-box w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
-            <!-- 모달 상단부 -->
-            <div>
-                <button type="button"
-                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
-                <h1 class="h1 px-8">프로필 배경 이미지</h1>
-
-                <hr class="border-gray-200 mt-4">
-            </div>
-
-            <!-- 모달 내용 -->
-            <div class="space-y-4 overflow-auto">
-                <form name="profileBackgroundForm" enctype="multipart/form-data">
-                    <ul class="space-y-4 px-8">
-                        <li>
-                            <label class="text-gray-500">배경 이미지</label><br>
-                            <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_background_img}" class="preview w-full h-50 object-cover rounded-lg mb-4"/>
-                            
-                            <c:if test="${sessionScope.loginuser.member_id == requestScope.memberId}">
-                                <label for="attach_member_background_img" class="button-orange w-full inline-block my-2 text-center">사진 선택</label>
-                                <input type="file" name="attach_member_background_img" id="attach_member_background_img" 
-                                    accept="image/*" class="img_file hidden" />
-                            </c:if>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-
-            <c:if test="${sessionScope.loginuser.member_id == requestScope.memberId}">
-                <!-- 모달 하단부 -->
-                <div>
-                    <hr class="border-gray-200 mb-4">
-                    <div class="flex justify-end items-center px-4">
-                        <div>
-                            <button type="button" id="submitProfileBackground" class="button-selected">저장</button>
-                        </div>
-                    </div>
-                </div>
-            </c:if>
-        </div>
-    </dialog>
-
-    <!-- 프로필 사진 수정 Modal -->
-    <dialog id="modalProfile"
-        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-100">
-        <div class="modal-box w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
-            <!-- 모달 상단부 -->
-            <div>
-                <button type="button"
-                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
-                <h1 class="h1 px-8">프로필 이미지</h1>
-
-                <hr class="border-gray-200 mt-4">
-            </div>
-
-            <!-- 모달 내용 -->
-            <div class="space-y-4 overflow-auto">
-                <form name="profileForm" enctype="multipart/form-data">
-                    <ul class="space-y-4 px-8">
-                        <li>
-                            <label class="text-gray-500">프로필 이미지</label><br>
-                            <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_profile}" class="preview m-auto w-40 h-40 rounded-full object-cover mb-4"/>
-                            
-                            <c:if test="${sessionScope.loginuser.member_id == requestScope.memberId}">
-                                <label for="attach_member_profile" class="button-orange w-full inline-block my-2 text-center">사진 선택</label>
-                                <input type="file" name="attach_member_profile" id="attach_member_profile" 
-                                    accept="image/*" class="img_file hidden" />
-                            </c:if>
-                        </li>
-                    </ul>
-                </form>
-            </div>
-
-            <c:if test="${sessionScope.loginuser.member_id == requestScope.memberId}">
-            <!-- 모달 하단부 -->
-            <div>
-                <hr class="border-gray-200 mb-4">
-                <div class="flex justify-end items-center px-4">
-                    <div>
-                        <button type="button" id="submitProfile" class="button-selected">저장</button>
-                    </div>
-                </div>
-            </div>
-            </c:if>
-        </div>
-    </dialog>
+<style>
+dialog.dropdown::backdrop {
+    background: transparent;
+}
+</style>
 
     <!-- 연락처 Modal -->
     <dialog id="modalMemberContact"
@@ -440,8 +455,8 @@ closeResult.addEventListener('click', function () {
                     <li>
                         <div class="font-bold text-lg">JobChae 프로필</div>
                         <div>
-                            <a class="hover:underline text-orange-500 font-bold" href="http://www.jobchae.kro.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
-                                www.jobchae.kro.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
+                            <a class="hover:underline text-orange-500 font-bold" href="http://localhost${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
+                                localhost${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
                             </a>
                         </div>
                     </li>
@@ -471,13 +486,330 @@ closeResult.addEventListener('click', function () {
     </dialog>
 
     <!-- 경력 Modal -->
-    <jsp:include page="/WEB-INF/views/member/modal/modalMemberCareer.jsp" />
+    <dialog id="modalMemberCareer"
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+        <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
+            <!-- 모달 상단부 -->
+            <div>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <h1 class="h1 px-8">경력 입력</h1>
+
+                <hr class="border-gray-200 mt-4">
+            </div>
+
+            <!-- 모달 내용 -->
+            <div class="space-y-4 overflow-auto">
+                <div class="text-gray-500 px-8">* 필수</div>
+                <form name="memberCareerForm">
+                    <input type="hidden" name="member_career_no">
+                    <ul class="space-y-4 px-8">
+                        <li>
+                            <label for="job_name" class="text-gray-500">직종 *</label><br>
+                            <input type="text" name="job_name" id="job_name"
+                                data-target-url="/api/member/job/search"
+                                data-search-type="job_name"
+                                data-result-name="fk_job_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="hidden" name="fk_job_no" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">직종을 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_career_type" class="text-gray-500">고용 형태 *</label><br>
+                            <select name="member_career_type" class="w-full border-1 rounded-sm p-1 required"
+                                id="member_career_type">
+                                <option value="0">선택하세요</option>
+                                <option value="1">정규직</option>
+                                <option value="2">시간제</option>
+                                <option value="3">자영업/개인사업</option>
+                                <option value="4">프리랜서</option>
+                                <option value="5">계약직</option>
+                                <option value="6">인턴</option>
+                                <option value="7">수습생</option>
+                                <option value="8">시즌</option>
+                            </select>
+                            <span class="hidden error text-red-600 text-sm">고용 형태를 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_career_company" class="w-14 text-gray-500">회사 또는 단체 *</label><br>
+                            <div class="relative">
+                                <input type="text" name="member_career_company" id="member_career_company"
+                                data-target-url="/api/member/company/search"
+                                data-search-type="company_name"
+                                data-result-name="fk_company_no"
+                                class="input-search w-full border-1 rounded-sm p-1 required"/>
+                                <span class="hidden error text-red-600 text-sm">회사 또는 단체를 입력하세요.</span>
+                            </div>
+                            <input type="hidden" name="fk_company_no"/>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <input type="checkbox" name="member_career_is_current" value="1" style="zoom:1.5;" class="accent-orange-600 opacity-60 required" id="member_career_is_current"/>
+                            <label for="member_career_is_current" class="text-lg pb-0.5">현재 이 업무로 근무 중</label>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">시작일 *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_career_startdate_year" class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_career_startdate_month" class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_career_startdate"class="required"/>
+                            <span class="hidden error text-red-600 text-sm">시작일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">종료일 *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_career_enddate_year"
+                                    class="select-date w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_career_enddate_month"
+                                    class="select-date w-full border-1 rounded-sm p-1 disabled:border-0 disabled:bg-gray-200">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_career_enddate" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">종료일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="region_name" class="text-gray-500">지역 *</label><br>
+                            <input type="text" name="region_name" id="region_name"
+                                data-target-url="/api/member/region/search"
+                                data-search-type="region_name"
+                                data-result-name="fk_region_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="hidden" name="fk_region_no" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">지역을 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_career_explain" class="text-gray-500">설명</label><br>
+                            <textarea name="member_career_explain" id="member_career_explain"
+                                class="w-full h-40 border-1 rounded-sm p-1 resize-none"></textarea>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+
+            <!-- 모달 하단부 -->
+            <div>
+                <hr class="border-gray-200 mb-4">
+                <div class="flex justify-between items-center px-4">
+                    <div>
+                        <button type="button" id="deleteMemberCareer" class="btn-transparent">경력 삭제</button>
+                    </div>
+                    <div>
+                        <button type="button" id="submitMemberCareer" class="button-selected">저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     <!-- 학력 Modal -->
-    <jsp:include page="/WEB-INF/views/member/modal/modalMemberEducation.jsp" />
+    <dialog id="modalMemberEducation"
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+        <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
+            <!-- 모달 상단부 -->
+            <div>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <h1 class="h1 px-8">학력 입력</h1>
+
+                <hr class="border-gray-200 mt-4">
+            </div>
+
+            <!-- 모달 내용 -->
+            <div class="space-y-4 overflow-auto">
+                <div class="text-gray-500 px-8">* 필수</div>
+                <form name="memberEducationForm">
+                    <input type="hidden" name="member_education_no">
+                    <ul class="space-y-4 px-8">
+                        <li>
+                            <label for="school_name" class="text-gray-500">학교 *</label><br>
+                            <input type="text" name="school_name" id="school_name"
+                                data-target-url="/api/member/school/search"
+                                data-search-type="school_name"
+                                data-result-name="fk_school_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="hidden" name="fk_school_no" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">학교를 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_education_degree" class="text-gray-500">학위 *</label><br>
+                            <select name="member_education_degree" class="w-full border-1 rounded-sm p-1 required"
+                                id="member_education_degree">
+                                <option value="0">선택하세요</option>
+                                <option value="1">중학교 졸업</option>
+                                <option value="2">고등학교 졸업</option>
+                                <option value="3">전문학사</option>
+                                <option value="4">학사</option>
+                                <option value="5">석사</option>
+                                <option value="6">박사</option>
+                            </select>
+                            <span class="hidden error text-red-600 text-sm">학위를 목록에서 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="major_name" class="text-gray-500">전공 *</label><br>
+                            <input type="text" name="major_name" id="major_name"
+                                data-target-url="/api/member/major/search"
+                                data-search-type="major_name"
+                                data-result-name="fk_major_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="text" name="fk_major_no" class="hidden required" />
+                            <span class="hidden error text-red-600 text-sm">전공을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">입학일 *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_education_startdate_year" class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_education_startdate_month"
+                                    class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_education_startdate" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">입학일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label class="text-gray-500">졸업일(예정) *</label><br>
+                            <div class="flex gap-4">
+                                <select id="member_education_enddate_year"
+                                    class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">연도</option>
+                                </select>
+                                <select id="member_education_enddate_month"
+                                    class="select-date w-full border-1 rounded-sm p-1">
+                                    <option value="0">월</option>
+                                    <option value="01">1월</option>
+                                    <option value="02">2월</option>
+                                    <option value="03">3월</option>
+                                    <option value="04">4월</option>
+                                    <option value="05">5월</option>
+                                    <option value="06">6월</option>
+                                    <option value="07">7월</option>
+                                    <option value="08">8월</option>
+                                    <option value="09">9월</option>
+                                    <option value="10">10월</option>
+                                    <option value="11">11월</option>
+                                    <option value="12">12월</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="member_education_enddate" class="required"/>
+                            <span class="hidden error text-red-600 text-sm">졸업일을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_education_grade" class="text-gray-500">학점 *</label><br>
+                            <input type="number" name="member_education_grade" id="member_education_grade"
+                                class="w-full border-1 rounded-sm p-1 required" min=2.0 max=4.5/>
+                                <span class="hidden error text-red-600 text-sm">학점을 선택하세요.</span>
+                        </li>
+                        <li>
+                            <label for="member_education_explain" class="text-gray-500">설명</label><br>
+                            <textarea name="member_education_explain" id="member_education_explain"
+                                class="w-full h-40 border-1 rounded-sm p-1 resize-none"></textarea>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+
+            <!-- 모달 하단부 -->
+            <div>
+                <hr class="border-gray-200 mb-4">
+                <div class="flex justify-between items-center px-4">
+                    <div>
+                        <button type="button" id="deleteMemberEducation" class="btn-transparent">학력 삭제</button>
+                    </div>
+                    <div>
+                        <button type="button" id="submitMemberEducation" class="button-selected">저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     <!-- 보유기술 Modal -->
-    <jsp:include page="/WEB-INF/views/member/modal/modalMemberSkill.jsp" />
+    <dialog id="modalMemberSkill"
+        class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
+        <div class="modal-box  w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
+            <!-- 모달 상단부 -->
+            <div>
+                <button type="button"
+                    class="btn-close-modal btn btn-sm btn-circle btn-ghost absolute right-8 top-6">✕</button>
+                <h1 class="h1 px-8">보유기술 입력</h1>
+
+                <hr class="border-gray-200 mt-4">
+            </div>
+
+            <!-- 모달 내용 -->
+            <div class="space-y-4 overflow-auto">
+                <div class="text-gray-500 px-8">* 필수</div>
+                <form name="memberSkillForm">
+                    <ul class="space-y-4 px-8">
+                        <li>
+                            <label for="skill_name" class="text-gray-500">보유기술 *</label><br>
+                            <input type="text" name="skill_name" id="skill_name"
+                                data-target-url="/api/member/skill/search"
+                                data-search-type="skill_name"
+                                data-result-name="fk_skill_no"
+                                class="input-search w-full border-1 rounded-sm p-1" />
+                            <input type="text" name="fk_skill_no" class="hidden" />
+                        </li>
+                    </ul>
+                </form>
+            </div>
+
+            <!-- 모달 하단부 -->
+            <div>
+                <hr class="border-gray-200 mb-4">
+                <div class="flex justify-end items-center px-4">
+                    <div>
+                        <button type="button" id="submitMemberSkill" class="button-selected">저장</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
 
     <!-- 본문 -->
@@ -491,24 +823,16 @@ closeResult.addEventListener('click', function () {
                 <div class="pt-0! relative pb-4!">
                     <div class="w-full h-50 px-0 bg-gray-100">
                         <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
-                        <button type="button" class="button btn-open-modal absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"
-                            data-target-modal="ProfileBackground"><i class="fa-solid fa-camera"></i></button>
+                        <button type="button" class="button absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"><i class="fa-solid fa-camera"></i></button>
                     </div>
                     <div class="absolute top-22">
-                        <button type="button" class="button btn-open-modal" data-target-modal="Profile">
-                            <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_profile}" class="bg-white w-40 h-40 rounded-full object-cover"/>
-                        </button>
+                        <button type="button" class="button"><img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_profile}" class="w-40 h-40 rounded-full object-cover"/></button>
                     </div>
-                    <c:if test="${requestScope.memberVO.member_profile == 'default/profile.png' && sessionScope.loginuser.member_id == requestScope.memberId}">
-                        <button type="button" class="button btn-open-modal absolute top-50 left-33 w-12 h-12 rounded-full border-1 border-orange-500 text-orange-500 flex justify-center text-center items-center bg-white text-xl"
-                            data-target-modal="Profile">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                    <c:if test="${requestScope.memberVO.member_profile == 'default/profile.png'}">
+	                    <button type="button" class="button absolute top-50 left-33 w-12 h-12 rounded-full border-1 border-orange-500 text-orange-500 flex justify-center text-center items-center bg-white text-xl"><i class="fa-solid fa-plus"></i></button>
                     </c:if>
-                    <div class="text-end text-xl py-2 min-h-14">
-                        <c:if test="${sessionScope.loginuser.member_id == requestScope.memberId}">
-                            <button type="button" class="btn-transparent btn-open-modal" data-target-modal="UpdateMember"><i class="fa-solid fa-pen"></i></button>
-                        </c:if>
+                    <div class="text-end text-xl py-2">
+                        <button type="button" class="btn-transparent"><i class="fa-solid fa-pen"></i></button>
                     </div>
 
                     <div>
@@ -530,13 +854,14 @@ closeResult.addEventListener('click', function () {
                             </span>
                         </div>
                         <div>
-                            <a href="#" class="hover:underline text-orange-500 font-bold">팔로워 <fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" />명</a>
+                            <a href="#" class="hover:underline text-orange-500 font-bold">팔로워 1,243명</a>
                         </div>
                     </div>
                     <div class="flex space-x-2">
                         <button type="button" class="button-selected">활동 상태</button>
                         <button type="button" class="button-gray">리소스</button>
-                           <!-- 신고기능 시작 (이진호)  -->
+                        
+                        <!-- 신고기능 시작 (이진호)  -->
                         <button id="report-btn" class="button-gray">신고/차단</button>
 
                         <!-- 신고 선택 메뉴 -->
@@ -675,124 +1000,207 @@ closeResult.addEventListener('click', function () {
                 <div class="space-y-0 pb-0!">
                     <h1 class="h1 mb-0">활동</h1>
                     <div class="text-gray-500 pb-2 text-lg">
-                        팔로워 <fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" />명
+                        팔로워 2,123명
                     </div>
-                    <div id="update" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0!">
-                        <c:forEach var="item" items="${searchBoardVOList}" varStatus="status">
+                    <div id="update" class="border-board flex gap-4">
                         <!-- 게시물 -->
-                        <div class="min-w-100 h-120 flex flex-col">
+                        <div>
                             <!-- 멤버 프로필 -->
                             <div class="board-member-profile">
                                 <div>
-                                    <a href="${pageContext.request.contextPath}/member/profile/${item.fk_member_id}"><img src="${pageContext.request.contextPath}/resources/files/profile/${item.member_profile}" class="aspect-square w-15 object-cover rounded-full"/></a>
+                                    <a href="#"><img src="./쉐보레전면.jpg" /></a>
                                 </div>
                                 <div class="flex-1">
                                     <a href="#">
-                                        <span>${item.member_name}</span>
-                                        <span>팔로워 <fmt:formatNumber value="${item.followerCount}" pattern="#,###" />명</span>
+                                        <span>CMC Global Company Limited.</span>
+                                        <span>팔로워 26,549명</span>
                                     </a>
-                                    <span>${item.board_register_date}</span>
+                                    <span>1년</span>
+                                </div>
+                                <div>
+                                    <button type="button" class="follow-button"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>
+                                    <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
                                 </div>
                             </div>
                             <!-- 글 내용 -->
                             <div>
-                                ${item.board_content}
+                                <p>
+                                    On February 10, 2025, representatives from CMC Corp attended a meeting with the government regarding tasks and solutions for private enterprises to accelerate and contribute to the country's rapid and sustainable development in the new era.
+                                </p>
                             </div>
                             <!-- 사진 또는 동영상 등 첨부파일 -->
-                            <div class="px-0 flex-grow">
-                                
+                            <div class="px-0">
+                                <div class="file-image">
+                                    <button type="button"><img src="4.png"/></button>
+                                    <button type="button"><img src="6.png"/></button>
+                                    <button type="button"><img src="7.png"/></button>
+                                    <button type="button" class="more-image"><img src="240502-Gubi-Showroom-London-003-Print.jpg"/>
+                                        <span class="flex items-center">
+                                            <span><i class="fa-solid fa-plus"></i></span>
+                                            <span class="text-4xl">3</span>
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                             <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
                             <div>
                                 <ul class="flex gap-4 text-gray-600">
                                     <li class="flex-1">
-                                        <c:if test="${not empty item.reactionStatusList}">
-                                            <button type="button" class="button-underline">
-                                                <div class="reaction-images">
-                                                    <c:forEach var="reaction" items="${fn:split(item.reactionStatusList, ',')}">
-                                                        <c:if test="${reaction == 1}">
-                                                            <img src="${pageContext.request.contextPath}/images/emotion/like_small.svg"/>
-                                                        </c:if>
-                                                        <c:if test="${reaction == 2}">
-                                                            <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
-                                                        </c:if>
-                                                        <c:if test="${reaction == 3}">
-                                                            <img src="${pageContext.request.contextPath}/images/emotion/support_small.svg"/>
-                                                        </c:if>
-                                                        <c:if test="${reaction == 4}">
-                                                            <img src="${pageContext.request.contextPath}/images/emotion/love_small.svg"/>
-                                                        </c:if>
-                                                        <c:if test="${reaction == 5}">
-                                                            <img src="${pageContext.request.contextPath}/images/emotion/insightful_small.svg"/>
-                                                        </c:if>
-                                                        <c:if test="${reaction == 6}">
-                                                            <img src="${pageContext.request.contextPath}/images/emotion/funny_small.svg"/>
-                                                        </c:if>
-                                                    </c:forEach>
-                                                </div>
-                                                <span id="reactionCount">${item.reactionCount}</span>
-                                            </button>
-                                        </c:if>
+                                        <button type="button" class="button-underline">
+                                            <div class="reaction-images">
+                                                <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
+                                                <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
+                                                <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
+                                            </div>
+                                            <span id="reactionCount">120</span>
+                                        </button>
                                     </li>
                                     <li>
                                         <button type="button" class="button-underline">
                                             <span>댓글&nbsp;</span>
-                                            <span id="commentCount">${item.commentCount}</span>
+                                            <span id="commentCount">1,205</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button type="button" class="button-underline">
                                             <span>퍼감&nbsp;</span>
-                                            <span id="embedCount">${item.embedCount}</span>
+                                            <span id="commentCount">4</span>
                                         </button>
                                     </li>
                                 </ul>
                             </div>
-
+        
                             <hr class="border-gray-300 mx-4">
                             <!-- 추천 댓글 퍼가기 등 버튼 -->
-                            <div class="py-0 text-gray-800">
+                            <div class="py-0">
                                 <ul class="grid grid-cols-4 gap-4 text-center">
                                     <li>
                                         <button type="button" class="button-board-action">
                                             <i class="fa-regular fa-thumbs-up"></i>
+                                            <span>추천</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button type="button" class="button-board-action">
                                             <i class="fa-regular fa-comment"></i>
+                                            <span>댓글</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button type="button" class="button-board-action">
                                             <i class="fa-solid fa-retweet"></i>
+                                            <span>퍼가기</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button type="button" class="button-board-action">
                                             <i class="fa-regular fa-paper-plane"></i>
+                                            <span>보내기</span>
                                         </button>
                                     </li>
                                 </ul>
                             </div>
                         </div>
-                        </c:forEach>
+        
+                        <!-- 게시물 -->
+                        <div class="mb-4">
+                            <!-- 멤버 프로필 -->
+                            <div class="board-member-profile">
+                                <div>
+                                    <a href="#"><img src="./쉐보레전면.jpg" /></a>
+                                </div>
+                                <div class="flex-1">
+                                    <a href="#">
+                                        <span>CMC Global Company Limited.</span>
+                                        <span>팔로워 26,549명</span>
+                                    </a>
+                                    <span>1년</span>
+                                </div>
+                                <div>
+                                    <button type="button" class="follow-button"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>
+                                    <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
+                                </div>
+                            </div>
+                            <!-- 글 내용 -->
+                            <div>
+                                <p>
+                                    On February 10, 2025, representatives from CMC Corp attended a meeting with the government regarding tasks and solutions for private enterprises to accelerate and contribute to the country's rapid and sustainable development in the new era.
+                                </p>
+                            </div>
+                            <!-- 사진 또는 동영상 등 첨부파일 -->
+                            <div class="px-0">
+                                <div class="file-image">
+                                    <button type="button"><img src="4.png"/></button>
+                                    <button type="button"><img src="6.png"/></button>
+                                    <button type="button"><img src="7.png"/></button>
+                                    <button type="button" class="more-image"><img src="240502-Gubi-Showroom-London-003-Print.jpg"/>
+                                        <span class="flex items-center">
+                                            <span><i class="fa-solid fa-plus"></i></span>
+                                            <span class="text-4xl">3</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
+                            <div>
+                                <ul class="flex gap-4 text-gray-600">
+                                    <li class="flex-1">
+                                        <button type="button" class="button-underline">
+                                            <div class="reaction-images">
+                                                <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
+                                                <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
+                                                <img src="${pageContext.request.contextPath}/images/emotion/celebrate_small.svg"/>
+                                            </div>
+                                            <span id="reactionCount">120</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="button-underline">
+                                            <span>댓글&nbsp;</span>
+                                            <span id="commentCount">1,205</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="button-underline">
+                                            <span>퍼감&nbsp;</span>
+                                            <span id="commentCount">4</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+        
+                            <hr class="border-gray-300 mx-4">
+                            <!-- 추천 댓글 퍼가기 등 버튼 -->
+                            <div class="py-0">
+                                <ul class="grid grid-cols-4 gap-4 text-center">
+                                    <li>
+                                        <button type="button" class="button-board-action">
+                                            <i class="fa-regular fa-thumbs-up"></i>
+                                            <span>추천</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="button-board-action">
+                                            <i class="fa-regular fa-comment"></i>
+                                            <span>댓글</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="button-board-action">
+                                            <i class="fa-solid fa-retweet"></i>
+                                            <span>퍼가기</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="button-board-action">
+                                            <i class="fa-regular fa-paper-plane"></i>
+                                            <span>보내기</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <c:if test="${empty requestScope.searchBoardVOList}">
-                        <div class="-mt-8 mb-4">
-                            <span class="font-bold">${requestScope.memberVO.member_name}님이 올린 업데이트가 없습니다.</span><br>
-                            ${requestScope.memberVO.member_name}님이 올리는 최근 업데이트는 여기에 표시됩니다.
-                        </div>
-                    </c:if>
-                        
-                    <c:if test="${not empty requestScope.searchBoardVOList and requestScope.searchBoardVOList.size() > 2}">
-                        <div class="px-0">
-                            <hr class="border-gray-300">
-                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/member/profile/update/'+memberId">
-                                활동 모두 보기 <i class="fa-solid fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </c:if>
                 </div>
 
                 <!-- 경력 -->
@@ -841,7 +1249,7 @@ closeResult.addEventListener('click', function () {
                             </c:forEach>
                         </c:if>
                         <c:if test="${empty requestScope.memberCareerVOList}">
-                            <li class="-pt-2 pb-4"><span class="block">조회된 경력 정보가 없습니다.</span>
+                            <li class="text-center text-lg py-2"><span class="block">조회된 경력 정보가 없습니다.</span>
                                 <%-- 로그인 본인 체크 --%>
                                 <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
                                     <button type="button" data-target-modal="MemberCareer"
@@ -908,7 +1316,7 @@ closeResult.addEventListener('click', function () {
                             </c:forEach>
                         </c:if>
                         <c:if test="${empty requestScope.memberEducationVOList}">
-                            <li class="-pt-2 pb-4"><span class="block">조회된 학력 정보가 없습니다.</span>
+                            <li class="text-center text-lg py-2"><span class="block">조회된 학력 정보가 없습니다.</span>
                                 <%-- 로그인 본인 체크 --%>
                                 <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
                                     <button type="button" data-target-modal="MemberEducation"
@@ -964,7 +1372,7 @@ closeResult.addEventListener('click', function () {
                             </c:forEach>
                         </c:if>
                         <c:if test="${empty requestScope.memberSkillVOList}">
-                            <li class="-pt-2 pb-4"><span class="block">조회된 보유기술 정보가 없습니다.</span>
+                            <li class="text-center text-lg py-2"><span class="block">조회된 보유기술 정보가 없습니다.</span>
                                 <%-- 로그인 본인 체크 --%>
                                 <c:if test="${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}">
                                     <button type="button" data-target-modal="MemberSkill"
@@ -986,7 +1394,7 @@ closeResult.addEventListener('click', function () {
                 </div>
 
                 <!-- 관심분야 -->
-                <%-- <div class="py-0!">
+                <div class="py-0!">
                     <h1 class="h1 pt-4">관심분야</h1>
                     <div class="px-0">
                         <!-- 탭 -->
@@ -1064,7 +1472,7 @@ closeResult.addEventListener('click', function () {
                             <button type="button" class="button-more">학교 모두 표시 <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     </div>
-                </div> --%>
+                </div>
             </div>
         </div>
 

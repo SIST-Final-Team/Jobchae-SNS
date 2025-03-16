@@ -1,6 +1,5 @@
 package com.spring.app.member.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.app.member.service.MemberService;
-import com.spring.app.common.FileManager;
 import com.spring.app.common.mail.FuncMail;
-import com.spring.app.config.DefaultImageNames;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
@@ -48,9 +43,6 @@ public class ApiMemberController {
 	@Autowired
 	FuncMail funcMail; // 이메일 인증 관련 클래스
 	
-	@Autowired
-	FileManager fileManager; // 파일 관련 클래스
-
 	// === 이준영 시작 === //
 	
 	// 지역 검색 시 자동 완성 해주는 메소드
@@ -508,147 +500,7 @@ public class ApiMemberController {
 		return jsonObj.toString();
 	}
 	
-	@Operation(summary = "회원 프로필 배경 수정", description = "회원 프로필 배경 수정, 로그인 후 사용 가능")
-    @Parameter(name = "attach_member_background_img", description = "회원 프로필 배경")
-	@PutMapping("member-background-img")
-	public String updateMemberBackgroundImg(HttpServletRequest request, MultipartHttpServletRequest mrequest) {
-		
-		MemberVO memberVO = new MemberVO();
-
-		// 파일부터 넣어주기 
-		MultipartFile attach_member_background_img = mrequest.getFile("attach_member_background_img"); // 프로필 배경 사진
-
-		// 프로필 배경 사진 일단 기본이미지로 default
-		if (!attach_member_background_img.isEmpty()) { // 스프링은 빈파일 객체로 반환해줘서 null 이 아니다!
-			
-			// WAS 의 webapp 의 절대경로를 알아와야한다.
-			HttpSession m_session = mrequest.getSession(); // 파일용 세션
-			String root = m_session.getServletContext().getRealPath("/");
-
-			String path = root + "resources" + File.separator + "files" + File.separator + "profile";
-			
-			String newProFileName = "";
-			// WAS(톰캣)의 디스크에 저장될 파일명
-			
-			byte[] bytes_member_background_img = null;
-			// 첨부파일의 내용물을 담는 것
-			
-			try {
-				bytes_member_background_img = attach_member_background_img.getBytes();
-				// 첨부파일의 내용물을 읽어오는 것
-				
-				String origin_member_background_img_Filename = attach_member_background_img.getOriginalFilename();
-//				System.out.println("origin_member_profile_Filename => "+ origin_member_profile_Filename);
-				// 첨부파일명의 파일명(예:강아지.png)을 읽어오는 것
-				
-				// 파일 확장자
-				String fileExt = origin_member_background_img_Filename.substring(origin_member_background_img_Filename.lastIndexOf(".")); 
-				System.out.println("fileExt => "+fileExt);
-				// 백엔드에서 한번 더 사진파일로 걸러주자
-				if (!".jpg".equals(fileExt) && !".png".equals(fileExt) && !".webp".equals(fileExt) && !".jpeg".equals(fileExt)) {
-					
-					JSONObject jsonObj = new JSONObject();
-					jsonObj.put("result", 0);
-					
-					return jsonObj.toString();
-				}//end of if (fileExt != ".jpg" || fileExt != ".png" || fileExt != ".webp") {}...
-				
-				// 첨부되어진 파일을 업로드 하는 것이다.
-
-				// MemberVO membervo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
-				newProFileName = fileManager.doFileUpload(bytes_member_background_img, origin_member_background_img_Filename, path);
-				memberVO.setMember_background_img(newProFileName);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			} // end of try catch...
-			
-		} else { // 들어온 프로필 배경 사진이 없을 때
-			memberVO.setMember_background_img(DefaultImageNames.BackgroundfileName);
-		}//end of if (!attach_member_background_img.isEmpty()) {}...
-
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
-		memberVO.setMember_id(loginuser.getMember_id());
-		
-		int n = service.updateMemberBackgroundImg(memberVO);
-		
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("result", n);
-		
-		return jsonObj.toString();
-	}
 	
-	@Operation(summary = "회원 프로필 사진 수정", description = "회원 프로필 사진 수정, 로그인 후 사용 가능")
-    @Parameter(name = "attach_member_profile", description = "회원 프로필 사진")
-	@PutMapping("member-profile")
-	public String updateMemberProfile(HttpServletRequest request, MultipartHttpServletRequest mrequest) {
-		
-		MemberVO memberVO = new MemberVO();
-
-		// 파일부터 넣어주기 
-		MultipartFile attach_member_profile = mrequest.getFile("attach_member_profile"); // 프로필 배경 사진
-
-		// 프로필 배경 사진 일단 기본이미지로 default
-		if (!attach_member_profile.isEmpty()) { // 스프링은 빈파일 객체로 반환해줘서 null 이 아니다!
-			
-			// WAS 의 webapp 의 절대경로를 알아와야한다.
-			HttpSession m_session = mrequest.getSession(); // 파일용 세션
-			String root = m_session.getServletContext().getRealPath("/");
-
-			String path = root + "resources" + File.separator + "files" + File.separator + "profile";
-			
-			String newProFileName = "";
-			// WAS(톰캣)의 디스크에 저장될 파일명
-			
-			byte[] bytes_member_profile = null;
-			// 첨부파일의 내용물을 담는 것
-			
-			try {
-				bytes_member_profile = attach_member_profile.getBytes();
-				// 첨부파일의 내용물을 읽어오는 것
-				
-				String origin_member_profile_Filename = attach_member_profile.getOriginalFilename();
-//				System.out.println("origin_member_profile_Filename => "+ origin_member_profile_Filename);
-				// 첨부파일명의 파일명(예:강아지.png)을 읽어오는 것
-				
-				// 파일 확장자
-				String fileExt = origin_member_profile_Filename.substring(origin_member_profile_Filename.lastIndexOf(".")); 
-				System.out.println("fileExt => "+fileExt);
-				// 백엔드에서 한번 더 사진파일로 걸러주자
-				if (!".jpg".equals(fileExt) && !".png".equals(fileExt) && !".webp".equals(fileExt) && !".jpeg".equals(fileExt)) {
-					
-					JSONObject jsonObj = new JSONObject();
-					jsonObj.put("result", 0);
-					
-					return jsonObj.toString();
-				}//end of if (fileExt != ".jpg" || fileExt != ".png" || fileExt != ".webp") {}...
-				
-				// 첨부되어진 파일을 업로드 하는 것이다.
-
-				// MemberVO membervo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
-				newProFileName = fileManager.doFileUpload(bytes_member_profile, origin_member_profile_Filename, path);
-				memberVO.setMember_profile(newProFileName);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			} // end of try catch...
-			
-		} else { // 들어온 프로필 배경 사진이 없을 때
-			memberVO.setMember_profile(DefaultImageNames.ProfileName);
-		}//end of if (!attach_member_profile.isEmpty()) {}...
-
-		HttpSession session = request.getSession();
-		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
-		memberVO.setMember_id(loginuser.getMember_id());
-		
-		int n = service.updateMemberProfile(memberVO);
-		
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("result", n);
-		
-		return jsonObj.toString();
-	}
 	
 	
 

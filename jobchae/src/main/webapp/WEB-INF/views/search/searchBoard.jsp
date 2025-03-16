@@ -7,7 +7,7 @@
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
 
     <!-- TailWind Script -->
-    <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -337,6 +337,7 @@ let requestLock = false;
         $("#additionalFields").append(`<input type="hidden" name="start" value="\${start}"/>`);
         $("#additionalFields").append(`<input type="hidden" name="end" value="\${start + len - 1}"/>`);
         const data = $("form[name='searchOptionForm']").serialize();
+        console.log(data);
         $.ajax({
             url: "${pageContext.request.contextPath}/api/search/board",
             data: data,
@@ -437,7 +438,7 @@ let requestLock = false;
                             <li>
                                 <div class="board-member-profile">
                                     <div>
-                                        <a href="${pageContext.request.contextPath}/member/profile/\${item.fk_member_id}"><img src="${pageContext.request.contextPath}/resources/files/profile/\${item.member_profile}" class="aspect-square w-15 object-cover rounded-full"/></a>
+                                        <a href="#"><img src="${pageContext.request.contextPath}/resources/files/profile/\${item.member_profile}" class="aspect-square w-15 object-cover rounded-full"/></a>
                                     </div>
                                     <div class="flex-1">
                                         <a href="${pageContext.request.contextPath}/member/profile/\${item.fk_member_id}">
