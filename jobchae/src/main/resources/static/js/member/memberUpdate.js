@@ -1,18 +1,6 @@
-
-let is_id_ok = false; // 아이디 입력 블러 중 버튼 바로 누를 시 걸러주는 역할
-
 let is_email_ok = false; // 이메일 입력 블러 중 버튼 바로 누를 시 걸러주는 역할
-
-let b_idcheck_click = false; // 아이디 중복확인 버튼 클릭했는지 여부
-
-// let b_email_click = false; // 이메일 중복확인 버튼 클릭했는지 여부
-
 let b_email_auth_click = false; // 인증버튼 클릭했는지 여부
-
 let is_email_auth = false; // 인증번호를 인증 받았는지 여부
-
-
-
 let region_search_arr = [];   // 자동 검색된 검색어들을 실시간으로 넣어줄 배열
 
 // 컨텍스트 패스
@@ -22,109 +10,7 @@ const contextPath = sessionStorage.getItem("contextpath");
 
 $(document).ready(function () {
 
-    // 모달 애니메이션 추가
-    $("dialog.modal").addClass("animate-slideDown");
-
-    // 사진 첨부
-    $("img#profile_img").on("click", function (e) {
-
-        $("input#file_input_profile").click(); // 프로필 사진 설정
-
-    });//end of $("img#profile_img").on("click", function (e) {}...
-
-    // 파일 인풋 값이 들어갔을 때 이벤트
-    $("input#file_input_profile").change(function (e) {
-
-        console.log("프로필 사진 => ",$("input#file_input_profile").val());
-
-        const inputFile = $(e.target).get(0).files[0];
-        const preview_profile_img = $("img#profile_img"); // 미리보기 사진칸
-
-        if (inputFile) { // 파일을 업로드한 경우
-
-            // console.log("$(e.target).get(0).value!!!!! => ", $(e.target).get(0).value);
-
-            const fileType = inputFile.type; // "image/jpeg", "image/png", ...
-            console.log("fileType => ", fileType);
-            
-            const reg = /image\/(jpg|jpeg|png|webp)$/; // 확장자가 이미지인지 확인하기 위한 regex
-
-            if (!reg.test(fileType)) { // 확장자가 이미지가 아닌 경우
-                alert('이미지 파일만 업로드 가능합니다.\n .jpg .jpeg .png, .webp');
-                $(e.target).get(0).value = ""; // input 비우기
-                return;
-            }
-
-            const limitSize = 10 * 1024 * 1024; // 10mb 크기 제한을 위한 변수
-
-            const uploadSize = inputFile.size;
-
-            if (limitSize < uploadSize) { // 이미지 크기가 10mb 이상인 경우
-                alert('10MB 미만 이미지만 업로드가 가능합니다.');
-                $(e.target).get(0).value = ""; // input 비우기
-                return;
-            }
-
-            // 이미지 파일을 로드해서 미리보기에 표시
-            const fileReader = new FileReader();
-
-            fileReader.readAsDataURL(inputFile);
-            fileReader.onload = function () {
-                $(preview_profile_img).attr("src", fileReader.result);
-                // console.log("fileReader.result => ", fileReader.result);
-                $("#icon_label").hide();
-            };
-        } else { // 파일을 업로드하지 않은 경우
-            $(preview_profile_img).attr("src", `${contextPath}/images/no_profile.png`); // 미리보기 이미지 초기화
-            console.log("$(e.target).get(0).value => ", $(e.target).get(0).value);
-            $(e.target).get(0).value = `${contextPath}/images/no_profile.png`; // 파일 value 도 초기화
-            $("#icon_label").show();
-        }// 
-
-    });//$("input#file_input_profile").change(function (e) {}...
-
-
-    // 백그라운드 사진 default 파일을 지정
-
-
-
-    // userid 블러 처리
-    const func_member_id = (e) => {
-
-        const member_id = $(e.target).val().trim();
-
-        if (member_id == "") { // 입력하지 않거나 공백만 입력했을 경우 
-
-            $(e.target).val("");
-            // $(e.target).focus();
-            $("div#idcheckResult").html("").hide(); // 아이디 중복체크
-            $("div#member_id_error").html("아이디는 필수입력 사항입니다.");
-
-        }
-        else { // 공백이 아닌 글자를 입력했을 경우
-            const regExp_member_id = /^[a-z][A-Za-z0-9]{4,19}$/;
-
-            // 생성된 정규표현식 객체속에 데이터를 넣어서 검사하기 
-            const bool = regExp_member_id.test(member_id); // 리턴타입 boolean
-
-            if (!bool) {
-                $("div#idcheckResult").html("").hide(); // 아이디 중복체크
-                $("div#member_id_error").html("");
-                $(e.target).val("");
-                $(e.target).focus();
-                $("div#member_id_error").html("아이디는 영문소문자/숫자 4~16 조합으로 입력하세요.");
-                console.log("bool => ", bool);
-
-            } else {
-                $("div#member_id_error").html("");
-                is_id_ok = true;
-            }
-        }
-
-    }// 아이디가 member_id 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다.
-
-    $("input#member_id").blur((e) => { func_member_id(e) });
-
+    
     // passwd 블러 처리
     $("input#member_passwd").blur((e) => {
 
@@ -211,82 +97,7 @@ $(document).ready(function () {
 
     });// 아이디가 name 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다. 
 
-
-
-    // 생년월일 
-    // === jQuery UI 의 datepicker === //
-    $("input#datepicker").datepicker({
-        dateFormat: 'yy-mm-dd'     //Input Display Format 변경
-        , showOtherMonths: true    //빈 공간에 현재월의 앞뒤월의 날짜를 표시
-        , showMonthAfterYear: true //년도 먼저 나오고, 뒤에 월 표시
-        , changeYear: true         //콤보박스에서 년 선택 가능
-        , changeMonth: true        //콤보박스에서 월 선택 가능                
-        //  ,showOn: "both"        //button:버튼을 표시하고,버튼을 눌러야만 달력 표시됨. both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시됨.  
-        //  ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
-        //  ,buttonImageOnly: true   //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
-        //  ,buttonText: "선택"       //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
-        , yearSuffix: "년"         //달력의 년도 부분 뒤에 붙는 텍스트
-        , monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] //달력의 월 부분 텍스트
-        , monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'] //달력의 월 부분 Tooltip 텍스트
-        , dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'] //달력의 요일 부분 텍스트
-        , dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'] //달력의 요일 부분 Tooltip 텍스트
-        , minDate: "-100Y" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
-        , maxDate: "today" //최대 선택일자(+1D:하루후, +1M:한달후, +1Y:일년후)   
-        , yearRange: "1900:today"
-    });
-
-    // 초기값을 오늘 날짜로 설정
-    // $('input#datepicker').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후) 
-
-    // === 전체 datepicker 옵션 일괄 설정하기 ===  
-    //     한번의 설정으로 $("input#fromDate"), $('input#toDate')의 옵션을 모두 설정할 수 있다.
-    // $(function () {
-    //     //모든 datepicker에 대한 공통 옵션 설정
-    //     $.datepicker.setDefaults({
-    //         dateFormat: 'yy-mm-dd' //Input Display Format 변경
-    //         , showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시
-    //         , showMonthAfterYear: true //년도 먼저 나오고, 뒤에 월 표시
-    //         , changeYear: true //콤보박스에서 년 선택 가능
-    //         , changeMonth: true //콤보박스에서 월 선택 가능        
-    //         // ,showOn: "both" //button:버튼을 표시하고,버튼을 눌러야만 달력 표시됨. both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시됨.  
-    //         // ,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" //버튼 이미지 경로
-    //         // ,buttonImageOnly: true //기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
-    //         // ,buttonText: "선택" //버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
-    //         , yearSuffix: "년" //달력의 년도 부분 뒤에 붙는 텍스트
-    //         , monthNamesShort: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'] //달력의 월 부분 텍스트
-    //         , monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'] //달력의 월 부분 Tooltip 텍스트
-    //         , dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'] //달력의 요일 부분 텍스트
-    //         , dayNames: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'] //달력의 요일 부분 Tooltip 텍스트
-    //         , minDate: "-100Y" //최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
-    //         // ,maxDate: "+1M" //최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                    
-    //     });
-
-    //     // input을 datepicker로 선언
-    //     $("input#fromDate").datepicker();
-    //     $("input#toDate").datepicker();
-
-    //     // From의 초기값을 오늘 날짜로 설정
-    //     $('input#fromDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-
-    //     // To의 초기값을 3일후로 설정
-    //     $('input#toDate').datepicker('setDate', '+3D'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-    // });
-
     ////////////////////////////////////////////////////////////////////
-
-    $("input#datepicker").attr("readonly", true);
-    // 생년월일에 키보드로 입력하는 경우 
-
-    $("input#datepicker").bind("change", e => {
-        if ($(e.target).val() != "") {
-            $(e.target).next().hide();
-        }
-    }); // 생년월일에 마우스로 값을 변경하는 경우
-
-
-
-
-
 
 
     // 이메일 메소드
@@ -328,10 +139,6 @@ $(document).ready(function () {
     $("input#member_email").blur((e) => { func_member_email(e) });
 
 
-
-
-
-
     // hp2, hp3 의 name 을 없애자!
     $("input#hp2").blur((e) => {
 
@@ -368,11 +175,11 @@ $(document).ready(function () {
             // 마지막 전화번호 4자리가 정규표현식에 위배된 경우 
             $(e.target).val("");
             // $(e.target).focus();
-            $(`#telerror`).html("휴대폰 형식이 아닙니다.");
+            $(`telerror`).html("휴대폰 형식이 아닙니다.");
         }
         else {
             // 마지막 전화번호 4자리가 정규표현식에 맞는 경우
-            $(`#telerror`).html("");
+            $(`telerror`).html("");
             $("input#member_tel").val($("input#hp1").val() + $("input#hp2").val() + $("input#hp3").val()); // 만들어라
             // console.log("전화번호 완성 => ", $("input#member_tel").val());
             
@@ -380,81 +187,7 @@ $(document).ready(function () {
 
     });// 아이디가 hp3 인 것은 포커스를 잃어버렸을 경우(blur) 이벤트를 처리해주는 것이다. 
 
-
-
-
-
-
     // ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 아이디 중복확인 클릭했을 시 이벤트 처리하기
-    $(`button#idcheck`).click(function (e) {
-
-        if (is_id_ok == false) {   // 여기까지 함, 인증번호 칸 숨기고 아이디 이메일 레디 밑에 함수로 선언해서 정리하자!!!
-            // func_userid(e);
-            return;
-        }
-        // === 두번째 방법 === //
-        $.ajax({
-            url: `${contextPath}/api/member/idDuplicateCheck`, //              /member/ 까진 똑같아서 제외함
-            data: { "member_id": $(`input#member_id`).val() }, // json 모양 파라미터(객체 아님!!)
-            type: "post",  // 빼면 get 방식
-            async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
-            // async:false 가 동기 방식이다. 지도를 할때는 반드시 동기방식인 async:false 을 사용해야만 지도가 올바르게 나온다.
-            dataType: "json", // Javascript Standard Object Notation.  dataType은 /MyMVC/member/idDuplicateCheck.up 로 부터 실행되어진 결과물을 받아오는 데이터타입을 말한다. 
-            // 만약에 dataType:"xml" 으로 해주면 /MyMVC/member/idDuplicateCheck.up 로 부터 받아오는 결과물은 xml 형식이어야 한다. 
-            // 만약에 dataType:"json" 으로 해주면 /MyMVC/member/idDuplicateCheck.up 로 부터 받아오는 결과물은 json 형식이어야 한다.
-
-            success: function (json) { //    
-                // console.log("json => ", json);
-                // console.log("typeof json => ", typeof json);
-
-                if (json["isExists"]) {
-                    // 입력한 userid 가 이미 사용중인 것이다!
-                    $(`div#idcheckResult`).html(`${$(`input#member_id`).val()}은 이미 사용중 이므로 다른 아이디를 입력하세요`).css({ "color": "red" }).show();
-                    $(`input#userid`).val("");
-                } else {
-                    // 사용 가능한 아이디다!
-                    $(`div#idcheckResult`).html(`${$(`input#member_id`).val()}은 사용할 수 있습니다!`).css({ "color": "blue" }).show();
-                    b_idcheck_click = true;
-                }
-            }
-            ,
-            error: function (request, status, error) { // 코딩이 잘못되어지면 어디가 잘못되어졌는지 보여준다!
-                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
-            }
-        });
-
-
-    });//end of $(`img#idcheck`).click(function (e) {  }....
-
-
-
-    // 아이디 값이 변경되면 가입하기 버튼 클릭시 아이디중복확인을 클릭했는지 여부 알아오기 용도 초기화 시키기
-    $(`input#member_id`).change(function (e) {
-        b_idcheck_click = false;
-        is_id_ok = false;
-        $(`div#idcheckResult`).html("").hide();
-        // 아이디 중복검사를 받아놓고 다시 아이디를 바꾸면 중복확인을 초기화 시켜줘야 한다!!!
-    });//end of $(`input#userid`).change(function (e) { }...
-
-
-
 
 
     // 이메일 중복확인 클릭했을 시 이벤트 처리하기 
@@ -553,9 +286,17 @@ $(document).ready(function () {
 
     // 이메일 값이 변경되면 가입하기 버튼 클릭시 아이디중복확인을 클릭했는지 여부 알아오기 용도 초기화 시키기
     $(`input#member_email`).change(function (e) {
-        b_email_auth_click = false;   // 이메일 인증 버튼 체크
-        is_email_auth = false;        // 이메일 인증 했는지 체크
-        is_email_ok = false;          // 이메일 입력 중 바로 버튼을 눌렀을 경우 걸러주는 역할
+
+        if($(this).value == oldMemberEmail) { // 이전 이메일과 같은 주소라면 통과
+            b_email_auth_click = true;   // 이메일 인증 버튼 체크
+            is_email_auth = true;        // 이메일 인증 했는지 체크
+            is_email_ok = true;          // 이메일 입력 중 바로 버튼을 눌렀을 경우 걸러주는 역할
+        }
+        else {
+            b_email_auth_click = false;   // 이메일 인증 버튼 체크
+            is_email_auth = false;        // 이메일 인증 했는지 체크
+            is_email_ok = false;          // 이메일 입력 중 바로 버튼을 눌렀을 경우 걸러주는 역할
+        }
         // 이메일도 중복검사를 받아놓고 다시 바꾸면 중복확인을 초기화 시켜줘야 한다!!!
         $(`div#emailCheckResult`).html("").hide();
         $(`div#email_authResult`).html("").hide();
@@ -717,14 +458,6 @@ $(document).ready(function () {
     });//end of $(document).on("blur", "input[name='region_name']", function (e) {}...
 
 
-
-    // // 이거 체인지 이벤트 상위호환이다. 엔터 막는 용
-    // $("input[name='region_name']").on("input", function (e) {
-
-    // });//end of 
-
-
-
     // 검색어 클릭시 완성하기
     $(document).on("mousedown", "li[name='result_a']", function (e) {
         const word = $(this).text();
@@ -737,63 +470,13 @@ $(document).ready(function () {
 
     });//end of $(document).on("click", "span.result", function(e) {}...
 
-
-
-
-
-
-    // 이용약관 체크박스 모달 처리
-    // $("input#agree_checkbox").prop("checked" ,false);
-
-    $("input#agree_checkbox").on("click", function (e) {
-        $(e.target).prop("checked", false); // 클릭하면 일단 체크 멈춤
-
-        if ($(e.target).prop("checked") == true) {
-            // alert("asdfasdfadsfsdafasdf");
-        }
-
-    });//end of $("input#agree_checkbox").on("click", function (e) {}...
-
-    // 이용약관 모달 안의 동의 버튼 클릭 시 
-    $("button#btn_agree").on("click", function (e) {
-
-        $("input#agree_checkbox").prop("checked", true); // 체크
-
-        $(".btn-close-modal").click();
-
-    });//end of $("button#btn_agree").on("click", function (e) {}...
-
-    // ====================================================================================================================== //
-
-    // 모달 열기
-    $(document).on("click", ".btn-open-modal", function () {
-        openModal(this);
-    });
-
-    // 취소 버튼 또는 X 버튼으로 모달 닫기
-    $(".btn-close-modal").on("click", function (e) {
-        dialog = $(this).parent().parent().parent()[0];
-        $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
-        $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
-
-        // 애니메이션이 끝난 후 모달 닫기
-        setTimeout(() => {
-            dialog.close();
-            $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
-            $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
-        }, 300);
-    });
-
-});// end $(document).ready(function(){})----------------------
-
-
-
+});
 
 
 
 // Function Declaration
-// "가입하기" 버튼 클릭시 호출되는 함수
-function goRegister() {
+// 회원정보 수정 폼 입력 후 "저장" 버튼 클릭시 호출되는 함수
+function goUpdate() {
 
     // === 필수 입력사항 모두 입력했는지 검사하기 시작 === //
     let b_requiredInfo = true;
@@ -815,7 +498,7 @@ function goRegister() {
 
     // // *** 지역에 값을 입력했는지 검사하기 시작 *** //
     // arr_addressInfo.push($("input#postcode").val());
-    const region_name = $("input#region_name").val().trim();
+    const region_name = $("input#member_region_name").val().trim();
 
     if (region_name == "") {
         alert("우편번호 및 주소를 입력하셔야 합니다.");
@@ -825,42 +508,32 @@ function goRegister() {
 
 
     // 생년월일 입력했는지 검사하기
-    const member_birth = $(`input#datepicker`).val().trim();
+    const member_birth = $(`input#member_birth`).val().trim();
 
     if (member_birth == "") {
         alert("생년월일을 입력하셔야 합니다.");
         return;
     }
 
-
-    // 약관에 동의 했는지 검사 
-    const agree_checked_length = $(`input#agree_checkbox:checked`).length; // 1 나와야함
-
-    if (agree_checked_length == 0) {
-        alert("이용약관에 동의하셔야 회원가입할 수 있습니다.");
-        return;
+    // 기존 이메일과 다른 이메일을 입력한 경우 인증을 완료해야 한다.
+    if($(`input#member_email`).val() != oldMemberEmail) {
+        // 이메일 중복확인 클릭했는지 여부 확인
+        if (!b_email_auth_click) {
+            alert("이메일 인증을 완료하셔야 합니다!");
+            return;
+        }
+    
+        // 이메일 중복확인 클릭했는지 여부 확인
+        if (!is_email_auth) {
+            alert("이메일 인증을 완료하셔야 합니다!");
+            return;
+        }
     }
-
-
-
-    // 아이디 중복확인 클릭했는지 여부 확인
-    if (!b_idcheck_click) {
-        alert("아이디 중복확인을 하셔야 합니다!");
-        return;
-    }
-
-
-    // 이메일 중복확인 클릭했는지 여부 확인
-    if (!b_email_auth_click) {
-        alert("이메일 중복확인을 하셔야 합니다!");
-        return;
-    }
-
 
 
     // 발송 서브밋
-    const frm = document.registerFrm;
-    frm.action = `${contextPath}/member/memberRegister`;
+    const frm = document.updateMemberForm;
+    frm.action = `${contextPath}/member/memberUpdate`;
     frm.method = "post";
     frm.submit();
 
@@ -869,8 +542,6 @@ function goRegister() {
     // alert("회원가입 하러 갑니다.");
 
 }// end of function goRegister() {}-------------------------
-
-
 
 
 
@@ -896,7 +567,7 @@ function ajax_search() {
             // === 검색어 입력시 자동글 완성하기
             if (json.length > 0) {
                 // 검색된 데이터가 있는 경우
-                let v_html = `<ul>`;
+                let v_html = `<ul style="list-style:none; padding: 0; margin-left: 0;">`;
 
                 $.each(json, function (index, item) {
                     const word = item.region_name;
@@ -911,9 +582,9 @@ function ajax_search() {
 
                     const len = $("input[name='region_name']").val().length;
 
-                    result = word.substring(0, idx) + "<span class='text-orange-500'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
+                    result = word.substring(0, idx) + "<span style='color:blue;'>" + word.substring(idx, idx + len) + "</span>" + word.substring(idx + len);
 
-                    v_html += `<li name='result${li_id}' class='result p-2 rounded-lg cursor-pointer hover:bg-gray-100 duration-200'>${result}${no_result}</li>`;
+                    v_html += `<li style='cursor:pointer;' name='result${li_id}' class='result'>${result}${no_result}</li>`;
 
                 });// end of $.each(json, function(index, item) {})-------------------
 
@@ -922,7 +593,7 @@ function ajax_search() {
                 $("div#displayList").html(v_html).show(); // 보여줘라
 
             } else {
-                $("div#displayList").html("<div class='p-2'>검색된 값이 없습니다.</div>").show();
+                $("div#displayList").html("검색된 값이 없습니다.").show();
             }//end of if (json.length > 0) {}...
 
         },
@@ -932,20 +603,4 @@ function ajax_search() {
     });
 
 }//end of function ajax_search() {}...
-
-
-
-
-// 약관 동의 모달 띄우기
-function openModal(btnEl) {
-    const targetModal = $(btnEl).data("target-modal");
-    const modalId = "#modal" + targetModal;
-    $(modalId)[0].showModal();
-}
-
-
-
-
-
-
 

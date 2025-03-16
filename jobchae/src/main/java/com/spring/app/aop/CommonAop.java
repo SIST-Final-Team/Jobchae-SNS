@@ -48,6 +48,7 @@ public class CommonAop {
 	// === Before Advice(공통관심사, 보조업무)를 구현한다. === //
 	@Before("requiredLogin()")
 	public void loginCheck(JoinPoint joinpoint) { // 로그인 유무 검사하는 메소드 작성하기
+
 		// JoinPoint joinpoint 는 포인트컷 되어진 주업무의 메소드이다.
 
 		// 로그인 유무를 확인하기 위해서는 request 를 통해 session 을 얻어와야 한다.
@@ -102,9 +103,9 @@ public class CommonAop {
 
 			HttpSession session = request.getSession();
 
-			if((boolean)session.getAttribute("emailCheckOk") != true) { // 이메일 인증이 true 값이 아니라면
-				String message = "email 인증을 받지 않으면 안됩니다!";
-				String loc = request.getContextPath() + "/board/feed"; // 메인페이지로
+			if(session.getAttribute("emailCheckOk") == null || (boolean)session.getAttribute("emailCheckOk") != true) { // 이메일 인증이 true 값이 아니라면
+				String message = "email 인증을 받아야 합니다.";
+				String loc = request.getContextPath() + "/index"; // 메인페이지로
 
 				request.setAttribute("message", message);
 				request.setAttribute("loc", loc);
@@ -123,13 +124,13 @@ public class CommonAop {
 
 	// ===== After Advice(보조업무) 만들기 ====== //
 
-	@Pointcut("execution(public * com.spring.app..*Controller)")
-	public void insert() {}
-	@After("insert()")
-	public void createAlarm(JoinPoint joinpoint) {
-		System.out.println("실행");
-		String methodName = joinpoint.getSignature().getName();
-	}
+//	@Pointcut("execution(public * com.spring.app..*Controller)")
+//	public void insert() {}
+//	@After("insert()")
+//	public void createAlarm(JoinPoint joinpoint) {
+//		System.out.println("실행");
+//		String methodName = joinpoint.getSignature().getName();
+//	}
 	// ===== Around Advice(보조업무) 만들기 ====== //
 }
 

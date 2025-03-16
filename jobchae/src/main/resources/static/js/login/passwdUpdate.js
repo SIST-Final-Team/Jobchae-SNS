@@ -160,18 +160,18 @@ $(document).ready(function () {
 function goPasswdUpdate() {
 
     if (!is_email_send) {
-        alert("이메일 인증 후 휴면계정 해제가 가능합니다.");
+        alert("이메일 인증 후 비밀번호 수정이 가능합니다.");
         return;
     }
 
     if (!is_email_auth) {
-        alert("인증번호 인증 후 휴면계정 해제가 가능합니다.");
+        alert("인증번호 확인 후 비밀번호 수정이 가능합니다.");
         return;
     }
 
 
 
-    // 휴면 계정 복구 전송
+    // 비밀번호 수정 전송
     const frm = document.passwdUpdateFrm;
 
     // 발송 서브밋

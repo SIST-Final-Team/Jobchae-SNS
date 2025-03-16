@@ -19,14 +19,14 @@ import com.spring.app.member.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/member/reportPage") // 기본 URL 경로 설정
+@RequestMapping("/report/*") // 기본 URL 경로 설정
 public class ReportController {
 
     @Autowired
     MemberService service;
 
     // 신고 처리 API
-    @PostMapping("")
+    @PostMapping("member")
     public ResponseEntity<Map<String, Object>> createReport(
             @RequestParam("Fk_reported_member_id") String fk_reported_member_id,
             @RequestParam("Report_type") int report_type,

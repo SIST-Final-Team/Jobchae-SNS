@@ -7,7 +7,7 @@
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
 
     <!-- TailWind Script -->
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -206,7 +206,7 @@
 <script type="text/javascript">
 
 let start = 1;
-let len = 8;
+let len = 16;
 let hasMore = true; // 글 목록이 더 존재하는지 확인하는 변수
 let requestLock = false;
 
@@ -668,7 +668,7 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                 }
                 else {
                     if(start==1) { // 목록이 하나도 없다면
-                        let html = `<li class="text-center text-lg"><span class="block pb-2">조회된 글이 없습니다.</span>
+                        let html = `<li class="text-center text-lg"><span class="block pb-2">조회된 회사가 없습니다.</span>
                                 </li>`;
 
                         $("#companyList").html(html);
@@ -697,7 +697,7 @@ dialog.option-dropdown::backdrop {
     <form name="searchOptionForm">
         <%-- 검색어 input --%>
         <input type="hidden" name="searchWord"/>
-        <input type="hidden" name="searchType" value="member"/>
+        <input type="hidden" name="searchType" value="company"/>
         <div id="additionalFields">
         </div>
         <!-- 검색 유형 Dropdown -->

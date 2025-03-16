@@ -64,12 +64,7 @@ public class ApiHistoryController {
 				memberIdList.add(profileViewVO.getProfileViewMemberId());
 			}
 
-			System.out.println(memberIdList.get(0));
-			System.out.println(memberIdList.get(1));
-
 			List<MemberVO> memberList = memberService.getMemberListByMemberId(memberIdList);
-			
-			System.out.println(memberList.size());
 
 			return memberList;
 		}

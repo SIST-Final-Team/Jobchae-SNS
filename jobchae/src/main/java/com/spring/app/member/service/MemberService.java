@@ -162,20 +162,13 @@ public interface MemberService {
 	 */
     List<MemberVO> getMemberListByMemberId(List<String> memberIdList);
 	
-
-
-	
-	
-
-
 	// === 김규빈 끝 === //
 	
-	
-	
+
 	// === 이진호 시작 === //
 	
 	// 신고 기능 추가
 	boolean createReport(ReportVO report);
 	
-	
+	// === 이진호 끝 === //
 }//end of interface...
