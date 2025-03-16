@@ -513,6 +513,21 @@
 		WHERE member_id = #{member_id}
 	</update>
 
+	<!-- 회원의 이름, 프로필 이미지 목록 조회 -->
+	<select id="getMemberListByMemberId" parameterType="ArrayList" resultType="MemberVO">
+		select member_id, member_birth, member_name, member_profile
+		from tbl_member m
+		where member_id in
+		<foreach collection="memberIdList" index="i" open="(" separator="," close=")">
+			'${memberIdList[i]}'
+		</foreach>
+		and member_status = 1
+		order by DECODE(member_id, 
+		<foreach collection="memberIdList" index="i" open="" separator="," close=")">
+			'${memberIdList[i]}',${i}
+		</foreach>
+	</select>
+
 	<!-- === 김규빈 끝 === -->
 
 	<!-- === 연규영 시작 === -->

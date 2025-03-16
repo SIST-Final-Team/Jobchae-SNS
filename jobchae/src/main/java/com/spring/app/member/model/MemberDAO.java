@@ -181,6 +181,13 @@ public interface MemberDAO {
 	 */
 	int updateMember(MemberVO memberVO);
 
+	/**
+	 * 회원의 이름, 프로필 이미지 목록 조회
+	 * @param memberIdList
+	 * @return
+	 */
+    List<MemberVO> getMemberListByMemberId(List<String> memberIdList);
+
 	
 
 

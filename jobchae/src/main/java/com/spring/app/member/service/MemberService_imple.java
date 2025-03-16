@@ -723,6 +723,12 @@ public class MemberService_imple implements MemberService {
 		return n;
 	}
 
+	// 회원의 이름, 프로필 이미지 목록 조회
+	@Override
+	public List<MemberVO> getMemberListByMemberId(List<String> memberIdList) {
+		return dao.getMemberListByMemberId(memberIdList);
+	}
+
 
 
 

@@ -1,6 +1,8 @@
 package com.spring.app.search.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.app.history.domain.SearchHistoryVO;
+import com.spring.app.history.service.HistoryService;
+import com.spring.app.member.domain.MemberVO;
 import com.spring.app.search.service.SearchService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 
 @Controller
@@ -20,12 +28,31 @@ public class SearchController {
 
 	@Autowired
 	SearchService service;
+
+    @Autowired
+    HistoryService historyService;
 	
     // 전체 검색
     @GetMapping("all")
-    public ModelAndView searchAll(ModelAndView mav, @RequestParam String searchWord) {
+    public ModelAndView searchAll(HttpServletRequest request, ModelAndView mav, @RequestParam String searchWord) {
 
-        // TODO: 검색
+        // TODO: 검색 결과 수 가져오기
+
+        // === 검색 기록 추가 시작 === //
+        SearchHistoryVO searchHistoryVO = new SearchHistoryVO();
+
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+        if(loginuser != null) {
+            searchHistoryVO.setMemberId(loginuser.getMember_id());
+            searchHistoryVO.setSearchHistoryWord(searchWord);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            searchHistoryVO.setSearchHistoryRegisterDate(sdf.format(new Date()));
+    
+            historyService.saveSearchHistory(searchHistoryVO);
+        }
+        // === 검색 기록 추가 끝 === //
 
         mav.addObject("searchWord", searchWord);
 
@@ -36,9 +63,25 @@ public class SearchController {
 
     // 글 검색
     @GetMapping("board")
-    public ModelAndView searchBoard(ModelAndView mav, @RequestParam Map<String, String> params) {
+    public ModelAndView searchBoard(HttpServletRequest request, ModelAndView mav, @RequestParam Map<String, String> params) {
 
         // TODO: 검색 결과 수 가져오기
+
+        // === 검색 기록 추가 시작 === //
+        SearchHistoryVO searchHistoryVO = new SearchHistoryVO();
+
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+        if(loginuser != null) {
+            searchHistoryVO.setMemberId(loginuser.getMember_id());
+            searchHistoryVO.setSearchHistoryWord(params.get("searchWord"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            searchHistoryVO.setSearchHistoryRegisterDate(sdf.format(new Date()));
+    
+            historyService.saveSearchHistory(searchHistoryVO);
+        }
+        // === 검색 기록 추가 끝 === //
 
         if(params.get("searchDate") != null) {
             mav.addObject("searchDate", params.get("searchDate"));
@@ -57,9 +100,25 @@ public class SearchController {
 
     // 회원 검색
     @GetMapping("member")
-    public ModelAndView searchMember(ModelAndView mav, @RequestParam Map<String, String> params) {
+    public ModelAndView searchMember(HttpServletRequest request, ModelAndView mav, @RequestParam Map<String, String> params) {
 
         // TODO: 검색 결과 수 가져오기
+
+        // === 검색 기록 추가 시작 === //
+        SearchHistoryVO searchHistoryVO = new SearchHistoryVO();
+
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+        if(loginuser != null) {
+            searchHistoryVO.setMemberId(loginuser.getMember_id());
+            searchHistoryVO.setSearchHistoryWord(params.get("searchWord"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            searchHistoryVO.setSearchHistoryRegisterDate(sdf.format(new Date()));
+    
+            historyService.saveSearchHistory(searchHistoryVO);
+        }
+        // === 검색 기록 추가 끝 === //
 
         if(params.get("arr_fk_skill_no") != null) {
             mav.addObject("arr_fk_skill_no", params.get("arr_fk_skill_no"));
@@ -94,9 +153,25 @@ public class SearchController {
 
     // 회사 검색
     @GetMapping("company")
-    public ModelAndView searchCompany(ModelAndView mav, @RequestParam Map<String, String> params) {
+    public ModelAndView searchCompany(HttpServletRequest request, ModelAndView mav, @RequestParam Map<String, String> params) {
 
         // TODO: 검색 결과 수 가져오기
+
+        // === 검색 기록 추가 시작 === //
+        SearchHistoryVO searchHistoryVO = new SearchHistoryVO();
+
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+        if(loginuser != null) {
+            searchHistoryVO.setMemberId(loginuser.getMember_id());
+            searchHistoryVO.setSearchHistoryWord(params.get("searchWord"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            searchHistoryVO.setSearchHistoryRegisterDate(sdf.format(new Date()));
+    
+            historyService.saveSearchHistory(searchHistoryVO);
+        }
+        // === 검색 기록 추가 끝 === //
 
         if(params.get("arr_fk_industry_no") != null) {
             mav.addObject("arr_fk_industry_no", params.get("arr_fk_industry_no"));

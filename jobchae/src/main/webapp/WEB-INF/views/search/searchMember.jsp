@@ -210,7 +210,6 @@ let len = 16;
 let hasMore = true; // 글 목록이 더 존재하는지 확인하는 변수
 let requestLock = false;
 
-const ctxPath = '${pageContext.request.contextPath}';
 let inputTimeout;        // 입력 후 일정시간이 지난 후 자동완성 검색이 되도록 하는 타임아웃
 let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
 

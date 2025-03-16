@@ -1,7 +1,9 @@
 package com.spring.app.member.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.common.FileManager;
 import com.spring.app.config.DefaultImageNames;
+import com.spring.app.history.domain.ProfileViewVO;
+import com.spring.app.history.service.HistoryService;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
@@ -41,7 +45,8 @@ public class MemberController {
 	@Autowired
 	MemberService service;
 	
-	
+	@Autowired
+	HistoryService historyService;
 	
 	@Autowired
 	FileManager fileManager; // 파일 관련 클래스
@@ -394,6 +399,19 @@ public class MemberController {
 			mav.addObject("loc", "javascript:history.back()");
 			mav.setViewName("common/msg");
 			return mav;
+		}
+
+		// 로그인 했고, 자기 자신의 프로필 조회가 아니라면
+		if(loginuser != null && !loginuser.getMember_id().equals(memberId)) {
+			// 프로필 조회 기록 및 조회수 증가
+			ProfileViewVO profileViewVO = new ProfileViewVO();
+
+			profileViewVO.setMemberId(loginuser.getMember_id());
+			profileViewVO.setProfileViewMemberId(memberId);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			profileViewVO.setProfileViewRegisterDate(sdf.format(new Date()));
+
+			historyService.saveProfileView(profileViewVO);
 		}
 
 		paraMap.put("size", "3");

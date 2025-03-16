@@ -18,6 +18,10 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
       src="<%=ctxPath%>/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js"
     ></script>
 
+    <script type="text/javascript">
+      const ctxPath = "${pageContext.request.contextPath}";
+    </script>
+
     <script
       type="text/javascript"
       src="<%=ctxPath%>/js/main-header/header.js"
