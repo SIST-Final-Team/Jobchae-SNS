@@ -47,6 +47,8 @@ public class InsertLikeNoti implements InsertNotification {
                 "member_profile", targetMember.getMember_profile());
         alarmVO.setMemberInfo(MemberInfo);
 
+        alarmVO.setAlarmData(alarmData);
+
         AlarmVO result = alarmDAO.save(alarmVO);
 
         return result;
