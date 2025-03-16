@@ -142,6 +142,10 @@
 		        <if test="authorMemberId != null">
 		            and b.fk_member_id = #{authorMemberId}
 		        </if>
+		        <!-- 글 번호 -->
+		        <if test="board_no != null">
+		            and b.board_no = #{board_no}
+		        </if>
 		        <!-- 작성일자 최근 30일, 7일, 1일 -->
 		        <if test="searchDate != null">
 		            and b.board_register_date &gt;= sysdate - #{searchDate}
