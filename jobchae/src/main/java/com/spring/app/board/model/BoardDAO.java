@@ -124,7 +124,8 @@ public interface BoardDAO {
 	// 부모 댓글 삭제시 자식 댓글도 삭제
 	int deleteReplyComment(Map<String, String> paraMap);
 	
-		
+	// 게시물번호로 게시물 조회
+	BoardVO findOneBoardByBoardNo(String board_no);
 
 
 }

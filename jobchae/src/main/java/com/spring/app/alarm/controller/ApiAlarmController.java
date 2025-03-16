@@ -2,12 +2,17 @@ package com.spring.app.alarm.controller;
 
 import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
+import com.spring.app.board.domain.BoardVO;
+import com.spring.app.board.model.BoardDAO;
 import com.spring.app.follow.domain.FollowEntity;
 import com.spring.app.follow.repository.FollowRepository;
 import com.spring.app.follow.service.FollowService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -47,6 +52,8 @@ public class ApiAlarmController {
 
 	@Autowired
 	private FollowService followService;
+    @Autowired
+    private BoardDAO boardDAO;
 
 	@Autowired
 	public ApiAlarmController(SimpMessagingTemplate template) {
@@ -58,10 +65,12 @@ public class ApiAlarmController {
 	
 //	알람 읽음 변경 메서드
 	@PutMapping("updateAlarmRead/{notification_no}")
-	public ResponseEntity<AlarmVO> updateAlarmRead(@PathVariable String notification_no){
+	public ResponseEntity<AlarmVO> updateAlarmRead(@PathVariable String notification_no, HttpServletRequest request){
 		//TODO
-		MemberVO member = new MemberVO();
-		member.setMember_id("user001");
+		//MemberVO user001 = new MemberVO();
+		//user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 		AlarmVO alarm = alarmService.updateAlarmRead(member, notification_no);
 		ResponseEntity<AlarmVO> response = new ResponseEntity<>(alarm, HttpStatus.OK);
 
@@ -70,13 +79,15 @@ public class ApiAlarmController {
 	
 //	알람 입력 메서드
 	@PostMapping("insertAlarm")
-	public ResponseEntity<AlarmVO> insertAlarm(){
+	public ResponseEntity<AlarmVO> insertAlarm(HttpServletRequest request){
 		//TODO 부분 완성
-		MemberVO user001 = new MemberVO();
-		user001.setMember_id("user001");
+		//MemberVO user001 = new MemberVO();
+		//user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 		try {
 			//알림 삽입
-			AlarmVO alarm = alarmService.insertAlarm2(user001, AlarmVO.NotificationType.COMMENT);
+			AlarmVO alarm = alarmService.insertAlarm2(member, AlarmVO.NotificationType.COMMENT);
 
 			//알림을 구독하고 있는 사용자에게 알림 전송
 			messagingTemplate.convertAndSend("/topic/alarm", alarm);
@@ -94,15 +105,17 @@ public class ApiAlarmController {
 	
 //	알람 삭제 메서드
 	@DeleteMapping("deleteAlarm/{notificationNo}")
-	public ResponseEntity<AlarmVO> deleteAlarm(@PathVariable String notificationNo){
+	public ResponseEntity<AlarmVO> deleteAlarm(@PathVariable String notificationNo, HttpServletRequest request){
 		//TODO 미완성
 
 		ResponseEntity<AlarmVO> response = null;
 
-		MemberVO user001 = new MemberVO();
-		user001.setMember_id("user001");
+		//MemberVO user001 = new MemberVO();
+		//user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 		try {
-			AlarmVO deletedAlarm = alarmService.deleteAlarm(user001,notificationNo);
+			AlarmVO deletedAlarm = alarmService.deleteAlarm(member,notificationNo);
 			response = ResponseEntity.ok(deletedAlarm);
 			return response;
 		}
@@ -114,26 +127,27 @@ public class ApiAlarmController {
 	
 //	알림 조회 메서드
 	@GetMapping("selectAlarmList/{pageNumber}")
-	public ResponseEntity<Map> selectAlarmList(@PathVariable String pageNumber){
+	public ResponseEntity<Map> selectAlarmList(@PathVariable String pageNumber, HttpServletRequest request){
 
-		MemberVO user001 = new MemberVO();
-		user001.setMember_id("user001");
+//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 		int pageNo = Integer.parseInt(pageNumber);
-		Map<String, Object> resultMap = alarmService.selectAlarmList(user001, pageNo);
+		Map<String, Object> resultMap = alarmService.selectAlarmList(member, pageNo);
 //		logger.info("alarmList: " + resultMap);
 		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
 		return response;
 	}
 
 	@GetMapping("testLike")
-	public ResponseEntity<AlarmVO> test() {
+	public ResponseEntity<AlarmVO> test(HttpServletRequest request) {
 
 		//현재 로그인된 사람
-		MemberVO member = new MemberVO();
-		member.setMember_id("user002");
-		member.setMember_name("user002");
-		member.setMember_birth("1995-10-20");
-		member.setMember_profile("profile");
+		//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 		//받는 사람
 		String targetId = "user001";
 
@@ -148,21 +162,23 @@ public class ApiAlarmController {
 	}
 
 	@GetMapping("testComment")
-	public ResponseEntity<AlarmVO> test2() {
+	public ResponseEntity<AlarmVO> test2(HttpServletRequest request) {
 
+		HttpSession session = request.getSession();
 		//현재 로그인된 사람
-		MemberVO member = new MemberVO();
-		member.setMember_id("user002");
-		member.setMember_name("user002");
-		member.setMember_birth("1995-10-20");
-		member.setMember_profile("profile");
+		MemberVO member = (MemberVO)session.getAttribute("loginuser");
+
+		System.out.println("멤버는 "+ member);
+
 		//받는 사람
 		String targetId = "user001";
 
 		//알림 데이터
 		AlarmData alarmData = new AlarmData();
 		alarmData.setCommentId("69");
-		alarmData.setCommentContent("ㅇㅇ");
+		BoardVO board = boardDAO.findOneBoardByBoardNo("241");
+		alarmData.setBoardId("241");
+		alarmData.setBoardContent(board.getBoard_content());
 
 		AlarmVO alarm = alarmService.insertAlarm(member, targetId, AlarmVO.NotificationType.COMMENT, alarmData);
 
@@ -170,14 +186,13 @@ public class ApiAlarmController {
 	}
 
 	@GetMapping("testFollow")
-	public ResponseEntity<AlarmVO> test3() {
+	public ResponseEntity<AlarmVO> test3(HttpServletRequest request) {
 
 		//현재 로그인된 사람
-		MemberVO member = new MemberVO();
-		member.setMember_id("user002");
-		member.setMember_name("user002");
-		member.setMember_birth("1995-10-20");
-		member.setMember_profile("profile");
+		//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 		//받는 사람
 		String targetId = "user001";
 
@@ -190,14 +205,13 @@ public class ApiAlarmController {
 	}
 
 	@GetMapping("testFollowerPost")
-	public ResponseEntity<List<AlarmVO>> test4() {
+	public ResponseEntity<List<AlarmVO>> test4(HttpServletRequest request) {
 
 		//현재 로그인된 사람
-		MemberVO member = new MemberVO();
-		member.setMember_id("user002");
-		member.setMember_name("user002");
-		member.setMember_birth("1995-10-20");
-		member.setMember_profile("profile");
+		//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
 
 
 

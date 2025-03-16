@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.spring.app.alarm.domain.AlarmData;
+import com.spring.app.alarm.domain.AlarmVO;
+import com.spring.app.alarm.service.AlarmService;
+import com.spring.app.board.model.BoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,8 +41,15 @@ public class ApiBoardController {
 	BoardService service;
 	
 	@Autowired  
-	private FileManager fileManager; 
-	
+	private FileManager fileManager;
+    @Autowired
+    private BoardDAO boardDAO;
+    @Autowired
+    private BoardService boardService;
+
+	@Autowired
+	private AlarmService alarmService;
+
 	// 글 삭제
 	@PostMapping("deleteBoard")
 	@ResponseBody
@@ -195,19 +206,18 @@ public class ApiBoardController {
 	    
 		return reactionCounts;
 	}
-	
-	// 게시물 반응별 유저 조회하기
+
 	@PostMapping("getReactionMembers")
 	@ResponseBody
 	public Map<String, Object> getReactionMembers(HttpServletRequest request, @RequestParam String reaction_target_no, @RequestParam String reaction_status) {
-		
+
 		//System.out.println("reaction_target_no: " + reaction_target_no);
 		//System.out.println("reaction_status: " + reaction_status);
-		
+
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("reaction_target_no", reaction_target_no);
 		paraMap.put("reaction_status", reaction_status);
-		
+
 		List<MemberVO> reaction_membervoList = service.getReactionMembers(paraMap);
 		/*
 		for (MemberVO member : reaction_membervoList) {
@@ -216,6 +226,7 @@ public class ApiBoardController {
 		    System.out.println("-------------------------------");
 		}
 		*/
+	// 게시물 반응별 유저 조회하기
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("membervo", reaction_membervoList);
@@ -346,7 +357,18 @@ public class ApiBoardController {
 		paraMap.put("fk_member_id", fk_member_id);
 		paraMap.put("comment_content", comment_content);
 		int n = service.addComment(paraMap);
-		
+
+		//알림 삽입 시작
+		HttpSession session = request.getSession();
+
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardId(fk_board_no);
+		BoardVO board = boardDAO.findOneBoardByBoardNo(fk_board_no);
+		alarmData.setBoardContent(board.getBoard_content());
+
+		alarmService.insertAlarm((MemberVO)session.getAttribute("loginuser"), fk_member_id, AlarmVO.NotificationType.COMMENT, alarmData);
+
+		//알림 삽입 끝
 		Map<String, Integer> map = new HashMap<>();
 		map.put("n", n);
 		return map; 

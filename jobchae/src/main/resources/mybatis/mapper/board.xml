@@ -330,6 +330,13 @@
 		from tbl_comment
 		where comment_parent_no = #{comment_no} and comment_depth = 1
 	</select>
-	
+
+
+	<!--연규영이 추가, 알림에 추가할 게시물 정보-->
+	<select id="findOneBoardByBoardNo" resultType="BoardVO">
+		select board_no, fk_member_id, board_content
+		from tbl_board
+		where board_no = #{board_no}
+	</select>
 	
 </mapper>
