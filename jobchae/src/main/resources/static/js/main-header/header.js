@@ -1,3 +1,7 @@
+let htmlResultListFirst = ``;  // 검색결과 리스트 최근 3개
+let htmlResultListSecond = ``; // 모든 검색결과 리스트
+let html_recentPage = ``;      // 최근 방문 프로필 리스트
+
 document.addEventListener("DOMContentLoaded", function () {
   //객체 가져오기
   const searchBoxInput = document.querySelector("#searchInput");
@@ -15,91 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
   //검색 결과 개수 카운트
   let resultListCount = 0;
 
-  //html 변수
-  const html_recentPage = `<ul>
-        <li class="SearchBoxDropDown">
-          <div class="SearchBoxDropDown" style="text-align: center">
-            <img
-              class="SearchBoxDropDown w-10 h-10"
-              src="images/samsung_electronics_logo.jpg"
-            />
-          </div>
-          <div>
-            <span clas="SearchBoxDropDown text-[0.8rem] font-bold"
-              >samsung electonics</span
-            >
-          </div>
-        </li>
-        <li class="SearchBoxDropDown">
-          <div class="SearchBoxDropDown" style="text-align: center">
-            <img
-              class="SearchBoxDropDown w-10 h-10"
-              src="images/samsung_electronics_logo.jpg"
-            />
-          </div>
-          <div>
-            <span clas="SearchBoxDropDown text-[0.8rem] font-bold"
-              >samsung electonics</span
-            >
-          </div>
-        </li>
-        <li class="SearchBoxDropDown">
-          <div class="SearchBoxDropDown" style="text-align: center">
-            <img
-              class="SearchBoxDropDown w-10 h-10"
-              src="images/samsung_electronics_logo.jpg"
-            />
-          </div>
-          <div>
-            <span clas="SearchBoxDropDown text-[0.8rem] font-bold"
-              >samsung electonics</span
-            >
-          </div>
-        </li>
-        <li class="SearchBoxDropDown">
-          <div class="SearchBoxDropDown" style="text-align: center">
-            <img
-              class="SearchBoxDropDown w-10 h-10"
-              src="images/samsung_electronics_logo.jpg"
-            />
-          </div>
-          <div>
-            <span clas="SearchBoxDropDown text-[0.8rem] font-bold"
-              >samsung electonics</span
-            >
-          </div>
-        </li>
-        <li class="SearchBoxDropDown">
-          <div class="SearchBoxDropDown" style="text-align: center">
-            <img
-              class="SearchBoxDropDown w-10 h-10"
-              src="images/samsung_electronics_logo.jpg"
-            />
-          </div>
-          <div>
-            <span clas="SearchBoxDropDown text-[0.8rem] font-bold"
-              >samsung electonics</span
-            >
-          </div>
-        </li>
-      </ul>`;
-
-  //검색결과 리스트 최근 3개개
-  const htmlResultListFirst = `
-    <ul class="SearchBoxDropDown">
-        <li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div class="SearchBoxDropDown w-10/11">122</div>
-        </li>
-        <li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div class="SearchBoxDropDown w-10/11">1234</div>
-        </li>
-        <li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div class="SearchBoxDropDown w-10/11">12345</div>
-        </li>
-      </ul>`;
 
   const headerProfile = document.getElementById("headerProfile");
   const headerProfileIcon = document.getElementById("headerProfileIcon");
@@ -118,19 +37,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  //모든 검색결과 리스트
-  let htmlResultListSecond = `<ul class="SearchBoxDropDown" id="searchBoxMenuRecentSecond">`;
-  data.forEach((item) => {
-    htmlResultListSecond += `<li class="SearchBoxDropDown hover:bg-gray-200 mb-2 mr-5 flex">
-          <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
-          <div class="SearchBoxDropDown w-10/11">${item["num"]}</div>
-        </li>`;
-    resultListCount++;
-  });
-  htmlResultListSecond += `</ul>`;
+  getSearchHistory(); // 검색 기록 가져오기
+  getProfileView(); // 프로필 방문 기록 가져오기
 
-  searchBoxMenuRecentPage.innerHTML = html_recentPage;
-  searchBoxMenuRecent.innerHTML = htmlResultListFirst;
   //검색 버튼 클릭시
   //스타일 클래스 토글
   searchBoxInput.addEventListener("click", (e) => {
@@ -200,5 +109,90 @@ document.addEventListener("DOMContentLoaded", function () {
         .querySelector("#searchBoxMenuRecentSecond")
         .classList.remove("h-80", "overflow-auto");
     }
+  }
+
+  function getSearchHistory() {
+    $.ajax({
+      url: "/jobchae/history/search",
+      dataType: "json",
+      async:"false",
+      success: function (json) {
+        if(json.length>0) {
+          htmlResultListFirst = `<ul class="SearchBoxDropDown">`; // 검색결과 리스트 최근 3개
+          htmlResultListSecond = `<ul class="SearchBoxDropDown" id="searchBoxMenuRecentSecond">`; // 모든 검색결과 리스트
+          for(let i=0; i<json.length; i++) {
+  
+            //검색결과 리스트 최근 3개
+            if(i<3) {
+              htmlResultListFirst += `
+                    <li class="SearchBoxDropDown mb-2 mr-5">
+                      <a href="${ctxPath}/search/all?searchWord=${json[i].searchHistoryWord}" class="w-full hover:bg-gray-200 flex py-1 rounded">
+                        <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div class="SearchBoxDropDown w-10/11">${json[i].searchHistoryWord}</div>
+                      </a>
+                    </li>`;
+            }
+            htmlResultListSecond += `<li class="SearchBoxDropDown mb-2 mr-5">
+                                      <a href="${ctxPath}/search/all?searchWord=${json[i].searchHistoryWord}" class="w-full hover:bg-gray-200 flex py-1 rounded">
+                                        <div class="SearchBoxDropDown w-1/11"><i class="fa-solid fa-magnifying-glass"></i></div>
+                                        <div class="SearchBoxDropDown w-10/11">${json[i].searchHistoryWord}</div>
+                                      </a>
+                                      </li>`;
+          }
+          htmlResultListFirst += `</ul>`;
+          htmlResultListSecond += `</ul>`;
+        }
+        else {
+          htmlResultListFirst += `<div>검색 기록이 없습니다.</div>`;
+          htmlResultListSecond += `<div>검색 기록이 없습니다.</div>`;
+        }
+
+        searchBoxReturn();
+        
+      }
+    });
+  }
+
+  function getProfileView() {
+    $.ajax({
+      url: "/jobchae/history/profile",
+      dataType: "json",
+      async:"false",
+      success: function (json) {
+        console.log(JSON.stringify(json));
+        if(json.length>0) {
+          
+          html_recentPage = `<ul>`; // 최근 방문 프로필 리스트
+          for(let i=0; i<json.length; i++) {
+            html_recentPage += `
+              <li class="SearchBoxDropDown rounded-lg">
+                <a href="${ctxPath}/member/profile/${json[i].member_id}" class="text-center">
+                  <div class="SearchBoxDropDown">
+                    <img
+                      class="SearchBoxDropDown w-10 h-10 mx-auto"
+                      src="${ctxPath}/resources/files/profile/${json[i].member_profile}"
+                    />
+                  </div>
+                  <div>
+                    <span clas="SearchBoxDropDown text-[0.8rem] font-bold"
+                      >${json[i].member_name}</span
+                    >
+                  </div>
+                </a>
+              </li>`;
+          }
+          html_recentPage += `</ul>`;
+        }
+        else {
+          html_recentPage = ``;
+        }
+
+        searchBoxReturn();
+        
+      },
+      error: function (request, status, error) {
+          alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+      }
+    });
   }
 });

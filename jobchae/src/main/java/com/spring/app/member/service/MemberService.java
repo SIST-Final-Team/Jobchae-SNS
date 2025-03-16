@@ -127,21 +127,48 @@ public interface MemberService {
 	int addMemberSkill(MemberSkillVO memberSkillVO);
 	int deleteMemberSkill(Map<String, String> paraMap);
 
+	/**
+	 * 회원 프로필 배경 수정
+	 * @param memberVO
+	 * @return
+	 */
+    int updateMemberBackgroundImg(MemberVO memberVO);
+
+	/**
+	 * 회원 프로필 사진 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMemberProfile(MemberVO memberVO);
+
+	/**
+	 * 한 회원의 팔로워 수 가져오는 메소드
+	 * @param member_id
+	 * @return
+	 */
+	int getFollowerCount(String member_id);
+
+	/**
+	 * 회원 정보 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMember(MemberVO memberVO);
+
+	/**
+	 * 회원의 이름, 프로필 이미지 목록 조회
+	 * @param memberIdList
+	 * @return
+	 */
+    List<MemberVO> getMemberListByMemberId(List<String> memberIdList);
 	
-
-
-	
-	
-
-
 	// === 김규빈 끝 === //
 	
-	
-	
+
 	// === 이진호 시작 === //
 	
 	// 신고 기능 추가
 	boolean createReport(ReportVO report);
 	
-	
+	// === 이진호 끝 === //
 }//end of interface...

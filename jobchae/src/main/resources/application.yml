@@ -34,7 +34,7 @@ spring: # 주의할 점은 내용작성시 들여쓰기 내어쓰기시 공백�
       max-request-size: 50MB  # 파일 및 파일을 제외한 input 태그값 업로드 용량제한 설정하기. 업로드 용량을 설정하지 않으면 기본값은 1048576 bytes (1MB)으로 된다.
   data:
     mongodb:
-      uri: mongodb://localhost:27017/JobchaeTest
+      uri: mongodb+srv://minjun9492:dkdkaks124!@leejunyoung.5kxrr.mongodb.net/jobchaeDB
   jpa:
     show-sql: true #실행한 쿼리를 콘솔에 출력
     properties:

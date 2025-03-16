@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-
+import com.spring.app.alarm.controller.AlarmController;
+import com.spring.app.alarm.model.AlarmDAO;
 import com.spring.app.common.AES256;
 import com.spring.app.common.FileManager;
 import com.spring.app.common.security.Sha256;
+import com.spring.app.config.AES256_Configuration;
 import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.member.domain.MemberCareerVO;
@@ -39,6 +41,12 @@ import jakarta.servlet.http.HttpSession;
 @Service
 public class MemberService_imple implements MemberService {
 
+    private final AlarmDAO alarmDAO;
+
+    private final AlarmController alarmController;
+
+    private final AES256_Configuration AES256_Configuration;
+
 	@Autowired
 	MemberDAO dao;
 
@@ -51,6 +59,13 @@ public class MemberService_imple implements MemberService {
 	
 	@Autowired
     private ServletContext servletContext;
+
+
+    MemberService_imple(AES256_Configuration AES256_Configuration, AlarmController alarmController, AlarmDAO alarmDAO) {
+        this.AES256_Configuration = AES256_Configuration;
+        this.alarmController = alarmController;
+        this.alarmDAO = alarmDAO;
+    }
 	
 	
 
@@ -315,9 +330,13 @@ public class MemberService_imple implements MemberService {
 		// 비밀번호 암호화 해서 넣어주자 
 		String new_member_passwd = Sha256.encrypt(paraMap.get("new_member_passwd"));
 		// 비밀번호 중복 확인
-		String reslut = dao.passwdExist(new_member_passwd);
+		
+		// 암호화한 비밀번호를 다시 맵에 넣어주자
+		paraMap.put("new_member_passwd", new_member_passwd);
+		
+		String result = dao.passwdExist(paraMap);
 		String loc = "";
-		if (reslut != null) { // 비밀번호가 일치하면(존재하면)
+		if (result != null) { // 비밀번호가 일치하면(존재하면)
 			
 			String message = "비밀번호가 기존 비밀번호와 일치합니다! 새로운 비밀번호를 입력해주세요.";
 			mav.addObject("message", message);
@@ -335,11 +354,8 @@ public class MemberService_imple implements MemberService {
 				mav.setViewName("common/msg");
 				return mav;
 			}
-		}//end of if (reslut != null) {}...
+		}//end of if (result != null) {}...
 		
-		
-		// 암호화한 비밀번호를 다시 맵에 넣어주자
-		paraMap.put("new_member_passwd", new_member_passwd);
 		// 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경
 		int n = dao.passwdUpdate(paraMap);
 		
@@ -560,7 +576,19 @@ public class MemberService_imple implements MemberService {
 	// 회원 한 명의 정보 조회
 	@Override
 	public MemberVO getMember(Map<String, String> paraMap) {
-		return dao.getMember(paraMap);
+		MemberVO memberVO = dao.getMember(paraMap);
+
+		// 복호화
+		try {
+			if(memberVO != null) {
+				memberVO.setMember_email(aes.decrypt(memberVO.getMember_email())); 		// 양방향
+				memberVO.setMember_tel(aes.decrypt(memberVO.getMember_tel())); 			// 양방향
+			}
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return memberVO;
 	}
 
 	// 회원 경력 1개 조회
@@ -647,80 +675,68 @@ public class MemberService_imple implements MemberService {
 		return dao.deleteMemberSkill(paraMap);
 	}
 
+	// 회원 프로필 배경 수정
+	@Override
+	public int updateMemberBackgroundImg(MemberVO memberVO) {
+		return dao.updateMemberBackgroundImg(memberVO);
+	}
 
+	// 회원 프로필 사진 수정
+	@Override
+	public int updateMemberProfile(MemberVO memberVO) {
+		return dao.updateMemberProfile(memberVO);
+	}
 
+	// 한 회원의 팔로워 수 가져오는 메소드
+	public int getFollowerCount(String member_id) {
+		return dao.getFollowerCount(member_id);
+	}
 
+	// 회원 정보 수정
+	@Override
+	public int updateMember(MemberVO memberVO) {
+		
+		// 암호화
+		try {
+			if(!"".equals(memberVO.getMember_passwd())){
+				memberVO.setMember_passwd(Sha256.encrypt(memberVO.getMember_passwd())); // 단방향
+			}
+			if(!"".equals(memberVO.getMember_passwd())){
+				memberVO.setMember_email(aes.encrypt(memberVO.getMember_email())); 		// 양방향
+			}
+			if(!"".equals(memberVO.getMember_passwd())){
+				memberVO.setMember_tel(aes.encrypt(memberVO.getMember_tel())); 			// 양방향
+			}
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
 
+		int n = dao.updateMember(memberVO);
+		
+		// 복호화
+		try {
+			memberVO.setMember_email(aes.decrypt(memberVO.getMember_email())); 		// 양방향
+			memberVO.setMember_tel(aes.decrypt(memberVO.getMember_tel())); 			// 양방향
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
 
+		return n;
+	}
 
+	// 회원의 이름, 프로필 이미지 목록 조회
+	@Override
+	public List<MemberVO> getMemberListByMemberId(List<String> memberIdList) {
+		return dao.getMemberListByMemberId(memberIdList);
+	}
 
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-	
-
-
-
-
-
-	
-
-
-
-
-
-
-	
-
-	
-	
 	// === 김규빈 끝 === //
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 
 	// === 이진호 시작 === //
 	
-
 	@Override
 	public boolean createReport(ReportVO report) {
 		
@@ -736,9 +752,6 @@ public class MemberService_imple implements MemberService {
 	            return false;  // 신고 실패
 	        }
 	}
-
-
-
 
 }//end of class..
 

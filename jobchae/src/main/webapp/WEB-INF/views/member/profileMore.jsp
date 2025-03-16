@@ -218,7 +218,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script type="text/javascript">
-        const ctxPath = '${pageContext.request.contextPath}';
         const memberId = '${requestScope.memberId}'; // 조회 대상 회원 아이디
         let requestLock = false; // AJAX 요청에 대해 응답이 오기 전에 다시 요청하는 것을 차단
         let inputTimeout;        // 입력 후 일정시간이 지난 후 검색이 되도록 하는 타임아웃

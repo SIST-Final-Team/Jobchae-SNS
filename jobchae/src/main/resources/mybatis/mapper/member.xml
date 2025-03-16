@@ -16,6 +16,7 @@
 	</select>
 	
 	
+	
 	<!-- 이메일 중복체크 -->
 	<select id="emailCheck" parameterType="String" resultType="String">
 		select member_email
@@ -61,7 +62,7 @@
        		   M.FK_REGION_NO,              -- 지역 일련번호
        		   MEMBER_PASSWD,               -- 비밀번호
        		   MEMBER_NAME,                 -- 성명
-       		   MEMBER_BIRTH,                -- 생년월일
+       		   to_char(MEMBER_BIRTH, 'yyyy-mm-dd') AS MEMBER_BIRTH, -- 생년월일
        		   MEMBER_EMAIL,                -- 이메일
        		   MEMBER_TEL,                  -- 전화번호
        		   MEMBER_REGISTER_DATE,        -- 가입일자 ,기본은 SYSDATE
@@ -71,7 +72,8 @@
        		   MEMBER_PROFILE,              -- 프로필 사진
        		   MEMBER_BACKGROUND_IMG,       -- 프로필 배경 사진
        		   MEMBER_HIRE_STATUS,          -- 고용상태 , 이직/구직중 : 1, 채용중 : 2, 프리랜서 활동중 : 3
-			   member_career_company        -- 회사명
+			   region_name,                 -- 지역명
+			   member_career_company,       -- 회사명
        		   school_name                  -- 학교명
 	   FROM TBL_MEMBER M
 	   LEFT JOIN (SELECT TRUNC(MONTHS_BETWEEN(SYSDATE, MAX(LOGIN_DATE))) AS lastlogingap, fk_member_id
@@ -124,16 +126,16 @@
 	
 
 	<!-- 비밀번호 중복 확인  -->
-	<select id="passwdExist" parameterType="String" resultType="String">
+	<select id="passwdExist" parameterType="HashMap" resultType="String">
 		SELECT member_passwd
 		FROM tbl_member
-		WHERE member_passwd = #{new_member_passwd}
+		WHERE member_id = #{member_id} and member_passwd = #{new_member_passwd}
 	</select>
 	
 	
 	<!-- 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경 하고 비밀번호 변경날짜 갱신 -->
 	<update id="passwdUpdate" parameterType="HashMap">
-		UPDATE tbl_member SET member_passwd = #{new_member_passwd} AND member_passwdupdate_date = SYSDATE 
+		UPDATE tbl_member SET member_passwd = #{new_member_passwd}, member_passwdupdate_date = SYSDATE 
 		WHERE member_id = #{member_id}
 	</update>
 	
@@ -203,9 +205,9 @@
 			, member_is_company , member_profile, member_background_img, member_hire_status
 			, r.region_name, mc.member_career_company, s.school_name
 		from tbl_member m
-		join tbl_member_setting ms
+		left join tbl_member_setting ms
 		on m.member_id = ms.fk_member_id
-		join tbl_region r
+		left join tbl_region r
 		on m.fk_region_no = r.region_no
 		LEFT JOIN (SELECT member_career_company, fk_member_id
 					FROM TBL_MEMBER_CAREER
@@ -466,18 +468,78 @@
 		where member_skill_no = #{member_skill_no} and fk_member_id = #{fk_member_id}
 	</delete>
 	<!-- === 회원 보유기술 끝 === -->
-	
-	
-	<!-- === 김규빈 끝 === -->
-	
-	
-	
-	
-	<!-- === 이진호 시작 === -->
-	
-	
-	
 
+	<!-- 회원의 이름, 프로필 이미지 목록 조회 -->
+	<select id="getMemberListByMemberId" parameterType="ArrayList" resultType="MemberVO">
+		select member_id, member_birth, member_name, member_profile
+		from tbl_member m
+		where member_id in
+		<foreach collection="memberIdList" index="i" open="(" separator="," close=")">
+			'${memberIdList[i]}'
+		</foreach>
+		and member_status = 1
+		order by DECODE(member_id, 
+		<foreach collection="memberIdList" index="i" open="" separator="," close=")">
+			'${memberIdList[i]}',${i}
+		</foreach>
+	</select>
+
+	<!-- 회원 프로필 배경 수정 -->
+	<update id="updateMemberBackgroundImg" parameterType="MemberVO">
+		update tbl_member SET member_background_img = #{member_background_img}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 회원 프로필 사진 수정 -->
+	<update id="updateMemberProfile" parameterType="MemberVO">
+		update tbl_member SET member_profile = #{member_profile}
+		where member_id = #{member_id}
+	</update>
+
+	<!-- 팔로워 수 가져오기 -->
+	<select id="getFollowerCount" parameterType="String" resultType="int">
+		select count(*) AS followerCount
+		from tbl_follow
+		where following_id = #{member_id}
+	</select>
+
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE tbl_member SET member_id = member_id
+		<if test='member_passwd != ""'>
+			, member_passwd = #{member_passwd}
+			, member_passwdupdate_date = SYSDATE
+		</if>
+		<if test='member_name != ""'>
+			, member_name = #{member_name}
+		</if>
+		<if test='member_birth != ""'>
+			, member_birth = #{member_birth}
+		</if>
+		<if test='member_email != ""'>
+			, member_email = #{member_email}
+		</if>
+		<if test='member_tel != ""'>
+			, member_tel = #{member_tel}
+		</if>
+		<if test='fk_region_no != ""'>
+			, fk_region_no = #{fk_region_no}
+		</if>
+		WHERE member_id = #{member_id}
+	</update>
+
+	<!-- === 김규빈 끝 === -->
+
+	<!-- === 연규영 시작 === -->
+	<select id="getAlarmMemberInfoByMemberId" resultType="MemberVO">
+		select member_id, member_birth, member_is_company ,member_name, member_profile
+		from tbl_member where member_id = #{member_id}
+	</select>
+
+
+	<!-- === 연규영 끝 === -->
+
+	<!-- === 이진호 시작 === -->
 	<!-- 🚨 신고 기록 추가 🚨  --> 
 	<insert id="createReport" parameterType="ReportVO">
    		 insert into tbl_report (report_no, fk_member_id, fk_reported_member_id, report_type, additional_explanation)
@@ -497,24 +559,7 @@
 		update tbl_member
 		set member_status = 3
 		where member_id = #{reportedMemberId}
-	</update>
+-->
 
-
-
- -->
 	<!-- === 이진호 끝 === -->
-
-
-
-
-	<!-- === 연규영 시작 === -->
-	<select id="getAlarmMemberInfoByMemberId" resultType="MemberVO">
-		select member_id, member_birth, member_is_company ,member_name, member_profile
-		from tbl_member where member_id = #{member_id}
-	</select>
-
-
-	<!-- === 연규영 끝 === -->
-	
-	
 </mapper>

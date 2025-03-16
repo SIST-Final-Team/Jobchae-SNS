@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -131,21 +130,20 @@ public class ApiSearchController {
 		}
 		
 		// 업종 일련번호 배열
-		if(params.get("fk_industry_no") != null) {
-			String[] arr_fk_industry_no = ((String) params.get("fk_industry_no")).split("\\,");
+		if(params.get("arr_fk_industry_no") != null) {
+			String[] arr_fk_industry_no = ((String) params.get("arr_fk_industry_no")).split("\\,");
 			params.put("arr_fk_industry_no", arr_fk_industry_no);
 		}
 		
 		// 회사 규모 배열
-		if(params.get("company_size") != null) {
-			String[] arr_company_size = ((String) params.get("company_size")).split("\\,");
+		if(params.get("arr_company_size") != null) {
+			String[] arr_company_size = ((String) params.get("arr_company_size")).split("\\,");
 			params.put("arr_company_size", arr_company_size);
 		}
 		
-		// TODO : SQL에 지역 추가하기
 		// 지역 일련번호 배열
-		if(params.get("fk_region_no") != null) {
-			String[] arr_fk_region_no = ((String) params.get("fk_region_no")).split("\\,");
+		if(params.get("arr_fk_region_no") != null) {
+			String[] arr_fk_region_no = ((String) params.get("arr_fk_region_no")).split("\\,");
 			params.put("arr_fk_region_no", arr_fk_region_no);
 		}
 		
