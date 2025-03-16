@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.spring.app.config.AES256_Configuration;
 import com.spring.app.history.domain.ProfileViewVO;
 import com.spring.app.history.domain.SearchHistoryVO;
 import com.spring.app.history.service.HistoryService;
@@ -23,11 +24,17 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping(value="/history/*")
 public class ApiHistoryController {
 
+    private final AES256_Configuration AES256_Configuration;
+
     @Autowired
     HistoryService service;
 
 	@Autowired
 	MemberService memberService;
+
+    ApiHistoryController(AES256_Configuration AES256_Configuration) {
+        this.AES256_Configuration = AES256_Configuration;
+    }
 
 	@Operation(summary = "검색 기록 조회", description = "한 회원의 검색 기록 조회")
 	@GetMapping("search")
@@ -59,14 +66,20 @@ public class ApiHistoryController {
 		else {
 			List<ProfileViewVO> profileViewVOList = service.findProfileViewByMemberId(loginuser.getMember_id());
 
-			List<String> memberIdList = new ArrayList<>();
-			for(ProfileViewVO profileViewVO: profileViewVOList) {
-				memberIdList.add(profileViewVO.getProfileViewMemberId());
+			if(profileViewVOList.size() > 0) {
+
+				List<String> memberIdList = new ArrayList<>();
+				for(ProfileViewVO profileViewVO: profileViewVOList) {
+					memberIdList.add(profileViewVO.getProfileViewMemberId());
+				}
+	
+				List<MemberVO> memberList = memberService.getMemberListByMemberId(memberIdList);
+	
+				return memberList;
 			}
-
-			List<MemberVO> memberList = memberService.getMemberListByMemberId(memberIdList);
-
-			return memberList;
+			else {
+				return new ArrayList<>();
+			}
 		}
 	}
 }
