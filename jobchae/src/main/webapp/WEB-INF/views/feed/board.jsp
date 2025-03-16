@@ -914,12 +914,13 @@
 				data: {"reaction_target_no": reaction_target_no,
 					   "reaction_status" : "7"},
 				success: function(json) {
-					//console.log(json.membervo);
+					console.log(json.membervo);
 					$(".reaction-list").empty();
 					
 					json.membervo.forEach(function(member) {
 						let member_name = member.member_name;
-						var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+						let member_profile = member.member_profile
+						var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 		        		$(".reaction-list").append(html);
 					});
 		        },
@@ -974,8 +975,9 @@
 						$(".reaction-list").empty();
 						
 						json.membervo.forEach(function(member) {
-							let member_name = member.member_name; //여기
-							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+							let member_name = member.member_name; 
+							let member_profile = member.member_profile
+							var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 			        		$(".reaction-list").append(html);
 						});
 			        },

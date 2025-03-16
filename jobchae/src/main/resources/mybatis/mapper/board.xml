@@ -154,7 +154,7 @@
 	<!-- 게시물 반응별 유저 조회하기 -->
 	<select id="getReactionMembers" resultType="MemberVO" parameterType="HashMap">
 		select
-			m.member_id, m.member_name, m.member_birth
+			m.member_id, m.member_name, m.member_birth, m.member_profile
 		from tbl_reaction r
 		join tbl_member m on r.fk_member_id = m.member_id
 		<where>
