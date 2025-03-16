@@ -119,7 +119,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         <div
           class="h-full w-25 flex-none text-center opacity-50 hover:opacity-100"
         >
-          <a href="" class="text-sm"
+          <a href="${pageContext.request.contextPath}/member/personalConnection" class="text-sm"
             ><img
               src="${pageContext.request.contextPath}/images/user-group-solid.svg"
               class="h-2/5 m-auto mt-1.5"

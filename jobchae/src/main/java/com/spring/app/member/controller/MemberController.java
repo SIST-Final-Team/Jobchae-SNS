@@ -505,6 +505,36 @@ public class MemberController {
 		return mav;
 	}
 	
+	// =========================== 이진호 시작 =========================== //
+
+	@GetMapping("personalConnection")
+	public ModelAndView personalConee(ModelAndView mav) {
+	    mav.setViewName("/member/personalConnection"); // view 단 페이지
+		return mav;
+	}
+
+	@GetMapping("/personalConnection/{memberId}")
+	public ModelAndView profile(@PathVariable String memberId, ModelAndView mav) {
+		// 멤버 정보를 가져오기 위한 파라미터
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("member_id", memberId);
+
+		// 멤버 정보 가져오기
+		MemberVO memberVO = service.getMember(paraMap); 
+		
+		if (memberVO == null) {
+			mav.addObject("message", "비공개 프로필 또는 탈퇴한 회원입니다.");
+			mav.addObject("loc", "javascript:history.back()");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+
+		// 프로필 화면에 전달할 데이터
+		mav.addObject("memberVO", memberVO); // MemberVO 객체를 뷰로 전달
+
+		mav.setViewName("/member/personalConnection");
+		return mav;
+	}
 	
 }//end of class...
 

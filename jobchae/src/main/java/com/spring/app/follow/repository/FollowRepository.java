@@ -13,6 +13,11 @@ public interface FollowRepository extends JpaRepository<FollowEntity, String> {
 	    List<FollowEntity> findByFollowerId(String followerId);  // 팔로잉 목록 조회
 	    
 	    void deleteByFollowerIdAndFollowingId(String followerId, String followingId);  // 팔로우 관계 삭제
-	}
+
+		FollowEntity findByFollowerIdAndFollowingId(String followerId, String followingId); // 팔로우 
+
+	
+
+}
 
 
