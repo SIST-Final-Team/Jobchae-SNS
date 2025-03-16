@@ -126,6 +126,33 @@ public interface MemberService {
 	int addMemberSkill(MemberSkillVO memberSkillVO);
 	int deleteMemberSkill(Map<String, String> paraMap);
 
+	/**
+	 * 회원 프로필 배경 수정
+	 * @param memberVO
+	 * @return
+	 */
+    int updateMemberBackgroundImg(MemberVO memberVO);
+
+	/**
+	 * 회원 프로필 사진 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMemberProfile(MemberVO memberVO);
+
+	/**
+	 * 한 회원의 팔로워 수 가져오는 메소드
+	 * @param member_id
+	 * @return
+	 */
+	int getFollowerCount(String member_id);
+
+	/**
+	 * 회원 정보 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMember(MemberVO memberVO);
 	
 
 	

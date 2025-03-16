@@ -45,7 +45,7 @@ public interface MemberDAO {
 	int memberReactivation(String member_id);
 	
 	// 비밀번호 중복 확인
-	String passwdExist(String new_member_passwd);
+	String passwdExist(Map<String, String> paraMap);
 	
 	// 비밀번호가 일치하지 않는 새 비밀번호인 경우 비밀번호 변경
 	int passwdUpdate(Map<String, String> paraMap);
@@ -153,7 +153,33 @@ public interface MemberDAO {
 	int insertMemberSkill(MemberSkillVO memberSkillVO) throws DataAccessException;
 	int deleteMemberSkill(Map<String, String> paraMap);
 
-	
+	/**
+	 * 회원 프로필 배경 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMemberBackgroundImg(MemberVO memberVO);
+
+	/**
+	 * 회원 프로필 사진 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMemberProfile(MemberVO memberVO);
+
+	/**
+	 * 한 회원의 팔로워 수 가져오는 메소드
+	 * @param member_id
+	 * @return
+	 */
+	int getFollowerCount(String member_id);
+
+	/**
+	 * 회원 정보 수정
+	 * @param memberVO
+	 * @return
+	 */
+	int updateMember(MemberVO memberVO);
 
 	
 
