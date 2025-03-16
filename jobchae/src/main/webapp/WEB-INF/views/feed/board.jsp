@@ -1211,7 +1211,7 @@
 
 
 		$(window).click(function(e) {
-			$comment.find('#comment-edit-input').hide();  
+			//$comment.find('#comment-edit-input').hide();  
         });
 
 		$(".comment-edit-button").click(function() { 
