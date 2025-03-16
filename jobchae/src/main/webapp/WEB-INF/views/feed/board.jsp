@@ -1729,10 +1729,10 @@
 		<div class="left-side col-span-3 hidden md:block h-full relative">
 		    <div class="border-normal sticky top-20">
 		        
-		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/images/쉐보레전면.jpg'); background-size: cover; background-position: center;"></div>
+		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/resources/files/profile/${membervo.member_profile}'); background-size: cover; background-position: center;"></div>
 		        
 		        <div class="flex flex-col items-center p-4 -mt-10">
-		            <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
+		            <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
 		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
 		            <p class="text-gray-500 text-sm">팔로워 0명</p>
 		        </div>
@@ -1752,7 +1752,7 @@
                     <!-- 멤버 프로필 -->                                                              
                     <div class="board-member-profile">
                         <div>
-                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" style="border-radius: 50%;" /></a>
+                            <a href="#"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
                         </div>
                         <div class="flex-1">
                         	<!-- 글 작성 -->
@@ -1816,7 +1816,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" style="border-radius: 50%;" /></a>
+	                            <a href="#"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -2026,7 +2026,7 @@
 	                            	<input type="hidden" name="" value="dd"/>
 	                                <button type="button" class="button-board-action button-board-action-reaction" value="${boardvo.board_no}">
 	                                	<div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-		                                    <i class="fa-regular fa-thumbs-up"></i>
+		                                    <!-- <i class="fa-regular fa-thumbs-up"></i> -->
 		                                    <c:set var="matched" value="false" />
 		                                    
 		                                    <!-- 반응 있을 때 -->
@@ -2200,7 +2200,7 @@
 		                    <div class="comment-profile">
 	                    		<input type="hidden" value="${boardvo.board_no}" />
 	                    		
-		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
+		                    	<div class="profile-image"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진" /></div>
 		                    	<div class="comment-input" >
 		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
 							        <input type="text" placeholder="댓글 남기기" id="commentInput">
@@ -2233,7 +2233,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진">
+									                <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진">
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2293,7 +2293,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진">
+											                        <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진">
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">
@@ -2380,7 +2380,7 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                            <img class="modal-profile" src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}">	<!-- DB에서 가져오기 -->
                         </div>
                         <div class="modal-name">
                             <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
@@ -2454,7 +2454,7 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info2">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	
+                            <img class="modal-profile" src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}">	
                         </div>
                         <div class="modal-name">
                             <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
@@ -2697,7 +2697,7 @@
                     <img src="<%= ctxPath%>/images/7.png"/>
                 </div>
                 <div class="px-4">
-                    <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
+                    <p class="font-bold">${membervo.member_name}님, Tridge의 관련 채용공고를 살펴보세요.</p>
                     <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
                 </div>
                 <div class="px-4">
