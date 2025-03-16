@@ -47,6 +47,7 @@ public class ApiBoardController {
     @Autowired
     private BoardService boardService;
 
+
 	@Autowired
 	private AlarmService alarmService;
 
@@ -365,10 +366,13 @@ public class ApiBoardController {
 
 		AlarmData alarmData = new AlarmData();
 		alarmData.setBoardId(fk_board_no);
+		//알림에 들어갈 게시글 내용
 		BoardVO board = boardDAO.findOneBoardByBoardNo(fk_board_no);
 		alarmData.setBoardContent(board.getBoard_content());
+		//알림에 들어갈 댓글 내용
+		alarmData.setCommentContent(comment_content);
 
-		alarmService.insertAlarm((MemberVO)session.getAttribute("loginuser"), fk_member_id, AlarmVO.NotificationType.COMMENT, alarmData);
+		alarmService.insertAlarm((MemberVO)session.getAttribute("loginuser"), board.getFk_member_id(), AlarmVO.NotificationType.COMMENT, alarmData);
 
 		//알림 삽입 끝
 		Map<String, Integer> map = new HashMap<>();

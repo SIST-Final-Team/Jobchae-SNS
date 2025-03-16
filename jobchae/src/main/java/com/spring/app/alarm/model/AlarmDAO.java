@@ -11,4 +11,6 @@ import java.util.List;
 
 public interface AlarmDAO extends MongoRepository<AlarmVO, String>{
 	Slice<AlarmVO> findByMemberIdOrderByNotificationRegisterDateDesc(String memberId, Pageable pageAble);
+
+	int countByMemberIdAndNotificationIsRead(String memberId, int i);
 }

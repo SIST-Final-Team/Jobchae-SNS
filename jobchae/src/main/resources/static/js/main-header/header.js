@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "#searchBoxMenuRecentPage"
   );
   const searchBoxMenuRecent = document.querySelector("#searchBoxMenuRecent");
+  const newAlarmCount = document.getElementById("newAlarmCount");
   //결과 데이터
   const data = JSON.parse(
     '[{"num":1},{"num":2},{"num":3},{"num":4},{"num":5},{"num":6},{"num":7},{"num":8},{"num":9},{"num":10},{"num":11},{"num":12},{"num":13},{"num":14},{"num":15}]'
@@ -22,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const headerProfile = document.getElementById("headerProfile");
   const headerProfileIcon = document.getElementById("headerProfileIcon");
+
 
 
   //프로필 아이콘 클릭시

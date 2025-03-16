@@ -154,13 +154,16 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
         </div>
         <!-- 알림 -->
         <div
-          class="h-full w-25 flex-none text-center opacity-50 hover:opacity-100"
+          class="h-full w-25 flex-none text-center opacity-50 hover:opacity-100 relative"
         >
-          <a href="" class="text-sm">
+          <a href="${pageContext.request.contextPath}/alarm/${sessionScope.loginuser.member_id}" class="text-sm">
             <img
               src="${pageContext.request.contextPath}/images/bell-solid.svg"
               class="h-2/5 m-auto mt-1.5"
-            />알림
+            />
+            <div id="newAlarmCount" class="absolute inline-block w-5 h-5 bg-red-700 rounded-full text-white right-7 top-0">
+              1
+            </div>알림
           </a>
         </div>
         <!-- 마이페이지 -->

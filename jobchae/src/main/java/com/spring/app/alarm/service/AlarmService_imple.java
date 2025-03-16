@@ -1,5 +1,6 @@
 package com.spring.app.alarm.service;
 
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.service.create.InsertNotification;
+import com.spring.app.member.model.MemberDAO;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
@@ -26,6 +28,9 @@ import com.spring.app.member.domain.MemberVO;
 public class AlarmService_imple implements AlarmService{
 
 	@Autowired
+	MemberDAO memberDAO;
+
+	@Autowired
 	AlarmDAO alarmDAO;
 	@Autowired
 	Validator validator;
@@ -40,7 +45,7 @@ public class AlarmService_imple implements AlarmService{
 		this.insertNotificationMap = sender.stream().collect(Collectors.toMap(InsertNotification::NotificationType, Function.identity()));
 	}
 	
-//	알람 삽입
+//	알람 삽입 테스트용
 	@Override
 	public AlarmVO insertAlarm2(MemberVO member, AlarmVO.NotificationType type) {
 
@@ -117,11 +122,12 @@ public class AlarmService_imple implements AlarmService{
 		boolean hasNext = alarmList.hasNext();
 		//값을 저장
 		List<AlarmVO> list = alarmList.getContent();
+		List <AlarmVO> result = updateAlarmRead(list);
 
 		//알림이 존재하면 상태를 변경
 		if(!list.isEmpty()) {
 			//알림의 상태를 확인만 한 상태로 변경
-			if(updateAlarmRead(list)){
+			if(result != null) {
 				logger.info("알림 상태 변경 성공");
 			}
 			else {
@@ -131,12 +137,17 @@ public class AlarmService_imple implements AlarmService{
 		}
 
 
-		//알림의 상태를 확인만 한 상태로 변경
-		list.forEach(alarm ->{
-			alarm.setNotificationIsRead(1);
+//		//알림의 프로필을 최신으로 변경
+		result.forEach(alarm ->{
+			MemberVO targetMember = memberDAO.getAlarmMemberInfoByMemberId(alarm.getTargetMemberId());
+			String targetMemberProfile = targetMember.getMember_profile();
+			Map<String, String> targetMemberInfo = Map.of("member_id", targetMember.getMember_id(),
+					"member_name", targetMember.getMember_name(),
+					"member_profile", targetMemberProfile);
+			alarm.setTargetMember(targetMemberInfo);
 		});
 
-		Map<String, Object> resultMap = Map.of("hasNext", hasNext, "list", list);
+		Map<String, Object> resultMap = Map.of("hasNext", hasNext, "list", result);
 		return resultMap;
 	}
 
@@ -151,21 +162,41 @@ public class AlarmService_imple implements AlarmService{
 		}
 		existAlarm.setNotificationIsRead(2);
 		AlarmVO result = alarmDAO.save(existAlarm);
+		logger.info("상태는 "+result.getNotificationIsRead() + "ID는 " + result.getNotificationNo());
 
 		return result;
 	}
 
 	//알림 읽음 처리
 	@Override
-	public boolean updateAlarmRead(List<AlarmVO> alarmList) {
+	public List<AlarmVO> updateAlarmRead(List<AlarmVO> alarmList) {
 
 		//알림의 상태를 확인만 한 상태로 변경
 		alarmList.forEach(alarm -> {
-			alarm.setNotificationIsRead(1);
+			//알림이 읽지 않은 상태라면
+			if(alarm.getNotificationIsRead() == 0) {
+				alarm.setNotificationIsRead(1);
+			}
 		});
-		List<AlarmVO> result = alarmDAO.saveAll(alarmList);
+		List<AlarmVO> result = null;
+		try {
+			result = alarmDAO.saveAll(alarmList);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("알림 상태 변경 실패");
+		}
 		//TODO 나중에 좀더 자세히 수정
-        return !result.isEmpty();
+        return result;
+	}
+
+	@Override
+	public int selectUnreadAlarmCount(MemberVO member) {
+
+		int result = alarmDAO.countByMemberIdAndNotificationIsRead(member.getMember_id(), 0);
+
+		logger.info("읽지않은 알림 개수 : " + result);
+
+		return result;
 	}
 
 }

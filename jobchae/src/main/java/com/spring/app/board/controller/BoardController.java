@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.spring.app.alarm.domain.AlarmData;
+import com.spring.app.alarm.domain.AlarmVO;
+import com.spring.app.alarm.service.AlarmService;
+import com.spring.app.follow.domain.FollowEntity;
+import com.spring.app.follow.service.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +42,13 @@ public class BoardController {
 	BoardService service;
 	
 	@Autowired  
-	private FileManager fileManager; 
+	private FileManager fileManager;
+
+	@Autowired
+	private FollowService followService;
+
+	@Autowired
+	private AlarmService alarmService;
 	
 	// 피드 조회하기
 	@GetMapping("feed")
@@ -217,6 +228,33 @@ public class BoardController {
 		}
 		
 		mav.setViewName("redirect:/board/feed");	// feed 화면으로 새로고침
+
+		//알림 전송 시작
+		//현재 로그인된 사람
+		//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = mrequest.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
+
+
+
+		//받는 사람
+
+		List<FollowEntity> followerList = new ArrayList<>();
+//		followerList.addAll(List.of("user001", "user003", "dltnstls89"));
+		followerList = followService.getFollowers(member.getMember_id());
+
+
+		//알림 데이터
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardContent(board_content);
+		List<AlarmVO> alarmList = new ArrayList<>();
+
+		followerList.stream().forEach(follow -> {
+			AlarmVO alarm = alarmService.insertAlarm(member, follow.getFollowerId(), AlarmVO.NotificationType.FOLLOWER_POST, alarmData);
+			alarmList.add(alarm);
+		});
+		//알림 전송 끝
 		return mav;
 	}
 	
