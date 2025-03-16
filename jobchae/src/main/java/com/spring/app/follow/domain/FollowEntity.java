@@ -8,12 +8,17 @@ import jakarta.persistence.*;
 @Table(name = "tbl_follow", uniqueConstraints = { @UniqueConstraint(columnNames = { "follower_id", "following_id" }) // follower_id와 following_id는 서로 유니크 관계이므로 중복 팔로우를 방지한다. 
 })
 
-
+@SequenceGenerator(
+    name = "follow_seq_generator",  // JPA에서 사용할 시퀀스 이름
+    sequenceName = "seq_follow_no", // 실제 DB 시퀀스 이름
+    allocationSize = 1              // 시퀀스 증가 단위 (1씩 증가)
+)
 public class FollowEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키 생성 전략
-	@Column(name = "follow_id")
-	private String followId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follow_seq_generator")
+    @Column(name = "follow_no")
+    private Long followNo;  // 팔로우 시퀀스
 
 	@Column(name = "follower_id", nullable = false, length = 20)
 	private String followerId; // 팔로우 하는 사람 (FK)
@@ -37,12 +42,13 @@ public class FollowEntity {
 	}
 
  // Getter, Setter
-	public String getFollowId() {
-		return followId;
+
+	public Long getFollowNo() {
+		return followNo;
 	}
 
-	public void setFollowId(String followId) {
-		this.followId = followId;
+	public void setFollowNo(Long followNo) {
+		this.followNo = followNo;
 	}
 
 	public String getFollowerId() {
@@ -71,7 +77,7 @@ public class FollowEntity {
 
 	@Override
 	public String toString() {
-		return "FollowEntity{" + "followId=" + followId + ", followerId='" + followerId + '\'' + ", followingId='"
+		return "FollowEntity{" + "followId=" + followNo + ", followerId='" + followerId + '\'' + ", followingId='"
 				+ followingId + '\'' + ", followRegisterDate=" + followRegisterDate + '}';
 	}
 }
