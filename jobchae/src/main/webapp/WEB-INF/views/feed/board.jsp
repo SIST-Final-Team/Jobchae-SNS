@@ -1753,7 +1753,7 @@
 		<div class="left-side col-span-3 hidden md:block h-full relative">
 		    <div class="border-normal sticky top-20">
 		        
-		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/resources/files/profile/${membervo.member_profile}'); background-size: cover; background-position: center;"></div>
+		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/resources/files/profile/${membervo.member_background_img}'); background-size: cover; background-position: center;"></div>
 		        
 		        <div class="flex flex-col items-center p-4 -mt-10">
 		            <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">

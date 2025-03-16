@@ -9,7 +9,6 @@
 <jsp:include page="/WEB-INF/views/member/profileTailwind.jsp" />
 
 <script type="text/javascript">
-    const ctxPath = '${pageContext.request.contextPath}';
     const memberId = '${requestScope.memberId}'; // 조회 대상 회원 아이디
     const reload = false; // 등록, 수정, 삭제 후 페이지 새로고침 여부
     const isMyProfile = ${not empty sessionScope.loginuser && sessionScope.loginuser.member_id == requestScope.memberId}; // 본인의 프로필인지 여부

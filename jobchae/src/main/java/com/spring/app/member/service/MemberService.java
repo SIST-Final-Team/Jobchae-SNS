@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.member.domain.ReportVO;
 import com.spring.app.member.domain.MemberCareerVO;
 import com.spring.app.member.domain.MemberEducationVO;
 import com.spring.app.member.domain.MemberSkillVO;
@@ -153,25 +154,21 @@ public interface MemberService {
 	 * @return
 	 */
 	int updateMember(MemberVO memberVO);
-	
 
+	/**
+	 * 회원의 이름, 프로필 이미지 목록 조회
+	 * @param memberIdList
+	 * @return
+	 */
+    List<MemberVO> getMemberListByMemberId(List<String> memberIdList);
 	
-	
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-	
-
-
 	// === 김규빈 끝 === //
 	
+
+	// === 이진호 시작 === //
 	
+	// 신고 기능 추가
+	boolean createReport(ReportVO report);
+	
+	// === 이진호 끝 === //
 }//end of interface...
