@@ -113,6 +113,12 @@ public interface BoardService {
 
 	// 답글 조회하기
 	List<CommentVO> getRelplyComments(String comment_no);
+	
+	// 댓글에 대한 답글 수 구하기
+	int getReplyCount(String comment_no);
+
+	// 부모 댓글 삭제시 자식 댓글도 삭제
+	int deleteReplyComment(Map<String, String> paraMap);
 
 
 	

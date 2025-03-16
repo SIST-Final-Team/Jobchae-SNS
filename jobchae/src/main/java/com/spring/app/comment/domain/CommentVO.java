@@ -17,9 +17,17 @@ public class CommentVO {
 	// select용
 	private String member_name;
 	private List<CommentVO> replyCommentsList;
+	private String replyCount;
 	
 	
-	
+	public String getReplyCount() {
+		return replyCount;
+	}
+
+	public void setReplyCount(String replyCount) {
+		this.replyCount = replyCount;
+	}
+
 	public String getMember_name() {
 		return member_name;
 	}

@@ -1081,7 +1081,7 @@
 			commentInputContainer.slideToggle();
 		});
 
-		// 댓글 작성 ㅇㅇ
+		// 댓글 작성
 		$(".comment-submit-button").click(function() {
 			const fk_board_no = $(this).closest('.comment-profile').find('input[type="hidden"]').first().val();
 			//alert(fk_board_no);
@@ -1094,13 +1094,12 @@
 			
 			
 			// 대댓글 관련
-			//const mentionedNameText = $('#mentionedName').text().trim();
-			//alert(mentionedNameText);
-			//const comment_no = $("input[name='hidden-comment-reply-no']").val();
-			//alert(comment_no);
+			const mentionedNameText = $('#mentionedName').text().trim();
+			const comment_no = $("input[name='hidden-comment-reply-no']").val();
+			//alert(mentionedNameText + " " + comment_no);
 			
-			//if (mentionedNameText !== "") { // 대댓글이라면
-				/*
+			if (mentionedNameText !== "") { // 대댓글이라면
+				
 				if (comment_content == "") {
 					alert("댓글 내용을 입력해주세요.");
 					$(this).closest('.comment-input-container').find('#commentInput').val('');
@@ -1127,7 +1126,7 @@
 					});
 				}
 			} else {
-				*/if (comment_content == "") {
+				if (comment_content == "") {
 					alert("댓글 내용을 입력해주세요.");
 					$(this).closest('.comment-profile').find('#commentInput').val('');
 					return;
@@ -1151,15 +1150,23 @@
 					 	}
 					});
 				}
-			//}
+			}
 		});
 		
 		// 댓글 삭제 ㅇㅇ
 		$(".comment-delete").click(function() {
-			const fk_board_no = $(this).closest('.comment').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val();  
-			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			const isChildComment = $(this).closest('.child-comment').length > 0;
+
+			// 부모 댓글이면 parent-comment 기준으로, 자식 댓글이면 child-comment 기준으로 탐색
+			const targetComment = isChildComment 
+				? $(this).closest('.child-comment')
+				: $(this).closest('.parent-comment');
+
+			const fk_board_no = targetComment.find('.hidden-board-no').val();  
+			const fk_member_id = targetComment.find('.hidden-member-id').val();  
+			const comment_no = targetComment.find('.hidden-comment-no').val(); 
+			const comment_depth = targetComment.find('.hidden-comment_depth').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no + " " + comment_depth);
 		
 			if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
 				$.ajax({
@@ -1168,7 +1175,8 @@
 					dataType: 'json',
 					data: {"fk_board_no": fk_board_no,
 						   "fk_member_id": fk_member_id,
-						   "comment_no" : comment_no},
+						   "comment_no" : comment_no,
+						   "comment_depth" : comment_depth},
 					success: function(json) {
 						if(json.n == 1) {
 							alert("댓글이 삭제되었습니다.");
@@ -1180,12 +1188,13 @@
 				 	}
 				});
 			}
+			
 		});
-
+		
 		$(".comment-edit").click(function() { 
-			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			const fk_board_no = $(this).closest('.comment').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val();  
 			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
 			
 			const originalText = $(this).closest('.comment-item').find('.comment-content-text').text(); 
@@ -1276,15 +1285,14 @@
 		});
 
     
-    	// 대댓글  
-    	$(".reply-button").click(function() {
-    		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
-    		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
-    		const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
-    		alert(board_no + " " + member_name + " " + comment_no);
+    	// 대댓글
+    	$(".reply").click(function() {
+    		const board_no = $(this).closest('.comment').find('.hidden-board-no').val(); 
+    	    const member_name = $(this).closest('.comment').find('.hidden-member_name').val(); 
+    	    const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val(); 
+    		//alert(board_no + " " + member_name + " " + comment_no);
     		
     		$("input[name='hidden-comment-reply-no']").val(comment_no);
-    		
     		$("#mentionedName").text(member_name);
     	});
     	
@@ -2202,6 +2210,7 @@
 	                    	</div>
 		                    
 		                    <!-- 댓글이 있을때만 정렬 표시 -->
+		                    <!-- 
 		                    <c:if test="${not empty boardvo.commentvoList}">
 		                    	<div class="comment-list-container">
 		                    		<div class="comment-sort">
@@ -2212,6 +2221,7 @@
 		                    		</div>
 		                    	</div>
 		                    </c:if>
+		                    -->
 		                    
 		                    <!-- 댓글이 있을때만 댓글 목록 표시 ㅇㅇ -->
 		                    <c:if test="${not empty boardvo.commentvoList}">
@@ -2250,13 +2260,14 @@
 									                        <i class="fas fa-heart"></i> 추천 · 1
 									                    </button>
 									                    <span class="action-separator"></span>
-									                    <button class="action-button reply">답장 · 댓글 1</button>
+									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
 									                    
 									                <input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
 													<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
 													<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
 													<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
+													<input type="hidden" value="${commentvo.comment_depth}" class="hidden-comment_depth">
 														    
 									                <!-- 댓글 드롭다운 -->
 									                <c:if test="${membervo.member_id == commentvo.fk_member_id}">
@@ -2312,6 +2323,12 @@
 											                            <button class="action-button reply">답장</button>
 											                        </div>
 											                        
+											                        <input type="hidden" value="${replyComment.fk_board_no}"  class="hidden-board-no">
+																	<input type="hidden" value="${replyComment.comment_no}"   class="hidden-comment-no">
+																	<input type="hidden" value="${replyComment.fk_member_id}" class="hidden-member-id">
+																	<input type="hidden" value="${replyComment.member_name}" class="hidden-member_name">
+																	<input type="hidden" value="${replyComment.comment_depth}" class="hidden-comment_depth">
+													
 											                        <c:if test="${membervo.member_id == replyComment.fk_member_id}">
 															            <div class="options-dropdown2">
 															                <ul>

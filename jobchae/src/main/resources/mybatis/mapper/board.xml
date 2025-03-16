@@ -212,10 +212,16 @@
 		where fk_board_no = #{board_no}
 	</select>
 	
-	<!-- 댓글 삭제하기 -->
+	<!-- 부모 댓글 삭제하기 (자식 댓글도 삭제됨) -->
 	<delete id="deleteComment" parameterType="HashMap">
 		delete from tbl_comment
-		where fk_board_no = #{fk_board_no} and comment_no = #{comment_no} and fk_member_id = #{fk_member_id}
+		where comment_group_no = #{comment_no}
+	</delete>
+	
+	<!-- 자식 댓글만 삭제 -->
+	<delete id="deleteReplyComment" parameterType="HashMap">
+		delete from tbl_comment
+		where fk_board_no = #{fk_board_no} and comment_no = #{comment_no} and comment_depth = 1
 	</delete>
 	
 	<!-- 댓글 수정하기 -->
@@ -316,5 +322,14 @@
 		where c.comment_parent_no = #{comment_no} and c.comment_depth = 1
 		order by c.comment_register_date desc
 	</select>
+	
+	
+	<!-- 댓글에 대한 답글 수 구하기 -->
+	<select id="getReplyCount" parameterType="String">
+		select count(*) as replyCount
+		from tbl_comment
+		where comment_parent_no = #{comment_no} and comment_depth = 1
+	</select>
+	
 	
 </mapper>

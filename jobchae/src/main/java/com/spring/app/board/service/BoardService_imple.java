@@ -262,6 +262,20 @@ public class BoardService_imple implements BoardService {
 		List<CommentVO> replyCommentsList = dao.getRelplyComments(comment_no);
 		return replyCommentsList;
 	}
+
+	// 댓글에 대한 답글 수 구하기
+	@Override
+	public int getReplyCount(String comment_no) {
+		int n = dao.getReplyCount(comment_no);
+		return n;
+	}
+
+	// 부모 댓글 삭제시 자식 댓글도 삭제
+	@Override
+	public int deleteReplyComment(Map<String, String> paraMap) {
+		int n = dao.deleteReplyComment(paraMap);
+		return n;
+	}
 	
 
 	

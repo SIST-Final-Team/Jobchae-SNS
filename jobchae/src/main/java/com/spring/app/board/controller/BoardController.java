@@ -115,9 +115,10 @@ public class BoardController {
 	        	List<CommentVO> replyCommentsList = service.getRelplyComments(commentvo.getComment_no());
 	        	commentvo.setReplyCommentsList(replyCommentsList);
 	        	
-	        	for (CommentVO reply : commentvo.getReplyCommentsList()) {
-	                System.out.println("대댓글: " + reply.getComment_content());
-	            }
+	        	// 댓글에 대한 답글 수 구하기
+	        	int replyCount = service.getReplyCount(commentvo.getComment_no());
+	        	commentvo.setReplyCount(String.valueOf(replyCount));
+	        	//System.out.println("replyCount : " + replyCount);
 	        }
 	        boardvo.setCommentvoList(commentvoList);
 		}
