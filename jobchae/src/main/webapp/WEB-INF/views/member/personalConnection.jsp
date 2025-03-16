@@ -4,6 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+
 <%
     String ctxPath = request.getContextPath();
 %>    
@@ -240,9 +241,7 @@ function removeProfileCard(button) {
 
 <body>
 
-  <header class="mb-[50px]">
-    <h1>헤더 영역</h1> <!-- 미리 만들었음 -->
-  </header>
+ 
 
     <!-- 모달 시작 -->
   <div id="default-modal" tabindex="-1" aria-hidden="true"
@@ -446,7 +445,7 @@ function removeProfileCard(button) {
             <div class="divider mx-0! my-2!"></div>
             <li>
               <a href="#"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-300">
                 <svg
                   class="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   fill="currentColor" viewBox="0 0 20 20" xmlns="w3.org/2000/svg">
@@ -458,7 +457,7 @@ function removeProfileCard(button) {
             </li>
             <li>
               <a href="#" target="_blank"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-300">
                 <svg
                   class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   fill="currentColor" viewBox="0 0 20 20" xmlns="w3.org/2000/svg">
@@ -471,7 +470,7 @@ function removeProfileCard(button) {
             </li>
             <li>
               <a href="#" target="_blank"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-300">
                 <svg
                   class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   fill="currentColor" viewBox="0 0 20 20" xmlns="w3.org/2000/svg">
@@ -487,7 +486,7 @@ function removeProfileCard(button) {
             </li>
             <li>
               <a href="#"
-                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-300">
                 <svg
                   class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   fill="currentColor" viewBox="0 0 20 20" xmlns="w3.org/2000/svg">
