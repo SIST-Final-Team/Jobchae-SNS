@@ -145,9 +145,9 @@
                     @apply text-orange-500 font-bold;
                 }
                 
-                /* 팔로우 버튼 */
-                .unfollow-button {
-                    @apply text-black;
+                /* 언팔로우 버튼 */
+                .follow-button.followed {
+                    @apply text-gray-600 font-normal;
                 }
             }
         }
@@ -271,7 +271,49 @@ let requestLock = false;
             $("#additionalFields").html(""); // 검색 옵션 초기화
             searchOptionForm.submit();
         });
+
+        // 팔로우 버튼
+        $(document).on("click", ".follow-button:not(.followed)", function() {
+            follow(this, "post");
+        });
+        // 언팔로우 버튼
+        $(document).on("click", ".follow-button.followed", function() {
+            follow(this, "delete");
+        });
     });
+
+    // 팔로우
+    // method 팔로우: "post", 언팔로우: "delete"
+    function follow(followButton, method) {
+
+        $(followButton).prop("disabled", true);
+
+        const followingId = $(followButton).data("following-id");
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/follow",
+            data: {"followerId" : "${sessionScope.loginuser.member_id}"
+                    ,"followingId" : followingId},
+            type: method,
+            dataType: "json",
+            success: function (json) {
+
+                if(method == "post") {
+                    $(followButton).addClass("followed");
+                    $(followButton).html("팔로우 중");
+                    $(followButton).prop("disabled", false);
+                }
+                if(method == "delete") {
+                    $(followButton).removeClass("followed");
+                    $(followButton).html("<i class='fa-solid fa-plus'></i> 팔로우");
+                    $(followButton).prop("disabled", false);
+                }
+            },
+            error: function (request, status, error) {
+                console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+        });
+    }
 
     // 검색 옵션 되돌리기
     function setSearchOption() {
@@ -432,6 +474,15 @@ let requestLock = false;
                                             <span id="reactionCount">\${item.reactionCount}</span>
                                         </button>`;
                         }
+                        
+                        // 팔로우 버튼
+                        let followButtonHtml = ``;
+                        if(item.isFollow == "0") {
+                            followButtonHtml = `<button type="button" class="follow-button" data-following-id="\${item.fk_member_id}"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>`;
+                        }
+                        else if (item.isFollow == "1") {
+                            followButtonHtml = `<button type="button" class="follow-button followed" data-following-id="\${item.fk_member_id}">팔로우 중</button>`;
+                        }
 
                         html += `
                             <li>
@@ -447,7 +498,7 @@ let requestLock = false;
                                         <span>\${item.board_register_date}</span>
                                     </div>
                                     <div>
-                                        <button type="button" class="follow-button"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>
+                                        \${followButtonHtml}
                                         <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
                                     </div>
                                 </div>

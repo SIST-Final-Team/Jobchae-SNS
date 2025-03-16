@@ -25,6 +25,7 @@
 		<result property="reactionCount" column="reactionCount"/>
 		<result property="embedCount" column="embedCount"/>
 		<result property="followerCount" column="followerCount"/>
+		<result property="isFollow" column="isFollow"/>
 		<result property="reactionStatusList" column="reactionStatusList"/>
 	    
 	    <collection property="fileList" ofType="FileVO">

@@ -204,9 +204,23 @@
 			, member_passwdupdate_date, member_status, member_idle
 			, member_is_company , member_profile, member_background_img, member_hire_status
 			, r.region_name, mc.member_career_company, s.school_name
+			<!-- 팔로우 여부 표시 -->
+			<if test="login_member_id != null">
+				, NVL2(f.following_id, '1', '0') as isFollow
+			</if>
 		from tbl_member m
 		left join tbl_member_setting ms
 		on m.member_id = ms.fk_member_id
+		<!-- 팔로우 여부 표시 -->
+		<if test="login_member_id != null">
+			left join
+			(
+				select following_id
+				from tbl_follow
+				where follower_id = #{login_member_id}
+			) f
+			on m.member_id = f.following_id
+		</if>
 		left join tbl_region r
 		on m.fk_region_no = r.region_no
 		LEFT JOIN (SELECT member_career_company, fk_member_id
