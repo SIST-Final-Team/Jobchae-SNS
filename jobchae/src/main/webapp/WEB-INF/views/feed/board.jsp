@@ -977,6 +977,7 @@
 						json.membervo.forEach(function(member) {
 							let member_name = member.member_name; 
 							let member_profile = member.member_profile
+							//console.log(member_profile)
 							var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 			        		$(".reaction-list").append(html);
 						});
