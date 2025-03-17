@@ -260,14 +260,23 @@ $(document).ready(function() {
             success: function (json) {
 
                 if(method == "post") {
-                    $(followButton).addClass("followed");
-                    $(followButton).html("팔로우 중");
-                    $(followButton).prop("disabled", false);
+                    $(".follow-button").each((index, elmt) => {
+                        if($(elmt).data("following-id") == followingId) {
+                            
+                            $(elmt).addClass("followed");
+                            $(elmt).html("팔로우 중");
+                            $(elmt).prop("disabled", false);
+                        }
+                    });
                 }
                 if(method == "delete") {
-                    $(followButton).removeClass("followed");
-                    $(followButton).html("<i class='fa-solid fa-plus'></i> 팔로우");
-                    $(followButton).prop("disabled", false);
+                    $(".follow-button").each((index, elmt) => {
+                        if($(elmt).data("following-id") == followingId) {
+                            $(elmt).removeClass("followed");
+                            $(elmt).html("<i class='fa-solid fa-plus'></i> 팔로우");
+                            $(elmt).prop("disabled", false);
+                        }
+                    });
                 }
             },
             error: function (request, status, error) {

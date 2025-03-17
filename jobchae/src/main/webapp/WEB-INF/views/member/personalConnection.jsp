@@ -4,6 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<jsp:include page="/WEB-INF/views/header/header.jsp" />
 
 <%
     String ctxPath = request.getContextPath();
@@ -288,7 +289,7 @@ function removeProfileCard(button) {
                 <img src="<%= ctxPath%>/resources/files/profile/스크린샷 2025-03-17 044624.png" alt="배경이미지" class="h-24! w-full object-cover" />
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <img src="<%= ctxPath%>/resources/files/profile/Urgot.png" />
                 </div>
               </div>
@@ -310,7 +311,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" alt="배경이미지" class="h-16! w-full object-cover" />
                 </div>
               </div>
@@ -331,7 +332,7 @@ function removeProfileCard(button) {
                 <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" />
                 </div>
               </div>
@@ -353,7 +354,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <img src="<%= ctxPath%>/resources/files/profile/eomjh.png" />
                 </div>
               </div>
@@ -374,7 +375,7 @@ function removeProfileCard(button) {
                 <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" />
                 </div>
               </div>
@@ -395,7 +396,7 @@ function removeProfileCard(button) {
                 <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-24! w-full object-cover" />
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <img src="<%= ctxPath%>/resources/files/profile/202503161203481125313654737599.webp" />
                 </div>
               </div>
@@ -622,7 +623,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                  <a href="http://localhost/jobchae/member/profile/codms1"><img src="<%= ctxPath%>/resources/files/profile/202503161203481125313654737599.webp" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -645,7 +646,7 @@ function removeProfileCard(button) {
                <img src="<%= ctxPath%>/resources/files/profile/KartRiderService_imple.png" alt="배경이미지" class="h-16! w-full object-cover" />
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/KartRider.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -671,7 +672,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/Squidward.png" style="border-radius: 50%;" /></a>
                 </div>
 
@@ -697,7 +698,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -723,7 +724,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -747,7 +748,7 @@ function removeProfileCard(button) {
 
               </figure>
               <div class="avatar">
-                <div class="w-18 rounded-full -mt-12 ml-4">
+                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/Urgot.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -781,8 +782,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -801,8 +802,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="http://localhost/jobchae/member/profile/user001"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -821,8 +822,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -841,8 +842,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/eomjh.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -861,8 +862,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -881,8 +882,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -901,8 +902,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>
@@ -921,8 +922,8 @@ function removeProfileCard(button) {
 
               </figure>
               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar">
-                <div class="w-[67px] rounded-full -mt-6 ml-4 m-auto">   
+              <div class="avatar relative w-full!">
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
                    <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
                 </div>
               </div>

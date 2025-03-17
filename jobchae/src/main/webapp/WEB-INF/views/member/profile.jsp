@@ -754,10 +754,10 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <div class="text-gray-500 pb-2 text-lg">
                         팔로워 <span class="follower-count"><fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" /></span>명
                     </div>
-                    <div id="update" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0!">
+                    <div id="update" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0! mb-0!">
                         <c:forEach var="item" items="${searchBoardVOList}" varStatus="status">
                         <!-- 게시물 -->
-                        <div class="min-w-100 h-120 flex flex-col">
+                        <div class="min-w-100 min-h-120 flex flex-col">
                             <!-- 멤버 프로필 -->
                             <div class="board-member-profile">
                                 <div>
@@ -777,7 +777,32 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             </div>
                             <!-- 사진 또는 동영상 등 첨부파일 -->
                             <div class="px-0 flex-grow">
-                                
+                                <c:if test="${item.fileList.size() > 0}">
+                                    <div class="file-image">
+                                    
+                                    <c:forEach var="file" items="${item.fileList}">
+                                        <c:choose>
+                                            <c:when test="${fn:endsWith(fn:toLowerCase(file.file_name), '.jpeg') 
+                                                            or fn:endsWith(fn:toLowerCase(file.file_name), '.jpg') 
+                                                            or fn:endsWith(fn:toLowerCase(file.file_name), '.png') 
+                                                            or fn:endsWith(fn:toLowerCase(file.file_name), '.webp')}">
+                                                <%-- 파일이 이미지 확장자로 끝날 때 실행되는 코드 --%>
+                                                <button type="button"><img src="${pageContext.request.contextPath}/resources/files/board/${file.file_name}"/>
+                                                    <%-- <c:if test=""> 파일 개수가 4개 이상
+                                                    <span class="flex items-center">
+                                                        <span><i class="fa-solid fa-plus"></i></span>
+                                                        <span class="text-4xl">${fileList.size()-4}</span>
+                                                    </span>
+                                                    </c:if> --%>
+                                                </button>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <%-- 파일이 이미지 확장자로 끝나지 않을 때 실행되는 코드 --%>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
+                                    </div>
+                                </c:if>
                             </div>
                             <!-- 반응 및 댓글 수(아무 반응 및 댓글이 없으면 표시하지 않음, 댓글만 있으면 댓글만 표시 등) -->
                             <div>

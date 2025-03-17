@@ -20,6 +20,7 @@
                     <li>
                         <label for="job_name" class="text-gray-500">직종 *</label><br>
                         <input type="text" name="job_name" id="job_name"
+                            autocomplete="off"
                             data-target-url="/api/member/job/search"
                             data-search-type="job_name"
                             data-result-name="fk_job_no"
@@ -47,6 +48,7 @@
                         <label for="member_career_company" class="w-14 text-gray-500">회사 또는 단체 *</label><br>
                         <div class="relative">
                             <input type="text" name="member_career_company" id="member_career_company"
+                            autocomplete="off"
                             data-target-url="/api/member/company/search"
                             data-search-type="company_name"
                             data-result-name="fk_company_no"
@@ -114,6 +116,7 @@
                     <li>
                         <label for="region_name" class="text-gray-500">지역 *</label><br>
                         <input type="text" name="region_name" id="region_name"
+                            autocomplete="off"
                             data-target-url="/api/member/region/search"
                             data-search-type="region_name"
                             data-result-name="fk_region_no"
