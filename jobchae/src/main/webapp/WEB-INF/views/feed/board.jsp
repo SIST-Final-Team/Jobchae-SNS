@@ -241,6 +241,24 @@
         nextBtn2.style.display = "none";
         
         
+        
+        // ㅇㅇ
+        $('.board-content-container').each(function() {
+            var container = $(this);
+            var content = container.find('.board-content');
+            
+            var lineHeight = parseInt(window.getComputedStyle(content[0]).lineHeight); // 한 줄의 높이 계산
+            var maxHeight = lineHeight * 5; // 5줄 높이 계산
+            var contentHeight = content[0].scrollHeight; // 콘텐츠의 실제 높이
+
+            // 5줄 이상인지 미만인지 확인하여 버튼 표시 여부 설정
+            if (contentHeight > maxHeight) {
+                container.find('.more-btn').css('display', 'block'); // 5줄 이상일 경우 버튼 보이기
+            } else {
+                container.find('.more-btn').css('display', 'none'); // 5줄 미만일 경우 버튼 숨기기
+            }
+        });
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         $("button.write-button").click(function() {
@@ -977,6 +995,7 @@
 						json.membervo.forEach(function(member) {
 							let member_name = member.member_name; 
 							let member_profile = member.member_profile
+							//console.log(member_profile)
 							var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 			        		$(".reaction-list").append(html);
 						});
@@ -1098,7 +1117,7 @@
 			// 대댓글 관련
 			const mentionedNameText = $('#mentionedName').text().trim();
 			const comment_no = $("input[name='hidden-comment-reply-no']").val();
-			alert(mentionedNameText + " " + comment_no);
+			//alert(mentionedNameText + " " + comment_no);
 			
 			if (mentionedNameText !== "") { // 대댓글이라면
 				
@@ -1193,7 +1212,7 @@
 			
 		});
 		
-		// 댓글 수정 ㅇㅇ
+		// 댓글 수정
 		$(".comment-edit").click(function() { 
 		    const $comment = $(this).closest('.comment'); 
 		
@@ -1739,12 +1758,12 @@
     }
     
  	// 긴 글 더보기 처리
-    function toggleContent() {
-        var container = document.querySelector('.board-content-container');
-        container.classList.toggle('expanded');
-        var button = document.getElementById('toggleButton');
-        button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
-    }    
+    $(document).on('click', '.more-btn', function() {
+        var button = $(this);
+        var container = button.closest('.board-content-container');
+        container.toggleClass('expanded');
+        button.text(container.hasClass('expanded') ? '접기' : '더보기');
+    });
 
 </script>
 
@@ -1760,7 +1779,7 @@
 		        <div class="flex flex-col items-center p-4 -mt-10">
 		            <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
 		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
-		            <p class="text-gray-500 text-sm">팔로워 0명</p>
+		            <p class="text-gray-500 text-sm">팔로워 ${membervo.follower_count}명</p>
 		        </div>
 		
 		    </div>
@@ -1842,7 +1861,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
+	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -1897,7 +1916,7 @@
 	                    	<div class="board-content" id="boardContent"> 
 		                        <p>${boardvo.board_content}</p>
 		                    </div>
-		                    <button id="toggleButton" class="more-btn" onclick="toggleContent()">더보기</button>
+		                    <button class="more-btn" onclick="toggleContent(this)">더보기</button>
 	                    </div>
 	             
 
@@ -2166,7 +2185,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
+									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2197,10 +2216,12 @@
 													</div>
 													
 									                <div class="actions">
+									                <!-- 
 									                    <button class="action-button like">
 									                        <i class="fas fa-heart"></i> 추천 · 1
 									                    </button>
-									                    <span class="action-separator"></span>
+									                    
+									                    <span class="action-separator"></span>--> 
 									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
 									                
@@ -2244,7 +2265,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
+											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">
@@ -2274,10 +2295,11 @@
 																		</div>
 																	</div>
 											                        <div class="actions">
+											                        <!--  
 											                            <button class="action-button like">
 											                                <i class="fas fa-heart"></i> 추천 · 1
 											                            </button>
-											                            <span class="action-separator"></span>
+											                            <span class="action-separator"></span>-->
 											                            <button class="action-button reply">답장</button>
 											                        </div>
 											                        

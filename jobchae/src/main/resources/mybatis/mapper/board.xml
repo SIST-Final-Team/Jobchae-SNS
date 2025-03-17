@@ -26,9 +26,16 @@
 	
 	<!-- 로그인된 사용자의 정보 얻어오기 -->
 	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
-		select member_id, member_name, member_birth, member_profile, member_background_img
-		from tbl_member
-		where member_id = #{login_userid}
+		SELECT m.member_id, 
+	       m.member_name, 
+	       m.member_birth, 
+	       m.member_profile, 
+	       m.member_background_img,
+	       (SELECT COUNT(*) 
+	        FROM tbl_follow f
+	        WHERE f.following_id = m.member_id) AS follower_count
+		FROM tbl_member m
+		WHERE m.member_id = #{login_userid}
 	</select>
 	
 	
@@ -40,7 +47,7 @@
        	SELECT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, 
 		       b.board_comment_allowed, b.board_register_date, b.board_parent_no, 
 		       b.board_group_no, b.board_depth, b.board_is_delete, 
-		       m.member_id, m.member_name, m.member_birth
+		       m.member_id, m.member_name, m.member_birth, m.member_profile
 		FROM tbl_board b
 		JOIN tbl_member m ON b.fk_member_id = m.member_id
 		LEFT JOIN tbl_follow f ON m.member_id = f.following_id
@@ -197,7 +204,7 @@
 	
 	<!-- 부모댓글 조회하기 -->
 	<select id="getAllComments" parameterType="String" resultType="CommentVO">
-		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
+		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name, m.member_profile
 		from tbl_comment c
 		join tbl_member m
 		on c.fk_member_id = m.member_id
@@ -315,7 +322,7 @@
 	
 	<!-- 답글 조회하기 -->
 	<select id="getRelplyComments" parameterType="String" resultType="CommentVO">
-		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name
+		select c.comment_no, c.fk_board_no, c.fk_member_id, c.comment_content, c.comment_parent_no, c.comment_group_no, c.comment_depth, c.comment_register_date, m.member_name, m.member_profile
 		from tbl_comment c
 		join tbl_member m
 		on c.fk_member_id = m.member_id

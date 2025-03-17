@@ -243,6 +243,7 @@ public class ApiBoardController {
 		    System.out.println("-------------------------------");
 		}
 		*/
+		
 	// 게시물 반응별 유저 조회하기
 		
 		Map<String, Object> map = new HashMap<>();

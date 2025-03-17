@@ -70,12 +70,20 @@ public class MemberVO {
 	private String school_name;			  // 학교명
 	private String region_name;           // 지역명
 	private String isFollow;              // 팔로우 했는지 여부
-	
+	private String follower_count;		  // 팔로우 수 구해오기 (채은이 추가함)
 	
 	
 	//////////////////////////////////////////////////////////////
 
 	
+	public String getFollower_count() {
+		return follower_count;
+	}
+
+	public void setFollower_count(String follower_count) {
+		this.follower_count = follower_count;
+	}
+
 	public String getRegion_name() {
 		return region_name;
 	}

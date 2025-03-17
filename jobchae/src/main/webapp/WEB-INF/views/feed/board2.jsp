@@ -25,7 +25,7 @@
             @apply text-[1.35rem] font-bold;
         }
         .border-normal {
-            @apply border-1 border-gray-300 rounded-lg bg-white;01
+            @apply border-1 border-gray-300 rounded-lg bg-white;
         }
         .border-search-board {
             @apply border-1 border-gray-300 rounded-lg bg-white;
@@ -200,7 +200,7 @@
         
     	$(".options-dropdown").hide();
     	$(".options-dropdown2").hide();
-    	$(".comment-input-container").hide();
+    	$(".commentDiv").hide();
 		
     	// 긴 글 더보기 처리
 		var content = document.getElementById('boardContent'); 
@@ -587,7 +587,7 @@
             }
         });
 	 	
-        // 글 수정하기 ㅇㅇ
+        // 글 수정하기 
         $("button#edit-update").click(function() {
 			const boardContent = editQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			
@@ -914,12 +914,13 @@
 				data: {"reaction_target_no": reaction_target_no,
 					   "reaction_status" : "7"},
 				success: function(json) {
-					//console.log(json.membervo);
+					console.log(json.membervo);
 					$(".reaction-list").empty();
 					
 					json.membervo.forEach(function(member) {
 						let member_name = member.member_name;
-						var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+						let member_profile = member.member_profile
+						var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 		        		$(".reaction-list").append(html);
 					});
 		        },
@@ -974,8 +975,10 @@
 						$(".reaction-list").empty();
 						
 						json.membervo.forEach(function(member) {
-							let member_name = member.member_name; //여기
-							var html = "<div class='reaction-item'><img src='profile1.jpg' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
+							let member_name = member.member_name; 
+							let member_profile = member.member_profile
+							//console.log(member_profile)
+							var html = "<div class='reaction-item'><img src='<%= ctxPath%>/resources/files/profile/" + member_profile + "' alt='Profile Image' class='avatar'><div class='user-info'><p class='user-name'>" + member_name + "</p></div></div>";
 			        		$(".reaction-list").append(html);
 						});
 			        },
@@ -1031,14 +1034,8 @@
 			}
 		});
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 게시글 시간
+		// 게시글, 댓글 시간
 		$(".time").each(function () {
-	        const timeString = $(this).attr("data-time");
-	        $(this).text(timeAgo(timeString));
-	    });
-
-		// 댓글 시간
-		$(".comment-date").each(function () {
 	        const timeString = $(this).attr("data-time");
 	        $(this).text(timeAgo(timeString));
 	    });
@@ -1058,41 +1055,54 @@
 		
 		
 		///////////////////////////////////////////////////////////////////////////////////////// 
-		// 댓글 
+		// 댓글
 		$(".comment-options").click(function(event) {
-			event.stopPropagation();
-			let dropdown = $(this).closest(".comment-item").find(".options-dropdown2");
-			$(".options-dropdown2").not(dropdown).hide(); 
-	        dropdown.toggle(); 
+		    event.stopPropagation();  
+		
+		    let isParent = $(this).closest(".comment").hasClass("parent-comment"); // 부모댓글인지 자식댓글인지 구분하기 위함!
+		
+		    if (isParent) {
+		        let dropdown = $(this).closest(".parent-comment").find("> .content > .options-dropdown2");  
+		        $(".options-dropdown2").not(dropdown).hide(); 
+		        dropdown.toggle(); 
+		    } else {
+		        let dropdown = $(this).closest(".child-comment").find("> .content > .options-dropdown2"); 
+		        $(".options-dropdown2").not(dropdown).hide(); 
+		        dropdown.toggle();
+		    }
 		});
+
 		
 		$(document).click(function () {
 	        $(".options-dropdown2").hide();
 	    });
 		
+		// 댓글창 토글
 		$(".button-board-action-comment").click(function() { 
-			var commentInputContainer = $(this).closest('div').next('.comment-input-container');
+			var commentInputContainer = $(this).closest('div').next('.commentDiv');
 			//console.log(commentInputContainer);
 			commentInputContainer.slideToggle();
 		});
 
-
+		// 댓글 작성
 		$(".comment-submit-button").click(function() {
-			const fk_board_no = $(this).closest('.comment-input-container').find('input[type="hidden"]').first().val();  
-			//alert("클릭" + fk_board_no);
 			
+			const $commentContainer = $(this).closest('.comment');
+			
+			
+			const fk_board_no = $(this).closest('.comment-profile').find('input[type="hidden"]').first().val();
 			const fk_member_id = document.getElementById("loginuserID").value;
+			const comment_content = $(this).closest('.comment-profile').find('#commentInput').val().trim(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_content);
 			
-			const comment_content = $(this).closest('.comment-input-container').find('#commentInput').val().trim(); 
-			//alert(comment_content);
 			
+			// 대댓글 관련
 			const mentionedNameText = $('#mentionedName').text().trim();
-			//alert(mentionedNameText);
-			
 			const comment_no = $("input[name='hidden-comment-reply-no']").val();
-			//alert(comment_no);
+			//alert(mentionedNameText + " " + comment_no);
 			
 			if (mentionedNameText !== "") { // 대댓글이라면
+				
 				if (comment_content == "") {
 					alert("댓글 내용을 입력해주세요.");
 					$(this).closest('.comment-input-container').find('#commentInput').val('');
@@ -1121,7 +1131,7 @@
 			} else {
 				if (comment_content == "") {
 					alert("댓글 내용을 입력해주세요.");
-					$(this).closest('.comment-input-container').find('#commentInput').val('');
+					$(this).closest('.comment-profile').find('#commentInput').val('');
 					return;
 				} else {
 					$.ajax({
@@ -1133,7 +1143,7 @@
 							   "comment_content" : comment_content},
 						success: function(json) {
 							if(json.n == 1) {
-								$(this).closest('.comment-input-container').find('#commentInput').val('');
+								$(this).closest('.comment-profile').find('#commentInput').val('');
 								alert("댓글이 등록되었습니다.");
 								location.reload();
 							}
@@ -1148,10 +1158,18 @@
 		
 		// 댓글 삭제
 		$(".comment-delete").click(function() {
-			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val();  
-			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+			const isChildComment = $(this).closest('.child-comment').length > 0;
+
+			// 부모 댓글이면 parent-comment 기준으로, 자식 댓글이면 child-comment 기준으로 탐색
+			const targetComment = isChildComment 
+				? $(this).closest('.child-comment')
+				: $(this).closest('.parent-comment');
+
+			const fk_board_no = targetComment.find('.hidden-board-no').val();  
+			const fk_member_id = targetComment.find('.hidden-member-id').val();  
+			const comment_no = targetComment.find('.hidden-comment-no').val(); 
+			const comment_depth = targetComment.find('.hidden-comment_depth').val(); 
+			//alert(fk_board_no + " " + fk_member_id + " " + comment_no + " " + comment_depth);
 		
 			if (confirm("정말로 댓글을 삭제하시겠습니까?")) {
 				$.ajax({
@@ -1160,7 +1178,8 @@
 					dataType: 'json',
 					data: {"fk_board_no": fk_board_no,
 						   "fk_member_id": fk_member_id,
-						   "comment_no" : comment_no},
+						   "comment_no" : comment_no,
+						   "comment_depth" : comment_depth},
 					success: function(json) {
 						if(json.n == 1) {
 							alert("댓글이 삭제되었습니다.");
@@ -1172,29 +1191,37 @@
 				 	}
 				});
 			}
+			
+		});
+		
+		// 댓글 수정 ㅇㅇ
+		$(".comment-edit").click(function() { 
+		    const $comment = $(this).closest('.comment'); 
+		
+		    const fk_board_no = $comment.find('.hidden-board-no').val();  
+		    const fk_member_id = $comment.find('.hidden-member-id').val();  
+		    const comment_no = $comment.find('.hidden-comment-no').val();  
+		    //alert(fk_board_no + " " + fk_member_id + " " + comment_no);
+		    
+		    const originalText = $comment.find('.comment-content-text').text(); 
+		    const editText = $comment.find('#edit-input').val();
+		    
+		    $comment.find('.comment-content-text').hide();  
+		    $comment.find('#comment-edit-input').show();  
 		});
 
-		$(".comment-edit").click(function() { 
-			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
-			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
-			
-			const originalText = $(this).closest('.comment-item').find('.comment-content-text').text(); 
-			const editText = $(this).closest('.comment-item').find('#edit-input').val();
-		    //alert(originalText + " " + editText);
-		    
-		    $(this).closest('.comment-item').find('.comment-content-text').hide();
-		    $(this).closest('.comment-item').find('#comment-edit-input').show();
-		});
+
+		$(window).click(function(e) {
+			//$comment.find('#comment-edit-input').hide();  
+        });
 
 		$(".comment-edit-button").click(function() { 
-			const comment_content = $(this).closest('.comment-item').find('#edit-input').val();
+			const comment_content = $(this).closest('.comment').find('#edit-input').val();
 			//alert(comment_content);
 			
-			const fk_board_no = $(this).closest('.comment-input-container').find('.hidden-board-no').val();  
-			const fk_member_id = $(this).closest('.comment-input-container').find('.hidden-member-id').val();  
-			const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
+			const fk_board_no = $(this).closest('.comment').find('.hidden-board-no').val();  
+			const fk_member_id = $(this).closest('.comment').find('.hidden-member-id').val();  
+			const comment_no = $(this).closest('.comment').find('.hidden-comment-no').val(); 
 			//alert(fk_board_no + " " + fk_member_id + " " + comment_no);
 			
 			$.ajax({
@@ -1268,18 +1295,34 @@
 		});
 
     
-    	// 대댓글 
-    	$(".reply-button").click(function() {
-    		const board_no = $(this).closest('.comment-item').find('.hidden-board-no').val(); 
-    		const member_name = $(this).closest('.comment-item').find('.hidden-member_name').val(); 
-    		const comment_no = $(this).closest('.comment-item').find('.hidden-comment-no').val(); 
-    		alert(board_no + " " + member_name + " " + comment_no);
-    		
-    		$("input[name='hidden-comment-reply-no']").val(comment_no);
-    		
-    		$("#mentionedName").text(member_name);
-    	});
+    	// 대댓글
+		$(".reply").click(function() {
+		    const $commentContainer = $(this).closest('.comment'); 
+		
+		    const board_no = $commentContainer.find('.hidden-board-no').val(); 
+		    const member_name = $commentContainer.find('.hidden-member_name').val(); 
+		    
+		    
+		    // 부모 댓글인지 자식 댓글인지 구분
+		    if ($commentContainer.hasClass('parent-comment')) {
+		    	const comment_no = $commentContainer.find('.hidden-comment-no').val(); 
+			    $("input[name='hidden-comment-reply-no']").val(comment_no);
+			    $("#mentionedName").text(member_name);
+		    } else if ($commentContainer.hasClass('child-comment')) {
+		        const comment_no = $commentContainer.find('.hidden-parent_comment_no').val(); 
+			    $("input[name='hidden-comment-reply-no']").val(comment_no);
+			    $("#mentionedName").text(member_name);
+		    }
+		    
+		});
+
     	
+    	// 멘션 후 backspace 누르면 멘션 지워지도록
+    	$("#commentInput").keydown(function(e) {
+    		if (e.key === "Backspace" && $(this).val() === "") {
+    			$("#mentionedName").text("");
+    		}
+    	});
     	
     	// 이미지, 비디오 크게보기
     	$(".file-preview-button").click(function() {
@@ -1530,7 +1573,7 @@
     }
     
     
- 	// 이미지 미리보기(수정)  ㅇㅇ
+ 	// 이미지 미리보기(수정) 
     function previewImage2(event) {
     	
         const files = event.target.files;
@@ -1713,12 +1756,12 @@
 		<div class="left-side col-span-3 hidden md:block h-full relative">
 		    <div class="border-normal sticky top-20">
 		        
-		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/images/쉐보레전면.jpg'); background-size: cover; background-position: center;"></div>
+		        <div class="h-20 relative" style="background-image: url('<%= ctxPath%>/resources/files/profile/${membervo.member_background_img}'); background-size: cover; background-position: center;"></div>
 		        
 		        <div class="flex flex-col items-center p-4 -mt-10">
-		            <img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
+		            <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
 		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
-		            <p class="text-gray-500 text-sm">팔로워 0명</p>
+		            <p class="text-gray-500 text-sm">팔로워 ${membervo.follower_count}명</p>
 		        </div>
 		
 		    </div>
@@ -1736,7 +1779,7 @@
                     <!-- 멤버 프로필 -->                                                              
                     <div class="board-member-profile">
                         <div>
-                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" style="border-radius: 50%;" /></a>
+                            <a href="#"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
                         </div>
                         <div class="flex-1">
                         	<!-- 글 작성 -->
@@ -1800,7 +1843,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="#"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" style="border-radius: 50%;" /></a>
+	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -2010,7 +2053,7 @@
 	                            	<input type="hidden" name="" value="dd"/>
 	                                <button type="button" class="button-board-action button-board-action-reaction" value="${boardvo.board_no}">
 	                                	<div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-		                                    <i class="fa-regular fa-thumbs-up"></i>
+		                                    <!-- <i class="fa-regular fa-thumbs-up"></i> -->
 		                                    <c:set var="matched" value="false" />
 		                                    
 		                                    <!-- 반응 있을 때 -->
@@ -2086,11 +2129,12 @@
 	                        </ul>
 	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    
-	                    <div class="comment-input-container" id="commentInputContainer">
-	                    	<div class="comment-profile">
+	
+	                    <div class="commentDiv">
+		                    <div class="comment-profile">
 	                    		<input type="hidden" value="${boardvo.board_no}" />
 	                    		
-		                    	<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진" /></div>
+		                    	<div class="profile-image"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진" /></div>
 		                    	<div class="comment-input" >
 		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
 							        <input type="text" placeholder="댓글 남기기" id="commentInput">
@@ -2098,37 +2142,53 @@
 						            <input type="hidden" name="hidden-comment-reply-no" value="" />
 							    </div>	
 	                    	</div>
-	                    	
-	                    	
-	                    	<div class="comment-list-container">
-	                    		<div class="comment-sort">
-	                    			<select id="sortOption">
-						                <option value="recent">최신순</option>
-						                <option value="relevant">관련순</option>
-						            </select>
-	                    		</div>
-	                    	</div>
-	                    	
-	                    	<ul class="comment-list"> 
-	                    		<c:if test="${not empty commentvoList}">
-		                    		<c:forEach var="commentvo" items="${commentvoList}">  
-		                    			<c:if test="${boardvo.board_no == commentvo.fk_board_no}">
-			                    			<li class="comment-item">
-												<div class="profile-image"><img src="<%= ctxPath%>/images/쉐보레전면.jpg" alt="프로필 사진"></div>
-												<div class="comment-content">
-													<div class="comment-info">
-														<input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
-														<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
-														<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
-														<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
-														
-														<span class="comment-author">${commentvo.member_name}</span>
-														<!--<span class="comment-relationship">팔로워 0명</span>-->
-														<span class="comment-date" data-time="${commentvo.comment_register_date}">5일</span> 
-														<button class="comment-options">...</button>
-													</div>
-													<div class="comment-text">
-													
+		                    
+		                    <!-- 댓글이 있을때만 정렬 표시 -->
+		                    <!-- 
+		                    <c:if test="${not empty boardvo.commentvoList}">
+		                    	<div class="comment-list-container">
+		                    		<div class="comment-sort">
+		                    			<select id="sortOption">
+							                <option value="recent">최신순</option>
+							                <option value="relevant">관련순</option>
+							            </select>
+		                    		</div>
+		                    	</div>
+		                    </c:if>
+		                    -->
+		                    
+		                    <!-- 댓글이 있을때만 댓글 목록 표시 ㅇㅇ -->
+		                    <c:if test="${not empty boardvo.commentvoList}">
+			                    <div class="comment-container">
+									
+									
+									<c:forEach var="commentvo" items="${boardvo.commentvoList}"> 
+									
+											<div class="comment parent-comment"> <!-- 부모 댓글 -->
+											
+									            <div class="profile">
+									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
+									            </div>
+									            <div class="content">
+									                <div class="header">
+									                    <div class="user-info">
+									                        <span class="username">${commentvo.member_name}</span>
+									                        <c:if test="${boardvo.fk_member_id == commentvo.fk_member_id}">
+										                        <span class="author-badge">글쓴이</span>
+									                        </c:if>
+									                        <span class="time" data-time="${commentvo.comment_register_date}"></span>
+									                        
+									                    </div>
+									                    <div class="more-button">
+									                        <button class="comment-options">...</button>
+									                    </div>
+									                </div>
+									                <!-- 
+									                <div class="user-title">
+									                    Maxwell Leadership Certified Team Member - Speaker, Trainer, and Co...
+									                </div>
+									                -->
+									                <div class="comment-text">
 														<span class="comment-content-text">${commentvo.comment_content}</span>
 														
 														<div class="comment-input" id="comment-edit-input" style="display:none;" >
@@ -2137,43 +2197,136 @@
 														</div>
 													</div>
 													
-													<div class="comment-actions">
-														<button class="like-button">추천</button>
-									                    <span>|</span>
-									                    <button class="reply-button">답장</button> 
+									                <div class="actions">
+									                    <button class="action-button like">
+									                        <i class="fas fa-heart"></i> 추천 · 1
+									                    </button>
+									                    <span class="action-separator"></span>
+									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
 									                
+									                <!-- ㅇㅇ 
+									                <div class="comment-text">
+														<span class="comment-content-text">${commentvo.comment_content}</span>
+														
+														<div class="comment-input" id="comment-edit-input" style="display:none;" >
+															<input type="text" id="edit-input" value="${commentvo.comment_content}" style="width: 100%; "/>
+															<button class="comment-edit-button">수정</button>
+														</div>
+													</div>-->
+													    
+									                <input type="hidden" value="${commentvo.fk_board_no}"  class="hidden-board-no">
+													<input type="hidden" value="${commentvo.comment_no}"   class="hidden-comment-no">
+													<input type="hidden" value="${commentvo.fk_member_id}" class="hidden-member-id">
+													<input type="hidden" value="${commentvo.member_name}" class="hidden-member_name">
+													<input type="hidden" value="${commentvo.comment_depth}" class="hidden-comment_depth">
+														    
+									                <!-- 댓글 드롭다운 -->
+									                <c:if test="${membervo.member_id == commentvo.fk_member_id}">
+											            <div class="options-dropdown2">
+											                <ul>
+												                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+												                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
+											                </ul>
+										            	</div> 
+													</c:if>
+													<c:if test="${membervo.member_id != commentvo.fk_member_id}">
+											            <div class="options-dropdown2">
+											                <ul>
+												                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
+											                </ul>
+										            	</div> 
+													</c:if>
 									                
-												</div>     
-												
-												<!-- 옵션 드롭다운 메뉴 -->
-												<c:if test="${membervo.member_id == commentvo.fk_member_id}">
-										            <div class="options-dropdown2">
-										                <ul>
-											                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
-											                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
-										                </ul>
-									            	</div> 
-												</c:if>
-												<c:if test="${membervo.member_id != commentvo.fk_member_id}">
-										            <div class="options-dropdown2">
-										                <ul>
-											                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
-										                </ul>
-									            	</div> 
-												</c:if>
-												<!-- div.options-dropdown 끝 -->
-				                    		</li>
-				                    		
-			                    		</c:if>
-		                    		</c:forEach>
-	                    		</c:if>
-	                    	</ul>
-	                    	
-	                    	
-	                    	
-	                    </div> <!-- div.comment-input-container 끝 -->
-
+									                <!-- 답글 -->
+									                <c:if test="${not empty commentvo.replyCommentsList}">
+									                
+									                	<c:forEach var="replyComment" items="${commentvo.replyCommentsList}"> 
+									                	
+									                		<div class="comment child-comment"> 
+											                    <div class="profile">
+											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
+											                    </div>
+											                    <div class="content">
+											                        <div class="header">
+											                            <div class="user-info">
+											                                <span class="username">${replyComment.member_name}</span>
+											                                <!-- <a href="#" class="linkedin-icon"><i class="fab fa-linkedin-in"></i></a>-->
+											                                <c:if test="${boardvo.fk_member_id == replyComment.fk_member_id}">
+														                        <span class="author-badge">글쓴이</span>
+													                        </c:if>
+											                                <span class="time" data-time="${replyComment.comment_register_date}"></span>
+											                            </div>
+											                            <div class="more-button">
+											                                <button class="comment-options" style="">...</button>
+											                            </div>
+											                        </div>
+											                        <!-- 
+											                        <div class="user-title">
+											                            Founder & CEO, WisdomQuant | Building AI-first careers throug...
+											                        </div>
+											                        -->
+											                        <div class="comment-text">
+																		<span class="comment-content-text">${replyComment.comment_content}</span>
+																		
+																		<div class="comment-input" id="comment-edit-input" style="display:none;" >
+																			<input type="text" id="edit-input" value="${replyComment.comment_content}" style="width: 100%; "/>
+																			<button class="comment-edit-button">수정</button>
+																		</div>
+																	</div>
+											                        <div class="actions">
+											                            <button class="action-button like">
+											                                <i class="fas fa-heart"></i> 추천 · 1
+											                            </button>
+											                            <span class="action-separator"></span>
+											                            <button class="action-button reply">답장</button>
+											                        </div>
+											                        
+											                        <input type="hidden" value="${replyComment.fk_board_no}"  class="hidden-board-no">
+																	<input type="hidden" value="${replyComment.comment_no}"   class="hidden-comment-no">
+																	<input type="hidden" value="${replyComment.fk_member_id}" class="hidden-member-id">
+																	<input type="hidden" value="${replyComment.member_name}" class="hidden-member_name">
+																	<input type="hidden" value="${replyComment.comment_depth}" class="hidden-comment_depth">
+																	<input type="hidden" value="${commentvo.comment_no}" class="hidden-parent_comment_no">
+													
+											                        <c:if test="${membervo.member_id == replyComment.fk_member_id}">
+															            <div class="options-dropdown2">
+															                <ul>
+																                <li class="comment-delete" value="${boardvo.board_no}">댓글 삭제</li>
+																                <li class="comment-edit" value="${boardvo.board_no}">댓글 수정</li>
+															                </ul>
+														            	</div> 
+																	</c:if>
+																	<c:if test="${membervo.member_id != replyComment.fk_member_id}">
+															            <div class="options-dropdown2">
+															                <ul>
+																                <li class="delete-post2" value="${boardvo.board_no}">댓글 신고</li>
+															                </ul>
+														            	</div> 
+																	</c:if>
+											                    </div>
+											                </div> <!-- div.comment child-comment 끝 -->
+									                	
+									                	</c:forEach>
+									                </c:if>
+									                
+								                </div> <!-- div.content 끝 -->
+									        </div> <!-- div.comment parent-comment 끝 -->
+									        
+									        
+									        
+									        
+									</c:forEach>
+						        </div> <!-- div.comment-container 끝 -->
+		                    </c:if>
+	                    </div>
+						
+						
+						
+						
+						
+						
+						
                     </div>
                	</c:forEach>
            	</div> <!-- div#update 끝 -->
@@ -2187,7 +2340,7 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	<!-- DB에서 가져오기 -->
+                            <img class="modal-profile" src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}">	<!-- DB에서 가져오기 -->
                         </div>
                         <div class="modal-name">
                             <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
@@ -2261,7 +2414,7 @@
                 <div class="content-top">
                     <button type="button" class="modal-profile-info" id="modal-profile-info2">
                         <div class="modal-profile-img">
-                            <img class="modal-profile" src="<%= ctxPath%>/images/쉐보레전면.jpg">	
+                            <img class="modal-profile" src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}">	
                         </div>
                         <div class="modal-name">
                             <h3 class="modal-profile-name">${membervo.member_name}</h3> 	
@@ -2504,7 +2657,7 @@
                     <img src="<%= ctxPath%>/images/7.png"/>
                 </div>
                 <div class="px-4">
-                    <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
+                    <p class="font-bold">${membervo.member_name}님, Tridge의 관련 채용공고를 살펴보세요.</p>
                     <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
                 </div>
                 <div class="px-4">
