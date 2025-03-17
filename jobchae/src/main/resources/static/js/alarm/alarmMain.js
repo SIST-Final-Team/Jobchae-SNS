@@ -1,4 +1,5 @@
 let pageNumber = 0;
+let currentType = "";
 
 const alarmLists = document.getElementById("alarmLists");
 
@@ -37,7 +38,7 @@ const observer = new IntersectionObserver((entries) => {
       if (entry.isIntersecting) {
         // console.log(loadAlarms);
         if (loadAlarms) {
-          getAlarms();
+          getAlarms(currentType);
         }
       }
     },
@@ -47,19 +48,20 @@ const observer = new IntersectionObserver((entries) => {
 
 // 알림을 가져오는 비동기 함수
 async function getAlarms(type) {
+  currentType = type;
   let url = "";
   switch (type) {
     case "all":
-      url = `http://localhost/jobchae/api/alarm/selectAlarmList/${pageNumber}`;
+      url = `/jobchae/api/alarm/selectAlarmList/${pageNumber}`;
       break;
     case "comment":
-      url = `http://localhost/jobchae/api/alarm/selectAlarmListByComment/${pageNumber}`;
+      url = `jobchae/api/alarm/selectAlarmListByComment/${pageNumber}`;
       break;
     case "like":
-      url = `http://localhost/jobchae/api/alarm/selectAlarmListByLike/${pageNumber}`;
+      url = `/jobchae/api/alarm/selectAlarmListByLike/${pageNumber}`;
       break;
     case "followPost":
-      url = `http://localhost/jobchae/api/alarm/selectAlarmListByFollowPost/${pageNumber}`;
+      url = `/jobchae/api/alarm/selectAlarmListByFollowPost/${pageNumber}`;
       break;
   }
   // console.log(url);
@@ -134,7 +136,7 @@ function addAlarms(alarmList) {
 
     }
 
-    console.log(alarm);
+    // console.log(alarm);
     switch (alarm.notificationType) {
       case "COMMENT": // 댓글
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
@@ -206,7 +208,7 @@ function addAlarms(alarmList) {
     }
   });
 
-  console.log(notificationHtml);
+  // console.log(notificationHtml);
   // 알림 리스트 추가
   alarmLists.innerHTML = notificationHtml;
   // 페이지 넘버 증가
