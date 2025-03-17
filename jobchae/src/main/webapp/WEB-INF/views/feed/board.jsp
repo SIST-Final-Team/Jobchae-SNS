@@ -873,6 +873,7 @@
 					success: function(json) {
 						if(json.n == 1) {
 						 	location.reload();
+						 	//$('#reaction-' + reaction_target_no).remove();
 						}
 			        },
 			        error: function(request, status, error){
