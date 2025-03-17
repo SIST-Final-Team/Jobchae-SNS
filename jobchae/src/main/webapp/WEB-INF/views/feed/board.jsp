@@ -241,6 +241,24 @@
         nextBtn2.style.display = "none";
         
         
+        
+        // ㅇㅇ
+        $('.board-content-container').each(function() {
+            var container = $(this);
+            var content = container.find('.board-content');
+            
+            var lineHeight = parseInt(window.getComputedStyle(content[0]).lineHeight); // 한 줄의 높이 계산
+            var maxHeight = lineHeight * 5; // 5줄 높이 계산
+            var contentHeight = content[0].scrollHeight; // 콘텐츠의 실제 높이
+
+            // 5줄 이상인지 미만인지 확인하여 버튼 표시 여부 설정
+            if (contentHeight > maxHeight) {
+                container.find('.more-btn').css('display', 'block'); // 5줄 이상일 경우 버튼 보이기
+            } else {
+                container.find('.more-btn').css('display', 'none'); // 5줄 미만일 경우 버튼 숨기기
+            }
+        });
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
         $("button.write-button").click(function() {
@@ -1194,7 +1212,7 @@
 			
 		});
 		
-		// 댓글 수정 ㅇㅇ
+		// 댓글 수정
 		$(".comment-edit").click(function() { 
 		    const $comment = $(this).closest('.comment'); 
 		
@@ -1740,12 +1758,12 @@
     }
     
  	// 긴 글 더보기 처리
-    function toggleContent() {
-        var container = document.querySelector('.board-content-container');
-        container.classList.toggle('expanded');
-        var button = document.getElementById('toggleButton');
-        button.textContent = container.classList.contains('expanded') ? '접기' : '더보기';
-    }    
+    $(document).on('click', '.more-btn', function() {
+        var button = $(this);
+        var container = button.closest('.board-content-container');
+        container.toggleClass('expanded');
+        button.text(container.hasClass('expanded') ? '접기' : '더보기');
+    });
 
 </script>
 
@@ -1898,7 +1916,7 @@
 	                    	<div class="board-content" id="boardContent"> 
 		                        <p>${boardvo.board_content}</p>
 		                    </div>
-		                    <button id="toggleButton" class="more-btn" onclick="toggleContent()">더보기</button>
+		                    <button class="more-btn" onclick="toggleContent(this)">더보기</button>
 	                    </div>
 	             
 
