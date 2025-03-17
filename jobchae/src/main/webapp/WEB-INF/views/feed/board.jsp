@@ -194,7 +194,7 @@
 	let boardList = $(".feed-item");
 	let currentPreviewBox = 1; 
 	let currentPreviewBox2 = 1; 
-	let dataTransfer = new DataTransfer(); 
+	//let dataTransfer = new DataTransfer(); // ㅇㅇ
 	
     $(document).ready(function() {
         
@@ -242,7 +242,7 @@
         
         
         
-        // ㅇㅇ
+        // 피드 글 높이 계산
         $('.board-content-container').each(function() {
             var container = $(this);
             var content = container.find('.board-content');
@@ -351,7 +351,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성 
+		// 글 작성  ㅇㅇ
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -366,6 +366,8 @@
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
     		    }
+    		    
+    		    console.log("imageFiles.length " + imageFiles.length);
     		    
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
@@ -1430,7 +1432,7 @@
     });
    
    
-    // 이미지 미리보기
+    // 이미지 미리보기 ㅇㅇ
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1441,7 +1443,7 @@
             return;
         }
         
-        //console.log(files);
+        //console.log("files " + files);
         //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
@@ -1543,8 +1545,9 @@
         });
 
         
-        function removeFile(fileToRemove) { 
-            const newDataTransfer = new DataTransfer();
+        function removeFile(fileToRemove) {
+
+        	const newDataTransfer = new DataTransfer();
             Array.from(dataTransfer.files).forEach((file) => {
                 if (file !== fileToRemove) {
                     newDataTransfer.items.add(file);
@@ -1552,15 +1555,16 @@
             });
             event.target.files = newDataTransfer.files;
 
+            console.log(event.target.files);
+            
             let currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
             let previewCount = track.querySelectorAll(".preview-box").length;
-			
+
             if (currentX !== 0) {
                 currentX = currentX + 208; 
                 $(track).css("transform", "translateX(" + currentX + "px)"); 
             }
         }
-
 
         function togglePrevButton() {
             const previewCount = track.querySelectorAll(".preview-box").length;
@@ -1861,7 +1865,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
+	                            <a href="<%= ctxPath%>/member/profile/${boardvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -2185,7 +2189,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
+									                <a href="<%= ctxPath%>/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2265,7 +2269,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
+											                        <a href="<%= ctxPath%>/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">
