@@ -134,7 +134,7 @@
         }
 
         .file-image {
-            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5;
+            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5 overflow-hidden;
 
             :hover {
                 @apply cursor-pointer;
@@ -194,7 +194,7 @@
 	let boardList = $(".feed-item");
 	let currentPreviewBox = 1; 
 	let currentPreviewBox2 = 1; 
-	let dataTransfer = new DataTransfer(); 
+	//let dataTransfer = new DataTransfer(); 
 	
     $(document).ready(function() {
         
@@ -366,6 +366,8 @@
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
     		    }
+    		    
+    		    console.log("imageFiles.length " + imageFiles.length);
     		    
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
@@ -1430,7 +1432,7 @@
     });
    
    
-    // 이미지 미리보기
+    // 이미지 미리보기 
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1441,7 +1443,7 @@
             return;
         }
         
-        //console.log(files);
+        //console.log("files " + files);
         //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
@@ -1544,14 +1546,13 @@
 
         
         function removeFile(fileToRemove) {
-            // 새로운 DataTransfer 객체로 업데이트
-            const newDataTransfer = new DataTransfer();
+
+        	const newDataTransfer = new DataTransfer();
             Array.from(dataTransfer.files).forEach((file) => {
                 if (file !== fileToRemove) {
                     newDataTransfer.items.add(file);
                 }
             });
-            // 업데이트된 DataTransfer 객체를 event.target.files에 반영
             event.target.files = newDataTransfer.files;
 
             console.log(event.target.files);
@@ -1924,7 +1925,7 @@
 	             
 
 		            	
-						<!-- 첨부파일 미리보기 -->
+						<!-- 첨부파일 미리보기 ㅇㅇ -->
 	                    <div class="px-0">
 		            		<input type="text" name="preview-board-no" class="preview-board-no" value="${boardvo.board_no}">
 						    <div class="file-image">
@@ -1937,7 +1938,7 @@
         									
         									<!-- 이미지 파일인 경우 -->
 									        <c:if test="${fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png' || fileExtension == 'gif' || fileExtension == 'bmp' || fileExtension == 'webp'}">
-									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
+									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 									        </c:if>
 									        
 									        <!-- 비디오 파일인 경우 -->
@@ -2178,7 +2179,7 @@
 		                    </c:if>
 		                    -->
 		                    
-		                    <!-- 댓글이 있을때만 댓글 목록 표시 ㅇㅇ -->
+		                    <!-- 댓글이 있을때만 댓글 목록 표시 -->
 		                    <c:if test="${not empty boardvo.commentvoList}">
 			                    <div class="comment-container">
 									
@@ -2228,7 +2229,7 @@
 									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
 									                
-									                <!-- ㅇㅇ 
+									                <!-- 
 									                <div class="comment-text">
 														<span class="comment-content-text">${commentvo.comment_content}</span>
 														

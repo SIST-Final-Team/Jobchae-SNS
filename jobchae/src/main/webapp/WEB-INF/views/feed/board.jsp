@@ -133,20 +133,23 @@
             }
         }
 
+/* ㅇㅇ */
         .file-image {
-            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5;
+            @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5 overflow-hidden;
 
             :hover {
                 @apply cursor-pointer;
             }
-
             button:first-child {
-                @apply max-h-[50rem] m-auto col-span-3;
+                @apply max-h-[25rem] m-auto col-span-3;
+				height: 100%;
+				overflow: hidden;
             }
             button:not(:first-child) {
                 @apply m-auto;
+				height: 100%;
+				overflow: hidden;
             }
-            
             button:not(:first-child)>img {
                 @apply object-cover aspect-[3/2];
             }
@@ -154,7 +157,7 @@
                 @apply relative;
             }
             button.more-image>img {
-                @apply brightness-50;
+                @apply brightness-50; 
             }
             button.more-image>span {
                 @apply absolute text-white;
@@ -194,7 +197,7 @@
 	let boardList = $(".feed-item");
 	let currentPreviewBox = 1; 
 	let currentPreviewBox2 = 1; 
-	//let dataTransfer = new DataTransfer(); // ㅇㅇ
+	//let dataTransfer = new DataTransfer(); 
 	
     $(document).ready(function() {
         
@@ -351,7 +354,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성  ㅇㅇ
+		// 글 작성 
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -1432,7 +1435,7 @@
     });
    
    
-    // 이미지 미리보기 ㅇㅇ
+    // 이미지 미리보기 
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1925,7 +1928,7 @@
 	             
 
 		            	
-						<!-- 첨부파일 미리보기 -->
+						<!-- 첨부파일 미리보기 ㅇㅇ -->
 	                    <div class="px-0">
 		            		<input type="text" name="preview-board-no" class="preview-board-no" value="${boardvo.board_no}">
 						    <div class="file-image">
@@ -1938,7 +1941,7 @@
         									
         									<!-- 이미지 파일인 경우 -->
 									        <c:if test="${fileExtension == 'jpg' || fileExtension == 'jpeg' || fileExtension == 'png' || fileExtension == 'gif' || fileExtension == 'bmp' || fileExtension == 'webp'}">
-									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
+									            <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
 									        </c:if>
 									        
 									        <!-- 비디오 파일인 경우 -->
@@ -1957,7 +1960,7 @@
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
 						                    <button type="button" class="file-preview-button">
-						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
 						                    </button>
 						                </c:if>
 						
@@ -2179,7 +2182,7 @@
 		                    </c:if>
 		                    -->
 		                    
-		                    <!-- 댓글이 있을때만 댓글 목록 표시 ㅇㅇ -->
+		                    <!-- 댓글이 있을때만 댓글 목록 표시 -->
 		                    <c:if test="${not empty boardvo.commentvoList}">
 			                    <div class="comment-container">
 									
@@ -2229,7 +2232,7 @@
 									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
 									                
-									                <!-- ㅇㅇ 
+									                <!-- 
 									                <div class="comment-text">
 														<span class="comment-content-text">${commentvo.comment_content}</span>
 														
