@@ -24,6 +24,10 @@ public interface AlarmService {
 	
 	//알림 조회
 	public Map<String, Object> selectAlarmList(MemberVO member, int pageNumber);
+
+	//댓글 알림 조회
+	public Map<String, Object> selectAlarmListByType(MemberVO member, int pageNumber, AlarmVO.NotificationType type);
+
 	
 	//알림 읽음 처리
 	public AlarmVO updateAlarmRead(MemberVO member, String notification_no);

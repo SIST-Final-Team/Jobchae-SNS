@@ -13,4 +13,6 @@ public interface AlarmDAO extends MongoRepository<AlarmVO, String>{
 	Slice<AlarmVO> findByMemberIdOrderByNotificationRegisterDateDesc(String memberId, Pageable pageAble);
 
 	int countByMemberIdAndNotificationIsRead(String memberId, int i);
+
+	Slice<AlarmVO> findByMemberIdAndNotificationTypeOrderByNotificationRegisterDateDesc(String memberId,  AlarmVO.NotificationType type, Pageable pageAble);
 }

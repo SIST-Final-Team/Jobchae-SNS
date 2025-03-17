@@ -46,10 +46,25 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 // 알림을 가져오는 비동기 함수
-async function getAlarms() {
-  const response = await fetch(
-    `http://localhost/jobchae/api/alarm/selectAlarmList/${pageNumber}`
-  );
+async function getAlarms(type) {
+  let url = "";
+  switch (type) {
+    case "all":
+      url = `http://localhost/jobchae/api/alarm/selectAlarmList/${pageNumber}`;
+      break;
+    case "comment":
+      url = `http://localhost/jobchae/api/alarm/selectAlarmListByComment/${pageNumber}`;
+      break;
+    case "like":
+      url = `http://localhost/jobchae/api/alarm/selectAlarmListByLike/${pageNumber}`;
+      break;
+    case "followPost":
+      url = `http://localhost/jobchae/api/alarm/selectAlarmListByFollowPost/${pageNumber}`;
+      break;
+  }
+  // console.log(url);
+
+  const response = await fetch(`${url}`);
   const jsonData = await response.json();
   // console.log(jsonData);
   const alarmList = jsonData["list"];
@@ -91,6 +106,7 @@ function addAlarms(alarmList) {
     let notificationContent = "";
     let notificationLogo = "";
     let boardContent = "";
+    // 게시물 내용
     if (
       alarm.notificationType == "FOLLOWER_POST" ||
       alarm.notificationType == "COMMENT" ||
@@ -98,19 +114,27 @@ function addAlarms(alarmList) {
     ) {
       boardContent = alarm.alarmData.boardContent.replace(/<[^>]*>/g, "");
       // console.log(boardContent);
-      if (boardContent.length > 25) {
-        boardContent = boardContent.substring(0, 25) + "...";
+      // 게시물 내용이 25자 이상일 경우 ...으로 표시
+      if(boardContent != null){
+        if (boardContent.length > 25) {
+          boardContent = boardContent.substring(0, 25) + "...";
+        }
       }
     }
+    // 댓글 내용
     let commentContent = "";
     if (alarm.notificationType == "COMMENT") {
       commentContent = alarm.alarmData.commentContent;
-      if (commentContent.length > 25) {
-        commentContent = commentContent.substring(0, 25) + "...";
+      // 댓글 내용이 25자 이상일 경우 ...으로 표시
+      if(commentContent != null){
+        if (commentContent.length > 25) {
+          commentContent = commentContent.substring(0, 25) + "...";
+        }
       }
+
     }
 
-    // console.log(alarm);
+    console.log(alarm);
     switch (alarm.notificationType) {
       case "COMMENT": // 댓글
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
@@ -121,7 +145,7 @@ function addAlarms(alarmList) {
         break;
       case "FOLLOW": //팔로우 알림
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
-        notificationContent = `${alarm.targetMember.member_name} 님이 팔로우 하기 시작했습니다.`;
+        notificationContent = `<a class ="targetLink" href="/${alarm.alarmData.targetURL}">${alarm.targetMember.member_name} 님이 팔로우 하기 시작했습니다.</a>`;
         break;
       case "LIKE": //좋아요 알림
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
@@ -138,7 +162,7 @@ function addAlarms(alarmList) {
     // 시간 계산
     const diffrentDate = getDiffrentTime(date, today);
 
-    console.log(alarm);
+    // console.log(alarm);
 
     // if (date.get) console.log(date);
     if (!notificationIsDeleted) {
@@ -182,6 +206,7 @@ function addAlarms(alarmList) {
     }
   });
 
+  console.log(notificationHtml);
   // 알림 리스트 추가
   alarmLists.innerHTML = notificationHtml;
   // 페이지 넘버 증가
@@ -205,11 +230,20 @@ function addAlarms(alarmList) {
 
   // 알림 카운트 초기화
   const newAlarmCount = document.getElementById("newAlarmCount");
-  console.log("알림데이터는 " + newAlarmCount);
+  // console.log("알림데이터는 " + newAlarmCount);
   newAlarmCount.textContent = 0;
   if (!newAlarmCount.classList.contains("!hidden")) {
     newAlarmCount.classList.add("!hidden");
   }
+
+  // 알림 클릭시 읽음 처리
+  const targetLink = document.getElementsByClassName("targetLink");
+  Array.from(targetLink).forEach((item) => {
+    item.addEventListener("click", (e) => {
+      const notificationItem = e.target.closest(".alarmItem");
+      updateAlarmRead(notificationItem);
+    });
+  });
 
   // observer 등록
   observer.observe(document.querySelector(`[data-alarm-id="${lastItem}"]`));
@@ -267,7 +301,7 @@ function getDiffrentTime(date, today) {
 
 // 알림 삭제 함수
 async function deleteAlarm(e) {
-  console.log("deleteAlarm");
+  // console.log("deleteAlarm");
   const notificationNo = e.target.closest(".alarmItem").dataset.alarmId;
   const response = await fetch(
     `http://localhost/jobchae/api/alarm/deleteAlarm/${notificationNo}`,
@@ -279,7 +313,7 @@ async function deleteAlarm(e) {
     }
   );
   const jsonData = await response.json();
-  console.log(jsonData);
+  // console.log(jsonData);
   if (response.status == 200) {
     console.log(e.target.closest(".alarmItem"));
     e.target.closest(".alarmItem").remove();
@@ -289,7 +323,7 @@ async function deleteAlarm(e) {
 // 알림 읽음 처리 함수
 async function updateAlarmRead(notificationItem) {
   const notificationNo = notificationItem.getAttribute("data-alarm-id");
-  console.log(notificationNo);
+  // console.log(notificationNo);
   const response = await fetch(
     `http://localhost/jobchae/api/alarm/updateAlarmRead/${notificationNo}`,
     {
@@ -305,10 +339,51 @@ async function updateAlarmRead(notificationItem) {
   }
   const jsonData = await response.json();
 }
+
+function getAlarmListByFilter(filter) {}
+// 필터링 함수
+async function selectByFilter() {
+  const alarmFilter = document.getElementsByClassName("filterButton");
+  Array.from(alarmFilter).forEach((item) => {
+
+    item.addEventListener("click", (e) => {
+
+      pageNumber = 0;
+      alarmLists.innerHTML = "";
+      notificationHtml = "";
+      // console.log(e.target.getAttribute("data-type"));
+      getAlarms(e.target.getAttribute("data-type"));
+
+        // 필터링 버튼 스타일 변경
+      changeButtonStyle(e.target, Array.from(alarmFilter));
+
+
+    });
+  });
+}
+
+function changeButtonStyle(target, buttons){
+  // 모든 필터링 버튼 스타일 변경
+  buttons.forEach((item) => {
+    // 현재 선택되어 있는 필터링 버튼 스타일 변경
+    if(item.classList.contains("button-selected")){
+      item.classList.remove("button-selected");
+      item.classList.add("button-gray");
+    }
+  });
+  // 눌린 필터링 버튼 스타일 변경")
+  if(target.classList.contains("button-gray")){
+    target.classList.remove("button-gray");
+    target.classList.add("button-selected");
+  }
+
+}
+
 // 비동기 함수 초기화
 async function initialize() {
   // 알림 가져오기
-  await getAlarms();
+  await getAlarms("all");
+  await selectByFilter();
 }
 
 // 초기화 함수 실행
