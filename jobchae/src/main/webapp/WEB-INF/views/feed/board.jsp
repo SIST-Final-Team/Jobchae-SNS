@@ -141,7 +141,7 @@
                 @apply cursor-pointer;
             }
             button:first-child {
-                @apply max-h-[25rem] m-auto col-span-3;
+                @apply max-h-[50rem] m-auto col-span-3;
 				height: 100%;
 				overflow: hidden;
             }
