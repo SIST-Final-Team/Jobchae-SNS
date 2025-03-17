@@ -26,9 +26,16 @@
 	
 	<!-- 로그인된 사용자의 정보 얻어오기 -->
 	<select id="getUserInfo" resultType="MemberVO" parameterType="String">
-		select member_id, member_name, member_birth, member_profile, member_background_img
-		from tbl_member
-		where member_id = #{login_userid}
+		SELECT m.member_id, 
+	       m.member_name, 
+	       m.member_birth, 
+	       m.member_profile, 
+	       m.member_background_img,
+	       (SELECT COUNT(*) 
+	        FROM tbl_follow f
+	        WHERE f.following_id = m.member_id) AS follower_count
+		FROM tbl_member m
+		WHERE m.member_id = #{login_userid}
 	</select>
 	
 	

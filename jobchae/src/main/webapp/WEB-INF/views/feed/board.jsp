@@ -1760,7 +1760,7 @@
 		        <div class="flex flex-col items-center p-4 -mt-10">
 		            <img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 이미지" class="w-20 h-20 rounded-full border-2 border-white relative">
 		            <h2 class="text-lg font-semibold mt-2">${membervo.member_name}</h2>
-		            <p class="text-gray-500 text-sm">팔로워 0명</p>
+		            <p class="text-gray-500 text-sm">팔로워 ${membervo.follower_count}명</p>
 		        </div>
 		
 		    </div>
