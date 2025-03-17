@@ -161,7 +161,7 @@ pageEncoding="UTF-8"%> <% String ctxPath = request.getContextPath(); %>
               src="${pageContext.request.contextPath}/images/bell-solid.svg"
               class="h-2/5 m-auto mt-1.5"
             />
-            <div id="newAlarmCount" class="absolute inline-block w-5 h-5 bg-red-700 rounded-full text-white right-7 top-0">
+            <div id="newAlarmCount" class="absolute inline-block w-5 h-5 bg-red-700 rounded-full text-white right-7 top-0 !hidden">
               1
             </div>알림
           </a>

@@ -13,6 +13,7 @@ import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.alarm.service.AlarmService;
 import com.spring.app.board.model.BoardDAO;
+import com.spring.app.follow.domain.FollowEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -123,6 +124,19 @@ public class ApiBoardController {
 		paraMap.put("fk_member_id", fk_member_id);
 		paraMap.put("reaction_target_no", reaction_target_no);
 		paraMap.put("reaction_status", reaction_status);
+
+		//알림 설정
+
+		AlarmData alarmData = new AlarmData();
+		alarmData.setBoardId(reaction_target_no);
+		//알림에 들어갈 게시글 내용
+		BoardVO board = boardDAO.findOneBoardByBoardNo(reaction_target_no);
+		alarmData.setBoardContent(board.getBoard_content());
+
+		alarmService.insertAlarm(loginuser, board.getFk_member_id(), AlarmVO.NotificationType.LIKE, alarmData);
+
+
+		//알림 설정 끝
 	
 		ReactionVO reactionvo = service.selectReaction(paraMap);
 		if (reactionvo != null) {	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
@@ -152,7 +166,7 @@ public class ApiBoardController {
 			Map<String, Integer> map = new HashMap<>();
 			map.put("n", n);
 			
-			return map; 
+			return map;
 		}
 		
 	}
@@ -553,6 +567,9 @@ public class ApiBoardController {
 		map.put("n", n);
 		return map; 
 	}
+
+
+
 	
 	
 }

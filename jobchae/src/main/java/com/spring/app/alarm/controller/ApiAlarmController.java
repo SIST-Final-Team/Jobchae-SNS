@@ -236,6 +236,15 @@ public class ApiAlarmController {
 		return ResponseEntity.ok(alarmList);
 	}
 
+	//알림 개수 조회
+	@GetMapping("selectAlarmCount")
+	public int selectAlarmCount(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
+		int count = alarmService.selectUnreadAlarmCount(member);
+		return count;
+	}
+
 	
 //	시퀀스 조회 메서드
 //	@GetMapping("seq")

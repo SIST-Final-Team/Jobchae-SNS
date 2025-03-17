@@ -24,6 +24,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const headerProfile = document.getElementById("headerProfile");
   const headerProfileIcon = document.getElementById("headerProfileIcon");
 
+  fetch("/jobchae/api/alarm/selectAlarmCount").then((response) => {
+    response.json().then((data) => {
+      newAlarmCount.textContent = data;
+      if(data != 0) {
+        newAlarmCount.classList.remove("!hidden");
+      }
+    }).catch((error) => {
+      console.error("알람 개수 조회 실패");
+    });
+  });
 
 
   //프로필 아이콘 클릭시
