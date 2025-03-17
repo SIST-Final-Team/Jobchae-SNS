@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.alarm.service.AlarmService;
 import com.spring.app.member.domain.MemberVO;
@@ -39,7 +40,8 @@ public class ApiFollowController {
 
         HttpSession session = request.getSession();
         MemberVO member = (MemberVO) session.getAttribute("loginuser");
-        alarmService.insertAlarm(member, followingId, AlarmVO.NotificationType.FOLLOW, null);
+        AlarmData alarmData = new AlarmData();
+        alarmService.insertAlarm(member, followingId, AlarmVO.NotificationType.FOLLOW, alarmData);
         //알림 등록 끝
 
 

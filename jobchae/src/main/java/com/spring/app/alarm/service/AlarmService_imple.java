@@ -27,6 +27,10 @@ import com.spring.app.member.domain.MemberVO;
 @Service
 public class AlarmService_imple implements AlarmService{
 
+
+	//한 페이지에 보여줄 알림 수
+	final int pageSize = 10;
+
 	@Autowired
 	MemberDAO memberDAO;
 
@@ -109,8 +113,6 @@ public class AlarmService_imple implements AlarmService{
 	@Override
 	public Map<String, Object> selectAlarmList(MemberVO member, int pageNumber) {
 		//TODO 나중에 더 할것이 있는지  조회
-		//한 페이지에 보여줄 알림 수
-		final int pageSize = 10;
 		//페이징 처리
 		Pageable pageAble = PageRequest.of(pageNumber, pageSize);
 		logger.info("memberId : " + member.getMember_id());
@@ -150,6 +152,51 @@ public class AlarmService_imple implements AlarmService{
 		Map<String, Object> resultMap = Map.of("hasNext", hasNext, "list", result);
 		return resultMap;
 	}
+
+	@Override
+	public Map<String, Object> selectAlarmListByType(MemberVO member, int pageNumber, AlarmVO.NotificationType type) {
+		//TODO 나중에 더 할것이 있는지  조회
+		logger.info("type :" + type);
+		//페이징 처리
+		Pageable pageAble = PageRequest.of(pageNumber, pageSize);
+		logger.info("memberId : " + member.getMember_id());
+
+		//알림 리스트 조회
+		Slice<AlarmVO> alarmList = alarmDAO.findByMemberIdAndNotificationTypeOrderByNotificationRegisterDateDesc(member.getMember_id(), type, pageAble);
+		logger.info("alarmList: " + alarmList);
+		//다음 페이지가 있는지 확인
+		boolean hasNext = alarmList.hasNext();
+		//값을 저장
+		List<AlarmVO> list = alarmList.getContent();
+		List <AlarmVO> result = updateAlarmRead(list);
+
+		//알림이 존재하면 상태를 변경
+		if(!list.isEmpty()) {
+			//알림의 상태를 확인만 한 상태로 변경
+			if(result != null) {
+				logger.info("알림 상태 변경 성공");
+			}
+			else {
+				//알림 상태 변경이 안되면 예외 발생
+				throw new RuntimeException("알림 상태 변경 실패");
+			}
+		}
+
+
+//		//알림의 프로필을 최신으로 변경
+		result.forEach(alarm ->{
+			MemberVO targetMember = memberDAO.getAlarmMemberInfoByMemberId(alarm.getTargetMemberId());
+			String targetMemberProfile = targetMember.getMember_profile();
+			Map<String, String> targetMemberInfo = Map.of("member_id", targetMember.getMember_id(),
+					"member_name", targetMember.getMember_name(),
+					"member_profile", targetMemberProfile);
+			alarm.setTargetMember(targetMemberInfo);
+		});
+
+		Map<String, Object> resultMap = Map.of("hasNext", hasNext, "list", result);
+		return resultMap;
+	}
+
 
 	//알림 읽음 처리
 	@Override

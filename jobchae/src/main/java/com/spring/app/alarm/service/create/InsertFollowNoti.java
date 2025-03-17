@@ -40,6 +40,7 @@ public class InsertFollowNoti implements InsertNotification {
                 "member_name", targetMember.getMember_name(),
                 "member_profile", targetMember.getMember_profile());
         alarmVO.setMemberInfo(MemberInfo);
+        alarmData.setTargetURL("jobchae/member/profile/" + targetMember.getMember_id());
 
         alarmVO.setAlarmData(alarmData);
 

@@ -33,22 +33,26 @@
         <div class="bg-white rounded-lg shadow mb-4 p-3">
           <div class="flex space-x-2 overflow-x-auto pb-2">
             <button
-              class="button-selected"
+              class="button-selected filterButton"
+              data-type = "all"
             >
               전체
             </button>
             <button
-              class="button-gray"
+              class="button-gray filterButton"
+              data-type = "comment"
             >
               댓글
             </button>
             <button
-              class="button-gray"
+              class="button-gray filterButton"
+              data-type = "like"
             >
               좋아요
             </button>
             <button
-              class="button-gray"
+              class="button-gray filterButton"
+              data-type = "followPost"
             >
               팔로워 게시물
             </button>

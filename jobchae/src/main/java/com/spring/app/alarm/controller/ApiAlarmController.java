@@ -140,6 +140,52 @@ public class ApiAlarmController {
 		return response;
 	}
 
+	//댓글 알림 조회
+	@GetMapping("selectAlarmListByComment/{pageNumber}")
+	public ResponseEntity<Map> selectAlarmListByComment(@PathVariable String pageNumber, HttpServletRequest request){
+
+//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
+		int pageNo = Integer.parseInt(pageNumber);
+		Map<String, Object> resultMap = alarmService.selectAlarmListByType(member, pageNo, AlarmVO.NotificationType.COMMENT);
+//		logger.info("alarmList: " + resultMap);
+		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
+		return response;
+	}
+
+	//좋아요 알림 조회
+	@GetMapping("selectAlarmListByLike/{pageNumber}")
+	public ResponseEntity<Map> selectAlarmListByLike(@PathVariable String pageNumber, HttpServletRequest request){
+
+//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
+		int pageNo = Integer.parseInt(pageNumber);
+		Map<String, Object> resultMap = alarmService.selectAlarmListByType(member, pageNo, AlarmVO.NotificationType.LIKE);
+//		logger.info("alarmList: " + resultMap);
+		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
+		return response;
+	}
+
+	//팔로우 게시물 알림 조회
+	@GetMapping("selectAlarmListByFollowPost/{pageNumber}")
+	public ResponseEntity<Map> selectAlarmListByFollowPost(@PathVariable String pageNumber, HttpServletRequest request){
+
+//		MemberVO user001 = new MemberVO();
+//		user001.setMember_id("user001");
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
+		int pageNo = Integer.parseInt(pageNumber);
+		Map<String, Object> resultMap = alarmService.selectAlarmListByType(member, pageNo, AlarmVO.NotificationType.FOLLOWER_POST);
+//		logger.info("alarmList: " + resultMap);
+		ResponseEntity<Map> response = ResponseEntity.ok(resultMap);
+		return response;
+	}
+
+
 	@GetMapping("testLike")
 	public ResponseEntity<AlarmVO> test(HttpServletRequest request) {
 
@@ -234,6 +280,15 @@ public class ApiAlarmController {
 		});
 
 		return ResponseEntity.ok(alarmList);
+	}
+
+	//알림 개수 조회
+	@GetMapping("selectAlarmCount")
+	public int selectAlarmCount(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		MemberVO member = (MemberVO) session.getAttribute("loginuser");
+		int count = alarmService.selectUnreadAlarmCount(member);
+		return count;
 	}
 
 	
