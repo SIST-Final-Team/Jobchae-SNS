@@ -90,4 +90,10 @@ public interface SearchDAO {
 	 */
 	List<Map<String, String>> getIndustryListByIndustryNo(List<String> industry_noList);
 	
+	/**
+	 * 회원 1명의 글 목록 가져오기
+	 * @param member_id
+	 * @return
+	 */
+	List<String> getBoardNoByMemberId(String member_id);
 }

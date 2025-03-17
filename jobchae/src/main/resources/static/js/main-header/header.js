@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function getSearchHistory() {
     $.ajax({
-      url: "/jobchae/history/search",
+      url: ctxPath+"/api/history/search",
       dataType: "json",
       async:"false",
       success: function (json) {
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function getProfileView() {
     $.ajax({
-      url: "/jobchae/history/profile",
+      url: ctxPath+"/api/history/profile",
       dataType: "json",
       async:"false",
       success: function (json) {

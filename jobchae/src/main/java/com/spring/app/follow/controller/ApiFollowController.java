@@ -1,6 +1,8 @@
 package com.spring.app.follow.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.alarm.service.AlarmService;
@@ -65,17 +67,19 @@ public class ApiFollowController {
         return followService.getFollowing(followerId);
     }
     
-	 // 팔로우/언팔로우 상태 토글
-	    @PostMapping("/toggle")
-	    public ResponseEntity<String> toggleFollow(@RequestParam String followerId, @RequestParam String followingId) {
+    // 팔로우/언팔로우 상태 토글
+    @PostMapping("/toggle")
+    public ResponseEntity<Map<String, String>> toggleFollow(@RequestParam String followerId, @RequestParam String followingId) {
         boolean isFollowed = followService.toggleFollow(followerId, followingId);
 
-        // 상태에 따른 응답
+        Map<String, String> response = new HashMap<>();
         if (isFollowed) {
-            return ResponseEntity.ok("팔로우되었습니다.");
+            response.put("status", "팔로우되었습니다.");
         } else {
-            return ResponseEntity.ok("언팔로우되었습니다.");
+            response.put("status", "언팔로우되었습니다.");
         }
+
+        return ResponseEntity.ok(response);  // JSON 형태로 응답
     }
     
 }

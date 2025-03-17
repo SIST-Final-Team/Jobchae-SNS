@@ -129,7 +129,68 @@ $(document).ready(function() {
         });
     });
 
+    // 팔로우 버튼
+    $(document).on("click", ".follow-button:not(.followed)", function() {
+        follow(this, "post");
+    });
+    // 언팔로우 버튼
+    $(document).on("click", ".follow-button.followed", function() {
+        follow(this, "delete");
+    });
 });
+
+
+// 팔로우
+// method 팔로우: "post", 언팔로우: "delete"
+let followCount = ${requestScope.followerCount};
+function follow(followButton, method) {
+
+    $(followButton).prop("disabled", true);
+
+    const followingId = $(followButton).data("following-id");
+
+    $.ajax({
+        url: "${pageContext.request.contextPath}/api/follow",
+        data: {"followerId" : "${sessionScope.loginuser.member_id}"
+                ,"followingId" : followingId},
+        type: method,
+        dataType: "json",
+        success: function (json) {
+
+            if(method == "post") {
+                $(followButton).addClass("followed");
+                $(followButton).html("팔로우 중");
+
+                // 팔로우 버튼 모양 변경
+                $(followButton).addClass("button-gray");
+                $(followButton).removeClass("button-orange");
+
+                // 팔로우 수 증가
+                followCount += 1;
+                $("span.follower-count").html(followCount.toLocaleString('en'));
+
+                $(followButton).prop("disabled", false);
+            }
+            if(method == "delete") {
+                $(followButton).removeClass("followed");
+                $(followButton).html("<i class='fa-solid fa-plus'></i> 팔로우");
+
+                // 팔로우 버튼 모양 변경
+                $(followButton).addClass("button-orange");
+                $(followButton).removeClass("button-gray");
+
+                // 팔로우 수 감소
+                followCount -= 1;
+                $("span.follower-count").html(followCount.toLocaleString('en'));
+
+                $(followButton).prop("disabled", false);
+            }
+        },
+        error: function (request, status, error) {
+            console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+}
 
 const oldMemberEmail = "${sessionScope.loginuser.member_email}"; // 회원정보 수정시 자신의 이메일인지 체크하기 위함
 sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // js 사용하기 위한 contextPath
@@ -530,13 +591,23 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             </span>
                         </div>
                         <div>
-                            <a href="#" class="hover:underline text-orange-500 font-bold">팔로워 <fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" />명</a>
+                            <a href="#" class="hover:underline text-orange-500 font-bold">팔로워 <span class="follower-count"><fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" /></span>명</a>
                         </div>
                     </div>
                     <div class="flex space-x-2">
-                        <button type="button" class="button-selected">활동 상태</button>
-                        <button type="button" class="button-gray">리소스</button>
                         
+                        <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '0'}">
+                            <button type="button" class="follow-button button-orange" data-following-id="${requestScope.memberVO.member_id}"><i class='fa-solid fa-plus'></i>&nbsp;팔로우</button>
+                        </c:if>
+                        
+                        <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '1'}">
+                            <button type="button" class="follow-button followed button-gray" data-following-id="${requestScope.memberVO.member_id}">팔로우 중</button>
+                        </c:if>
+
+                        <%-- <button type="button" class="button-selected">활동 상태</button>
+                        <button type="button" class="button-gray">리소스</button> --%>
+                        
+                        <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id}">
                         <!-- 신고기능 시작 (이진호)  -->
                         <button id="report-btn" class="button-gray">신고/차단</button>
 
@@ -646,37 +717,42 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             </div>
                         </div>
                         <!-- 신고/차단 기능 끝 (이진호) -->
+                        </c:if>
                     </div>
                 </div>
 
-                <!-- 분석 -->
+                <!-- 분석 (본인 것만 조회 가능) -->
+                <c:if test="${sessionScope.loginuser.member_id == requestScope.memberVO.member_id}">
                 <div class="py-0!">
                     <h1 class="h1 pt-4">분석</h1>
                     <div class="flex space-x-2 pb-2 text-gray-800 text-center">
-                            <a href="#" class="button-board-action space-x-2">
+                            <a href="${pageContext.request.contextPath}/member/profile/view-count#profileViewCount" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-user-group text-2xl"></i>
-                                <span class="font-bold text-lg">프로필 조회 0</span>
+                                <span class="font-bold text-lg">프로필 조회 <fmt:formatNumber value="${requestScope.viewCountSummary.profileViewCount}" pattern="#,###" /></span>
                             </a>
-                            <a href="#" class="button-board-action space-x-2">
+                            <a href="${pageContext.request.contextPath}/member/profile/view-count#boardViewCount" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-chart-simple text-2xl"></i>
-                                <span class="font-bold text-lg">업데이트 노출 48</span>
+                                <span class="font-bold text-lg">업데이트 노출 <fmt:formatNumber value="${requestScope.viewCountSummary.boardViewCount}" pattern="#,###" /></span>
                             </a>
-                            <a href="#" class="button-board-action space-x-2">
+                            <a href="${pageContext.request.contextPath}/member/profile/view-count#searchProfileViewCount" class="button-board-action space-x-2">
                                 <i class="fa-solid fa-magnifying-glass text-2xl"></i>
-                                <span class="font-bold text-lg">검색결과 노출 3</span>
+                                <span class="font-bold text-lg">검색결과 노출 <fmt:formatNumber value="${requestScope.viewCountSummary.searchProfileViewCount}" pattern="#,###" /></span>
                             </a>
                     </div>
                     <div class="px-0">
                         <hr class="border-gray-300">
-                        <button type="button" class="button-more">분석 모두 보기 <i class="fa-solid fa-arrow-right"></i></button>
+                        <a href="${pageContext.request.contextPath}/member/profile/view-count">
+                            <button type="button" class="button-more">분석 모두 보기 <i class="fa-solid fa-arrow-right"></i></button>
+                        </a>
                     </div>
                 </div>
+                </c:if>
 
                 <!-- 활동 -->
                 <div class="space-y-0 pb-0!">
                     <h1 class="h1 mb-0">활동</h1>
                     <div class="text-gray-500 pb-2 text-lg">
-                        팔로워 <fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" />명
+                        팔로워 <span class="follower-count"><fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" /></span>명
                     </div>
                     <div id="update" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0!">
                         <c:forEach var="item" items="${searchBoardVOList}" varStatus="status">
@@ -789,7 +865,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <c:if test="${not empty requestScope.searchBoardVOList and requestScope.searchBoardVOList.size() > 2}">
                         <div class="px-0">
                             <hr class="border-gray-300">
-                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/member/profile/update/'+memberId">
+                            <button type="button" class="button-more"  onclick="location.href=ctxPath+'/search/board/member/'+memberId">
                                 활동 모두 보기 <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
@@ -1070,7 +1146,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
         </div>
 
         <!-- 우측 광고 -->
-        <div class="right-side lg:col-span-4 h-full relative hidden lg:block">
+        <div class="right-side lg:col-span-4 h-full relative hidden lg:block -z-1">
             <div class="border-list sticky top-20 space-y-2 text-center relative">
                 <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
                     <span class="pl-1.5 font-bold">광고</span>

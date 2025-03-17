@@ -1,11 +1,13 @@
 package com.spring.app.search.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -153,6 +155,32 @@ public class ApiSearchController {
 		}
 		
 		return service.searchCompanyByName(params);
+	}
+	
+	@Operation(summary = "글 1개 조회", description = "글 번호로 글 1개 조회")
+	@GetMapping("board/{board_no}")
+	public List<SearchBoardVO> getBoardOne(HttpServletRequest request, @PathVariable String board_no) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		
+		Map<String, String> params = new HashMap<>();
+
+		params.put("board_no", board_no);
+
+		// 로그인 여부 확인
+		if(loginuser != null) {
+			params.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			params.put("login_member_id", null);
+		}
+		
+		params.put("start", "1");
+		params.put("end", "1");
+		params.put("searchWord", "");
+		
+		return service.searchBoardByContent(params);
 	}
 
 }

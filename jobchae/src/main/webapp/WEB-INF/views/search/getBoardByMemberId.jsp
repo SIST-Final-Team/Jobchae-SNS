@@ -206,11 +206,9 @@ let hasMore = true; // 글 목록이 더 존재하는지 확인하는 변수
 let requestLock = false;
 
     $(document).ready(function() {
-        // 검색 옵션 불러오기
-        setSearchOption();
 
         // 검색 결과 불러오기
-        getSearchResult('${requestScope.searchWord}');
+        getSearchResult();
 
         // 무한 스크롤
         $(window).scroll(function() {
@@ -218,53 +216,6 @@ let requestLock = false;
             if( $(window).scrollTop() + $(window).height() + 300 >= $(document).height() ) {
                 getSearchResult('${requestScope.searchWord}');
             }
-        });
-
-        // 검색옵션 선택 해제
-        $("input[type='radio']").on("input", function(){
-            $(".btn-reset-dropdown").each((index, elmt) => {
-                if($(this).attr("name") == $(elmt).data("reset")) {
-                    $(elmt).text("초기화").addClass("active");
-                    $(elmt).removeClass("btn-close-dropdown");
-                }
-            });
-        });
-
-        // 검색옵션 초기화 버튼을 누른 경우
-        $(document).on("click", ".btn-reset-dropdown.active", function() {
-            const resetInputName = $(this).data("reset");
-            $("input[name='"+resetInputName+"']").prop("checked", false);
-            $(this).text("취소").removeClass("active");
-            $(this).addClass("btn-close-dropdown");
-        });
-        
-        // 정렬기준 드롭다운 모달 열기
-        $(".btn-open-dropdown").on("click", function() {
-            const btnId = $(this).attr("id");
-            const dropdownId = "#dropdown" + btnId.slice(3);
-            const rect = this.getBoundingClientRect();
-    
-            $(dropdownId).css({"left":rect.left+"px","top":(rect.bottom)+"px"});
-            $(dropdownId)[0].showModal();
-        });
-    
-        // 바깥 클릭하면 드롭다운 모달 닫기
-        $(".option-dropdown").on("click", function(e) {
-            if (e.target === this) {
-                setSearchOption(); // 검색 옵션을 원래대로 되돌리기
-                this.close();
-            }
-        });
-        
-        // 취소 버튼 또는 X 버튼으로 드롭다운 모달 닫기
-        $(document).on("click", ".btn-close-dropdown", function(e) {
-            $(".option-dropdown").click();
-        });
-
-        // 검색 옵션 결과보기 버튼
-        $(".btn-submit").on("click", function() {
-            $("#additionalFields").html(""); // 검색 옵션 초기화
-            searchOptionForm.submit();
         });
 
         // 팔로우 버튼
@@ -310,51 +261,6 @@ let requestLock = false;
         });
     }
 
-    // 검색 옵션 되돌리기
-    function setSearchOption() {
-        // 올린 날이 선택되어 있다면
-        if(${not empty requestScope.searchDate}) {
-            $("input[name='searchDate']").each((index, elmt) => {
-                if($(elmt).val() == "${requestScope.searchDate}") {
-                    $(elmt).prop("checked", true);
-                }
-            });
-            $("button#btnSearchDate").removeClass("button-gray");
-            $("button#btnSearchDate").addClass("button-selected");
-            
-            $(".btn-reset-dropdown").each((index, elmt) => {
-                if($(elmt).data("reset") == "searchDate") {
-                    $(elmt).text("초기화").addClass("active");
-                    $(elmt).removeClass("btn-close-dropdown");
-                }
-            });
-        }
-        else {
-            $("input[name='searchDate']").prop("checked", false);
-        }
-
-        // 콘텐츠 종류가 선택되어 있다면
-        if(${not empty requestScope.searchContentType}) {
-            $("input[name='searchContentType']").each((index, elmt) => {
-                if($(elmt).val() == "${requestScope.searchContentType}") {
-                    $(elmt).prop("checked", true);
-                }
-            });
-            $("button#btnSearchContentType").removeClass("button-gray");
-            $("button#btnSearchContentType").addClass("button-selected");
-            
-            $(".btn-reset-dropdown").each((index, elmt) => {
-                if($(elmt).data("reset") == "searchContentType") {
-                    $(elmt).text("초기화").addClass("active");
-                    $(elmt).removeClass("btn-close-dropdown");
-                }
-            });
-        }
-        else {
-            $("input[name='searchContentType']").prop("checked", false);
-        }
-    }
-
     function getSearchResult(searchWord) {
         
         if(requestLock) {
@@ -366,8 +272,6 @@ let requestLock = false;
         }
         
 	    requestLock = true; // 스크롤 이벤트가 여러 번 발생 하기 때문에 ajax를 쓰는동안 락을 걸어야 한다.
-
-        document.searchOptionForm.searchWord.value = searchWord;
 
         $("#additionalFields").html(""); // 검색 옵션 초기화
 
@@ -593,130 +497,13 @@ dialog.option-dropdown::backdrop {
         <%-- 검색어 input --%>
         <input type="hidden" name="searchWord"/>
         <input type="hidden" name="searchType" value="board"/>
+        <input type="hidden" name="authorMemberId" value="${requestScope.member_id}"/>
         <div id="additionalFields">
         </div>
-        <!-- 검색 유형 Dropdown -->
-        <dialog id="dropdownSearchType" class="option-dropdown border-normal drop-shadow-lg">
-            <ul class="nav font-bold text-gray-600 w-50">
-                <li><a href="${pageContext.request.contextPath}/search/all?searchWord=${requestScope.searchWord}">전체</a></li>
-                <li class="nav-selected"><a href="${pageContext.request.contextPath}/search/board?searchWord=${requestScope.searchWord}">글</a></li>
-                <li><a href="${pageContext.request.contextPath}/search/member?searchWord=${requestScope.searchWord}">사람</a></li>
-                <li><a href="${pageContext.request.contextPath}/search/company?searchWord=${requestScope.searchWord}">회사</a></li>
-                <%-- <li><a href="${pageContext.request.contextPath}/search/recruit?searchWord=${requestScope.searchWord}">채용</a></li> --%>
-            </ul>
-        </dialog>
-    
-        <!-- 정렬 기준 Dropdown -->
-        <%-- <dialog id="dropdownSearchSortBy" class="option-dropdown border-normal pt-4 pb-2 drop-shadow-lg">
-            <div class="space-y-2">
-                <button type="button" class="btn-close-dropdown btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                <ul class="space-y-4 w-60 px-4">
-                    <li>
-                        <input type="radio" name="searchSortBy" id="searchSortByRelative" value="relative"/>
-                        <label for="searchSortByRelative">관련순</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="searchSortBy" id="searchSortByRecent" value="recent"/>
-                        <label for="searchSortByRecent">최신순</label>
-                    </li>
-                </ul>
-                <hr class="border-gray-200">
-                <div class="flex justify-end items-center gap-4 px-4">
-                    <div>
-                        <button type="button" class="btn-close-dropdown button-board-action px-4 btn-reset-dropdown" data-reset="searchSortBy">취소</button>
-                    </div>
-                    <div>
-                        <button type="button" class="button-selected btn-submit">결과보기</button>
-                    </div>
-                </div>
-            </div>
-        </dialog> --%>
-        
-        <!-- 올린 날 Dropdown -->
-        <dialog id="dropdownSearchDate" class="option-dropdown border-normal pt-4 pb-2 drop-shadow-lg">
-            <div class="space-y-2">
-                <button type="button" class="btn-close-dropdown btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                <ul class="space-y-4 w-60 px-4">
-                    <li>
-                        <input type="radio" name="searchDate" id="searchDateToday" value="1"/>
-                        <label for="searchDateToday">24시간 내</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="searchDate" id="searchDateWeek" value="7"/>
-                        <label for="searchDateWeek">지난 주</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="searchDate" id="searchDateMonth" value="30"/>
-                        <label for="searchDateMonth">지난 달</label>
-                    </li>
-                </ul>
-                <hr class="border-gray-200">
-                <div class="flex justify-end items-center gap-4 px-4">
-                    <div>
-                        <button type="button" class="btn-close-dropdown button-board-action px-4 btn-reset-dropdown" data-reset="searchDate">취소</button>
-                    </div>
-                    <div>
-                        <button type="button" class="button-selected btn-submit">결과보기</button>
-                    </div>
-                </div>
-            </div>
-        </dialog>
-        
-        <!-- 콘텐츠 종류 Dropdown -->
-        <dialog id="dropdownSearchContentType" class="option-dropdown border-normal pt-4 pb-2 drop-shadow-lg">
-            <div class="space-y-2">
-                <button type="button" class="btn-close-dropdown btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                <ul class="space-y-4 w-60 px-4">
-                    <li>
-                        <input type="radio" name="searchContentType" id="searchContentTypeVideo" value="video"/>
-                        <label for="searchContentTypeVideo">동영상</label>
-                    </li>
-                    <li>
-                        <input type="radio" name="searchContentType" id="searchContentTypeImage" value="image"/>
-                        <label for="searchContentTypeImage">이미지</label>
-                    </li>
-                    <%-- <li>
-                        <input type="radio" name="searchContentType" id="searchContentTypeRecruit" value="recruit"/>
-                        <label for="searchContentTypeRecruit">채용공고</label>
-                    </li> --%>
-                </ul>
-                <hr class="border-gray-200">
-                <div class="flex justify-end items-center gap-4 px-4">
-                    <div>
-                        <button type="button" class="btn-close-dropdown button-board-action px-4 btn-reset-dropdown" data-reset="searchContentType">취소</button>
-                    </div>
-                    <div>
-                        <button type="button" class="button-selected btn-submit">결과보기</button>
-                    </div>
-                </div>
-            </div>
-        </dialog>
     </form>
     <!-- 검색옵션 Form 끝 -->
 
-    <!-- 상단 헤더 -->
-    <div class="fixed left-0 p-4 bg-white w-full z-99 drop-shadow-md">
-        <div class="flex gap-2 bg-white xl:max-w-[1140px] m-auto">
-            <button type="button" id="btnSearchType" class="button-selected btn-open-dropdown">
-                <span>글</span>
-                <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <%-- <button type="button" id="btnSearchSortBy" class="button-gray btn-open-dropdown">
-                <span>정렬기준</span>
-                <i class="fa-solid fa-caret-down"></i>
-            </button> --%>
-            <button type="button" id="btnSearchDate" class="button-gray btn-open-dropdown">
-                <span>올린 날</span>
-                <i class="fa-solid fa-caret-down"></i>
-            </button>
-            <button type="button" id="btnSearchContentType" class="button-gray btn-open-dropdown">
-                <span>콘텐츠 종류</span>
-                <i class="fa-solid fa-caret-down"></i>
-            </button>
-        </div>
-    </div>
-
-    <div class="container m-auto mt-23 grid grid-cols-14 gap-6 xl:max-w-[1140px]">
+    <div class="container m-auto mt-5 grid grid-cols-14 gap-6 xl:max-w-[1140px]">
         <div class="center col-span-14 md:col-span-7 space-y-2 mb-5">
             <ul id="update" class="border-board">
                 <!-- 게시물 -->
@@ -823,7 +610,7 @@ dialog.option-dropdown::backdrop {
         </div>
 
         <div class="right-side col-span-4 h-full relative hidden lg:block">
-            <div class="border-list sticky top-37 space-y-2 text-center relative bg-white">
+            <div class="border-list sticky top-19 space-y-2 text-center relative bg-white">
                 <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
                     <span class="pl-1.5 font-bold">광고</span>
                     <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
