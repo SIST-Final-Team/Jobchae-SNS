@@ -194,7 +194,7 @@
 	let boardList = $(".feed-item");
 	let currentPreviewBox = 1; 
 	let currentPreviewBox2 = 1; 
-	let dataTransfer = new DataTransfer(); 
+	//let dataTransfer = new DataTransfer(); // ㅇㅇ
 	
     $(document).ready(function() {
         
@@ -351,7 +351,7 @@
 		});
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
-		// 글 작성 
+		// 글 작성  ㅇㅇ
 		$("button#write-update").click(function() {
 			const boardContent = writeQuill.root.innerHTML.replace(/\s+/g, "").replace(/<p><br><\/p>/g, "");
 			//alert(boardContent);
@@ -366,6 +366,8 @@
     		    if (imageFiles.length === 0) {
     		        document.getElementById("file-image").remove();
     		    }
+    		    
+    		    console.log("imageFiles.length " + imageFiles.length);
     		    
 				alert("글이 성공적으로 업데이트 되었습니다.");
 				const frm = document.addFrm;
@@ -1430,7 +1432,7 @@
     });
    
    
-    // 이미지 미리보기
+    // 이미지 미리보기 ㅇㅇ
     function previewImage(event) {
     	
         const files = event.target.files;
@@ -1441,7 +1443,7 @@
             return;
         }
         
-        //console.log(files);
+        //console.log("files " + files);
         //const dataTransfer = new DataTransfer(); 
 
         Array.from(files).forEach((file) => { 
@@ -1544,14 +1546,13 @@
 
         
         function removeFile(fileToRemove) {
-            // 새로운 DataTransfer 객체로 업데이트
-            const newDataTransfer = new DataTransfer();
+
+        	const newDataTransfer = new DataTransfer();
             Array.from(dataTransfer.files).forEach((file) => {
                 if (file !== fileToRemove) {
                     newDataTransfer.items.add(file);
                 }
             });
-            // 업데이트된 DataTransfer 객체를 event.target.files에 반영
             event.target.files = newDataTransfer.files;
 
             console.log(event.target.files);
