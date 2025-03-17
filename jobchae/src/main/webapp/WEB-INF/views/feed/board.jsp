@@ -2162,7 +2162,7 @@
 		                    	<div class="profile-image"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진" /></div>
 		                    	<div class="comment-input" >
 		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
-							        <input type="text" placeholder="댓글 남기기" id="commentInput">
+							        <input type="text" placeholder="댓글 남기기" id="commentInput" autocomplete="off">
 						            <button class="comment-submit-button">댓글</button>
 						            <input type="hidden" name="hidden-comment-reply-no" value="" />
 							    </div>	
