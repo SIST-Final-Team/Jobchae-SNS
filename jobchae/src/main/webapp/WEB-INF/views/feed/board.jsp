@@ -242,7 +242,7 @@
         
         
         
-        // ㅇㅇ
+        // 피드 글 높이 계산
         $('.board-content-container').each(function() {
             var container = $(this);
             var content = container.find('.board-content');
@@ -1543,24 +1543,27 @@
         });
 
         
-        function removeFile(fileToRemove) { 
+        function removeFile(fileToRemove) {
+            // 새로운 DataTransfer 객체로 업데이트
             const newDataTransfer = new DataTransfer();
             Array.from(dataTransfer.files).forEach((file) => {
                 if (file !== fileToRemove) {
                     newDataTransfer.items.add(file);
                 }
             });
+            // 업데이트된 DataTransfer 객체를 event.target.files에 반영
             event.target.files = newDataTransfer.files;
 
+            console.log(event.target.files);
+            
             let currentX = parseInt($(track).css("transform").split(",")[4]) || 0;
             let previewCount = track.querySelectorAll(".preview-box").length;
-			
+
             if (currentX !== 0) {
                 currentX = currentX + 208; 
                 $(track).css("transform", "translateX(" + currentX + "px)"); 
             }
         }
-
 
         function togglePrevButton() {
             const previewCount = track.querySelectorAll(".preview-box").length;
@@ -1861,7 +1864,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
+	                            <a href="<%= ctxPath%>/member/profile/${boardvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -2185,7 +2188,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
+									                <a href="<%= ctxPath%>/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2265,7 +2268,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
+											                        <a href="<%= ctxPath%>/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">

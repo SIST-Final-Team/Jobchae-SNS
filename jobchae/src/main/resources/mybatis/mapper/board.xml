@@ -44,7 +44,7 @@
 	
 	<!-- 피드 조회하기 -->
 	<select id="getAllBoards" resultType="BoardVO" parameterType="HashMap">
-       	SELECT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, 
+       	SELECT DISTINCT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, 
 		       b.board_comment_allowed, b.board_register_date, b.board_parent_no, 
 		       b.board_group_no, b.board_depth, b.board_is_delete, 
 		       m.member_id, m.member_name, m.member_birth, m.member_profile
