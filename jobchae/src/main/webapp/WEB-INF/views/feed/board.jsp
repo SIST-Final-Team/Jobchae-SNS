@@ -2216,10 +2216,12 @@
 													</div>
 													
 									                <div class="actions">
+									                <!-- 
 									                    <button class="action-button like">
 									                        <i class="fas fa-heart"></i> 추천 · 1
 									                    </button>
-									                    <span class="action-separator"></span>
+									                    
+									                    <span class="action-separator"></span>--> 
 									                    <button class="action-button reply">답장 · 댓글 ${commentvo.replyCount}</button>
 									                </div>
 									                
@@ -2293,10 +2295,11 @@
 																		</div>
 																	</div>
 											                        <div class="actions">
+											                        <!--  
 											                            <button class="action-button like">
 											                                <i class="fas fa-heart"></i> 추천 · 1
 											                            </button>
-											                            <span class="action-separator"></span>
+											                            <span class="action-separator"></span>-->
 											                            <button class="action-button reply">답장</button>
 											                        </div>
 											                        
