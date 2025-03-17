@@ -16,6 +16,15 @@ public class CommentVO {
 	
 	// select용
 	private String member_name;
+	private String member_profile;
+	public String getMember_profile() {
+		return member_profile;
+	}
+
+	public void setMember_profile(String member_profile) {
+		this.member_profile = member_profile;
+	}
+
 	private List<CommentVO> replyCommentsList;
 	private String replyCount;
 	

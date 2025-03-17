@@ -1098,7 +1098,7 @@
 			// 대댓글 관련
 			const mentionedNameText = $('#mentionedName').text().trim();
 			const comment_no = $("input[name='hidden-comment-reply-no']").val();
-			alert(mentionedNameText + " " + comment_no);
+			//alert(mentionedNameText + " " + comment_no);
 			
 			if (mentionedNameText !== "") { // 대댓글이라면
 				
@@ -1842,7 +1842,7 @@
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
 	                        <div>
-	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
+	                            <a href="http://localhost/jobchae/member/profile/${boardvo.member_id}"><img src="<%= ctxPath%>/resources/files/profile/${boardvo.member_profile}" style="border-radius: 50%;" /></a>
 	                        </div>
 	                        <div class="flex-1">
 	                            <a href="#">
@@ -2166,7 +2166,7 @@
 											<div class="comment parent-comment"> <!-- 부모 댓글 -->
 											
 									            <div class="profile">
-									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
+									                <a href="http://localhost/jobchae/member/profile/${commentvo.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${commentvo.member_profile}" alt="프로필 사진"></a>
 									            </div>
 									            <div class="content">
 									                <div class="header">
@@ -2244,7 +2244,7 @@
 									                	
 									                		<div class="comment child-comment"> 
 											                    <div class="profile">
-											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진"></a>
+											                        <a href="http://localhost/jobchae/member/profile/${replyComment.fk_member_id}"><img src="<%= ctxPath%>/resources/files/profile/${replyComment.member_profile}" alt="프로필 사진"></a>
 											                    </div>
 											                    <div class="content">
 											                        <div class="header">
