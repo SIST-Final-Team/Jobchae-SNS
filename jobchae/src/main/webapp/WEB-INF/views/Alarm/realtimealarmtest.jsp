@@ -23,14 +23,19 @@ pageEncoding="UTF-8"%>
       // 웹소켓 연결을 설정하고, 알림 구독을 시작하는 함수
       function connect() {
         // SockJS를 사용하여 서버와의 웹소켓 연결 생성
-        const socket = new SockJS("/jobchae/ws");
+        const socket = new SockJS("/jobchae/ws?user-id="+userId);
         // STOMP 클라이언트를 생성
         stompClient = Stomp.over(socket);
+        const headers = {
+          'user-id':  userId // 'token'은 실제 토큰 값으로 대체해야 함
+        };
         // 서버에 연결 요청, 연결이 성공하면 콜백 실행
-        stompClient.connect({}, function (frame) {
+        stompClient.connect(headers, function (frame) {
           console.log("Connected: " + frame);
           // 사용자별 알림 토픽 구독 및 수신 시, 메시지를 파싱 후 알림 추가
-          stompClient.subscribe("/topic/alarm", function (alarm) {
+          // stompClient.subscribe("/user/"+userId+"/queue/alarm", function (alarm) {
+          stompClient.subscribe("/topic/alarm/"+userId, function (alarm) {
+            console.log(alarm);
             const jsonData = JSON.parse(alarm.body);
             console.log(jsonData);
             addAlarm(jsonData);

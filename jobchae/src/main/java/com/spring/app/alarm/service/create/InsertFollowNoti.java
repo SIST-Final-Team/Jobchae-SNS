@@ -6,6 +6,7 @@ import com.spring.app.alarm.model.AlarmDAO;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.model.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,6 +18,8 @@ public class InsertFollowNoti implements InsertNotification {
     MemberDAO memberDAO;
     @Autowired
     AlarmDAO alarmDAO;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Override
     public AlarmVO insertNotification(MemberVO memberVO, String TargetId, AlarmData alarmData) {
@@ -45,6 +48,8 @@ public class InsertFollowNoti implements InsertNotification {
         alarmVO.setAlarmData(alarmData);
 
         AlarmVO result = alarmDAO.save(alarmVO);
+        System.out.println(TargetId);
+        messagingTemplate.convertAndSendToUser(TargetId, "/queue/alarm", alarmData);
 
         return result;
     }

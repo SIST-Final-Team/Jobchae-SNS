@@ -15,6 +15,7 @@ import com.spring.app.alarm.service.AlarmService;
 import com.spring.app.board.model.BoardDAO;
 import com.spring.app.follow.domain.FollowEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,9 @@ public class ApiBoardController {
 
 	@Autowired
 	private AlarmService alarmService;
+
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 
 	// 글 삭제
 	@PostMapping("deleteBoard")
@@ -135,6 +139,7 @@ public class ApiBoardController {
 
 		alarmService.insertAlarm(loginuser, board.getFk_member_id(), AlarmVO.NotificationType.LIKE, alarmData);
 
+		simpMessagingTemplate.convertAndSendToUser(board.getFk_member_id(), "/topic/alarm", alarmData);
 
 		//알림 설정 끝
 	
@@ -389,6 +394,7 @@ public class ApiBoardController {
 
 		alarmService.insertAlarm((MemberVO)session.getAttribute("loginuser"), board.getFk_member_id(), AlarmVO.NotificationType.COMMENT, alarmData);
 
+		System.out.println("알림을 받는 사람 : " + board.getFk_member_id());
 		//알림 삽입 끝
 		Map<String, Integer> map = new HashMap<>();
 		map.put("n", n);

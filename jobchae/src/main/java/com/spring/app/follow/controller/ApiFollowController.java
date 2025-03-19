@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,8 @@ public class ApiFollowController {
     private FollowService followService;
     @Autowired
     private AlarmService alarmService;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     // 팔로우 등록
     @PostMapping
@@ -42,10 +45,9 @@ public class ApiFollowController {
         MemberVO member = (MemberVO) session.getAttribute("loginuser");
         AlarmData alarmData = new AlarmData();
         alarmService.insertAlarm(member, followingId, AlarmVO.NotificationType.FOLLOW, alarmData);
+        simpMessagingTemplate.convertAndSendToUser(followingId, "/topic/alarm", alarmData);
         //알림 등록 끝
 
-
-        //알림 등록 끝
         return ResponseEntity.status(HttpStatus.CREATED).body(followEntity);
     }
 

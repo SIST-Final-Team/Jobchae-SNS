@@ -1,10 +1,17 @@
 package com.spring.app.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
 
 
 @Configuration
@@ -16,7 +23,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // /ws로 접속하면 SockJS를 통해 웹소켓을 사용하도록 설정
-        registry.addEndpoint("/ws").withSockJS();
+        registry.addEndpoint("/ws").setHandshakeHandler(new DefaultHandshakeHandler(){
+            //TODO: 이 코드는 인증 관련 코드인데 원리에 대해 좀 더 공부해야 할 듯
+            @Override
+            protected Principal determineUser(ServerHttpRequest request
+                                              , WebSocketHandler wsHandler
+                                              , Map<String, Object> attributes) {
+                // URL 파라미터에서 user-id 가져오기
+                String userId = request.getURI().getQuery();
+                System.out.println("determineUser: " + userId);
+                if(userId != null && userId.contains("user-id=")) {
+                    userId = userId.split("user-id=")[1].split("&")[0];
+                    System.out.println("determineUser: " + userId);
+                    return new StompPrincipal(userId);
+                }
+                return null;
+            }
+        }).withSockJS();
     }
 
     // 메시지 브로커가 사용할 주소를 설정
@@ -31,6 +54,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app");
 
         // /user로 시작하는 주소로 메시지를 보내면 특정 사용자에게 메시지를 보내도록 설정
-        registry.setUserDestinationPrefix("/user");
+            registry.setUserDestinationPrefix("/user");
+    }
+
+
+    public static class StompPrincipal implements Principal {
+        private final String name;
+
+        public StompPrincipal(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 }

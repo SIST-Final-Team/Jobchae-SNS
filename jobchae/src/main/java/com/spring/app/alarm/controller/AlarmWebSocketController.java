@@ -15,12 +15,12 @@ public class AlarmWebSocketController {
         return alarm;
     }
 
-    //팔로워들에게 알림을 보내는 컨트롤러
-    @MessageMapping("/follower/{member_id}")
-    @SendTo("/topic/follower/{member_id}")
-    public AlarmVO send(AlarmVO alarm, String member_id) throws Exception {
-        return alarm;
-    }
+//    //팔로워들에게 알림을 보내는 컨트롤러
+//    @MessageMapping("/follower/{member_id}")
+//    @SendTo("/topic/follower/{member_id}")
+//    public AlarmVO send(AlarmVO alarm, String member_id) throws Exception {
+//        return alarm;
+//    }
 
 
 }

@@ -13,6 +13,7 @@ import com.spring.app.alarm.service.AlarmService;
 import com.spring.app.follow.domain.FollowEntity;
 import com.spring.app.follow.service.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +50,9 @@ public class BoardController {
 
 	@Autowired
 	private AlarmService alarmService;
+
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 	
 	// 피드 조회하기
 	@GetMapping("feed")
@@ -253,7 +257,11 @@ public class BoardController {
 		followerList.stream().forEach(follow -> {
 			AlarmVO alarm = alarmService.insertAlarm(member, follow.getFollowerId(), AlarmVO.NotificationType.FOLLOWER_POST, alarmData);
 			alarmList.add(alarm);
+
+			simpMessagingTemplate.convertAndSendToUser(follow.getFollowerId(), "/topic/alarm", alarm);
 		});
+
+
 		//알림 전송 끝
 		return mav;
 	}
