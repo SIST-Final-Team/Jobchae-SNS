@@ -19,6 +19,7 @@
                     <li>
                         <label for="skill_name" class="text-gray-500">보유기술 *</label><br>
                         <input type="text" name="skill_name" id="skill_name" placeholder="예: 스프링 프레임워크"
+                            autocomplete="off"
                             data-target-url="/api/member/skill/search"
                             data-search-type="skill_name"
                             data-result-name="fk_skill_no"

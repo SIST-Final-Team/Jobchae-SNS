@@ -258,7 +258,7 @@
 				on b.board_no = e.board_parent_no
 		        where b.board_is_delete = 0
 		        <!-- 검색어 -->
-		        and b.board_content like '%'|| #{searchWord} ||'%'
+		        and lower(b.board_content like) '%'|| lower(#{searchWord}) ||'%'
 		        <!-- 작성일자 최근 30일, 7일, 1일 -->
 		        <if test="searchDate != null">
 		            and b.board_register_date &gt;= sysdate - #{searchDate}
@@ -409,7 +409,7 @@
 				on m.member_id = msk.fk_member_id
 				<!-- 보유기술 목록 끝 -->
 				where member_status = 1
-				and member_name like '%' || #{searchWord} || '%'
+				and lower(member_name) like '%' || lower(#{searchWord}) || '%'
 				<!-- 지역 -->
 				<if test="arr_fk_region_no != null">
 					and m.fk_region_no in
@@ -453,7 +453,7 @@
 				left join tbl_industry i
 				on c.fk_industry_no = i.industry_no
 				where company_status = 1
-				and company_name like '%' || #{searchWord} || '%'
+				and lower(company_name) like '%' || lower(#{searchWord}) || '%'
 				<!-- 업종 -->
 				<if test="arr_fk_industry_no != null">
 					and fk_industry_no in

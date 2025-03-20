@@ -20,6 +20,7 @@
                     <li>
                         <label for="school_name" class="text-gray-500">학교 *</label><br>
                         <input type="text" name="school_name" id="school_name" placeholder="예: 서울대학교"
+                            autocomplete="off"
                             data-target-url="/api/member/school/search"
                             data-search-type="school_name"
                             data-result-name="fk_school_no"
@@ -44,6 +45,7 @@
                     <li>
                         <label for="major_name" class="text-gray-500">전공 *</label><br>
                         <input type="text" name="major_name" id="major_name"
+                            autocomplete="off"
                             data-target-url="/api/member/major/search"
                             data-search-type="major_name"
                             data-result-name="fk_major_no"
