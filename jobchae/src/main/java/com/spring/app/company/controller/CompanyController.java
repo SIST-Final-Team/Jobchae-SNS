@@ -32,7 +32,7 @@ public class CompanyController {
     //회사 등록 페이지 이동
     @GetMapping("/registerCompany")
     public String requiredLogin_registerCompany(HttpServletRequest request, HttpServletResponse response){
-        return "company/formtest";
+        return "company/companyForm";
     }
 
 

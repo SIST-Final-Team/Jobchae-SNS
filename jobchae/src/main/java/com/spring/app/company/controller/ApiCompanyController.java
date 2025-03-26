@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/api/company")
+@CrossOrigin(origins = "*")
 public class ApiCompanyController {
 
     private final CompanyDAO companyDAO;
