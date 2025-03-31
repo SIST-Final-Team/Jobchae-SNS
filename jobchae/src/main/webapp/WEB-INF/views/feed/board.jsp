@@ -2074,7 +2074,7 @@
 	                    
 	                    <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    <div class="py-0">
-	                        <ul class="grid grid-cols-4 gap-4 text-center">
+	                        <ul class="grid grid-cols-2 gap-4 text-center">
 	                            <li>
 	                            	<input type="hidden" name="" value="dd"/>
 	                                <button type="button" class="button-board-action button-board-action-reaction" value="${boardvo.board_no}">
@@ -2140,6 +2140,8 @@
 	                                    <span>댓글</span>
 	                                </button>
 	                            </li>
+	                            
+	                            <!-- 
 	                            <li>
 	                                <button type="button" class="button-board-action">
 	                                    <i class="fa-solid fa-retweet"></i>
@@ -2152,6 +2154,7 @@
 	                                    <span>보내기</span>
 	                                </button>
 	                            </li>
+	                             -->
 	                        </ul>
 	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    
