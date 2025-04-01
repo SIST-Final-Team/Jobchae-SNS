@@ -122,6 +122,7 @@ public class CommonAop {
 		}//end of public void emailCheck(JoinPoint joinpoint) {}...
 	
 
+
 	// ===== After Advice(보조업무) 만들기 ====== //
 
 //	@Pointcut("execution(public * com.spring.app..*Controller)")

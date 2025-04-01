@@ -325,6 +325,13 @@ public class BoardController {
 	@GetMapping("/feed/{board_no}")
 	public ModelAndView boardOne(HttpServletRequest request, ModelAndView mav, @PathVariable String board_no) {
 		
+		BoardVO boardvo = service.boardOneSelect(board_no);
+		
+		if (boardvo == null) {
+			mav.setViewName("redirect:/board/feed");
+			return mav;
+		}
+		
 		HttpSession session = request.getSession();
 		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
 //		MemberVO loginuser = new MemberVO(); // feat: 이준영, 기능 구현 중 오류발생하여 주석처리함
@@ -334,8 +341,6 @@ public class BoardController {
 		
 		// 로그인된 사용자의 정보 얻어오기
 		MemberVO membervo = service.getUserInfo(login_userid);
-		
-		BoardVO boardvo = service.boardOneSelect(board_no);
 		
 		String following_id = boardvo.getFk_member_id();
         int followerCount = service.getFollowerCount(following_id);
