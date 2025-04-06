@@ -11,6 +11,7 @@
             action="<%= ctxPath%>/api/company/registerCompany"
             method="post"
             class="bg-white border-2 rounded-xl p-4 mt-3"
+            enctype="multipart/form-data"
           >
             <label for="companyName">이름* :</label><br />
             <input
@@ -50,15 +51,15 @@
                 outline: none;
               }
             </style>
-            <input id="industryName" type="text" class="border w-full">
-            <details id = "option">
-              <summary></summary>
-              <ol>
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
-              </ol>
-            </details>
+            <input id="industryName" name="industryName" type="text" class="border w-full">
+<%--            <details id = "option">--%>
+<%--              <summary></summary>--%>
+<%--              <ol>--%>
+<%--                <li>1</li>--%>
+<%--                <li>2</li>--%>
+<%--                <li>3</li>--%>
+<%--              </ol>--%>
+<%--            </details>--%>
             <label for="companySize">단체 규모* :</label><br />
             <select id="companySize" name="companySize">
               <option value="1">규모 선택</option>
@@ -174,6 +175,7 @@
                         type="file"
                         class="hidden"
                         accept="image/jpeg, image/png"
+                        enc
                 />
               </div>
 

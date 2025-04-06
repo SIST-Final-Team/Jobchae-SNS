@@ -55,7 +55,7 @@ public class ApiCompanyController {
 
     //회사 등록
     @PostMapping("/registerCompany")
-    public ModelAndView registerCompany(CompanyVO companyVO, MultipartHttpServletRequest request) {
+    public ModelAndView registerCompany(CompanyVO companyVO, MultipartHttpServletRequest request, @RequestParam(value = "industryName") String industryName) {
 
         //파라미터 확인
 //        Enumeration<String> parameterNames = request.getParameterNames();
@@ -70,7 +70,8 @@ public class ApiCompanyController {
         member.setMember_birth("1996-02-27");
         companyVO.setFkMemberId(member.getMember_id());
         companyVO.setMember(member);
-        String industryName = (String)request.getParameter("industryName");
+//        String industryName = (String)request.getParameter("industryName");
+        System.out.println("industryName => "+industryName);
 
 
         //세션 정보 확인
@@ -108,7 +109,7 @@ public class ApiCompanyController {
                 e.printStackTrace();
             }
         }
-
+        System.out.println("companyVO => "+companyVO.toString());
         //회사 등록
         CompanyVO company = companyService.insertCompany(companyVO, industryName);
         //회사 대시보드로 이동
