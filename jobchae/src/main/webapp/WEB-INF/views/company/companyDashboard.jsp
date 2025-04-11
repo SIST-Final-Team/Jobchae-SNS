@@ -38,13 +38,13 @@
 
                 <div>
                     <div class="text-3xl font-bold flex items-center">
-                        <span id="CompanyName">company Name</span>
+                        <span id="companyName">company Name</span>
                         <i class="fas fa-check-circle text-orange-500 ml-2 text-lg" title="인증된 회사"></i>
                     </div>
                     <div class="text-sm text-gray-500">
-                        <span id="industry">연구 서비스</span> · 
-                        <span id="location">위치</span> · 
-                        <span id="followerCount">팔로워</span> · 
+                        <span id="companyIndustry">연구 서비스</span> · 
+                        <span id="companyLocation">위치</span> · 
+                        <span id="companyFollowerCount">팔로워</span> · 
                         <span id="companySize">직원 규모</span>
                     </div>
                 </div>
@@ -328,7 +328,11 @@
 
 <!-- 회사 프로필 수정 모달 등 다른 모달도 필요한 경우 추가 -->
 <!-- 회사 배경 이미지 변경, 로고 변경, 회사 정보 업데이트 모달 -->
-<script src="${pageContext.request.contextPath}/js/company/dashboard.js"></script>
-
 </body>
+
+<script>
+    const contextPath = "${pageContext.request.contextPath}";
+</script>
+<script src="${pageContext.request.contextPath}/js/company/pageLoad.js"></script>
+<script src="${pageContext.request.contextPath}/js/company/dashboard.js"></script>
 </html>
