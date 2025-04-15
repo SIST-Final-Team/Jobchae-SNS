@@ -16,37 +16,11 @@
         .h1 {
             @apply text-[1.35rem] font-bold;
         }
-        .border-normal {
-            @apply border-1 border-gray-300 rounded-lg bg-white;
-        }
-        .border-search-board {
-            @apply border-1 border-gray-300 rounded-lg bg-white;
-
-            &>li:not(:last-child) {
-                @apply border-b-4 border-gray-200;
-            }
-
-            &>li {
-                @apply space-y-2;
-            }
-
-            &>li:not(.py-0) {
-                @apply pt-4 pb-2;
-            }
-            
-            &>li>*:not(.px-0) {
-                @apply px-4;
-            }
-
-            .button-more {
-                @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
-            }
-        }
         .border-board {
             @apply space-y-4;
 
             &>li {
-                @apply border-1 border-gray-300 rounded-lg space-y-2 bg-white;
+                @apply border-0! sm:border-x-1! border-y-1! border-gray-300 rounded-none! sm:rounded-lg! space-y-2 bg-white;
             }
 
             &>li {
@@ -155,7 +129,7 @@
             }
 
             button:first-child {
-                @apply max-h-[50rem] m-auto col-span-3;
+                @apply max-h-[80rem] m-auto col-span-3 overflow-hidden;
             }
             button:not(:first-child) {
                 @apply m-auto;
@@ -504,7 +478,7 @@ dialog.option-dropdown::backdrop {
     <!-- 검색옵션 Form 끝 -->
 
     <div class="container m-auto mt-5 grid grid-cols-14 gap-6 xl:max-w-[1140px]">
-        <div class="center col-span-14 md:col-span-7 space-y-2 mb-5">
+        <div class="center col-span-14 lg:col-span-10 space-y-2 mb-5">
             <ul id="update" class="border-board">
                 <!-- 게시물 -->
                 <%--
@@ -616,14 +590,16 @@ dialog.option-dropdown::backdrop {
                     <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div>
-                    <img src="7.png"/>
+                    <img src="${pageContext.request.contextPath}/images/ad.png"/>
                 </div>
                 <div class="px-4">
-                    <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
-                    <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
+                    <p class="font-bold">${membervo.member_name}님, ANTICO에서 경매에 참여해보세요.</p>
+                    <p>ANTICO에서 나에게 맞는 물건을 살펴보세요.</p>
                 </div>
                 <div class="px-4">
-                    <button type="button" class="button-orange">팔로우</button>
+					<a href="http://antico.shop/antico/index">
+                    <button type="button" class="button-orange">방문하기</button>
+					</a>
                 </div>
             </div>
         </div>
