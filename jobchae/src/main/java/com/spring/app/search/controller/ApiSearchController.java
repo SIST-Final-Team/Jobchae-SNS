@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.recruit.domain.RecruitVO;
 import com.spring.app.search.domain.SearchBoardVO;
 import com.spring.app.search.domain.SearchCompanyVO;
 import com.spring.app.search.domain.SearchMemberVO;
@@ -181,6 +182,54 @@ public class ApiSearchController {
 		params.put("searchWord", "");
 		
 		return service.searchBoardByContent(params);
+	}
+
+	@Operation(summary = "채용공고 검색", description = "채용 직종명, 기업명으로 채용공고 검색")
+    @Parameter(name = "params", description = "검색을 위한 Map")
+	@GetMapping("recruit")
+	public List<RecruitVO> searchRecruit(HttpServletRequest request, @RequestParam Map<String, Object> params) {
+		
+		HttpSession session = request.getSession();
+		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+		
+		// 로그인 여부 확인
+		if(loginuser != null) {
+			params.put("login_member_id", loginuser.getMember_id());
+		}
+		else {
+			params.put("login_member_id", null);
+		}
+
+		// 현재 회사 일련번호 배열
+		if(params.get("arr_fk_company_no") != null) {
+			String[] arr_fk_company_no = ((String) params.get("arr_fk_company_no")).split("\\,");
+			params.put("arr_fk_company_no", arr_fk_company_no);
+		}
+		
+		// 지역 일련번호 배열
+		if(params.get("arr_fk_region_no") != null) {
+			String[] arr_fk_region_no = ((String) params.get("arr_fk_region_no")).split("\\,");
+			params.put("arr_fk_region_no", arr_fk_region_no);
+		}
+		
+		// 근무유형 배열
+		if(params.get("arr_recruit_work_type") != null) {
+			String[] arr_recruit_work_type = ((String) params.get("arr_recruit_work_type")).split("\\,");
+			params.put("arr_recruit_work_type", arr_recruit_work_type);
+		}
+		
+		// 고용형태 배열
+		if(params.get("arr_recruit_job_type") != null) {
+			String[] arr_recruit_job_type = ((String) params.get("arr_recruit_job_type")).split("\\,");
+			params.put("arr_recruit_job_type", arr_recruit_job_type);
+		}
+		
+		if(params.get("start") == null) {
+			params.put("start", "1");
+			params.put("end", "10");
+		}
+		
+		return service.searchRecruit(params);
 	}
 
 }
