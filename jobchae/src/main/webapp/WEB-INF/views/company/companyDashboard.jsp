@@ -7,7 +7,7 @@
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
 
 
-<div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]"">
+<div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]">
     <!-- 메인 부분 -->
     <div class="center col-span-14 md:col-span-10 space-y-2 my-5">
         <div class="scroll-mt-22 border-board">
@@ -15,7 +15,7 @@
             <!-- 회사 프로필 -->
             <div class="pt-0! relative pb-4!" id="company-profile">
                 <div class="w-full h-50 px-0 bg-gray-100">
-                    <img src="${pageContext.request.contextPath}/resources/files/company/${companyVO.company_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
+                    <img src="" id="company-background-img" class="w-full h-50 object-cover rounded-t-md"/>
                     <c:if test="${sessionScope.loginuser.member_id == companyVO.member_id}">
                         <button type="button" class="button btn-open-modal absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"
                                 data-target-modal="CompanyBackground"><i class="fa-solid fa-camera"></i></button>
@@ -25,7 +25,7 @@
                     <c:if test="${sessionScope.loginuser.member_id == companyVO.member_id}">
                     <button type="button" class="button btn-open-modal" data-target-modal="CompanyLogo">
                         </c:if>
-                        <img src="${pageContext.request.contextPath}/resources/files/company/${companyVO.company_logo}" class="bg-white w-40 h-40 rounded-md object-cover border-4 border-white shadow-lg"/>
+                        <img id ="company-profile-logo" src="" class="bg-white w-40 h-40 rounded-md object-cover border-4 border-white shadow-lg"/>
                         <c:if test="${sessionScope.loginuser.member_id == companyVO.member_id}">
                     </button>
                     </c:if>
@@ -57,7 +57,7 @@
                         <button type="button" class="follow-button followed button-gray" data-following-id="${companyVO.company_id}">팔로우 중</button>
                     </c:if>
 
-                    <a href="${companyVO.company_website}" target="_blank" class="button-gray">홈페이지 방문 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+                    <a href="" id="webLinkButton" target="_blank" class="button-gray">홈페이지 방문 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
 
                     <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != companyVO.member_id}">
                         <button id="report-btn" class="button-gray">신고/차단</button>

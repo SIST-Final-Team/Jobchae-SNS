@@ -62,16 +62,16 @@
 <%--            </details>--%>
             <label for="companySize">단체 규모* :</label><br />
             <select id="companySize" name="companySize">
-              <option value="1">규모 선택</option>
-              <option value="2">0-1</option>
-              <option value="3">2-10</option>
-              <option value="4">11-50</option>
-              <option value="5">51-200</option>
-              <option value="6">201-500</option>
-              <option value="7">501-1000</option>
-              <option value="8">1001-5000</option>
-              <option value="9">5001-10000</option>
-              <option value="10">10000+</option></select
+              <option value="0">규모 선택</option>
+              <option value="1">0-1</option>
+              <option value="2">2-10</option>
+              <option value="3">11-50</option>
+              <option value="4">51-200</option>
+              <option value="5">201-500</option>
+              <option value="6">501-1000</option>
+              <option value="7">1001-5000</option>
+              <option value="8">5001-10000</option>
+              <option value="9">10000+</option></select
             ><br /><br />
             <label for="companyType">단체 종류* :</label><br />
             <select id="companyType" name="companyType">

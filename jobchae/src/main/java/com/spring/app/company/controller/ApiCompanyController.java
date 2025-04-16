@@ -82,7 +82,7 @@ public class ApiCompanyController {
         MultipartFile logoFile = request.getFile("company_logo");
         if(logoFile != null && !logoFile.isEmpty()) {
             String root = session.getServletContext().getRealPath("/");
-            String path = root + "resources" + File.separator + "uploadFiles" + File.separator + "companyLogo";
+            String path = root + "resources" + File.separator + "files" + File.separator + "companyLogo";
             String originCompanyLogoFilename = logoFile.getOriginalFilename();
 
             String LogoFileName = "";
@@ -95,15 +95,18 @@ public class ApiCompanyController {
                 String fileExt = originCompanyLogoFilename.substring(originCompanyLogoFilename.lastIndexOf("."));
                 System.out.println("fileExt => "+fileExt);
                 // 백엔드에서 한번 더 사진파일로 걸러주자
-                if (!".jpg".equals(fileExt) && !".png".equals(fileExt) && !".webp".equals(fileExt) && !".jpeg".equals(fileExt)) {
+                if (!".jpg".equalsIgnoreCase(fileExt) && !".png".equalsIgnoreCase(fileExt) && !".webp".equalsIgnoreCase(fileExt) && !".jpeg".equalsIgnoreCase(fileExt)) {
 
+//                    System.out.println("업로드할 수 없는 파일입니다.");
                     return null;
                 }//end of if (fileExt != ".jpg" || fileExt != ".png" || fileExt != ".webp") {}...
 
+//                System.out.println("LogoFileName => "+LogoFileName);
                 LogoFileName = fileManager.doFileUpload(bytes_company_logo, originCompanyLogoFilename, path);
 
                 //CompanyVO에 파일명 저장
                 companyVO.setCompanyLogo(LogoFileName);
+//                System.out.println("LogoFileName => "+LogoFileName);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -112,9 +115,10 @@ public class ApiCompanyController {
         System.out.println("companyVO => "+companyVO.toString());
         //회사 등록
         CompanyVO company = companyService.insertCompany(companyVO, industryName);
+        System.out.println("company => "+company.toString());
         //회사 대시보드로 이동
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/company/dashboard/"+company.getCompanyNo());
+        modelAndView.setViewName("redirect:/company/dashboard/"+company.getCompanyNo()+"/");
         modelAndView.addObject("company", company);
         return  modelAndView;
     }

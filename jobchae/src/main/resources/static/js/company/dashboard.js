@@ -29,17 +29,81 @@ urlArray.forEach((item, index) => {
 //콘텐츠를 렌더링 하는 함수
 function renderContent(path) {
   let pageContent = null;
+  // path가 null일 경우 빈 문자열로 설정합니다.
+  if (path == null) {
+    path = "";
+  }
 
   // path에 따라 다른 페이지를 렌더링합니다.
   switch (path) {
-    case "company-profile":
-      pageContent = companyPrifileDiv.innerHTML;
+    case "":
+      console.log("path : " + path); // 콘솔에 출력합니다.
+      pageContent = `<div class="py-0!">
+                    <h1 class="h1 pt-4">소개</h1>
+                    <div class="text-gray-700 whitespace-pre-line mb-4">
+                    안녕하세요
+                    </div>
+                </div>
+
+                <!-- 채용공고 -->
+                <div class="space-y-0 pb-0!">
+                    <h1 class="h1 mb-0">채용공고</h1>
+                    <div class="text-gray-500 pb-2 text-lg">
+                        현재 진행 중인 채용공고
+                    </div>
+                    <div id="jobs" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0! mb-0!">
+                        
+                    </div>
+
+                   
+                </div>
+
+                <!-- 회사 게시물 -->
+                <div class="pb-0!">
+                    <h1 class="h1 mb-0">회사 소식</h1>
+                    <div id="company-posts" class="space-y-4 mt-4">
+                    </div>
+                </div>
+
+                <!-- 회사 직원 -->
+                <div class="pb-0!">
+                    <h1 class="h1 mb-0">사람들</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-2">여기서 근무하는 직원 (명)</h3>
+                            <p class="text-sm text-gray-500 mb-3">현재 에서 근무 중인 사람들</p>
+                            <div class="flex -space-x-2 mb-3">
+                                
+                            </div>
+                            
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-2">연관 회사</h3>
+                            <p class="text-sm text-gray-500 mb-3">비슷한 산업에 있는 회사들</p>
+                            <ul class="space-y-2">
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+    case "about":
+      pageContent = `<div class="py-0!">
+                    <h1 class="h1 pt-4">소개</h1>
+                    <div class="text-gray-700 whitespace-pre-line mb-4">
+                    안녕하세요
+                    </div>
+                </div>`;
       break;
-    case "company-board":
-      pageContent = rightSideDiv.innerHTML;
+    case "posts":
+      pageContent = "아직 게시물이 없습니다.";
       break;
+    case "jobs":
+      pageContent = "취업관련 정보가 없습니다.";
+      break;
+    case "people":
+      pageContent = "직원 관련 데이터가 없습니다.";
     default:
-      pageContent = rightSideDiv.innerHTML;
+      pageContent = "오류";
   }
   contentDiv.innerHTML = pageContent;
 }
@@ -52,6 +116,7 @@ function changePage(path) {
 
 //메뉴의 스타일을 변경하는 함수
 function changeMenuStyle(menuUrl) {
+  console.log("menuUrl : " + menuUrl); // 콘솔에 출력합니다.
   Array.from(menuElement).forEach((menu) => {
     const menuPath = menu.getAttribute("data-root"); // 클릭한 메뉴의 data-path 속성값을 가져옵니다.
     // 기존 스타일 제거
@@ -71,10 +136,10 @@ Array.from(menuElement).forEach((menu) => {
   menu.addEventListener("click", (e) => {
     e.preventDefault(); // 기본 동작 방지
     const path = e.target.getAttribute("data-root"); // 클릭한 메뉴의 data-path 속성값을 가져옵니다.
-    const menuUrl = window.location.pathname.split("/")[menuArrayNum];
     // console.log(menuUrl); // 메뉴 URL을 콘솔에 출력합니다.
-    changeMenuStyle(menuUrl); // 메뉴 스타일 변경 함수 호출
     history.pushState(null, null, url + path); // 브라우저의 히스토리에 새로운 상태를 추가합니다.
+    const menuUrl = window.location.pathname.split("/")[menuArrayNum]; // 현재 URL 경로에서 메뉴 부분을 가져옵니다.
+    changeMenuStyle(menuUrl); // 메뉴 스타일 변경 함수 호출
     renderContent(path); // 콘텐츠를 렌더링합니다.
   });
 });
@@ -89,9 +154,9 @@ window.addEventListener("popstate", () => {
 });
 
 //함수 호출
-//초기 로딩시 실행되는 함수
+//초기 로딩시 실행
 window.onload = function () {
   const path = window.location.pathname.split("/")[menuArrayNum]; // 현재 URL 경로에서 메뉴 부분을 가져옵니다.
   // 초기 메뉴 스타일 설정
-  changeMenuStyle("/" + path);
+  changeMenuStyle(path);
 };

@@ -24,8 +24,8 @@ public class CompanyController {
     }
 
     //회사 대시보드 페이지 이동
-    @GetMapping("/dashboard/{company_no}/")
-    public String requiredLogin_selectCompany(HttpServletRequest request, HttpServletResponse response, @PathVariable String company_no){
+    @GetMapping({"/dashboard/{company_no}/", "/dashboard/{company_no}/{menu}"})
+    public String requiredLogin_selectCompany(HttpServletRequest request, HttpServletResponse response, @PathVariable String company_no, @PathVariable(required = false) String menu){
         return "company/companyDashboard";
     }
 
