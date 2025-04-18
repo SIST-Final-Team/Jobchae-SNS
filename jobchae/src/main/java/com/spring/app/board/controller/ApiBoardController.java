@@ -142,37 +142,37 @@ public class ApiBoardController {
 		simpMessagingTemplate.convertAndSendToUser(board.getFk_member_id(), "/topic/alarm", alarmData);
 
 		//알림 설정 끝
-	
+		
+		int n;
 		ReactionVO reactionvo = service.selectReaction(paraMap);
 		if (reactionvo != null) {	// 이미 반응 누른 경우, 유니크키 때문에 update 처리 
 			
-			int n = service.updateReactionBoard(paraMap);
+			n = service.updateReactionBoard(paraMap);
 			
 			if (n != 1) {
 				mav.addObject("message", "추천 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
 				mav.addObject("loc", "javascript:history.back()");
 				mav.setViewName("msg");
 			}
-			
-			Map<String, Integer> map = new HashMap<>();
-			map.put("n", n);
-			
-			return map; 
 		} else {
 			
-			int n = service.reactionBoard(paraMap);
+			n = service.reactionBoard(paraMap);
 			
 			if (n != 1) {
 				mav.addObject("message", "추천 과정에서 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
 				mav.addObject("loc", "javascript:history.back()");
 				mav.setViewName("msg");
 			}
-			
-			Map<String, Integer> map = new HashMap<>();
-			map.put("n", n);
-			
-			return map;
 		}
+		
+		// 최신 반응 개수 가져오기
+		int latestReactionCount = service.getReactionCount2(reaction_target_no);
+		
+		Map<String, Integer> map = new HashMap<>();
+		map.put("n", n);
+		map.put("reaction_count", latestReactionCount);
+		
+		return map;
 		
 	}
 	

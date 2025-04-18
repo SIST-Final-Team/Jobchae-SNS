@@ -130,5 +130,8 @@ public interface BoardDAO {
 	// 피드 하나만 띄우기
 	BoardVO boardOneSelect(String board_no);
 
+	// 최신 반응 개수 가져오기
+	int getReactionCount2(String reaction_target_no);
+
 
 }

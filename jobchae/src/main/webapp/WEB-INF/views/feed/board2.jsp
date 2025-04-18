@@ -133,20 +133,23 @@
             }
         }
 
+/* ㅇㅇ */
         .file-image {
             @apply grid grid-flow-row-dense grid-flow-col gap-1 p-0.5 overflow-hidden;
 
             :hover {
                 @apply cursor-pointer;
             }
-
             button:first-child {
                 @apply max-h-[50rem] m-auto col-span-3;
+				height: 100%;
+				overflow: hidden;
             }
             button:not(:first-child) {
                 @apply m-auto;
+				height: 100%;
+				overflow: hidden;
             }
-            
             button:not(:first-child)>img {
                 @apply object-cover aspect-[3/2];
             }
@@ -154,7 +157,7 @@
                 @apply relative;
             }
             button.more-image>img {
-                @apply brightness-50;
+                @apply brightness-50; 
             }
             button.more-image>span {
                 @apply absolute text-white;
@@ -854,7 +857,9 @@
 						   "reaction_status": 1},
 					success: function(json) {
 						if(json.n == 1) {
-						 	location.reload();
+							// ㅇㅇ
+							//let countSpan = $("#reactionCount");
+							//countSpan.text("왜 안바뀌냐");
 						}
 			        },
 			        error: function(request, status, error){
@@ -869,7 +874,8 @@
 					data: {"reaction_target_no": reaction_target_no},
 					success: function(json) {
 						if(json.n == 1) {
-						 	location.reload();
+						 	//location.reload();
+						 	//$('#reaction-' + reaction_target_no).remove();
 						}
 			        },
 			        error: function(request, status, error){
@@ -895,7 +901,7 @@
 					   "reaction_status": reaction_status},
 				success: function(json) {
 					if(json.n == 1) {
-					 	location.reload();
+					 	//location.reload();
 					}
 		        },
 		        error: function(request, status, error){
@@ -1957,7 +1963,7 @@
 						                <!-- 첫 3장은 그대로 출력 -->
 						                <c:if test="${status.index < 3}">
 						                    <button type="button" class="file-preview-button">
-						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}"/>
+						                        <img src="<%= ctxPath%>/resources/files/board/${file.file_name}" />
 						                    </button>
 						                </c:if>
 						
@@ -2042,27 +2048,30 @@
 		                                			</c:forEach>
                                					</div>
                                					
-		                                        <span id="reactionCount" value="${boardvo.board_no}">
-													${reactionCount.reaction_count}
-			                                    </span>
-			                                    
+                               					<div class="reactionCountDiv">
+                               						<span id="reactionCount" value="${boardvo.board_no}"> <!-- ㅇㅇ -->
+														${reactionCount.reaction_count}
+			                                    	</span>
+                               					</div>
 	                                		</c:if>
 								        </c:forEach>
 								        
 	                                </button>
 	                            </li>
-	                            <li>
+	                            <li> 
 	                                <button type="button" class="button-underline">
 	                                    <span>댓글&nbsp;</span>
 	                                    <span id="commentCount">${boardvo.countComment}</span>
 	                                </button>
 	                            </li>
+	                            <!-- 
 	                            <li>
 	                                <button type="button" class="button-underline">
 	                                    <span>퍼감&nbsp;</span>
 	                                    <span id="commentCount">4</span>
 	                                </button>
 	                            </li>
+	                             -->
 	                        </ul>
 	                    </div>
 	
@@ -2070,7 +2079,7 @@
 	                    
 	                    <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    <div class="py-0">
-	                        <ul class="grid grid-cols-4 gap-4 text-center">
+	                        <ul class="grid grid-cols-2 gap-4 text-center">
 	                            <li>
 	                            	<input type="hidden" name="" value="dd"/>
 	                                <button type="button" class="button-board-action button-board-action-reaction" value="${boardvo.board_no}">
@@ -2136,6 +2145,8 @@
 	                                    <span>댓글</span>
 	                                </button>
 	                            </li>
+	                            
+	                            <!-- 
 	                            <li>
 	                                <button type="button" class="button-board-action">
 	                                    <i class="fa-solid fa-retweet"></i>
@@ -2148,6 +2159,7 @@
 	                                    <span>보내기</span>
 	                                </button>
 	                            </li>
+	                             -->
 	                        </ul>
 	                    </div> <!-- 추천 댓글 퍼가기 등 버튼 -->
 	                    
@@ -2159,7 +2171,7 @@
 		                    	<div class="profile-image"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" alt="프로필 사진" /></div>
 		                    	<div class="comment-input" >
 		                    		<span id="mentionedName" style="color: #084B99; font-weight: bold; margin-right: 5px;"></span>
-							        <input type="text" placeholder="댓글 남기기" id="commentInput">
+							        <input type="text" placeholder="댓글 남기기" id="commentInput" autocomplete="off">
 						            <button class="comment-submit-button">댓글</button>
 						            <input type="hidden" name="hidden-comment-reply-no" value="" />
 							    </div>	

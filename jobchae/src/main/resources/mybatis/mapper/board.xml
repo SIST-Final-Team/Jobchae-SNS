@@ -128,6 +128,13 @@
 		group by reaction_target_no
 	</select>
 	
+	<!-- 반응 개수 조회하기 (AJAX) -->
+	<select id="getReactionCount2" parameterType="String" resultType="int">
+		SELECT COUNT(*) 
+    	FROM tbl_reaction
+    	WHERE reaction_target_no = #{reaction_target_no}
+	</select>
+	
 	<!-- 팔로워 수 구하기 -->
 	<select id="getFollowerCount" parameterType="String">
 		select count(*) as follower_count
