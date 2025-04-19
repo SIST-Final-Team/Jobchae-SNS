@@ -10,6 +10,7 @@ const companySize = document.querySelector("#companySize"); //회사 규모
 const companyLogo = document.querySelector("#company-profile-logo"); //회사 로고
 const webLinkButton = document.querySelector("#webLinkButton"); //웹사이트 링크 버튼
 const companyBackgroundImg = document.querySelector("#company-background-img"); //회사 프로필의 백그라운드 이미지
+let companyData = null; //회사 데이터
 /*
  <select id="companySize" name="companySize">
               <option value="1">규모 선택</option>
@@ -34,15 +35,12 @@ async function getCompanyInfo() {
   });
   const data = await response.json(); // JSON 형식으로 응답을 받습니다.
   await renderCompanyInfo(data); // 받은 데이터를 화면에 표시합니다.
+  companyData = data; // 회사 데이터를 저장합니다.
 
   //받은 데이터를 화면에 표시합니다.
 }
 
 async function renderCompanyInfo(data) {
-  console.log("function data:"); // 콘솔에 출력합니다.
-  console.log(data); // 콘솔에 출력합니다.
-  console.log(companyIndustry); // 콘솔에 출력합니다.
-
   companyName.textContent = data.companyName; //회사명을 표시합니다.
   companyIndustry.textContent = data.industry.industryName; //업종을 표시합니다.
   //   companyLocation.textContent = data.location; //위치를 표시합니다.
@@ -107,4 +105,4 @@ async function renderCompanyInfo(data) {
 }
 
 //필요한 요청에 대한 초기화 작업을 수행합니다.
-getCompanyInfo(); //회사의 정보를 가져오는 ajax 요청을 보냅니다.
+// getCompanyInfo(); //회사의 정보를 가져오는 ajax 요청을 보냅니다.
