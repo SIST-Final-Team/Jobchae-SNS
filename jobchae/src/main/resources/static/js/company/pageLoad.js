@@ -11,6 +11,7 @@ const companyLogo = document.querySelector("#company-profile-logo"); //회사 �
 const webLinkButton = document.querySelector("#webLinkButton"); //웹사이트 링크 버튼
 const companyBackgroundImg = document.querySelector("#company-background-img"); //회사 프로필의 백그라운드 이미지
 let companyData = null; //회사 데이터
+let companySizeText = null; //회사 규모 텍스트
 /*
  <select id="companySize" name="companySize">
               <option value="1">규모 선택</option>
@@ -74,30 +75,39 @@ async function renderCompanyInfo(data) {
       break;
     case 1:
       companySize.textContent = "0-1";
+      companySizeText = "0-1";
       break;
     case 2:
       companySize.textContent = "2-10";
+      companySizeText = "2-10";
       break;
     case 3:
       companySize.textContent = "11-50";
+      companySizeText = "11-50";
       break;
     case 4:
       companySize.textContent = "51-200";
+      companySizeText = "51-200";
       break;
     case 5:
       companySize.textContent = "201-500";
+      companySizeText = "201-500";
       break;
     case 6:
       companySize.textContent = "501-1000";
+      companySizeText = "501-1000";
       break;
     case 7:
       companySize.textContent = "1001-5000";
+      companySizeText = "1001-5000";
       break;
     case 8:
       companySize.textContent = "5001-10000";
+      companySizeText = "5001-10000";
       break;
     case 9:
       companySize.textContent = "10000+";
+      companySizeText = "10000+";
       break;
     default:
       companySize.textContent = "규모 선택";

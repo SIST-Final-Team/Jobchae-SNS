@@ -5,7 +5,6 @@ function loadHome() {
   let companyExplain = companyData.companyExplain; // 회사 설명을 가져옵니다.
   //홈페이지에 표시할 회사 설명이 100자 이상일 경우, 100자까지만 표시합니다.
 
-  console.log(console.log(companyExplain.length)); // 콘솔에 출력합니다.
   if (companyExplain.length > 100) {
     console.log("100자 초과"); // 콘솔에 출력합니다.
     companyExplain = companyExplain.substr(0, 100) + "..."; // 100자까지만 표시합니다.
@@ -14,7 +13,7 @@ function loadHome() {
                 <div class="py-0!">
                     <h1 class="h1 pt-4">소개</h1>
                     <div class="text-gray-700 whitespace-pre-line mb-4">
-                    ${companyData.companyExplain}
+                    ${companyExplain}
                     </div>
                 </div>
 
@@ -212,12 +211,38 @@ function loadHome() {
 
 //소개 정보 반환 함수
 function loadAbout() {
+  let webLinkHtml; // 웹사이트 링크를 설정합니다.
+  let industryHtml; // 업종을 설정합니다.
+  let companySizeHtml; // 회사 규모를 설정합니다.
+  //회사 웹페이지 링크가 null이 아닐 경우, 웹사이트 링크를 설정합니다.
+  if (companyData.companyWebsite != null) {
+    webLinkHtml = `<h1 class="h1 pt-4">웹사이트</h1>
+                          <a href="${companyData.companyWebsite}" class="text-blue-600 hover:underline">${companyData.companyWebsite}</a>`; // 웹사이트 링크를 설정합니다.
+  }
+  //회사 업계가 null이 아닐 경우, 업종을 설정합니다.
+  if (companyData.industry != null) {
+    industryHtml = `<h1 class="h1 pt-4">업계</h1>
+                        <div class="text-gray-700 whitespace-pre-line mb-4">
+                            ${companyData.industry.industryName}
+                      </div>`;
+  }
+  //회사 규모가 null이 아닐 경우, 회사 규모를 설정합니다.
+  if (companyData.companySize != null) {
+    companySizeHtml = `<h1 class="h1 pt-4">회사 규모</h1>
+                          <div class="text-gray-700 whitespace-pre-line mb-4">
+                              ${companySizeText}
+                        </div>`;
+  }
+
   const html = `<!-- 회사 소개 -->
                   <div class="py-0!">
-                      <h1 class="h1 pt-4">소개</h1>
+                      <h1 class="pt-4 text-3xl font-bold">한눈에 보기</h1>
                       <div class="text-gray-700 whitespace-pre-line mb-4">
-                      안녕하세요
+                            ${companyData.companyExplain}
                       </div>
+                      ${webLinkHtml}
+                      ${industryHtml}
+                      ${companySizeHtml}
                   </div>`;
   return html; // 회사 소개 HTML을 반환합니다.
 }
