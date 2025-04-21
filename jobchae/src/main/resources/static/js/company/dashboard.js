@@ -85,6 +85,7 @@ function changeMenuStyle(menuUrl) {
 }
 
 //비동기 함수들을 초기화하는 함수
+
 async function asyncFunctionInitialization() {
   const path = window.location.pathname.split("/")[menuArrayNum]; // 현재 URL 경로에서 메뉴 부분을 가져옵니다.
   // 초기 메뉴 스타일 설정
