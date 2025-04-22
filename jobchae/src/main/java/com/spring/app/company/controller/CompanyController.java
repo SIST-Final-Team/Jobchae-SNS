@@ -48,4 +48,9 @@ public class CompanyController {
         return "company/CompanyUpdateTest";
     }
 
+    @GetMapping("/{company_no}/admin/{menu}")
+    public String requiredLogin_companyAdmin(HttpServletRequest request, HttpServletResponse response, @PathVariable String company_no, @PathVariable String menu ){
+        return "company/companyHome";
+    }
+
 }
