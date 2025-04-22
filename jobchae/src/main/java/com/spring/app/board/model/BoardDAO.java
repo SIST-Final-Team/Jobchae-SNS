@@ -127,5 +127,11 @@ public interface BoardDAO {
 	// 게시물번호로 게시물 조회
 	BoardVO findOneBoardByBoardNo(String board_no);
 
+	// 피드 하나만 띄우기
+	BoardVO boardOneSelect(String board_no);
+
+	// 최신 반응 개수 가져오기
+	int getReactionCount2(String reaction_target_no);
+
 
 }
