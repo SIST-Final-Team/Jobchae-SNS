@@ -7,9 +7,11 @@ import com.spring.app.company.service.CompanyService;
 import com.spring.app.member.domain.MemberVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.apache.coyote.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
+import java.lang.reflect.Member;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/company")
@@ -29,9 +35,11 @@ public class ApiCompanyController {
     public ApiCompanyController(CompanyService companyService, CompanyDAO companyDAO) {
         this.companyService = companyService;
         this.companyDAO = companyDAO;
+
     }
     @Autowired
     FileManager fileManager;
+
 
     @GetMapping("/dashboard/{company_no}")
     public ResponseEntity<CompanyVO> selectCompany(@PathVariable String company_no, HttpServletRequest request){
@@ -73,7 +81,6 @@ public class ApiCompanyController {
 //        String industryName = (String)request.getParameter("industryName");
         System.out.println("industryName => "+industryName);
 
-
         //세션 정보 확인
         HttpSession session = request.getSession();
 
@@ -84,6 +91,7 @@ public class ApiCompanyController {
             String root = session.getServletContext().getRealPath("/");
             String path = root + "resources" + File.separator + "files" + File.separator + "companyLogo";
             String originCompanyLogoFilename = logoFile.getOriginalFilename();
+
 
             String LogoFileName = "";
 
@@ -120,6 +128,7 @@ public class ApiCompanyController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/company/dashboard/"+company.getCompanyNo()+"/");
         modelAndView.addObject("company", company);
+
         return  modelAndView;
     }
 
@@ -143,6 +152,41 @@ public class ApiCompanyController {
 
         return ResponseEntity.ok(updateCompany);
     }
+
+
+    //운영자의 회사 정보 조회
+    @GetMapping("/selectAdminCompnay/{company_no}")
+    public ResponseEntity<CompanyVO> selectAdminCompany(@PathVariable String company_no, HttpServletRequest request) {
+        //이 함수의 논리구조
+        //입력받은 company_no를 통해 회사 정보를 조회 - 세션에 있는 운영자 정보와 비교
+        //만약 운영자 ID와 로그인한 유저의 ID가 같은지 비교
+        //같다면 회사 정보를 반환
+        //같지 않다면 에러 페이지를 반환
+
+        //세선 정보 저장
+        HttpSession session = request.getSession();
+
+
+        CompanyVO companyVO = companyService.selectCompany(company_no);
+        MemberVO memberVO =  (MemberVO)session.getAttribute("loginuser");
+
+        //회사의 운영자 정보와 세션의 운영자 정보가 일치하는지 확인
+        //멤버의 정보를 변수에 저장
+        String companyAdminId = companyVO.getFkMemberId();
+        String sessionMemberId = memberVO.getMember_id();
+
+        //운영자 정보가 일치하지 않을 경우 에러 페이지로 반환
+        if(!companyAdminId.equals(sessionMemberId)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        //운영자 정보가 일치할 경우 회사 정보를 반환
+        return ResponseEntity.ok(companyVO);
+
+
+    }
+        
+
 
 
 
