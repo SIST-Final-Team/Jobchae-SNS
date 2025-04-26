@@ -3,7 +3,7 @@
 <% String ctxPath = request.getContextPath(); %>
 <jsp:include page="/WEB-INF/views/header/header.jsp" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <div class="max-w-6xl mx-auto md:flex text-sm">
+    <div class="max-w-7xl mx-auto md:flex text-lg">
       <div id="FormDiv" class="md:w-1/2 p-4">
         <div id="registeForm">
           *필수
@@ -20,6 +20,7 @@
               name="companyName"
               required
               placeholder="단체 이름을 입력하세요"
+              class="w-full h-10 border border-black rounded p-3"
             /><br /><br />
             <label for="companyWebsite">Website :</label><br />
             <input
@@ -27,6 +28,7 @@
               id="companyWebsite"
               name="companyWebsite"
               placeholder="http://www.example.com"
+              class="w-full h-10 border border-black rounded p-3"
             /><br /><br />
             <label for="industryName">업계* :</label><br />
 <%--            <input--%>
@@ -51,17 +53,16 @@
                 outline: none;
               }
             </style>
-            <input id="industryName" name="industryName" type="text" class="border w-full">
-<%--            <details id = "option">--%>
-<%--              <summary></summary>--%>
-<%--              <ol>--%>
-<%--                <li>1</li>--%>
-<%--                <li>2</li>--%>
-<%--                <li>3</li>--%>
-<%--              </ol>--%>
-<%--            </details>--%>
+            <!-- 업계 영역 -->
+            <div id="industryDiv" class="relative">
+              <input id="industryName" name="industryName" type="text" class="w-full h-10 border border-black rounded mb-5 p-3">
+              <!-- 선택 리스트 영역 -->
+              <div id="listDiv"></div>
+            </div>
+
+            <!-- 회사 규모 영역 -->
             <label for="companySize">단체 규모* :</label><br />
-            <select id="companySize" name="companySize">
+            <select id="companySize" name="companySize" class="w-full h-10 border border-black rounded p-1">
               <option value="0">규모 선택</option>
               <option value="1">0-1</option>
               <option value="2">2-10</option>
@@ -74,7 +75,7 @@
               <option value="9">10000+</option></select
             ><br /><br />
             <label for="companyType">단체 종류* :</label><br />
-            <select id="companyType" name="companyType">
+            <select id="companyType" name="companyType" class="w-full h-10 border border-black rounded p-1">
               <option value="1">종류 선택</option>
               <option value="2">Private</option>
               <option value="3">Government</option>
@@ -191,6 +192,8 @@
           </form>
         </div>
       </div>
+
+      <!-- 페이지 미리보기 영역 -->
       <div class="md:w-1/2 p-4">
         <div class="p4 border-2 mt-8 rounded-xl overflow-hidden">
           <div class="p-4">페이지 미리보기</div>
@@ -262,5 +265,18 @@
     industryName.addEventListener("change", function (e) {
 
     })
+
+
+    //업종 리스트 보여주기
+    //업종 리스트 보여주기의 과정
+    //처리에 필요한 변수들 생성 - 업종 리스트 불러오기 - 지연 함수 생성(요청 과부하 방지)
+    //필요한 이벤트 리스너 추가 - 입력시 업종 리스트 보여주기 - 업종 리스트 선택시 값 변경
+    
+    //필요한 변수 선언
+    const 
+    //지연처리 함수
+    
+    //이벤트 리스너 추가
+
 </script>
 </html>
