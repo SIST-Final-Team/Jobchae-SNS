@@ -54,10 +54,24 @@
               }
             </style>
             <!-- 업계 영역 -->
-            <div id="industryDiv" class="relative">
-              <input id="industryName" name="industryName" type="text" class="w-full h-10 border border-black rounded mb-5 p-3">
+            <div id="industryDiv" class="relative mb-5">
+              <input id="industryName" name="industryName" type="text" class="w-full h-10 border border-black rounded p-3">
               <!-- 선택 리스트 영역 -->
-              <div id="listDiv"></div>
+              <div id="listDiv" class="absolute border border-gray-600 bg-white w-full rounded hidden">
+                <ul id="optionList" class="max-h-100 overflow-auto">
+                  <li class="industryList border hover:bg-gray-200 h-10 leading-10 pl-2">1</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">2</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">3</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">4</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">5</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">6</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">7</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">8</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">9</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">10</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">11</li>
+                </ul>
+              </div>
             </div>
 
             <!-- 회사 규모 영역 -->
@@ -203,80 +217,6 @@
     </div>
 </body>
 
-<script>
-  const fileInput = document.getElementById("logo-upload");
-  const uploadArea = document.getElementById("upload-area");
-  const previewArea = document.getElementById("preview-area");
-  const thumbnailPreview = document.getElementById("thumbnail-preview");
-  const fileNameSpan = document.getElementById("file-name");
-  const fileSizeSpan = document.getElementById("file-size");
-  const deleteButton = document.getElementById("delete-button");
-
-  // 파일 입력(input) 값이 변경되었을 때 실행될 함수
-  fileInput.addEventListener("change", function (event) {
-    const file = event.target.files[0]; // 선택된 파일 가져오기
-
-    if (file) {
-      // 파일이 선택되었다면
-      // 파일 정보 읽기
-      const reader = new FileReader();
-
-      reader.onload = function (e) {
-        // 썸네일 이미지 설정
-        thumbnailPreview.src = e.target.result;
-
-        // 파일 이름 설정
-        fileNameSpan.textContent = file.name;
-
-        // 파일 크기 설정 (KB 단위, 소수점 1자리)
-        const fileSizeKB = (file.size / 1024).toFixed(1);
-        fileSizeSpan.textContent = `${fileSizeKB}KB`;
-
-        // 영역 전환: 초기 영역 숨기고 미리보기 영역 보여주기
-        uploadArea.classList.add("hidden"); // Tailwind hidden 클래스 추가
-        previewArea.classList.remove("hidden"); // Tailwind hidden 클래스 제거
-        previewArea.classList.add("flex"); // display: flex 활성화 (Tailwind)
-      };
-
-      // 파일을 읽어서 Data URL 형태로 변환
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // 삭제 버튼(X) 클릭 시 실행될 함수
-  deleteButton.addEventListener("click", function () {
-    // 파일 입력 필드 값 초기화
-    fileInput.value = null;
-
-    // 썸네일 이미지 초기화 (선택 사항)
-    thumbnailPreview.src = "#"; // 빈 값 또는 기본 이미지 경로
-
-    // 영역 전환: 미리보기 영역 숨기고 초기 영역 보여주기
-    previewArea.classList.add("hidden"); // Tailwind hidden 클래스 추가
-    previewArea.classList.remove("flex"); // display: flex 비활성화
-    uploadArea.classList.remove("hidden"); // Tailwind hidden 클래스 제거
-  });
-
-  //업종 키입력시 업종 리스트 보여주기
-    const industryOptions = document.getElementById("option");
-    const industryName = document.getElementById("industryName");
-    //업종 리스트 보여주기
-
-    industryName.addEventListener("change", function (e) {
-
-    })
-
-
-    //업종 리스트 보여주기
-    //업종 리스트 보여주기의 과정
-    //처리에 필요한 변수들 생성 - 업종 리스트 불러오기 - 지연 함수 생성(요청 과부하 방지)
-    //필요한 이벤트 리스너 추가 - 입력시 업종 리스트 보여주기 - 업종 리스트 선택시 값 변경
-    
-    //필요한 변수 선언
-    const 
-    //지연처리 함수
-    
-    //이벤트 리스너 추가
-
-</script>
+<script>const ctxPath = "<%= ctxPath%>";</script>
+<script src="${pageContext.request.contextPath}/js/company/companyForm.js"></script>
 </html>
