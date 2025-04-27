@@ -63,13 +63,16 @@
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">2</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">3</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">4</li>
-                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">5</li>
+                  <!-- <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">5</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">6</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">7</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">8</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">9</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">10</li>
                   <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">11</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">11</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">11</li>
+                  <li class="border hover:bg-gray-200 h-10 leading-10 pl-2">11</li> -->
                 </ul>
               </div>
             </div>
@@ -202,7 +205,7 @@
             <!-- <label for="logo">Logo :</label><br />
             <input type="file" id="logo" name="logo" /><br /><br /> -->
             <!-- 제출 버튼 -->
-            <button type="submit">페이지 만들기</button>
+            <button type="submit" class="follow-button button-orange mt-5 mb-5">페이지 만들기</button>
           </form>
         </div>
       </div>
@@ -210,8 +213,18 @@
       <!-- 페이지 미리보기 영역 -->
       <div class="md:w-1/2 p-4">
         <div class="p4 border-2 mt-8 rounded-xl overflow-hidden">
-          <div class="p-4">페이지 미리보기</div>
-          <div class="bg-stone-400 p-4">미리보기 내용</div>
+          <div class="p-4 font-bold bg-white">페이지 미리보기</div>
+          <div class="bg-stone-300 p-8">
+            <div class="border-2 bg-white h-75 rounded-lg p-6">
+              <div>
+                <img id="preImg" src="<%= ctxPath%>/images/no_company_logo.jpg" class="w-20 h-20 mb-4">
+                <p id="companyNamePre" class="mb-2 font-bold text-2xl">회사 이름</p>
+                <p id="companyExplainPre" class="mb-2 text-xl">회사 설명</p>
+                <p id="industryPre" class="mb-2 text-xl text-gray-500">업계</p>
+                <button type="button" class="follow-button button-orange">+ 팔로우</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
