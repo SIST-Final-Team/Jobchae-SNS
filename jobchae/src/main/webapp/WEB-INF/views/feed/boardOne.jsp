@@ -857,9 +857,7 @@
 						   "reaction_status": 1},
 					success: function(json) {
 						if(json.n == 1) {
-							// ㅇㅇ
-							//let countSpan = $("#reactionCount");
-							//countSpan.text("왜 안바뀌냐");
+						 	location.reload();
 						}
 			        },
 			        error: function(request, status, error){
@@ -874,7 +872,7 @@
 					data: {"reaction_target_no": reaction_target_no},
 					success: function(json) {
 						if(json.n == 1) {
-						 	//location.reload();
+						 	location.reload();
 						 	//$('#reaction-' + reaction_target_no).remove();
 						}
 			        },
@@ -901,7 +899,7 @@
 					   "reaction_status": reaction_status},
 				success: function(json) {
 					if(json.n == 1) {
-					 	//location.reload();
+					 	location.reload();
 					}
 		        },
 		        error: function(request, status, error){
@@ -1800,18 +1798,19 @@
         <div class="center col-span-14 md:col-span-7 space-y-2 m-5">
 			
 			<input type="hidden" id="loginuserID" value="${membervo.member_id}">
-			
+			 <!-- 
 			<div id="write" class="border-board">
 			
-				<div>
-                    <!-- 멤버 프로필 -->                                                              
+				<div>--> 
+                    <!-- 멤버 프로필 -->       
+                    <!--                                                        
                     <div class="board-member-profile">
                         <div>
                             <a href="#"><img src="<%= ctxPath%>/resources/files/profile/${membervo.member_profile}" style="border-radius: 50%;" /></a>
                         </div>
                         <div class="flex-1">
                         	<!-- 글 작성 -->
-	                        <button class="write-button button-board-action">                   
+	                        <!-- <button class="write-button button-board-action">                   
 	                            <span>
 	                                <span>
 	                                    <span class="write-span">
@@ -1822,7 +1821,7 @@
 	                        </button>
                         </div>
                     </div>
-
+						--> 
 					<!-- 
                     <hr class="border-gray-300 mx-4">
 
@@ -1846,9 +1845,10 @@
                             </li>
                         </ul>
                     </div> -->
-                </div>
-			</div>
+               <!-- </div>
+			</div>-->
 			
+			<!--
 			<div class="feed-divider">
 			    <hr class="divider-line">
 			    <div class="sort-options">
@@ -1861,12 +1861,11 @@
 			            </div>
 			        </div>
 			    </div>
-			</div>	<!-- div.feed-divider 끝 -->
+			</div>	
+			-->
+			<!-- div.feed-divider 끝 -->
 			
             <div id="update" class="border-board">
-                <!-- 게시물 동적으로 생성 -->
-                <c:forEach var="boardvo" items="${boardvoList}">              
-                	
                 	<div>
 	                    <!-- 멤버 프로필 -->                                                              
 	                    <div class="board-member-profile">
@@ -2048,17 +2047,16 @@
 		                                			</c:forEach>
                                					</div>
                                					
-                               					<div class="reactionCountDiv">
-                               						<span id="reactionCount" value="${boardvo.board_no}"> <!-- ㅇㅇ -->
-														${reactionCount.reaction_count}
-			                                    	</span>
-                               					</div>
+		                                        <span id="reactionCount" value="${boardvo.board_no}">
+													${reactionCount.reaction_count}
+			                                    </span>
+			                                    
 	                                		</c:if>
 								        </c:forEach>
 								        
 	                                </button>
 	                            </li>
-	                            <li> 
+	                            <li>
 	                                <button type="button" class="button-underline">
 	                                    <span>댓글&nbsp;</span>
 	                                    <span id="commentCount">${boardvo.countComment}</span>
@@ -2358,14 +2356,7 @@
 		                    </c:if>
 	                    </div>
 						
-						
-						
-						
-						
-						
-						
                     </div>
-               	</c:forEach>
            	</div> <!-- div#update 끝 -->
        	</div>
                

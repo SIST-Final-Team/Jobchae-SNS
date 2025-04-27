@@ -49,7 +49,7 @@ public class CompanyServiceImple implements CompanyService{
     @Override
     public CompanyVO insertCompany(CompanyVO companyVO, String industryName) {
 
-
+        logger.info(industryName);
         //업종이름으로 업종 정보 조회
         IndustryVO industryVO = industryService.selectIndustryByName(industryName);
         //TODO : 업종이 없는 값 예외 처리

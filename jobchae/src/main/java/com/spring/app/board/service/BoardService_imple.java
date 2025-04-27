@@ -276,6 +276,20 @@ public class BoardService_imple implements BoardService {
 		int n = dao.deleteReplyComment(paraMap);
 		return n;
 	}
+
+	// 피드 하나만 띄우기
+	@Override
+	public BoardVO boardOneSelect(String board_no) {
+		BoardVO boardvo = dao.boardOneSelect(board_no);
+		return boardvo;
+	}
+
+	// 최신 반응 개수 가져오기
+	@Override
+	public int getReactionCount2(String reaction_target_no) {
+		int n = dao.getReactionCount2(reaction_target_no);
+		return n;
+	}
 	
 
 	

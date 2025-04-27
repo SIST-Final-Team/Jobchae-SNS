@@ -120,6 +120,12 @@ public interface BoardService {
 	// 부모 댓글 삭제시 자식 댓글도 삭제
 	int deleteReplyComment(Map<String, String> paraMap);
 
+	// 피드 하나만 띄우기
+	BoardVO boardOneSelect(String board_no);
+
+	// 최신 반응 개수 가져오기
+	int getReactionCount2(String reaction_target_no);
+
 
 	
 

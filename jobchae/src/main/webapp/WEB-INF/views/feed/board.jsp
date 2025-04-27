@@ -833,7 +833,7 @@
 	    
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// 추천기능
-		$("button.button-board-action-reaction").click(function() {
+		$("button.button-board-action-reaction").click(function() { // 그냥 추천 눌렀을 때
 			const reaction_target_no = $(this).val();
 			let reaction_status = null;
 			//alert(reaction_target_no);
@@ -857,7 +857,7 @@
 						   "reaction_status": 1},
 					success: function(json) {
 						if(json.n == 1) {
-						 	location.reload();
+							location.reload();
 						}
 			        },
 			        error: function(request, status, error){
@@ -873,7 +873,6 @@
 					success: function(json) {
 						if(json.n == 1) {
 						 	location.reload();
-						 	//$('#reaction-' + reaction_target_no).remove();
 						}
 			        },
 			        error: function(request, status, error){
@@ -885,7 +884,7 @@
 		});
 		
 		
-		$("button.reactions-menu__reaction-index").click(function() {
+		$("button.reactions-menu__reaction-index").click(function() { // 추천에서 6가지 항목 뜨는 거에서 눌렀을 때
 			
 			const reaction_target_no = $(this).closest(".reactions-menu").data("value");
 			const reaction_status = $(this).val();
@@ -2046,27 +2045,30 @@
 		                                			</c:forEach>
                                					</div>
                                					
-		                                        <span id="reactionCount" value="${boardvo.board_no}">
-													${reactionCount.reaction_count}
-			                                    </span>
-			                                    
+                               					<div class="reactionCountDiv">
+                               						<span id="reactionCount" value="${boardvo.board_no}"> <!-- ㅇㅇ -->
+														${reactionCount.reaction_count}
+			                                    	</span>
+                               					</div>
 	                                		</c:if>
 								        </c:forEach>
 								        
 	                                </button>
 	                            </li>
-	                            <li>
+	                            <li> 
 	                                <button type="button" class="button-underline">
 	                                    <span>댓글&nbsp;</span>
 	                                    <span id="commentCount">${boardvo.countComment}</span>
 	                                </button>
 	                            </li>
+	                            <!-- 
 	                            <li>
 	                                <button type="button" class="button-underline">
 	                                    <span>퍼감&nbsp;</span>
 	                                    <span id="commentCount">4</span>
 	                                </button>
 	                            </li>
+	                             -->
 	                        </ul>
 	                    </div>
 	

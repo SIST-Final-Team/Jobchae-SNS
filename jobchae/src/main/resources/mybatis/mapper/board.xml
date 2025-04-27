@@ -128,6 +128,13 @@
 		group by reaction_target_no
 	</select>
 	
+	<!-- 반응 개수 조회하기 (AJAX) -->
+	<select id="getReactionCount2" parameterType="String" resultType="int">
+		SELECT COUNT(*) 
+    	FROM tbl_reaction
+    	WHERE reaction_target_no = #{reaction_target_no}
+	</select>
+	
 	<!-- 팔로워 수 구하기 -->
 	<select id="getFollowerCount" parameterType="String">
 		select count(*) as follower_count
@@ -346,4 +353,15 @@
 		where board_no = #{board_no}
 	</select>
 	
+	
+	<!-- 게시글 하나만 조회 -->
+	<select id="boardOneSelect" parameterType="String">
+		SELECT b.board_no, b.fk_member_id, b.board_content, b.board_visibility, 
+		       b.board_comment_allowed, b.board_register_date, b.board_parent_no, 
+		       b.board_group_no, b.board_depth, b.board_is_delete,
+		       m.member_id, m.member_name, m.member_birth, m.member_profile
+		FROM tbl_board b
+		JOIN tbl_member m ON b.fk_member_id = m.member_id
+		where b.board_no = #{board_no} and b.board_is_delete = 0 
+	</select>
 </mapper>
