@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.spring.app.config.AES256_Configuration;
 import com.spring.app.history.service.HistoryService;
+import com.spring.app.recruit.domain.RecruitVO;
 import com.spring.app.search.domain.SearchBoardVO;
 import com.spring.app.search.domain.SearchCompanyVO;
 import com.spring.app.search.domain.SearchMemberVO;
@@ -105,6 +106,11 @@ public class SearchService_imple implements SearchService {
 	@Override
 	public List<String> getBoardNoByMemberId(String member_id) {
 		return dao.getBoardNoByMemberId(member_id);
+	}
+
+	@Override
+	public List<RecruitVO> searchRecruit(Map<String, Object> params) {
+		return dao.searchRecruit(params);
 	}
 	
 

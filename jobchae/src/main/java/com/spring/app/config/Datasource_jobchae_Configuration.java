@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration  // Spring 컨테이너가 처리해주는 클래스로서, 클래스내에 하나 이상의 @Bean 메소드를 선언만 해주면 런타임시 해당 빈에 대해 정의되어진 대로 요청을 처리해준다.
 @EnableTransactionManagement // 스프링 부트에서 Transaction 처리를 위한 용도
-@MapperScan(basePackages={"com.spring.app.member.model", "com.spring.app.board.model", "com.spring.app.search.model"}, sqlSessionFactoryRef="sqlSessionFactory") // Mapper Interface 를 사용하기 위한 설정
+@MapperScan(basePackages={"com.spring.app.member.model", "com.spring.app.board.model", "com.spring.app.search.model", "com.spring.app.recruit.model"}, sqlSessionFactoryRef="sqlSessionFactory") // Mapper Interface 를 사용하기 위한 설정
 public class Datasource_jobchae_Configuration {
 
 	@Value("${mybatis.mapper-locations}")  // *.yml 파일에 있는 설정값을 가지고 온 것으로서 mapper 파일의 위치를 알려주는 것

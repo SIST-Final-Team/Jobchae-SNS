@@ -546,12 +546,12 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
 
         <!-- 중앙 본문 -->
         <div class="center col-span-14 md:col-span-10 space-y-2 my-5">
-            <div class="scroll-mt-22 border-board">
+            <div class="scroll-mt-22 border-profile">
 
                 <!-- 프로필 -->
                 <div class="pt-0! relative pb-4!">
                     <div class="w-full h-50 px-0 bg-gray-100">
-                        <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_background_img}" class="w-full h-50 object-cover rounded-t-md"/>
+                        <img src="${pageContext.request.contextPath}/resources/files/profile/${requestScope.memberVO.member_background_img}" class="w-full h-50 object-cover sm:rounded-t-md"/>
                         <button type="button" class="button btn-open-modal absolute top-4 right-4 w-10 h-10 rounded-full text-orange-500 hover:text-orange-600 flex justify-center text-center items-center bg-white text-md"
                             data-target-modal="ProfileBackground"><i class="fa-solid fa-camera"></i></button>
                     </div>
@@ -754,10 +754,10 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <div class="text-gray-500 pb-2 text-lg">
                         팔로워 <span class="follower-count"><fmt:formatNumber value="${requestScope.followerCount}" pattern="#,###" /></span>명
                     </div>
-                    <div id="update" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0! mb-0!">
+                    <div id="update" class="border-profile flex gap-4 overflow-x-auto pb-4 space-y-0! mb-0!">
                         <c:forEach var="item" items="${searchBoardVOList}" varStatus="status">
                         <!-- 게시물 -->
-                        <div class="min-w-100 min-h-120 flex flex-col">
+                        <div class="min-w-100 min-h-120 flex flex-col border-1! rounded-lg!">
                             <!-- 멤버 프로필 -->
                             <div class="board-member-profile">
                                 <div>
@@ -1178,14 +1178,16 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div>
-                    <img src="7.png"/>
+                    <img src="${pageContext.request.contextPath}/images/ad.png"/>
                 </div>
                 <div class="px-4">
-                    <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
-                    <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
+                    <p class="font-bold">${sessionScope.loginuser.member_name}님, ANTICO에서 경매에 참여해보세요.</p>
+                    <p>ANTICO에서 나에게 맞는 물건을 살펴보세요.</p>
                 </div>
                 <div class="px-4">
-                    <button type="button" class="button-orange">팔로우</button>
+					<a href="http://antico.shop/antico/index">
+                    <button type="button" class="button-orange">방문하기</button>
+					</a>
                 </div>
             </div>
         </div>

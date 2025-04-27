@@ -10,14 +10,20 @@
     dialog::backdrop {
         background:rgba(0, 0, 0, 0.6);
     }
+    #update{
+        @apply mb-2;
+    }
     .h1 {
         @apply text-[1.35rem] font-bold;
+    }
+    .border-rwd {
+        @apply border-0 sm:border-x-1 border-y-1 border-gray-300 rounded-none sm:rounded-lg bg-white;
     }
     .border-normal {
         @apply border-1 border-gray-300 rounded-lg bg-white;
     }
     .border-search-board {
-        @apply border-1 border-gray-300 rounded-lg bg-white;
+        @apply border-0 sm:border-x-1 border-y-1 border-gray-300 rounded-none sm:rounded-lg bg-white;
 
         &>li:not(:last-child) {
             @apply border-b-4 border-gray-200;
@@ -36,14 +42,38 @@
         }
 
         .button-more {
-            @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            @apply sm:rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
         }
     }
     .border-board {
         @apply space-y-4;
 
+        &>li {
+            @apply border-0 sm:border-x-1 border-y-1 border-gray-300 rounded-none sm:rounded-lg bg-white;
+        }
+
+        &>li:not(.space-y-0) {
+            @apply space-y-2;
+        }
+
+        &>li:not(.py-0) {
+            @apply pt-4;
+            @apply pb-2;
+        }
+        
+        &>li>*:not(.px-0) {
+            @apply px-4;
+        }
+
+        .button-more {
+            @apply sm:rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+        }
+    }
+    .border-profile {
+        @apply space-y-4;
+
         &>div {
-            @apply border-1 border-gray-300 rounded-lg bg-white;
+            @apply border-0 sm:border-x-1 border-y-1 border-gray-300 rounded-none sm:rounded-lg bg-white;
         }
 
         &>div:not(.space-y-0) {
@@ -60,11 +90,11 @@
         }
 
         .button-more {
-            @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+            @apply sm:rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
         }
     }
     .border-search-member {
-        @apply border-1 border-gray-300 rounded-lg bg-white;
+        @apply border-0 sm:border-x-1 border-y-1 border-gray-300 rounded-none sm:rounded-lg bg-white;
 
         &>div:not(:last-child) {
             @apply border-b-1 border-gray-300 space-y-2;
@@ -79,7 +109,7 @@
         }
     }
     .button-more {
-        @apply rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
+        @apply sm:rounded-b-lg py-2 text-center font-bold text-lg w-full cursor-pointer hover:bg-gray-100 transition-all duration-200;
     }
     .nav-selected {
         @apply relative before:inline-block before:absolute before:w-0.5 before:h-10 before:bg-green-800 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
@@ -87,11 +117,28 @@
     .nav {
         @apply list-none pb-2 [&>li]:px-4 [&>li]:hover:bg-gray-100 [&>li]:cursor-pointer [&>li>a]:block [&>li>a]:py-2;
     }
+    .recruit-nav {
+        @apply text-[1.05rem];
+        li {
+            @apply px-4 text-gray-600 cursor-pointer hover:bg-gray-100 border-t-1 border-gray-300;
+
+            a {
+                @apply block py-2;
+            }
+        }
+        li:last-child {
+            @apply rounded-b-lg;
+        }
+        li.recruit-nav-selected {
+            @apply relative before:inline-block before:absolute before:w-0.5 before:h-10 before:bg-orange-500 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
+            @apply text-orange-500 font-bold;
+        }
+    }
     .border-list {
         @apply my-0.5 space-y-4 py-4 bg-white;
-        @apply first:border-1 first:border-gray-300 first:rounded-t-lg;
+        @apply first:border-1 first:border-gray-300 sm:first:rounded-t-lg;
         @apply not-first:border-1 not-first:border-gray-300;
-        @apply last:border-1 last:border-gray-300 last:rounded-b-lg;
+        @apply last:border-1 last:border-gray-300 sm:last:rounded-b-lg;
     }
     .button-gray:not(.button-selected) {
         @apply border-1 rounded-full border-gray-400 px-3 py-0.5 font-bold text-gray-700 text-lg;
@@ -107,6 +154,10 @@
         @apply border-1 border-orange-400 rounded-full px-3 py-0.5 font-bold text-white text-lg bg-orange-400;
         @apply hover:bg-orange-500 hover:border-orange-500 transition-all duration-200;
         @apply hover:cursor-pointer;
+    }
+    .button-disabled {
+        @apply border-1 border-gray-200 rounded-full px-3 py-0.5 font-bold text-gray-400 text-lg bg-gray-200;
+        @apply cursor-not-allowed!;
     }
     .board-member-profile {
         @apply flex gap-4;
@@ -156,7 +207,7 @@
         }
 
         button:first-child {
-            @apply max-h-[50rem] m-auto col-span-3;
+            @apply max-h-[80rem] m-auto col-span-3 overflow-hidden;
         }
         button:not(:first-child) {
             @apply m-auto;
@@ -196,7 +247,7 @@
     }
 
     .button-board-action {
-        @apply w-full h-10 flex items-center justify-center rounded-md font-bold hover:cursor-pointer hover:bg-gray-100;
+        @apply w-full h-10 flex items-center justify-center rounded-md font-bold hover:cursor-pointer hover:bg-gray-100 duration-100;
     }
     button {
         @apply hover:cursor-pointer;
@@ -208,6 +259,14 @@
 
     .btn-transparent:hover {
         @apply bg-gray-100 cursor-pointer;
+    }
+
+    .quill-viewer {
+        @apply border-0! pt-4;
+    }
+
+    .quill-viewer .ql-editor {
+        @apply p-0!;
     }
 
     dialog.dropdown::backdrop {

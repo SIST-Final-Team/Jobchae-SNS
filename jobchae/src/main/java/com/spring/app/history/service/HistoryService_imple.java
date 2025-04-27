@@ -3,6 +3,7 @@ package com.spring.app.history.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -131,12 +132,25 @@ public class HistoryService_imple implements HistoryService {
         String sixDaysAgoFormatted = sixDaysAgo.format(formatter);
         String currentDateFormatted = currentDate.format(formatter);
 
-        Query query = new Query(Criteria.where("viewCountTargetId").is(memberId)
+        if("board".equals(viewCountTargetType)) {
+            List<String> boardNoList = searchDAO.getBoardNoByMemberId(memberId);
+            
+            Query query = new Query(Criteria.where("viewCountTargetId").in(boardNoList)
             .and("viewCountTargetType").is(viewCountTargetType)
             .and("viewCountType").is(viewCountType)
             .and("viewCountRegisterDate").gte(sixDaysAgoFormatted).lte(currentDateFormatted));
 
-        return mongoTemplate.find(query, ViewCountVO.class);
+            return mongoTemplate.find(query, ViewCountVO.class);
+        }
+        else {
+            Query query = new Query(Criteria.where("viewCountTargetId").is(memberId)
+                .and("viewCountTargetType").is(viewCountTargetType)
+                .and("viewCountType").is(viewCountType)
+                .and("viewCountRegisterDate").gte(sixDaysAgoFormatted).lte(currentDateFormatted));
+            
+            return mongoTemplate.find(query, ViewCountVO.class);
+        }
+
     }
 
     // 조회수 증가

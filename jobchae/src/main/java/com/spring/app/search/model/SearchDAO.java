@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.spring.app.recruit.domain.RecruitVO;
 import com.spring.app.search.domain.SearchBoardVO;
 import com.spring.app.search.domain.SearchCompanyVO;
 import com.spring.app.search.domain.SearchMemberVO;
@@ -96,4 +97,18 @@ public interface SearchDAO {
 	 * @return
 	 */
 	List<String> getBoardNoByMemberId(String member_id);
+
+	/**
+	 * 채용공고 검색 결과 가져오기
+	 * searchWord: 검색어,
+	 * login_member_id: 로그인 한 유저 id,
+	 * arr_fk_company_no: 회사 일련번호 배열,
+	 * arr_fk_region_no: 지역 일련번호 배열,
+	 * arr_recruit_work_type: 근무유형 배열,
+	 * arr_recruit_job_type: 고용형태 배열
+	 * @param params
+	 * @return
+	 */
+	List<RecruitVO> searchRecruit(Map<String, Object> params);
+
 }
