@@ -59,14 +59,16 @@
                             class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div>
-                    <img src="7.png" />
+                    <img src="${pageContext.request.contextPath}/images/ad.png"/>
                 </div>
                 <div class="px-4">
-                    <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
-                    <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
+                    <p class="font-bold">${sessionScope.loginuser.member_name}님, ANTICO에서 경매에 참여해보세요.</p>
+                    <p>ANTICO에서 나에게 맞는 물건을 살펴보세요.</p>
                 </div>
                 <div class="px-4">
-                    <button type="button" class="button-orange">팔로우</button>
+					<a href="http://antico.shop/antico/index">
+                    <button type="button" class="button-orange">방문하기</button>
+					</a>
                 </div>
             </div>
         </div>

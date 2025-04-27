@@ -3,7 +3,6 @@ package com.spring.app.search.controller;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -198,6 +197,63 @@ public class SearchController {
         mav.addObject("searchWord", params.get("searchWord"));
         
         mav.setViewName("search/searchCompany");
+
+        return mav;
+    }
+
+    // 채용공고 검색
+    @GetMapping("recruit")
+    public ModelAndView searchRecruit(HttpServletRequest request, ModelAndView mav, @RequestParam Map<String, String> params) {
+
+        // TODO: 검색 결과 수 가져오기
+
+        // === 검색 기록 추가 시작 === //
+        SearchHistoryVO searchHistoryVO = new SearchHistoryVO();
+
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
+
+        if(loginuser != null) {
+            searchHistoryVO.setMemberId(loginuser.getMember_id());
+            searchHistoryVO.setSearchHistoryWord(params.get("searchWord"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            searchHistoryVO.setSearchHistoryRegisterDate(sdf.format(new Date()));
+    
+            historyService.saveSearchHistory(searchHistoryVO);
+        }
+        // === 검색 기록 추가 끝 === //
+        
+        if(params.get("searchDate") != null) {
+            mav.addObject("searchDate", params.get("searchDate"));
+        }
+
+        if(params.get("arr_fk_company_no") != null) {
+            mav.addObject("arr_fk_company_no", params.get("arr_fk_company_no"));
+            
+            // 회사 목록 가져오기
+            List<String> company_noList =  Arrays.asList((String[])params.get("arr_fk_company_no").split("\\,"));
+            mav.addObject("companyList", service.getCompanyListByCompanyNo(company_noList));
+        }
+
+        if(params.get("arr_fk_region_no") != null) {
+            mav.addObject("arr_fk_region_no", params.get("arr_fk_region_no"));
+            
+            // 지역 목록 가져오기
+            List<String> region_noList =  Arrays.asList((String[])params.get("arr_fk_region_no").split("\\,"));
+            mav.addObject("regionList", service.getRegionListByRegionNo(region_noList));
+        }
+
+        if(params.get("arr_recruit_work_type") != null) {
+            mav.addObject("arr_recruit_work_type", params.get("arr_recruit_work_type"));
+        }
+        
+        if(params.get("arr_recruit_job_type") != null) {
+            mav.addObject("arr_recruit_job_type", params.get("arr_recruit_job_type"));
+        }
+
+        mav.addObject("searchWord", params.get("searchWord"));
+        
+        mav.setViewName("search/searchRecruit");
 
         return mav;
     }

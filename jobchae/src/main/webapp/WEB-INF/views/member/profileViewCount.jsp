@@ -69,24 +69,26 @@ function fillMissingData(json, daysBefore) {
     const viewCounts = {};
     const viewCountDates = [];
 
-    // daysBefore 일 전까지의 날짜를 YYYY-MM-DD 형식으로 생성
+    // 날짜별 초기 값 설정
     for (let i = daysBefore; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         const formattedDate = `\${year}-\${month}-\${day}`;
         viewCountDates.push(formattedDate);
         viewCounts[formattedDate] = 0; // 초기값 0으로 설정
     }
 
-    // JSON 데이터를 순회하면서 viewCounts 객체 업데이트
+    // JSON 데이터를 순회하면서 날짜별 viewCount 합산
     json.forEach(item => {
-        viewCounts[item.viewCountRegisterDate] = item.viewCount;
+        if (viewCounts[item.viewCountRegisterDate] !== undefined) {
+            viewCounts[item.viewCountRegisterDate] += item.viewCount;
+        }
     });
 
-    // 최종 결과 배열 생성
+    // 결과 배열 생성
     const filledViewCounts = viewCountDates.map(date => viewCounts[date]);
 
     return {
@@ -204,14 +206,16 @@ function getViewCount(name, resultContainerId, viewCountTargetType, viewCountTyp
                     <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
                 </div>
                 <div>
-                    <img src="7.png"/>
+                    <img src="${pageContext.request.contextPath}/images/ad.png"/>
                 </div>
                 <div class="px-4">
-                    <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
-                    <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
+                    <p class="font-bold">${sessionScope.loginuser.member_name}님, ANTICO에서 경매에 참여해보세요.</p>
+                    <p>ANTICO에서 나에게 맞는 물건을 살펴보세요.</p>
                 </div>
                 <div class="px-4">
-                    <button type="button" class="button-orange">팔로우</button>
+					<a href="http://antico.shop/antico/index">
+                    <button type="button" class="button-orange">방문하기</button>
+					</a>
                 </div>
             </div>
         </div>

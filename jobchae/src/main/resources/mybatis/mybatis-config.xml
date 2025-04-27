@@ -29,6 +29,9 @@
 		<typeAlias type="com.spring.app.search.domain.SearchBoardVO" alias="SearchBoardVO"/>
 		<typeAlias type="com.spring.app.search.domain.SearchMemberVO" alias="SearchMemberVO"/>
 		<typeAlias type="com.spring.app.search.domain.SearchCompanyVO" alias="SearchCompanyVO"/>
+
+		<typeAlias type="com.spring.app.recruit.domain.RecruitVO" alias="RecruitVO"/>
+		<typeAlias type="com.spring.app.recruit.domain.QuestionVO" alias="QuestionVO"/>
 	</typeAliases>
 
 </configuration>

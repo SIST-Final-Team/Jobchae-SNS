@@ -26,17 +26,11 @@ import jakarta.servlet.http.HttpSession;
 @RequestMapping(value="/api/history/*")
 public class ApiHistoryController {
 
-    private final AES256_Configuration AES256_Configuration;
-
     @Autowired
     HistoryService service;
 
 	@Autowired
 	MemberService memberService;
-
-    ApiHistoryController(AES256_Configuration AES256_Configuration) {
-        this.AES256_Configuration = AES256_Configuration;
-    }
 
 	@Operation(summary = "검색 기록 조회", description = "한 회원의 검색 기록 조회")
 	@GetMapping("search")

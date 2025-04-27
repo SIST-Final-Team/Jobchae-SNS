@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ==== mapper 기본설정 ==== -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ==== 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
+
+<mapper namespace="com.spring.app.recruit.model.RecruitDAO">
+
+    <!-- 채용공고 일련번호 채번 -->
+    <select id="getSeqRecruitNo" resultType="String">
+        select seq_recruit_no.nextval
+        from dual
+    </select>
+
+    <!-- 채용공고 등록 -->
+    <insert id="insertRecruit" parameterType="RecruitVO">
+        insert into tbl_recruit(recruit_no, fk_member_id, fk_region_no, recruit_job_name, recruit_company_name, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_auto_fail, recruit_auto_fail_message, recruit_email, recruit_register_date, recruit_end_date)
+        values(to_number(#{recruit_no}), #{fk_member_id}, to_number(#{fk_region_no}), #{recruit_job_name}, #{recruit_company_name}, to_number(#{recruit_work_type}), to_number(#{recruit_job_type}), #{recruit_explain_html}, to_number(#{recruit_auto_fail})
+        <if test="recruit_auto_fail_message == null">
+        , default
+        </if>
+        <if test="recruit_auto_fail_message != null">
+        , #{recruit_auto_fail_message}
+        </if>
+        , #{recruit_email}, default, sysdate+14)
+    </insert>
+
+    <!-- 채용공고 질문목록 등록 -->
+    <insert id="insertQuestion" parameterType="QuestionVO">
+        insert into tbl_question(question_no, fk_recruit_no, question_query, question_type, question_correct, question_required)
+        values(seq_question_no.nextval, to_number(#{fk_recruit_no}), #{question_query}, to_number(#{question_type}), #{question_correct}, to_number(#{question_required}))
+    </insert>
+
+    <!-- 채용공고 조회를 위한 Map -->
+    <resultMap id="RecruitMap" type="RecruitVO">
+		<id property="recruit_no" column="recruit_no"/>
+		<result property="fk_member_id" column="fk_member_id"/>
+		<result property="fk_region_no" column="fk_region_no"/>
+		<result property="region_name" column="region_name"/>
+		<result property="recruit_job_name" column="recruit_job_name"/>
+		<result property="recruit_company_name" column="recruit_company_name"/>
+		<result property="recruit_work_type" column="recruit_work_type"/>
+		<result property="recruit_job_type" column="recruit_job_type"/>
+		<result property="recruit_explain_html" column="recruit_explain_html"/>
+		<result property="recruit_auto_fail" column="recruit_auto_fail"/>
+		<result property="recruit_auto_fail_message" column="recruit_auto_fail_message"/>
+		<result property="recruit_email" column="recruit_email"/>
+		<result property="recruit_register_date" column="recruit_register_date"/>
+		<result property="recruit_end_date" column="recruit_end_date"/>
+
+        <collection property="questionVOList" ofType="QuestionVO">
+			<id property="question_no" column="question_no"/>
+			<result property="fk_recruit_no" column="fk_recruit_no"/>
+			<result property="question_query" column="question_query"/>
+			<result property="question_type" column="question_type"/>
+			<result property="question_correct" column="question_correct"/>
+			<result property="question_required" column="question_required"/>
+        </collection>
+	</resultMap>
+
+    <!-- 채용공고 조회 -->
+    <select id="getRecruit" parameterType="String" resultMap="RecruitMap">
+        select *
+        from tbl_recruit r
+        left join tbl_question q
+        on r.recruit_no = q.fk_recruit_no
+        left join tbl_region re
+        on r.fk_region_no = re.region_no
+        where recruit_no = #{recruit_no}
+    </select>
+
+    <!-- 채용공고 수정 -->
+    <update id="updateRecruit" parameterType="RecruitVO">
+        update tbl_recruit set
+            fk_region_no = to_number(#{fk_region_no}),
+            recruit_job_name = #{recruit_job_name},
+            recruit_company_name = #{recruit_company_name},
+            recruit_work_type = to_number(#{recruit_work_type}),
+            recruit_job_type = to_number(#{recruit_job_type}),
+            recruit_explain_html = #{recruit_explain_html},
+            recruit_auto_fail = to_number(#{recruit_auto_fail}),
+            <if test='recruit_auto_fail == "1"'>
+                recruit_auto_fail_message = #{recruit_auto_fail_message},
+            </if>
+            <if test='recruit_auto_fail == "0"'>
+                recruit_auto_fail_message = null,
+            </if>
+            recruit_email = #{recruit_email}
+        where recruit_no = #{recruit_no}
+    </update>
+
+</mapper>

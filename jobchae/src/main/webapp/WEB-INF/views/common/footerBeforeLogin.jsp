@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <div class="w-full bg-white bottom-0">
-    <div class="max-w-5xl m-auto text-gray-400 text-left text-sm py-4">
+    <div class="mx-4 xl:max-w-[1140px] xl:m-auto text-gray-400 text-left text-sm py-4">
         쌍용강북교육센터
         <hr class="my-2 border-gray-300!">
         <a href="mailto:gyu9907@gmail.com" class="hover:underline">김규빈</a>
