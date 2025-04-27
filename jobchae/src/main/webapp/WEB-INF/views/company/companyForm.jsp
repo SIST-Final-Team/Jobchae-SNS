@@ -217,6 +217,6 @@
     </div>
 </body>
 
-<script>const ctxPath = "<%= ctxPath%>";</script>
+<script>const contextPath = "<%= ctxPath%>";</script>
 <script src="${pageContext.request.contextPath}/js/company/companyForm.js"></script>
 </html>

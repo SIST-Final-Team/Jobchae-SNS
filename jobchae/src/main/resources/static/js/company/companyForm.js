@@ -63,7 +63,7 @@ const optionList = document.getElementById("optionList");
 let industryList = [];
 
 //업종 리스트 불러오기
-fetch(`${ctxPath}/api/industry/list`)
+fetch(`${contextPath}/api/industry/list`)
   .then((response) => {
     if (response.ok) {
       // 응답이 성공적일 경우 JSON으로 변환
