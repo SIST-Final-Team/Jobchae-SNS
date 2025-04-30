@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LinkedIn 관리 페이지 클론</title>
-    <link rel="stylesheet" href="/src/main/resources/static/css/tailwind.css" />
-    <script src="/src/main/resources/static/js/tailwind.js"></script>
-  </head>
-  <body class="p-6 font-sans">
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<% String ctxPath = request.getContextPath(); %>
+<jsp:include page="/WEB-INF/views/header/header.jsp" />
     <style>
       /* 추가적인 커스텀 스타일 (필요한 경우) */
       body {
@@ -49,57 +43,57 @@
           </button>
           <ul class="mt-5">
             <li
-              class="py-2 font-semibold text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 font-semibold text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               대시보드
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               페이지 게시물
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               분석
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               피드
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               활동
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               수신함
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               페이지 내용 변경
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               채용 공고
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               프리미엄 페이지 사용
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               광고
             </li>
             <li
-              class="py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
+              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer"
             >
               설정
             </li>
@@ -107,7 +101,7 @@
         </div>
       </div>
       <!-- 메인 -->
-      <div class="md:col-span-4 space-y-6">
+      <div id="contentArea" class="md:col-span-4 space-y-6">
         <div class="card p-4 space-y-3">
           <h2 class="text-lg font-semibold text-gray-800">오늘의 작업</h2>
           <p class="text-sm text-gray-600">
