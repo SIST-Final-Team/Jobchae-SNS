@@ -41,6 +41,7 @@ public class ApiCompanyController {
     FileManager fileManager;
 
 
+    //회사의 정보를 조회
     @GetMapping("/dashboard/{company_no}")
     public ResponseEntity<CompanyVO> selectCompany(@PathVariable String company_no, HttpServletRequest request){
 

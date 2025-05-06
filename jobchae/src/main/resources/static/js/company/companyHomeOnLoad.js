@@ -13,7 +13,26 @@ window.onload = function () {
 
   //주소에서 메뉴 값을 가져온다
   const menu = addressUrl.split("/")[5];
+  const companyId = addressUrl.split("/")[3];
 
   getContent(menu, contentDiv);
   changeMenuStyle(menu);
+
+  //회사의 데이터를 가져온다.
+  getCompanyData(companyId)
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching content:", error);
+    });
 };
+
+//ajax 요청을 통해서 회사의 데이터를 가져옵니다.
+async function getCompanyData(companyId) {
+  const response = await fetch(
+    `${contextPath}/api/company/selectAdminCompnay/${companyId}`
+  );
+  const data = await response.json();
+  return data;
+}
