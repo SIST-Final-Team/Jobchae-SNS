@@ -1,119 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
-<% String ctxPath = request.getContextPath(); %>
-<jsp:include page="/WEB-INF/views/header/header.jsp" />
-<style>
-  /* 추가적인 커스텀 스타일 (필요한 경우) */
-  body {
-    background-color: #f4f2ee; /* LinkedIn 배경색과 유사하게 설정 */
-  }
-  .card {
-    background-color: white;
-    border-radius: 0.5rem; /* rounded-lg */
-    border: 1px solid #e0e0e0; /* 테두리 추가 */
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-      0 1px 2px 0 rgba(0, 0, 0, 0.06); /* 그림자 효과 */
-    overflow: hidden; /* 내부 요소가 카드를 벗어나지 않도록 */
-  }
-</style>
-<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-6 mt-6">
-  <!-- 사이드바 -->
-  <div class="md:col-span-1 space-y-6 text-lg">
-    <div class="card">
-      <div class="relative mb-10">
-        <div class="w-full h-25">
-          <img
-            src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg"
-            alt="LinkedIn 배경 이미지"
-            class="w-full h-full"
-          />
-        </div>
-        <div
-          class="absolute -bottom-7 left-4 w-16 h-16 border-2 border-gray-300 rounded-lg"
-        >
-          <img
-            src="<%= ctxPath%>/images/no_company_logo.JPG"
-            alt="프로필 이미지"
-          />
-        </div>
-      </div>
-      <h2 class="font-semibold pl-4">쌍용 파이널 테스트</h2>
-      <button class="text-sm text-blue-600 hover:underline pl-4">
-        회원 모드로 보기
-      </button>
-      <ul class="mt-5">
-        <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold text-green-900 border-l-4"
-              data-url="dashboard"
-            >
-              대시보드
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="post"
-            >
-              페이지 게시물
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="analytics"
-            >
-              분석
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="feed"
-            >
-              피드
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="activity"
-            >
-              활동
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="message"
-            >
-              수신함
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="pageContent"
-            >
-              페이지 내용 변경
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="hiring"
-            >
-              채용 공고
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="premium"
-            >
-              프리미엄 페이지 사용
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="advertisement"
-            >
-              광고
-            </li>
-            <li
-              class="menuList py-2 text-gray-700 hover:bg-gray-100 rounded px-2 cursor-pointer font-semibold"
-              data-url="setting"
-            >
-              설정
-            </li>
-      </ul>
-    </div>
-  </div>
-  <!-- 메인 -->
-  <div id="contentDiv" class="md:col-span-4 space-y-6">
-    <div class="card p-4 space-y-3">
+//이 페이지는 컨텐츠를 불러오는 기능을 하는 자바스크립트 파일입니다.
+// 각 메뉴를 클릭 했을 때 해당하는 페이지의 내용물을 바꿉니다.
+
+// 대시보드 로드
+async function loadDashboard(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">
       <h2 class="text-lg font-semibold text-gray-800">오늘의 작업</h2>
       <p class="text-sm text-gray-600">
         이러한 작업을 정기적으로 완료하는 페이지는 4배 더 빠르게 성장합니다.
@@ -355,12 +245,66 @@
       >
         피드 표시
       </button>
-    </div>
-  </div>
-</div>
-<script>const contextPath = "<%= ctxPath%>";</script>
-<script src = "<%= ctxPath%>/js/company/companyHomeOnLoad.js"></script>
-<script src = "<%= ctxPath%>/js/company/companyHomePageLoad.js"></script>
-<script src = "<%= ctxPath%>/js/company/companyHomeRouter.js"></script>
-</body>
-</html>
+    </div>`;
+  console.log("대시보드");
+}
+
+// 게시물 로드
+async function loadPost(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">게시물</div>`;
+  console.log("게시물");
+}
+
+// 분석 로드
+async function loadAnalytics(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">분석</div>`;
+  console.log("분석");
+}
+
+// 피드 로드
+async function loadFeed(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">피드</div>`;
+  console.log("피드");
+}
+
+// 활동 로드
+async function loadActivity(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">활동</div>`;
+  console.log("활동");
+}
+
+// 메세지 로드
+async function loadMessage(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">메세지</div>`;
+  console.log("메세지");
+}
+
+// 페이지 내용 로드
+async function loadPageContent(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">페이지 내용</div>`;
+  console.log("페이지 내용");
+}
+
+// 채용 로드
+async function loadHiring(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">채용</div>`;
+  console.log("채용");
+}
+
+// 프리미엄 로드
+async function loadPremium(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">프리미엄</div>`;
+  console.log("프리미엄");
+}
+
+// 광고 로드
+async function loadAdvertisement(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">광고</div>`;
+  console.log("광고");
+}
+
+// 설정 로드
+async function loadSetting(contentDiv) {
+  contentDiv.innerHTML = `<div class="card p-4 space-y-3">설정</div>`;
+  console.log("설정");
+}
