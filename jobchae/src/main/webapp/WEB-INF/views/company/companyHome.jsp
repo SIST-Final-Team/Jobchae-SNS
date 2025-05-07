@@ -37,7 +37,8 @@
           />
         </div>
       </div>
-      <h2 class="font-semibold pl-4">쌍용 파이널 테스트</h2>
+      <h2 class="font-semibold pl-4 text-2xl" id="companyName">테스트</h2>
+      <h2 class="font-semibold pl-4 text-gray-700 text-sm">팔로워 <span>123</span></h2>
       <button class="text-sm text-blue-600 hover:underline pl-4">
         회원 모드로 보기
       </button>
