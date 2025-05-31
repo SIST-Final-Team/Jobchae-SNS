@@ -15,8 +15,8 @@
 
     <!-- 채용공고 등록 -->
     <insert id="insertRecruit" parameterType="RecruitVO">
-        insert into tbl_recruit(recruit_no, fk_member_id, fk_region_no, recruit_job_name, recruit_company_name, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_auto_fail, recruit_auto_fail_message, recruit_email, recruit_register_date, recruit_end_date)
-        values(to_number(#{recruit_no}), #{fk_member_id}, to_number(#{fk_region_no}), #{recruit_job_name}, #{recruit_company_name}, to_number(#{recruit_work_type}), to_number(#{recruit_job_type}), #{recruit_explain_html}, to_number(#{recruit_auto_fail})
+        insert into tbl_recruit(recruit_no, fk_member_id, fk_region_no, fk_company_no, recruit_job_name, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_auto_fail, recruit_auto_fail_message, recruit_email, recruit_register_date, recruit_end_date)
+        values(to_number(#{recruit_no}), #{fk_member_id}, to_number(#{fk_region_no}), to_number(#{fk_company_no}), #{recruit_job_name}, to_number(#{recruit_work_type}), to_number(#{recruit_job_type}), #{recruit_explain_html}, to_number(#{recruit_auto_fail})
         <if test="recruit_auto_fail_message == null">
         , default
         </if>
@@ -37,9 +37,9 @@
 		<id property="recruit_no" column="recruit_no"/>
 		<result property="fk_member_id" column="fk_member_id"/>
 		<result property="fk_region_no" column="fk_region_no"/>
+        <result property="fk_company_no" column="fk_company_no"/>
 		<result property="region_name" column="region_name"/>
 		<result property="recruit_job_name" column="recruit_job_name"/>
-		<result property="recruit_company_name" column="recruit_company_name"/>
 		<result property="recruit_work_type" column="recruit_work_type"/>
 		<result property="recruit_job_type" column="recruit_job_type"/>
 		<result property="recruit_explain_html" column="recruit_explain_html"/>
@@ -48,6 +48,9 @@
 		<result property="recruit_email" column="recruit_email"/>
 		<result property="recruit_register_date" column="recruit_register_date"/>
 		<result property="recruit_end_date" column="recruit_end_date"/>
+        <result property="company_name" column="company_name"/>
+        <result property="company_logo" column="company_logo"/>
+        <result property="apply_cnt" column="apply_cnt"/>
 
         <collection property="questionVOList" ofType="QuestionVO">
 			<id property="question_no" column="question_no"/>
@@ -67,6 +70,14 @@
         on r.recruit_no = q.fk_recruit_no
         left join tbl_region re
         on r.fk_region_no = re.region_no
+        left join tbl_company c
+        on r.fk_company_no = c.company_no
+        left join (
+            select fk_recruit_no, count(*) as apply_cnt
+            from TBL_APPLY
+            group by fk_recruit_no
+        ) a
+        on r.recruit_no = a.fk_recruit_no
         where recruit_no = #{recruit_no}
     </select>
 
@@ -74,8 +85,8 @@
     <update id="updateRecruit" parameterType="RecruitVO">
         update tbl_recruit set
             fk_region_no = to_number(#{fk_region_no}),
+            fk_company_no = to_number(#{fk_company_no}),
             recruit_job_name = #{recruit_job_name},
-            recruit_company_name = #{recruit_company_name},
             recruit_work_type = to_number(#{recruit_work_type}),
             recruit_job_type = to_number(#{recruit_job_type}),
             recruit_explain_html = #{recruit_explain_html},
@@ -90,4 +101,406 @@
         where recruit_no = #{recruit_no}
     </update>
 
+    <!-- 회원 아이디로 작성한 채용공고 목록 조회 -->
+    <select id="getRecruitListByMemberId" parameterType="HashMap" resultType="RecruitVO">
+        select *
+		from
+		(
+			select rownum as rno, recruit_no, fk_member_id, fk_region_no, fk_company_no, recruit_job_name
+				, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_register_date, recruit_end_date
+				, region_name, company_name, company_logo, apply_cnt
+			from
+			(
+				select recruit_no, r.fk_member_id, r.fk_region_no, fk_company_no, recruit_job_name
+					, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_register_date, recruit_end_date
+					, region_name, company_name, company_logo, apply_cnt
+				from tbl_recruit r
+				left join tbl_region rg
+				on r.fk_region_no = rg.region_no
+                left join tbl_company c
+                on r.fk_company_no = c.company_no
+				left join tbl_member m
+				on m.member_id = r.fk_member_id
+                left join (
+                    select fk_recruit_no, count(*) as apply_cnt
+                    from TBL_APPLY
+                    group by fk_recruit_no
+                ) a
+                on r.recruit_no = a.fk_recruit_no
+				where m.member_status = 1
+				and r.fk_member_id = #{login_member_id}
+                <if test='recruit_closed == "1"'>
+                    and recruit_end_date &lt;= sysdate
+                </if>
+                <if test='recruit_closed == "0"'>
+                    and recruit_end_date &gt; sysdate
+                </if>
+				order by recruit_register_date DESC
+			)
+		)
+		where rno BETWEEN #{start} AND #{end}
+    </select>
+
+    <!-- 채용공고 마감 -->
+    <update id="closeRecruit" parameterType="HashMap">
+        update tbl_recruit set recruit_end_date = sysdate where recruit_no = #{recruit_no} and fk_member_id = #{login_member_id}
+    </update>
+
+    <!-- 채용지원 일련번호 채번 -->
+    <select id="getSeqApplyNo" resultType="String">
+        select seq_apply_no.nextval
+        from dual
+    </select>
+
+    <!-- 채용지원 등록 -->
+    <insert id="insertApply" parameterType="ApplyVO">
+        insert into tbl_apply(apply_no, fk_recruit_no, fk_member_id, apply_resume, apply_register_date, apply_checked, apply_result)
+        values(to_number(#{apply_no}), to_number(#{fk_recruit_no}), #{fk_member_id}, #{apply_resume}, default, default, default)
+    </insert>
+
+    <!-- 선별질문 답변 등록 -->
+    <insert id="insertAnswer" parameterType="AnswerVO">
+        insert into tbl_answer(answer_no, fk_question_no, fk_apply_no, answer_query)
+        values(seq_answer_no.nextval, to_number(#{fk_question_no}), to_number(#{fk_apply_no}), #{answer_query})
+    </insert>
+
+
+    <!-- 채용지원 조회를 위한 Map -->
+    <resultMap id="ApplyMap" type="ApplyVO">
+		<id property="apply_no" column="apply_no"/>
+        <result property="fk_recruit_no" column="fk_recruit_no"/>
+        <result property="fk_member_id" column="fk_member_id"/>
+        <result property="apply_resume" column="apply_resume"/>
+        <result property="apply_register_date" column="apply_register_date"/>
+        <result property="apply_checked" column="apply_checked"/>
+        <result property="apply_result" column="apply_result"/>
+        <result property="required_score" column="required_score"/>
+        <result property="advantage_score" column="advantage_score"/>
+
+        <association property="memberVO" javaType="MemberVO">
+            <id property="member_id" column="member_id"/>
+            <result property="member_name" column="member_name"/>
+            <result property="member_birth" column="member_birth"/>
+            <result property="member_email" column="member_email"/>
+            <result property="member_tel" column="member_tel"/>
+            <result property="member_profile" column="member_profile"/>
+            <result property="region_name" column="region_name"/>
+            <result property="member_career_company" column="member_career_company"/>
+            <result property="school_name" column="school_name"/>
+        </association>
+
+        <collection property="answerVOList" ofType="AnswerVO">
+			<id property="answer_no" column="answer_no"/>
+			<result property="fk_question_no" column="fk_question_no"/>
+			<result property="fk_apply_no" column="fk_apply_no"/>
+			<result property="answer_query" column="answer_query"/>
+        </collection>
+	</resultMap>
+    <!-- 채용공고 번호로 채용지원 목록 조회 -->
+    <select id="getApplyByRecruitNo" parameterType="HashMap" resultMap="ApplyMap">
+    	select *
+		from
+        (
+            select rownum as rno, apply_no, fk_recruit_no, fk_member_id, apply_resume, apply_register_date, apply_checked, apply_result
+            , answer_no, fk_question_no, fk_apply_no, answer_query
+            , member_id, member_name, member_email, member_tel, member_profile, member_birth
+            , region_name
+            , member_career_company
+            , school_name
+            , required_score, advantage_score
+            from
+            (
+                select ap.apply_no, ap.fk_recruit_no, ap.fk_member_id, ap.apply_resume, ap.apply_register_date, ap.apply_checked, ap.apply_result
+                , an.answer_no, an.fk_question_no, an.fk_apply_no, an.answer_query
+                , m.member_id, m.member_name, m.member_email, m.member_tel, m.member_profile, m.member_birth
+                , r.region_name
+				, mc.member_career_company
+				, me.school_name
+                , s.required_score, s.advantage_score
+                from tbl_apply ap
+                left join tbl_answer an
+                on ap.apply_no = an.fk_apply_no
+                left join tbl_member m
+                on ap.fk_member_id = m.member_id
+                left join
+				(
+					SELECT mc.fk_member_id,
+                        LISTAGG(CAST(member_career_company AS VARCHAR2(100))
+                                || ' '
+                                || to_char(mc.member_career_startdate, 'yyyy-mm')
+                                ||
+                            CASE WHEN mc.member_career_is_current = 0 THEN
+                                    ' ~ '
+                                    || to_char(mc.member_career_enddate, 'yyyy-mm')
+                                ELSE
+                                    ' ~ 현재'
+                            END, ',') WITHIN GROUP (ORDER BY member_career_startdate ASC) AS member_career_company,
+
+                        -- 총 경력 월수를 연단위로 변환
+                        ROUND(SUM(
+                            CASE 
+                                WHEN mc.member_career_is_current = 0 THEN 
+                                    MONTHS_BETWEEN(mc.member_career_enddate, mc.member_career_startdate)
+                                ELSE 
+                                    MONTHS_BETWEEN(SYSDATE, mc.member_career_startdate)
+                            END
+                        ) / 12, 0) AS total_career_years
+                    FROM tbl_member_career mc
+                        LEFT JOIN tbl_company c
+                        ON mc.fk_company_no = c.company_no
+                    GROUP BY mc.fk_member_id
+				) mc
+				on m.member_id = mc.fk_member_id
+                left join
+				(
+                    SELECT me.fk_member_id,
+                        LISTAGG(CAST(school_name AS VARCHAR2(100))
+                                || ' '
+                                || to_char(me.member_education_startdate, 'yyyy-mm')
+                                ||
+                            CASE WHEN me.member_education_enddate &lt; sysdate THEN
+                                    ' ~ '
+                                    || to_char(me.member_education_enddate, 'yyyy-mm')
+                                ELSE
+                                    ' ~ 현재'
+                            END, ',') WITHIN GROUP (ORDER BY member_education_startdate ASC) AS school_name
+                    FROM tbl_member_education me
+                        LEFT JOIN tbl_school s
+                        ON me.fk_school_no = s.school_no
+                    GROUP BY me.fk_member_id
+				) me
+				on m.member_id = me.fk_member_id
+                left join tbl_member_skill ms
+                on m.member_id = ms.fk_member_id
+				left join
+				(
+					SELECT an.fk_apply_no,
+						
+						-- 필수 질문
+						TO_CHAR(
+							COUNT(CASE WHEN q.question_correct = an.answer_query AND q.question_required = 1 THEN 1 END)) || '/' ||
+							COUNT(CASE WHEN q.question_required = 1 THEN 1 END
+						) AS required_score,
+
+						-- 우대 질문
+						TO_CHAR(
+							COUNT(CASE WHEN q.question_correct = an.answer_query AND q.question_required = 0 THEN 1 END)) || '/' ||
+							COUNT(CASE WHEN q.question_required = 0 THEN 1 END
+						) AS advantage_score
+
+					FROM tbl_question q
+					LEFT JOIN tbl_answer an
+						ON q.question_no = an.fk_question_no
+					GROUP BY an.fk_apply_no
+				) s
+				on ap.apply_no = s.fk_apply_no
+                left join tbl_region r
+                on m.fk_region_no = r.region_no
+                where fk_recruit_no = #{recruit_no} and member_status = 1
+                <!-- 평가 결과 -->
+                <if test="searchApplyResultList != null">
+                    and apply_result in
+                    <foreach collection="searchApplyResultList" index="i" open="(" separator="," close=")">
+                        '${searchApplyResultList[i]}'
+                    </foreach>
+                </if>
+                <!-- 지역 -->
+                <if test="searchApplyRegionList != null">
+                    and m.fk_region_no in
+                    <foreach collection="searchApplyRegionList" index="i" open="(" separator="," close=")">
+                        '${searchApplyRegionList[i]}'
+                    </foreach>
+                </if>
+                <!-- 전문분야 -->
+                <if test="searchApplySkillList != null">
+                    and ms.fk_skill_no in
+                    <foreach collection="searchApplySkillList" index="i" open="(" separator="," close=")">
+                        '${searchApplySkillList[i]}'
+                    </foreach>
+                </if>
+                <!-- 경력 -->
+                <if test="searchApplyCareerYearList != null">
+                    and (
+                    <foreach collection="searchApplyCareerYearList" item="year" separator="OR">
+                        <choose>
+                            <when test="year == 0">
+                                mc.total_career_years is null
+                                or
+                                mc.total_career_years = 0
+                            </when>
+                            <when test="year == 11">
+                                mc.total_career_years &gt;= 11
+                            </when>
+                            <otherwise>
+                                mc.total_career_years = ${year}
+                            </otherwise>
+                        </choose>
+                    </foreach>
+                    )
+                </if>
+                <!-- 정렬 기준 -->
+                <if test='searchApplyOrderBy != "member_name"'>
+                    order by apply_register_date DESC
+                </if>
+                <if test='searchApplyOrderBy == "member_name"'>
+                    order by member_name ASC
+                </if>
+            )
+        )
+		where rno BETWEEN #{start} AND #{end}
+    </select>
+
+    <resultMap id="regionMap" type="HashMap">
+        <id property="region_no" column="region_no"/>
+        <result property="region_name" column="region_name"/>
+    </resultMap>
+
+    <select id="getApplyRegionList" parameterType="String" resultMap="regionMap">
+        select distinct region_no, region_name
+        from tbl_apply a
+        left join tbl_member m
+            on a.fk_member_id = m.member_id
+        join tbl_region r
+            on m.fk_region_no = r.region_no
+        where fk_recruit_no = #{recruit_no}
+    </select>
+
+    <resultMap id="skillMap" type="HashMap">
+        <id property="skill_no" column="skill_no"/>
+        <result property="skill_name" column="skill_name"/>
+    </resultMap>
+
+    <select id="getApplySkillList" parameterType="String" resultMap="skillMap">
+        select distinct skill_no, skill_name
+        from tbl_apply a
+        left join tbl_member m
+            on a.fk_member_id = m.member_id
+        left join tbl_member_skill ms
+            on m.member_id = ms.fk_member_id
+        join tbl_skill s
+            on ms.fk_skill_no = s.skill_no
+        where fk_recruit_no = #{recruit_no}
+    </select>
+
+    <select id="getTotalApplyCount" parameterType="String" resultType="int">
+        select count(*)
+        from tbl_apply
+        where fk_recruit_no = #{recruit_no}
+    </select>
+
+    <select id="getSearchApplyCount" parameterType="String" resultType="int">
+        select count(distinct apply_no)
+        from tbl_apply ap
+        left join tbl_member m
+        on ap.fk_member_id = m.member_id
+        left join
+        (
+            SELECT mc.fk_member_id,
+                -- 총 경력 월수를 연단위로 변환
+                ROUND(SUM(
+                    CASE 
+                        WHEN mc.member_career_is_current = 0 THEN 
+                            MONTHS_BETWEEN(mc.member_career_enddate, mc.member_career_startdate)
+                        ELSE 
+                            MONTHS_BETWEEN(SYSDATE, mc.member_career_startdate)
+                    END
+                ) / 12, 0) AS total_career_years
+            FROM tbl_member_career mc
+                LEFT JOIN tbl_company c
+                ON mc.fk_company_no = c.company_no
+            GROUP BY mc.fk_member_id
+        ) mc
+        on m.member_id = mc.fk_member_id
+        left join tbl_member_skill ms
+        on m.member_id = ms.fk_member_id
+        left join tbl_region r
+        on m.fk_region_no = r.region_no
+        where fk_recruit_no = #{recruit_no} and member_status = 1
+        <!-- 평가 결과 -->
+        <if test="searchApplyResultList != null">
+            and apply_result in
+            <foreach collection="searchApplyResultList" index="i" open="(" separator="," close=")">
+                '${searchApplyResultList[i]}'
+            </foreach>
+        </if>
+        <!-- 지역 -->
+        <if test="searchApplyRegionList != null">
+            and m.fk_region_no in
+            <foreach collection="searchApplyRegionList" index="i" open="(" separator="," close=")">
+                '${searchApplyRegionList[i]}'
+            </foreach>
+        </if>
+        <!-- 전문분야 -->
+        <if test="searchApplySkillList != null">
+            and ms.fk_skill_no in
+            <foreach collection="searchApplySkillList" index="i" open="(" separator="," close=")">
+                '${searchApplySkillList[i]}'
+            </foreach>
+        </if>
+        <!-- 경력 -->
+        <if test="searchApplyCareerYearList != null">
+            and (
+            <foreach collection="searchApplyCareerYearList" item="year" separator="OR">
+                <choose>
+                    <when test="year == 0">
+                        mc.total_career_years is null
+                        or
+                        mc.total_career_years = 0
+                    </when>
+                    <when test="year == 11">
+                        mc.total_career_years &gt;= 11
+                    </when>
+                    <otherwise>
+                        mc.total_career_years = ${year}
+                    </otherwise>
+                </choose>
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <update id="updateApplyResult" parameterType="ApplyVO">
+        update TBL_APPLY set APPLY_RESULT = #{apply_result} where APPLY_NO = #{apply_no}
+    </update>
+
+    <update id="updateApplyChecked" parameterType="String">
+        update TBL_APPLY set APPLY_CHECKED = 1 where APPLY_NO = #{apply_no}
+    </update>
+
+
+    <!-- 회원 아이디로 지원 또는 저장한 채용공고 목록 조회 -->
+    <select id="getRecruitSaveListByMemberId" parameterType="HashMap" resultType="RecruitVO">
+        select *
+        from
+        (
+        select rownum as rno, recruit_no, fk_member_id, fk_region_no, fk_company_no, recruit_job_name
+        , recruit_work_type, recruit_job_type, recruit_explain_html, recruit_register_date, recruit_end_date
+        , region_name, company_name, company_logo
+        from
+        (
+        select distinct recruit_no, r.fk_member_id, r.fk_region_no, fk_company_no, recruit_job_name
+        , recruit_work_type, recruit_job_type, recruit_explain_html, recruit_register_date, recruit_end_date
+        , region_name, company_name, company_logo
+        from tbl_recruit r
+        left join tbl_region rg
+        on r.fk_region_no = rg.region_no
+        left join tbl_company c
+        on r.fk_company_no = c.company_no
+        left join tbl_member m
+        on m.member_id = r.fk_member_id
+        left join tbl_apply a
+        on r.RECRUIT_NO = a.FK_RECRUIT_NO
+        where m.member_status = 1
+        and a.fk_member_id = #{login_member_id}
+        <if test='recruit_closed == "1"'>
+            and recruit_end_date &lt;= sysdate
+        </if>
+        <if test='recruit_closed == "0"'>
+            and recruit_end_date &gt; sysdate
+        </if>
+        order by recruit_register_date DESC
+        )
+        )
+        where rno BETWEEN #{start} AND #{end}
+    </select>
 </mapper>

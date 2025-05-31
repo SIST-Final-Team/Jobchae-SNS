@@ -65,7 +65,7 @@ $(document).ready(function() {
 });
 
 function fillMissingData(json, daysBefore) {
-    const today = new Date();
+    const today = new Date(2025,2,17);
     const viewCounts = {};
     const viewCountDates = [];
 

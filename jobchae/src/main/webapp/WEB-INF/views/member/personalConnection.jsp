@@ -254,7 +254,7 @@ function removeProfileCard(button) {
         <div
           class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-            LinkedIn 탑스토리
+            JOB Chae 탑스토리
           </h3>
           <button type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -605,7 +605,7 @@ function removeProfileCard(button) {
      		 <!-- 탑스토리 -->
 			<div class="border-normal px-2 py-2">
 			  <div class="flex justify-between items-center">
-			    <h2 class="pl-2">LinkedIn 탑스토리</h2>
+			    <h2 class="pl-2">JOB Chae 탑스토리</h2>
 			    <button type="button" data-modal-target="default-modal" data-modal-toggle="default-modal"
 			      class="btn-bold px-2!">
 			      모두 표시

@@ -121,15 +121,15 @@ public class HistoryService_imple implements HistoryService {
     @Override
     public List<ViewCountVO> findViewCountByMemberId(String memberId, String viewCountTargetType, String viewCountType) {
         // 현재 날짜
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate = LocalDate.of(2025, 3, 17);
         // 6일 전 날짜
-        LocalDate sixDaysAgo = currentDate.minusDays(6);
+        LocalDate oldDate = currentDate.minusDays(6);
 
         // 날짜 형식 설정 (yyyy-MM-dd)
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        
+
         // 6일 전부터 현재까지의 날짜 범위 설정
-        String sixDaysAgoFormatted = sixDaysAgo.format(formatter);
+        String oldDateFormatted = oldDate.format(formatter);
         String currentDateFormatted = currentDate.format(formatter);
 
         if("board".equals(viewCountTargetType)) {
@@ -138,7 +138,7 @@ public class HistoryService_imple implements HistoryService {
             Query query = new Query(Criteria.where("viewCountTargetId").in(boardNoList)
             .and("viewCountTargetType").is(viewCountTargetType)
             .and("viewCountType").is(viewCountType)
-            .and("viewCountRegisterDate").gte(sixDaysAgoFormatted).lte(currentDateFormatted));
+            .and("viewCountRegisterDate").gte(oldDateFormatted).lte(currentDateFormatted));
 
             return mongoTemplate.find(query, ViewCountVO.class);
         }
@@ -146,7 +146,7 @@ public class HistoryService_imple implements HistoryService {
             Query query = new Query(Criteria.where("viewCountTargetId").is(memberId)
                 .and("viewCountTargetType").is(viewCountTargetType)
                 .and("viewCountType").is(viewCountType)
-                .and("viewCountRegisterDate").gte(sixDaysAgoFormatted).lte(currentDateFormatted));
+                .and("viewCountRegisterDate").gte(oldDateFormatted).lte(currentDateFormatted));
             
             return mongoTemplate.find(query, ViewCountVO.class);
         }
@@ -216,11 +216,24 @@ public class HistoryService_imple implements HistoryService {
     
     // 특정 대상(targetId, targetType, viewType)의 조회수 합산
     public long getTotalViewCount(String targetId, String targetType, String viewType) {
+        // 현재 날짜
+        LocalDate currentDate = LocalDate.of(2025, 3, 17);
+        // 6일 전 날짜
+        LocalDate oldDate = currentDate.minusDays(6);
+
+        // 날짜 형식 설정 (yyyy-MM-dd)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 6일 전부터 현재까지의 날짜 범위 설정
+        String oldDateFormatted = oldDate.format(formatter);
+        String currentDateFormatted = currentDate.format(formatter);
+
         // 1. 조건 (해당 targetId와 targetType에 해당하는 문서)
         MatchOperation matchOperation = Aggregation.match(
                 Criteria.where("viewCountTargetId").is(targetId)
                         .and("viewCountTargetType").is(targetType)
                         .and("viewCountType").is(viewType)
+                        .and("viewCountRegisterDate").gte(oldDateFormatted).lte(currentDateFormatted)
         );
 
         // 2. 합산

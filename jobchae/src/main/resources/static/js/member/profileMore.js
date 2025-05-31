@@ -717,7 +717,7 @@ function getMemberCareerListByMemberId(memberId) {
                     const borderHtml = (index != json.length - 1)?`border-b-1 border-gray-300 `:``;
                     const enddate = (item.member_career_enddate != null)?` ~ ${item.member_career_enddate}`:``;
                     const companyLogoImg = (item.company_logo != null)
-                        ?`<img src="${ctxPath}/resources/files/${item.school_logo}" class="aspect-square w-15 object-cover" />`
+                        ?`<img src="\${ctxPath}/resources/files/companyLogo/\${item.company_logo}" class="aspect-square w-15 object-cover" />`
                         :`<div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>`;
                     
                     const buttonHtml = (isMyProfile)?`<button type="button" data-target-modal="MemberCareer" data-target-no="${item.member_career_no}"
@@ -817,7 +817,7 @@ function getMemberEducationListByMemberId(memberId) {
     });
 }
 
-// 한 회원의 학력 정보를 모두 가져오는 함수
+// 한 회원의 보유기술 정보를 모두 가져오는 함수
 function getMemberSkillListByMemberId(memberId) {
     $.ajax({
         url: ctxPath + "/api/member/member-skill/" + memberId,

@@ -86,6 +86,12 @@ let requestLock = false;
         $(document).on("click", ".follow-button.followed", function() {
             follow(this, "delete");
         });
+
+        // 검색어 변경 버튼 클릭시
+        $(document).on("click", "#btnSearchFocus", function() {
+            $('input[name="searchWord"]').click();
+            $('input[name="searchWord"]').focus();
+        });
     });
 
     // 팔로우
@@ -199,7 +205,7 @@ let requestLock = false;
             data: data,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -228,7 +234,7 @@ let requestLock = false;
                                 }
                             }
 
-                            console.log(imageList.length);
+                            // console.log(imageList.length);
 
                             // 이미지가 존재한다면
                             if(imageList.length > 0) {
@@ -256,7 +262,7 @@ let requestLock = false;
                         // 반응이 존재한다면
                         if(item.reactionStatusList != null) {
                             const reactionStatusList = item.reactionStatusList.split(",");
-                            console.log(reactionStatusList);
+                            // console.log(reactionStatusList);
                             reactionHtml += `<button type="button" class="button-underline">
                                                 <div class="reaction-images">`;
 
@@ -347,31 +353,19 @@ let requestLock = false;
                                 </div>
 
                                 <hr class="border-gray-300 mx-4">
-                                <!-- 추천 댓글 퍼가기 등 버튼 -->
+                                <!-- 추천 댓글 버튼 -->
                                 <div class="py-0">
-                                    <ul class="grid grid-cols-4 gap-4 text-center">
+                                    <ul class="grid grid-cols-2 gap-4 text-center">
                                         <li>
                                             <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-thumbs-up"></i>
+                                                <i class="fa-regular fa-thumbs-up mr-2"></i>
                                                 <span>추천</span>
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-comment"></i>
+                                                <i class="fa-regular fa-comment mr-2"></i>
                                                 <span>댓글</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-solid fa-retweet"></i>
-                                                <span>퍼가기</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-paper-plane"></i>
-                                                <span>보내기</span>
                                             </button>
                                         </li>
                                     </ul>
@@ -384,8 +378,12 @@ let requestLock = false;
                 }
                 else {
                     if(start==1) { // 목록이 하나도 없다면
-                        let html = `<li class="text-center text-lg"><span class="block pb-2">조회된 글이 없습니다.</span>
-                                </li>`;
+                        let html = `<li class="text-center">
+                                        <img src="${pageContext.request.contextPath}/images/no_recruit.svg" alt="" class="my-4 mx-auto w-50">
+                                        <div class="text-2xl font-bold mt-4">결과 없음</div>
+                                        <div class="text-lg text-gray-500">검색어를 간단히 하시거나 다른 검색어로 해보세요.</div>
+                                        <button type="button" id="btnSearchFocus" class="button-gray mt-4 mb-8">검색어 변경</button>
+                                    </li>`;
 
                         $("#update").html(html);
                     }
