@@ -257,7 +257,7 @@ let requestLock = false;
             data: data,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -286,7 +286,7 @@ let requestLock = false;
                                 }
                             }
 
-                            console.log(imageList.length);
+                            // console.log(imageList.length);
 
                             // 이미지가 존재한다면
                             if(imageList.length > 0) {
@@ -314,7 +314,7 @@ let requestLock = false;
                         // 반응이 존재한다면
                         if(item.reactionStatusList != null) {
                             const reactionStatusList = item.reactionStatusList.split(",");
-                            console.log(reactionStatusList);
+                            // console.log(reactionStatusList);
                             reactionHtml += `<button type="button" class="button-underline">
                                                 <div class="reaction-images">`;
 

@@ -550,30 +550,38 @@
     	select *
 		from
 		(
-			select rownum as rno, recruit_no, fk_member_id, fk_region_no, recruit_job_name, recruit_company_name
+			select rownum as rno, recruit_no, fk_member_id, fk_region_no, fk_company_no, recruit_job_name
 				, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_register_date, recruit_end_date
-				, region_name
+				, region_name, company_name, company_logo, apply_cnt
 			from
 			(
-				select recruit_no, fk_member_id, r.fk_region_no, recruit_job_name, recruit_company_name
+				select recruit_no, r.fk_member_id, r.fk_region_no, r.fk_company_no, recruit_job_name
 					, recruit_work_type, recruit_job_type, recruit_explain_html, recruit_register_date, recruit_end_date
-					, region_name
+					, region_name, company_name, company_logo, apply_cnt
 				from tbl_recruit r
 				left join tbl_region rg
 				on r.fk_region_no = rg.region_no
+				left join tbl_company c
+				on r.fk_company_no = c.company_no
 				left join tbl_member m
 				on m.member_id = r.fk_member_id
+				left join (
+					select fk_recruit_no, count(*) as apply_cnt
+					from TBL_APPLY
+					group by fk_recruit_no
+				) a
+				on r.recruit_no = a.fk_recruit_no
 				where m.member_status = 1
 				and (lower(recruit_job_name) like '%' || lower(#{searchWord}) || '%'
-					or lower(recruit_company_name) like '%' || lower(#{searchWord}) || '%')
-				and recruit_end_date &gt; sysdate - 1
+					or lower(company_name) like '%' || lower(#{searchWord}) || '%')
+				and recruit_end_date &gt; sysdate
 				<!-- 등록일자 최근 30일, 7일, 1일 -->
 				<if test="searchDate != null">
 					and recruit_register_date &gt;= sysdate - #{searchDate}
 				</if>
 				<!-- 회사명 -->
 				<if test="arr_fk_company_no != null">
-					and recruit_company_name in (
+					and company_name in (
 						select company_name
 						from tbl_company
 						where company_no in

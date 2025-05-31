@@ -920,7 +920,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                                     <a href="#" class="flex flex-1">
                                         <div>
                                             <c:if test="${not empty item.company_logo}">
-                                                <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                                                <img src="${pageContext.request.contextPath}/resources/files/companyLogo/${item.company_logo}" class="aspect-square w-15 object-cover" />
                                             </c:if>
                                             <c:if test="${empty item.company_logo}">
                                                 <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>

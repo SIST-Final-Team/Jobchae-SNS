@@ -37,8 +37,8 @@ $(document).ready(function() {
     // 스크롤 위치에 따라 nav 선택 변경
     $(window).scroll(function() {
         for(let i=0; i<$(".center>*").length; i++) {
-            if( $(".center>*").eq(i).position().top - 150 <= $(window).scrollTop() &&
-                $(window).scrollTop() < $(".center>*").eq(i).height() + $(".center>*").eq(i).position().top - 100 ) {
+            if( $(".center>*").eq(i).position().top - 200 <= $(window).scrollTop() &&
+                $(window).scrollTop() < $(".center>*").eq(i).height() + $(".center>*").eq(i).position().top - 200 ) {
                 $(".nav>li").removeClass("nav-selected");
                 $(".nav>li").eq(i).addClass("nav-selected");
             }
@@ -104,9 +104,10 @@ $(document).ready(function() {
             data: {"searchWord":searchWord
                   ,"start":1
                   ,"end":3},
+            async: false,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -139,7 +140,7 @@ $(document).ready(function() {
                                 }
                             }
 
-                            console.log(imageList.length);
+                            // console.log(imageList.length);
 
                             // 이미지가 존재한다면
                             if(imageList.length > 0) {
@@ -167,7 +168,7 @@ $(document).ready(function() {
                         // 반응이 존재한다면
                         if(item.reactionStatusList != null) {
                             const reactionStatusList = item.reactionStatusList.split(",");
-                            console.log(reactionStatusList);
+                            // console.log(reactionStatusList);
                             reactionHtml += `<button type="button" class="button-underline">
                                                 <div class="reaction-images">`;
 
@@ -274,31 +275,19 @@ $(document).ready(function() {
                                 </div>
 
                                 <hr class="border-gray-300 mx-4">
-                                <!-- 추천 댓글 퍼가기 등 버튼 -->
+                                <!-- 추천 댓글 버튼 -->
                                 <div class="py-0">
-                                    <ul class="grid grid-cols-4 gap-4 text-center">
+                                    <ul class="grid grid-cols-2 gap-4 text-center">
                                         <li>
                                             <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-thumbs-up"></i>
+                                                <i class="fa-regular fa-thumbs-up mr-2"></i>
                                                 <span>추천</span>
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-comment"></i>
+                                                <i class="fa-regular fa-comment mr-2"></i>
                                                 <span>댓글</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-solid fa-retweet"></i>
-                                                <span>퍼가기</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-paper-plane"></i>
-                                                <span>보내기</span>
                                             </button>
                                         </li>
                                     </ul>
@@ -307,17 +296,9 @@ $(document).ready(function() {
                             `;
                     });
 
-                    $("#update").append(html);
-                }
-                else { // 목록이 하나도 없다면
-                    let html = `
-                            <li class="text-lg">
-                                <h1 class="h1">업데이트</h1>
-                                <span class="text-center block pb-2">조회된 글이 없습니다.</span>
-                            </li>`;
+                    $(".board-container").removeClass("hidden");
 
-                    $("#update").html(html);
-                    
+                    $("#update").append(html);
                 }
                     
                 if(json.length>2) {
@@ -349,9 +330,10 @@ $(document).ready(function() {
             data: {"searchWord":searchWord
                   ,"start":1
                   ,"end":4},
+            async: false,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -381,14 +363,10 @@ $(document).ready(function() {
                             $("#memberMore").removeClass("hidden");
                         }
                     });
+                    
+                    $(".member-container").removeClass("hidden");
 
                     $("#memberList").append(html);
-                }
-                else { // 목록이 하나도 없다면
-                    let html = `<li class="text-center text-lg"><span class="block pb-2">조회된 회원이 없습니다.</span>
-                            </li>`;
-
-                    $("#memberList").html(html);
                 }
             },
             error: function (request, status, error) {
@@ -401,9 +379,10 @@ $(document).ready(function() {
             data: {"searchWord":searchWord
                   ,"start":1
                   ,"end":4},
+            async: false,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -415,16 +394,20 @@ $(document).ready(function() {
                         }
 
                         const borderHtml = (index != json.length - 1)?`border-b-1 border-gray-300 `:``;
+                        const companyLogoImg = (item.company_logo != null)
+                            ?`<img src="\${ctxPath}/resources/files/companyLogo/\${item.company_logo}" class="aspect-square w-15 object-cover" />`
+                            :`<div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>`;
+
                         html += `
                         <li class="border-b-1 border-gray-300  py-2">
-                            <a href="#" class="flex">
+                            <a href="\${ctxPath}/company/dashboard/\${item.company_no}/" class="flex">
                                 <div>
-                                    <img src="${pageContext.request.contextPath}/resources/files/company/\${item.company_logo}" class="aspect-square w-15 object-cover"/>
+                                    \${companyLogoImg}
                                 </div>
                                 <div class="flex-1 ml-4">
                                     <div class="font-bold text-lg hover:underline">\${item.company_name}</div>
                                     <div>\${item.industry_name}</div>
-                                    <div class="text-gray-600">\${item.region_name}</div>
+                                    <%-- <div class="text-gray-600">\${item.region_name}</div> --%>
                                 </div>
                             </a>
                         </li>`;
@@ -434,13 +417,9 @@ $(document).ready(function() {
                         }
                     });
 
-                    $("#companyList").append(html);
-                }
-                else { // 목록이 하나도 없다면
-                    let html = `<li class="text-center text-lg"><span class="block pb-2">조회된 회사가 없습니다.</span>
-                            </li>`;
+                    $(".company-container").removeClass("hidden");
 
-                    $("#companyList").html(html);
+                    $("#companyList").append(html);
                 }
                 
             },
@@ -448,6 +427,76 @@ $(document).ready(function() {
                 alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
             }
         });
+
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/search/recruit",
+            data: {"searchWord":searchWord
+                  ,"start":1
+                  ,"end":3},
+            dataType: "json",
+            success: function (json) {
+                // console.log(JSON.stringify(json));
+
+                if(json.length > 0) {
+
+                    let html = ``;
+                    $.each(json, (index, item) => {
+
+                        const companyLogoHtml = (item.company_logo != null)
+                            ?`<img src="\${ctxPath}/resources/files/companyLogo/\${item.company_logo}" class="aspect-square w-15 object-cover" />`
+                            :`<div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>`;
+
+                        let recruit_work_type = ``;
+                        switch(item.recruit_work_type) {
+                            case "1":
+                                recruit_work_type = `대면근무`;
+                            break;
+                            case "2":
+                                recruit_work_type = `대면재택혼합근무`;
+                            break;
+                            case "3":
+                                recruit_work_type = `재택근무`;
+                            break;
+                        }
+
+                        html += `
+                        <li>
+                            <a href="${pageContext.request.contextPath}/recruit/view/\${item.recruit_no}" class="btn-recruit-info w-full text-left flex border-b-1 border-gray-300">
+                                <div class="px-2 py-4">
+                                    \${companyLogoHtml}
+                                </div>
+                                <div class="flex-1 p-2">
+                                    <div class="font-bold text-lg hover:underline">\${item.recruit_job_name}</div>
+                                    <div>\${item.company_name}</div>
+                                    <div class="text-gray-600">\${item.region_name} (\${recruit_work_type})</div>
+                                </div>
+                            </a>
+                        </li>`;
+                    });
+
+                    $("#recruitList").append(html);
+
+                    $(".recruit-container").removeClass("hidden");
+
+                    if(json.length>=3) {
+                        $("#recruitMore").removeClass("hidden");
+                    }
+
+                }
+            },
+            error: function (request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                requestLock = false;
+            }
+        });
+
+        // 모든 검색 결과가 없다면
+        if($(".board-container.hidden").length > 0 && $(".member-container.hidden").length > 0
+            && $(".company-container.hidden").length > 0 && $(".recruit-container.hidden").length > 0) {
+
+            $("#mainContainer").addClass("hidden");
+            $("#emptyContainer").removeClass("hidden");
+        }
     }
 
     function getSearchBoardResult(searchWord) {
@@ -468,7 +517,7 @@ $(document).ready(function() {
                   ,"end":start + len - 1},
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -497,7 +546,7 @@ $(document).ready(function() {
                                 }
                             }
 
-                            console.log(imageList.length);
+                            // console.log(imageList.length);
 
                             // 이미지가 존재한다면
                             if(imageList.length > 0) {
@@ -525,7 +574,7 @@ $(document).ready(function() {
                         // 반응이 존재한다면
                         if(item.reactionStatusList != null) {
                             const reactionStatusList = item.reactionStatusList.split(",");
-                            console.log(reactionStatusList);
+                            // console.log(reactionStatusList);
                             reactionHtml += `<button type="button" class="button-underline">
                                                 <div class="reaction-images">`;
 
@@ -632,31 +681,19 @@ $(document).ready(function() {
                                 </div>
 
                                 <hr class="border-gray-300 mx-4">
-                                <!-- 추천 댓글 퍼가기 등 버튼 -->
+                                <!-- 추천 댓글 버튼 -->
                                 <div class="py-0">
-                                    <ul class="grid grid-cols-4 gap-4 text-center">
+                                    <ul class="grid grid-cols-2 gap-4 text-center">
                                         <li>
                                             <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-thumbs-up"></i>
+                                                <i class="fa-regular fa-thumbs-up mr-2"></i>
                                                 <span>추천</span>
                                             </button>
                                         </li>
                                         <li>
                                             <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-comment"></i>
+                                                <i class="fa-regular fa-comment mr-2"></i>
                                                 <span>댓글</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-solid fa-retweet"></i>
-                                                <span>퍼가기</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-paper-plane"></i>
-                                                <span>보내기</span>
                                             </button>
                                         </li>
                                     </ul>
@@ -681,6 +718,12 @@ $(document).ready(function() {
             }
         });
     }
+
+    // 검색어 변경 버튼 클릭시
+    $(document).on("click", "#btnSearchFocus", function() {
+        $('input[name="searchWord"]').click();
+        $('input[name="searchWord"]').focus();
+    });
 });
 </script>
 <style>
@@ -690,30 +733,30 @@ dialog::backdrop {
 </style>
 
     <!-- 상단 헤더 -->
-    <div class="sticky top-15 left-0 p-4 bg-white w-full z-99 drop-shadow-md">
+    <div class="sticky top-15 left-0 p-4 bg-white w-full z-99 drop-shadow-md h-16">
         <ul class="flex gap-2 bg-white xl:max-w-[1140px] m-auto">
-            <li>
+            <li class="board-container hidden">
                 <a href="${pageContext.request.contextPath}/search/board?searchWord=${requestScope.searchWord}">
                     <button type="button" value="borad" class="button-gray btn-search-type">
                         <span>글</span>
                     </button>
                 </a>
             </li>
-            <li>
+            <li class="member-container hidden">
                 <a href="${pageContext.request.contextPath}/search/member?searchWord=${requestScope.searchWord}">
                     <button type="button" value="member" class="button-gray btn-search-type">
                         <span>사람</span>
                     </button>
                 </a>
             </li>
-            <li>
+            <li class="company-container hidden">
                 <a href="${pageContext.request.contextPath}/search/company?searchWord=${requestScope.searchWord}">
                     <button type="button" value="company" class="button-gray btn-search-type">
                         <span>회사</span>
                     </button>
                 </a>
             </li>
-            <li>
+            <li class="recruit-container hidden">
                 <a href="${pageContext.request.contextPath}/search/recruit?searchWord=${requestScope.searchWord}">
                     <button type="button" value="recruit" class="button-gray btn-search-type">
                         <span>채용공고</span>
@@ -724,27 +767,36 @@ dialog::backdrop {
     </div>
 
     <!-- 본문 -->
-    <div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]">
+    <div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px] mt-5">
         <!-- 좌측 네비게이션 -->
         <div class="left-side col-span-3 hidden md:block h-full relative">
             <div class="border-normal sticky top-36">
                 <h1 class="h1 p-4">이 페이지에는</h1>
                 <ul class="nav">
-                    <li class="nav-selected"><a href="#update">업데이트</a></li>
-                    <li><a href="#member">사람</a></li>
-                    <li><a href="#company">회사</a></li>
+                    <li class="nav-selected board-container hidden"><a href="#update">업데이트</a></li>
+                    <li class="member-container hidden"><a href="#member">사람</a></li>
+                    <li class="company-container hidden"><a href="#company">회사</a></li>
+                    <li class="recruit-container hidden"><a href="#recruit">채용공고</a></li>
                     <li id="updateMoreNav" class="hidden"><a href="#updateMore">업데이트 더보기</a></li>
                 </ul>
             </div>
         </div>
+        
+        <div id="emptyContainer" class="hidden col-span-10 md:col-span-7 space-y-2 mb-5 text-center border-rwd p-4">
+            <img src="${pageContext.request.contextPath}/images/no_recruit.svg" alt="" class="my-4 mx-auto w-50">
+            <div class="text-2xl font-bold mt-4">결과 없음</div>
+            <div class="text-lg text-gray-500">검색어를 간단히 하시거나 다른 검색어로 해보세요.</div>
+            <button type="button" id="btnSearchFocus" class="button-gray mt-4 mb-8">검색어 변경</button>
+        </div>
 
         <!-- 중앙 본문 -->
-        <div class="center col-span-10 md:col-span-7 space-y-2 my-5">
-            <ul id="update" class="scroll-mt-36 border-search-board">
+        <div id="mainContainer" class="center col-span-10 md:col-span-7 space-y-2 mb-5">
+
+            <ul id="update" class="board-container hidden scroll-mt-36 border-search-board">
                 <%-- 게시물 목록 표시 --%>
             </ul>
             
-            <div id="member" class="scroll-mt-36 border-normal pt-4">
+            <div id="member" class="member-container hidden scroll-mt-36 border-normal pt-4">
                 <div class="space-y-2 px-4 pb-2">
                     <h1 class="h1">사람</h1>
                     <%-- <div class="flex space-x-2">
@@ -769,7 +821,7 @@ dialog::backdrop {
             </div>
 
             
-            <div id="company" class="scroll-mt-36 border-normal pt-4">
+            <div id="company" class="company-container hidden scroll-mt-36 border-normal pt-4">
                 <div class="space-y-2 px-4 pb-2">
                     <h1 class="h1">회사</h1>
                 </div>
@@ -784,6 +836,26 @@ dialog::backdrop {
                 <div id="companyMore" class="px-0 py-0 hidden">
                     <a href="${pageContext.request.contextPath}/search/company?searchWord=${requestScope.searchWord}">
                         <button type="button" class="button-more">회사 결과 모두 보기</button>
+                    </a>
+                </div>
+            </div>
+
+            
+            <div id="recruit" class="recruit-container hidden scroll-mt-36 border-normal pt-4">
+                <div class="space-y-2 px-4 pb-2">
+                    <h1 class="h1">채용공고</h1>
+                </div>
+                <div class="px-4">
+                    <ul id="recruitList">
+                        <%-- 채용공고 목록 표시 --%>
+                    </ul>
+                    <div class="flex">
+                    </div>
+                </div>
+                
+                <div id="recruitMore" class="px-0 py-0 hidden">
+                    <a href="${pageContext.request.contextPath}/search/recruit?searchWord=${requestScope.searchWord}">
+                        <button type="button" class="button-more">채용공고 결과 모두 보기</button>
                     </a>
                 </div>
             </div>

@@ -268,7 +268,7 @@ $(document).ready(function() {
                     <%-- 질문 작성 폼 --%>
                     <div class="px-3">
                         <label for="questionQuery" class="block text-sm font-medium text-gray-700 pt-2">질문 *</label>
-                        <textarea name="questionQuery" id="questionQuery" maxlength="200" class="mt-1 p-2 border border-gray-600 rounded-sm w-full required" placeholder='"개인 디바이스를 가져오시겠어요?" 같은 질문을 던져보세요.' ></textarea>
+                        <textarea name="question_query" id="questionQuery" maxlength="200" class="mt-1 p-2 border border-gray-600 rounded-sm w-full required" placeholder='"개인 디바이스를 가져오시겠어요?" 같은 질문을 던져보세요.' ></textarea>
                         <div class="text-end text-gray-600 text-sm"><span id="textCount">0</span>/200</div>
                         
                         <div class="md:flex pb-3">
@@ -358,11 +358,15 @@ $(document).ready(function() {
             // name="questionList[0].question_query"
             $("#questionList").children().each((index, element) => {
                 $(element).find("input").each((i, elmt) => {
-                    const name = "questionList["+index+"]." + $(elmt).attr("name");
+                    const name = "questionVOList["+index+"]." + $(elmt).attr("name");
                     $(elmt).attr("name", name);
                 });
                 $(element).find("textarea").each((i, elmt) => {
-                    const name = "questionList["+index+"]." + $(elmt).attr("name");
+                    const name = "questionVOList["+index+"]." + $(elmt).attr("name");
+                    $(elmt).attr("name", name);
+                });
+                $(element).find("select").each((i, elmt) => {
+                    const name = "questionVOList["+index+"]." + $(elmt).attr("name");
                     $(elmt).attr("name", name);
                 });
             });
@@ -447,19 +451,20 @@ function openModal(btnEl) {
             <%-- 불합격 통보 이메일 --%>
             <div id="recruitAutoFailMessageDiv" class="p-4">
                 <label for="recruit_auto_fail_message" class="block text-sm font-medium text-gray-700">미리보기 *</label>
-                <textarea name="recruit_auto_fail_message" id="recruit_auto_fail_message" maxlength="2000" class="mt-1 border border-gray-600 rounded-sm w-full h-30 required" >${requestScope.recruitVO.recruit_company_name} ${requestScope.recruitVO.recruit_job_name}에 지원해 주셔서 감사합니다. 아쉽지만, 회원님을 이 자리의 채용에 더 이상 고려하지 않기로 결정했습니다. ${requestScope.recruitVO.recruit_company_name}에 관심을 가져주셔서 다시 한번 감사드립니다.
+                <textarea name="recruit_auto_fail_message" id="recruit_auto_fail_message" maxlength="2000" class="mt-1 border border-gray-600 rounded-sm w-full h-30 required" >${requestScope.recruitVO.company_name} ${requestScope.recruitVO.recruit_job_name}에 지원해 주셔서 감사합니다. 아쉽지만, 회원님을 이 자리의 채용에 더 이상 고려하지 않기로 결정했습니다. ${requestScope.recruitVO.company_name}에 관심을 가져주셔서 다시 한번 감사드립니다.
 
 감사합니다.
-${requestScope.recruitVO.recruit_company_name}</textarea>
+${requestScope.recruitVO.company_name}</textarea>
                 <span class="error text-red-500 text-sm mt-1 hidden">불합격 통보 이메일 미리보기는 필수항목입니다.</span>
                 <div class="text-end text-gray-600 text-sm"><span id="textCount">0</span>/2,000</div>
             </div>
 
             <%-- 이전 폼 내용 --%>
             <input type="hidden" name="fk_region_no" value="${requestScope.recruitVO.fk_region_no}"/>
+            <input type="hidden" name="fk_company_no" value="${requestScope.recruitVO.fk_company_no}"/>
             <textarea class="hidden" name="recruit_explain">${requestScope.recruitVO.recruit_explain}</textarea>
             <input type="hidden" name="recruit_job_name" value="${requestScope.recruitVO.recruit_job_name}"/>
-            <input type="hidden" name="recruit_company_name" value="${requestScope.recruitVO.recruit_company_name}"/>
+            <input type="hidden" name="company_name" value="${requestScope.recruitVO.company_name}"/>
             <input type="hidden" name="recruit_work_type" value="${requestScope.recruitVO.recruit_work_type}"/>
             <input type="hidden" name="recruit_job_type" value="${requestScope.recruitVO.recruit_job_type}"/>
 
@@ -482,7 +487,7 @@ ${requestScope.recruitVO.recruit_company_name}</textarea>
                 <div class="border-rwd p-4 flex space-x-2">
                     <div>
                     <%-- <c:if test="${not empty item.company_logo}">
-                        <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                        <img src="${pageContext.request.contextPath}/resources/files/companyLogo/${item.company_logo}" class="aspect-square w-15 object-cover" />
                     </c:if>
                     <c:if test="${empty item.company_logo}"> --%>
                         <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>

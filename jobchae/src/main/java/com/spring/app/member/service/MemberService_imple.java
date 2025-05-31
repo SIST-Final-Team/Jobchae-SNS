@@ -701,10 +701,10 @@ public class MemberService_imple implements MemberService {
 			if(!"".equals(memberVO.getMember_passwd())){
 				memberVO.setMember_passwd(Sha256.encrypt(memberVO.getMember_passwd())); // 단방향
 			}
-			if(!"".equals(memberVO.getMember_passwd())){
+			if(!"".equals(memberVO.getMember_email())){
 				memberVO.setMember_email(aes.encrypt(memberVO.getMember_email())); 		// 양방향
 			}
-			if(!"".equals(memberVO.getMember_passwd())){
+			if(!"".equals(memberVO.getMember_tel())){
 				memberVO.setMember_tel(aes.encrypt(memberVO.getMember_tel())); 			// 양방향
 			}
 		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
