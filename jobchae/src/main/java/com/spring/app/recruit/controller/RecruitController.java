@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,8 @@ import com.spring.app.recruit.service.RecruitService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -94,6 +98,8 @@ public class RecruitController {
 
         recruitVO.setRecruit_explain_html(uploadHtmlName);
 
+        System.out.println(recruitVO);
+
         service.insertRecruit(recruitVO); // 채용공고 등록
 
         mav.addObject("recruitVO", recruitVO);
@@ -114,6 +120,25 @@ public class RecruitController {
         return mav;
     }
 
+    @GetMapping("detail/{recruit_no}/applicant")
+    public ModelAndView requiredLogin_getRecruitApplicant(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @PathVariable String recruit_no) {
+
+        RecruitVO recruitVO = service.getRecruit(recruit_no);
+        mav.addObject("recruitVO", recruitVO);
+
+        // 지원자들의 지역 목록
+        List<Map<String, String>> regionList = service.getApplyRegionList(recruit_no);
+        mav.addObject("regionList", regionList);
+
+        // 지원자들의 보유기술(전문 분야) 목록
+        List<Map<String, String>> skillList = service.getApplySkillList(recruit_no);
+        mav.addObject("skillList", skillList);
+
+        mav.setViewName("recruit/recruitApplicant");
+
+        return mav;
+    }
+
     @GetMapping("main/save")
     public ModelAndView requiredLogin_getRecruitMainSave(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 
@@ -129,5 +154,16 @@ public class RecruitController {
 
         return mav;
     }
+
+    @GetMapping("view/{recruit_no}")
+    public ModelAndView requiredLogin_getRecruitView(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @PathVariable String recruit_no) {
+
+        mav.addObject("recruit_no", recruit_no);
+
+        mav.setViewName("recruit/recruitView");
+
+        return mav;
+    }
+    
 
 }

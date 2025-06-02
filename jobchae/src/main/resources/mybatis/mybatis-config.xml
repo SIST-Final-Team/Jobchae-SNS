@@ -32,6 +32,8 @@
 
 		<typeAlias type="com.spring.app.recruit.domain.RecruitVO" alias="RecruitVO"/>
 		<typeAlias type="com.spring.app.recruit.domain.QuestionVO" alias="QuestionVO"/>
+		<typeAlias type="com.spring.app.recruit.domain.ApplyVO" alias="ApplyVO"/>
+		<typeAlias type="com.spring.app.recruit.domain.AnswerVO" alias="AnswerVO"/>
 	</typeAliases>
 
 </configuration>

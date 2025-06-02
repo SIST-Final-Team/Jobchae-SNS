@@ -124,8 +124,9 @@ function openModal(btnEl) {
 
             <%-- 이전 폼 내용 --%>
             <input type="hidden" name="fk_region_no" value="${requestScope.recruitVO.fk_region_no}"/>
+            <input type="hidden" name="fk_company_no" value="${requestScope.recruitVO.fk_company_no}"/>
             <input type="hidden" name="recruit_job_name" value="${requestScope.recruitVO.recruit_job_name}"/>
-            <input type="hidden" name="recruit_company_name" value="${requestScope.recruitVO.recruit_company_name}"/>
+            <input type="hidden" name="company_name" value="${requestScope.recruitVO.company_name}"/>
             <input type="hidden" name="recruit_work_type" value="${requestScope.recruitVO.recruit_work_type}"/>
             <input type="hidden" name="recruit_job_type" value="${requestScope.recruitVO.recruit_job_type}"/>
             </form>
@@ -147,7 +148,7 @@ function openModal(btnEl) {
                 <div class="border-rwd p-4 flex space-x-2">
                     <div>
                     <%-- <c:if test="${not empty item.company_logo}">
-                        <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                        <img src="${pageContext.request.contextPath}/resources/files/companyLogo/${item.company_logo}" class="aspect-square w-15 object-cover" />
                     </c:if>
                     <c:if test="${empty item.company_logo}"> --%>
                         <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>

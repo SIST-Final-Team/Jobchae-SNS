@@ -52,15 +52,15 @@
 
                     <!-- 회사 -->
                     <div class="w-full max-w-md mb-4">
-                        <label for="recruit_company_name" class="block text-sm font-medium text-gray-700">회사<span class="text-red-500">*</span></label>
+                        <label for="company_name" class="block text-sm font-medium text-gray-700">회사<span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input type="text" name="recruit_company_name" id="recruit_company_name"
+                            <input type="text" name="company_name" id="company_name"
                                 placeholder="회사 입력"
                                 autocomplete="off"
                                 data-target-url="/api/member/company/search"
                                 data-search-type="company_name"
                                 data-result-name="fk_company_no"
-                                value="${requestScope.recruitVO.recruit_company_name}"
+                                value="${requestScope.recruitVO.company_name}"
                                 class="input-search mt-1 p-2 border border-gray-300 rounded-md w-full required"/>
                             <span class="hidden error text-red-600 text-sm">회사를 입력하세요.</span>
                         </div>

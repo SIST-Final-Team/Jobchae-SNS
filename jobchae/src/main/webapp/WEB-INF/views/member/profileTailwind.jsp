@@ -273,6 +273,22 @@
         background: transparent;
     }
 
+    .apply-selected {
+        @apply relative before:inline-block before:absolute before:w-1 before:h-full before:bg-orange-400 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
+    }
+
+    .apply-new {
+        @apply bg-orange-50;
+        @apply relative before:inline-block before:absolute before:w-2 before:aspect-square before:rounded-full before:bg-orange-400 before:left-2 before:top-10 before:-translate-y-1/2;
+    }
+
+    .companyLink {
+        @apply hover:underline;
+    }
+    .recruitLink {
+        @apply hover:underline;
+    }
+
     /* 모달 애니메이션 */
     .animate-slideDown {
         animation: slideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1);
