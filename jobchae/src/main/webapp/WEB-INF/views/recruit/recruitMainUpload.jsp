@@ -141,7 +141,7 @@ function getRecruitList(recruit_closed) {
                         <li>
                             <a href="${pageContext.request.contextPath}/recruit/detail/\${item.recruit_no}" class="w-full text-left flex">
                                 <div class="pl-4 pr-2 py-4">
-                                    <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>
+                                    \${companyLogoHtml}
                                 </div>
                                 <div class="\${borderHtml} flex-1 py-2">
                                     <div class="font-bold text-gray-900 text-lg hover:underline">\${item.recruit_job_name}</div>
