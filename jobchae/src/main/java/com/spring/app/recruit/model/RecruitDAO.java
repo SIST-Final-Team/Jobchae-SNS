@@ -67,4 +67,8 @@ public interface RecruitDAO {
     // 회원 아이디로 지원 또는 저장한 채용공고 목록 조회
     List<RecruitVO> getRecruitSaveListByMemberId(Map<String, String> params);
 
+    //연규영의 부분
+    // 회사 번호로 채용공고 목록 조회
+    List<RecruitVO> getRecruitListByCompanyNo(int company_no);
+
 }

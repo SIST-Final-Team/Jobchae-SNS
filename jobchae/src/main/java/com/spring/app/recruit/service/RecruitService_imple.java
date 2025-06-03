@@ -151,4 +151,9 @@ public class RecruitService_imple implements RecruitService {
     public List<RecruitVO> getRecruitSaveListByMemberId(Map<String, String> params) {
         return dao.getRecruitSaveListByMemberId(params);
     }
+
+    @Override
+    public List<RecruitVO> getRecruitListByCompanyNo(int company_no){
+        return null;
+    }
 }

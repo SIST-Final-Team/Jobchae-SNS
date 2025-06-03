@@ -119,4 +119,11 @@ public interface RecruitService {
      * start: 시작 번호, end: 끝 번호
      */
     List<RecruitVO> getRecruitSaveListByMemberId(Map<String, String> params);
+
+    // 연규영의 메서드
+    /**
+     * 회사 번호로 채용공고 목록 조회
+     * @param company_no
+     */
+    public List<RecruitVO> getRecruitListByCompanyNo(int company_no);
 }
