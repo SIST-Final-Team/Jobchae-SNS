@@ -251,7 +251,17 @@ function loadJobs() {
   const companyNo = window.location.pathname.split("/")[4]; // url에서 회사 번호를 가져옵니다.
   const apiPath = contextPath + "/api/recruit/company/" + companyNo; // API 경로를 설정합니다.
   console.log(apiPath); // API 경로를 콘솔에 출력합니다.
-  const recruitData = null; // 채용공고 데이터를 가져옵니다. (예시로 null로 설정)
+  let recruitData;
+  fetch(apiPath)
+    .then((response) => {
+      response.json().then((data) => {
+        console.log("채용공고 데이터:", data); // 채용공고 데이터를 콘솔에 출력합니다.]
+        recruitData = data; // 채용공고 데이터를 저장합니다.
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching recruitment data:", error);
+    }); // 채용공고 데이터를 가져옵니다. (예시로 null로 설정)
 
   const html = `<!-- 채용공고 -->
                   <div class="space-y-0 pb-0!">
