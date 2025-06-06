@@ -291,4 +291,23 @@ public class ApiRecruitController {
 
         return resultMap;
     }
+
+    //연규영의 부분
+    //기업 번호로 채용 공고 리스트 조회
+    @GetMapping("company/{company_no}")
+    public List<RecruitVO> getRecruitListByCompanyNO(HttpServletRequest request, HttpServletResponse response, @PathVariable String company_no) {
+//    public int getRecruitListByCompanyNO(HttpServletRequest request, HttpServletResponse response, @PathVariable String company_no) {
+        int companyNo = 0;
+        try{
+            companyNo = Integer.parseInt(company_no);
+        }
+        catch (NumberFormatException e) {
+            e.printStackTrace();
+            return null; // 잘못된 형식의 company_no 처리
+        }
+        // 기업 번호로 채용 공고 리스트 조회
+        List<RecruitVO> recruitList = service.getRecruitListByCompanyNo(companyNo);
+        return recruitList;
+    }
 }
+

@@ -248,6 +248,11 @@ function loadAbout() {
 }
 //채용공고 정보 반환 함수
 function loadJobs() {
+  const companyNo = window.location.pathname.split("/")[4]; // url에서 회사 번호를 가져옵니다.
+  const apiPath = contextPath + "/api/recruit/company/" + companyNo; // API 경로를 설정합니다.
+  console.log(apiPath); // API 경로를 콘솔에 출력합니다.
+  const recruitData = null; // 채용공고 데이터를 가져옵니다. (예시로 null로 설정)
+
   const html = `<!-- 채용공고 -->
                   <div class="space-y-0 pb-0!">
                       <h1 class="h1 mb-0">채용공고</h1>

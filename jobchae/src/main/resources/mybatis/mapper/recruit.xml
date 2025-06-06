@@ -506,10 +506,10 @@
 
     <!-- 연규영의 함수  -->
     <select id="getRecruitListByCompanyNo" resultType="RecruitVO">
-        select r.*,c.COMPANY_NO, c.COMPANY_NAME
+        select r.*,c.*
         from TBL_RECRUIT r
                  join TBL_COMPANY c
                       on r.FK_COMPANY_NO = c.COMPANY_NO
-        where fk_company_no = #{company_no};
+        where fk_company_no = #{company_no}
     </select>
 </mapper>

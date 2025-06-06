@@ -23,6 +23,8 @@ public class RecruitService_imple implements RecruitService {
 
     @Autowired
     private AES256 aes256;
+    @Autowired
+    private RecruitDAO recruitDAO;
 
     @Override
     public String insertRecruit(RecruitVO recruitVO) {
@@ -152,8 +154,11 @@ public class RecruitService_imple implements RecruitService {
         return dao.getRecruitSaveListByMemberId(params);
     }
 
+    // 연규영의 메서드
     @Override
     public List<RecruitVO> getRecruitListByCompanyNo(int company_no){
-        return null;
+        List<RecruitVO> recruitList = dao.getRecruitListByCompanyNo(company_no);
+
+        return recruitList;
     }
 }
