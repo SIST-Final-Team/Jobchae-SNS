@@ -385,7 +385,8 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
             <!-- 모달 하단부 -->
             <div>
                 <hr class="border-gray-200 mb-4">
-                <div class="flex justify-end items-center px-4">
+                <div class="flex justify-between items-center px-8">
+                    <a href="${pageContext.request.contextPath}/member/memberDisable" class="text-gray-500 cursor-pointer btn-transparent">회원 탈퇴</a>
                     <button type="button" id="submitUpdateMember" class="button-selected" onclick="goUpdate()">저장</button>
                 </div>
             </div>

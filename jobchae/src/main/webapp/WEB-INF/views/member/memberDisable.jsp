@@ -68,7 +68,7 @@ String ctx_Path = request.getContextPath();
 				JobChae를 탈퇴하면 탈퇴 계정은 즉시 비활성화되며, 비활성화된 정보는 한달의 유예기간 후 자동 삭제됩니다. 
 			</p>
 			<p style="margin-top: 5%">
-				&lt;삭제대상&lt;<br>
+				&lt;삭제대상&gt;<br>
 				작성한 개시물 전체 / 내프로필정보(프로필 사진 및 배경사진 정보 등) / 친구 및 개시물 소식 받기 정보 등
 			</p>
 		</div>
