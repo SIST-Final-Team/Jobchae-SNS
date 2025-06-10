@@ -327,7 +327,7 @@ public class MemberService_imple implements MemberService {
 	public ModelAndView passwdUpdate(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {
 			
 		// 기존 비밀번호랑 새 비밀번호가 다른지 확인
-		// 비밀번호 암호화 해서 넣어주자 
+		// 비밀번호 암호화 해서 넣어주자
 		String new_member_passwd = Sha256.encrypt(paraMap.get("new_member_passwd"));
 		// 비밀번호 중복 확인
 		
