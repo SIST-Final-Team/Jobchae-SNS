@@ -59,6 +59,9 @@ String ctx_Path = request.getContextPath();
                     </div>
 
                     <!-- 숨겨진 필드 -->
+<%--                    <c:if var="">--%>
+<%--                        --%>
+<%--                    </c:if>--%>
                     <input type="hidden" id="is_passwdFind" name="is_passwdFind" value="is_passwdFind" />
 
                     <!-- 비밀번호 찾기 버튼 -->
