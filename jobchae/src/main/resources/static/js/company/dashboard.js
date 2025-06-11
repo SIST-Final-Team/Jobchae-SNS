@@ -40,23 +40,23 @@ async function renderContent(path) {
   switch (path) {
     case "":
       console.log("home 출력"); // 콘솔에 출력합니다.
-      pageContent += loadHome(); // 홈페이지를 렌더링합니다.
+      pageContent += await loadHome(); // 홈페이지를 렌더링합니다.
       break;
     case "about":
       console.log("about 출력"); // 콘솔에 출력합니다.
-      pageContent = loadAbout(); // 회사 정보를 함수를 호출합니다.
+      pageContent = await loadAbout(); // 회사 정보를 함수를 호출합니다.
       break;
     case "posts":
       console.log("posts 출력"); // 콘솔에 출력합니다.
-      pageContent = loadPosts(); // 포스트를 렌더링합니다.
+      pageContent = await loadPosts(); // 포스트를 렌더링합니다.
       break;
     case "jobs":
       console.log("jobs 출력"); // 콘솔에 출력합니다.
-      pageContent = loadJobs(); // 채용 정보를 렌더링합니다.
+      pageContent = await loadJobs(); // 채용 정보를 렌더링합니다.
       break;
     case "people":
       console.log("people 출력"); // 콘솔에 출력합니다.
-      pageContent = loadPeople(); // 사람들을 렌더링합니다.
+      pageContent = await loadPeople(); // 사람들을 렌더링합니다.
       break;
     default:
       pageContent = "오류";

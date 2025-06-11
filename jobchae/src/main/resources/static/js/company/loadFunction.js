@@ -247,69 +247,127 @@ function loadAbout() {
   return html; // 회사 소개 HTML을 반환합니다.
 }
 //채용공고 정보 반환 함수
-function loadJobs() {
+async function loadJobs() {
   const companyNo = window.location.pathname.split("/")[4]; // url에서 회사 번호를 가져옵니다.
   const apiPath = contextPath + "/api/recruit/company/" + companyNo; // API 경로를 설정합니다.
-  console.log(apiPath); // API 경로를 콘솔에 출력합니다.
-  let recruitData;
-  fetch(apiPath)
-    .then((response) => {
-      response.json().then((data) => {
-        console.log("채용공고 데이터:", data); // 채용공고 데이터를 콘솔에 출력합니다.]
-        recruitData = data; // 채용공고 데이터를 저장합니다.
-      });
-    })
-    .catch((error) => {
-      console.error("Error fetching recruitment data:", error);
-    }); // 채용공고 데이터를 가져옵니다. (예시로 null로 설정)
+  let recruitHtml = ""; // 채용공고 HTML을 초기화합니다.
+  let html = ""; // HTML 변수를 초기화합니다.
+  const now = new Date(); // 현재 날짜를 가져옵니다.
 
-  const html = `<!-- 채용공고 -->
+  const response = await fetch(apiPath);
+  const data = await response.json();
+  let recruitCount = 0; // 채용공고를 카운트 하기 위한 변수
+  let companyLogo = ""; // 회사 로고를 초기화합니다.
+  console.log("채용공고 데이터:", data); // 채용공고 데이터를 콘솔에 출력합니다.
+  // 채용공고가 있는 경우에만 HTML을 생성합니다.
+  if (data.length > 0) {
+    Array.from(data).forEach((recruit) => {
+      if (new Date(recruit.recruit_end_date) < now) {
+        return; // 현재 날짜보다 채용 마감일이 이후인 경우에만 표시합니다.
+      }
+      recruitCount++; // 채용공고 카운트를 증가시킵니다.
+
+      //채용공고의 표시 개수를 2개로 제한합니다
+      let workType = null; // 근무유형을 초기화합니다.
+      let jobType = null; // 고용형태를 초기화합니다.
+      if (recruitCount < 2) {
+        //근무유형 설정
+        switch (recruit.recruit_work_type) {
+          case "1":
+            workType = "대면근무";
+            break;
+          case "2":
+            workType = "대면재택혼합근무";
+            break;
+          case "3":
+            workType = "재택근무";
+            break;
+        }
+        //고용형태 설정
+        switch (recruit.recruit_job_type) {
+          case "1":
+            jobType = "풀타입";
+            break;
+          case "2":
+            jobType = "파트타임";
+            break;
+          case "3":
+            jobType = "계약직";
+            break;
+          case "4":
+            jobType = "임시직";
+            break;
+          case "5":
+            jobType = "기타";
+            break;
+          case "6":
+            jobType = "자원봉사";
+            break;
+          case "7":
+            jobType = "인턴";
+            break;
+        }
+
+        //   console.log(new Date(recruit.recruit_end_date) > now);
+        recruitHtml += `<div class="min-w-100 min-h-60 flex flex-col border border-gray-200 rounded-lg shadow-sm p-4 transition duration-300 hover:drop-shadow-lg">
+                              <div class="flex items-center mb-3">
+                                  <img src="${logoPath}" class="w-12 h-12 object-cover rounded-md mr-3"/>
+                                  <div>
+                                      <h3 class="font-bold text-xl">${
+                                        recruit.recruit_job_name
+                                      }</h3>
+                                      <p class="text-gray-600">${
+                                        recruit.company_name
+                                      }</p>
+                                  </div>
+                              </div>
+  
+                              <div class="text-sm text-gray-500 mb-2">
+                                  <p>지원마감: ${recruit.recruit_end_date.substr(
+                                    0,
+                                    10
+                                  )}</p>
+                                  <p>근무 유형: ${workType}</p>
+                                  <p>고용형태: ${jobType}</p>
+                              </div>
+  
+                              <div class="text-center pt-2 border-t border-gray-200 pt-5">
+                                  <a href="${contextPath}/recruit/view/${
+          recruit.recruit_no
+        }" class="button-orange w-full block">상세 보기</a>
+                              </div>
+                          </div>`;
+      }
+    });
+  } else {
+    console.log("채용공고가 없습니다."); // 채용공고가 없는 경우 콘솔에 출력합니다.
+    recruitHtml = `<!-- 채용공고 없을 때 표시할 템플릿 -->
+                          <div class="w-full text-center p-8 border border-gray-200 rounded-lg">
+                              <span class="font-bold">회사명의 진행 중인 채용공고가 없습니다.</span><br>
+                              새 채용공고가 올라오면 여기에 표시됩니다.
+                          </div>`;
+  }
+
+  html = `<!-- 채용공고 -->
                   <div class="space-y-0 pb-0!">
                       <h1 class="h1 mb-0">채용공고</h1>
                       <div class="text-gray-500 pb-2 text-lg">
                           현재 진행 중인 채용공고
                       </div>
                       <div id="jobs" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0! mb-0!">
-                          <!-- 채용공고 아이템 템플릿 -->
-                          <div class="min-w-100 min-h-120 flex flex-col border border-gray-200 rounded-lg shadow-sm p-4">
-                              <div class="flex items-center mb-3">
-                                  <img src="" class="w-12 h-12 object-cover rounded-md mr-3"/>
-                                  <div>
-                                      <h3 class="font-bold text-xl">채용 제목</h3>
-                                      <p class="text-gray-600">회사명 · 위치</p>
-                                  </div>
-                              </div>
-  
-                              <div class="flex-grow text-gray-700 mb-3">
-                                  <p class="font-semibold">주요 내용:</p>
-                                  <p class="line-clamp-3">채용 설명 내용이 여기에 표시됩니다.</p>
-                              </div>
-  
-                              <div class="text-sm text-gray-500 mb-2">
-                                  <p>지원마감: 2025-05-30</p>
-                                  <p>경력: 신입</p>
-                                  <p>급여: 면접 후 결정</p>
-                              </div>
-  
-                              <div class="text-center pt-2 border-t border-gray-200">
-                                  <a href="" class="button-orange w-full block">상세 보기</a>
-                              </div>
-                          </div>
-                          
-                          <!-- 채용공고 없을 때 표시할 템플릿 -->
-                          <div class="w-full text-center p-8 border border-gray-200 rounded-lg">
-                              <span class="font-bold">회사명의 진행 중인 채용공고가 없습니다.</span><br>
-                              새 채용공고가 올라오면 여기에 표시됩니다.
-                          </div>
+                          ${recruitHtml}
                       </div>
   
                       <div class="px-0">
                           <hr class="border-gray-300">
+                          <a href="${contextPath}/search/recruit?searchWord=${companyName.textContent}">
                           <button type="button" class="button-more">
                               채용공고 모두 보기 <i class="fa-solid fa-arrow-right"></i>
                           </button>
+                          </a>
                       </div>
                   </div>`;
+
   return html; // 회사 소개 HTML을 반환합니다.
 }
 //게시물 정보 반환 함수
@@ -460,3 +518,50 @@ function loadPeople() {
                 </div>`;
   return html; // 회사 소개 HTML을 반환합니다.
 }
+
+/* 
+
+  const html = `<!-- 채용공고 -->
+                  <div class="space-y-0 pb-0!">
+                      <h1 class="h1 mb-0">채용공고</h1>
+                      <div class="text-gray-500 pb-2 text-lg">
+                          현재 진행 중인 채용공고
+                      </div>
+                      <div id="jobs" class="border-board flex gap-4 overflow-x-auto pb-4 space-y-0! mb-0!">
+                          <!-- 채용공고 아이템 템플릿 -->
+                          <div class="min-w-100 min-h-120 flex flex-col border border-gray-200 rounded-lg shadow-sm p-4">
+                              <div class="flex items-center mb-3">
+                                  <img src="" class="w-12 h-12 object-cover rounded-md mr-3"/>
+                                  <div>
+                                      <h3 class="font-bold text-xl">채용 제목</h3>
+                                      <p class="text-gray-600">회사명 · 위치</p>
+                                  </div>
+                              </div>
+  
+                              <div class="flex-grow text-gray-700 mb-3">
+                                  <p class="font-semibold">주요 내용:</p>
+                                  <p class="line-clamp-3">채용 설명 내용이 여기에 표시됩니다.</p>
+                              </div>
+  
+                              <div class="text-sm text-gray-500 mb-2">
+                                  <p>지원마감: 2025-05-30</p>
+                                  <p>경력: 신입</p>
+                                  <p>급여: 면접 후 결정</p>
+                              </div>
+  
+                              <div class="text-center pt-2 border-t border-gray-200">
+                                  <a href="" class="button-orange w-full block">상세 보기</a>
+                              </div>
+                          </div>
+                          
+                          
+                      </div>
+  
+                      <div class="px-0">
+                          <hr class="border-gray-300">
+                          <button type="button" class="button-more">
+                              채용공고 모두 보기 <i class="fa-solid fa-arrow-right"></i>
+                          </button>
+                      </div>
+                  </div>`;
+*/

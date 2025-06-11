@@ -12,6 +12,7 @@ const webLinkButton = document.querySelector("#webLinkButton"); //웹사이트 �
 const companyBackgroundImg = document.querySelector("#company-background-img"); //회사 프로필의 백그라운드 이미지
 let companyData = null; //회사 데이터
 let companySizeText = null; //회사 규모 텍스트
+let logoPath = null; //회사 로고 경로
 /*
  <select id="companySize" name="companySize">
               <option value="1">규모 선택</option>
@@ -51,13 +52,12 @@ async function renderCompanyInfo(data) {
   //회사의 로고를 표시합니다.
   //회사의 로고가 없을 경우 기본 로고를 표시합니다.
   if (data.companyLogo == null) {
-    const logoPath = contextPath + "/images/no_company_logo.jpg";
+    logoPath = contextPath + "/images/no_company_logo.jpg";
     console.log("no company logo"); // 콘솔에 출력합니다.
     console.log(logoPath); // 콘솔에 출력합니다.
     companyLogo.src = logoPath; //회사 로고를 표시합니다.
   } else {
-    const logoPath =
-      contextPath + "/resources/files/companyLogo/" + data.companyLogo;
+    logoPath = contextPath + "/resources/files/companyLogo/" + data.companyLogo;
     companyLogo.src = logoPath; //회사 로고를 표시합니다.
   }
 
