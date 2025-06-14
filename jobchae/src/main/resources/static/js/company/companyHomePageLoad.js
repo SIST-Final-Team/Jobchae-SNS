@@ -999,7 +999,8 @@ async function loadMessage(contentDiv) {
 
 // 페이지 내용 로드
 async function loadPageContent(contentDiv) {
-  contentDiv.innerHTML = `<div class="card p-4 space-y-3">페이지 내용</div>`;
+  const companyUpdateDialog = document.getElementById("companyUpdateDialog");
+  companyUpdateDialog.showModal();
   console.log("페이지 내용");
 }
 

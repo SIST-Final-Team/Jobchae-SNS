@@ -359,6 +359,9 @@
     </div>
   </div>
 </div>
+<dialog id="companyUpdateDialog">
+  테스트
+</dialog>
 <script>const contextPath = "<%= ctxPath%>";</script>
 <script src = "<%= ctxPath%>/js/company/companyHomeOnLoad.js"></script>
 <script src = "<%= ctxPath%>/js/company/companyHomePageLoad.js"></script>
