@@ -998,10 +998,15 @@ async function loadMessage(contentDiv) {
 }
 
 // 페이지 내용 로드
+// 페이지 내용 로드 (수정)
 async function loadPageContent(contentDiv) {
   const companyUpdateDialog = document.getElementById("companyUpdateDialog");
+
+  // 모달을 열기 전에 최신 회사 정보를 불러와 폼에 채웁니다.
+  await fetchCompanyInfoForUpdate();
+
   companyUpdateDialog.showModal();
-  console.log("페이지 내용");
+  console.log("페이지 내용 수정 모달 열기");
 }
 
 // 채용 로드

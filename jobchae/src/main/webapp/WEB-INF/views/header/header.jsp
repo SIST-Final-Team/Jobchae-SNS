@@ -148,7 +148,9 @@ uri="http://java.sun.com/jsp/jstl/core" %>
         <div
           class="h-full! w-25! flex-none text-center opacity-50 hover:opacity-100"
         >
-          <a href="${pageContext.request.contextPath}/recruit/main/save" class="text-sm"
+          <a
+            href="${pageContext.request.contextPath}/recruit/main/save"
+            class="text-sm"
             ><img
               src="${pageContext.request.contextPath}/images/briefcase-solid.svg"
               class="h-2/5! m-auto mt-1.5"
@@ -257,7 +259,11 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <span class="font-semibold mb-2 block">관리</span>
                 <ul class="space-y-2 text-gray-500!">
                   <li>글&활동</li>
-                  <li>회사:<span>회사이름</span></li>
+                  <li>
+                    <a href="<%= ctxPath%>/company/1/admin/dashboard"
+                      >회사:<span>회사이름</span></a
+                    >
+                  </li>
                   <li>채용공고 계정</li>
                 </ul>
               </li>

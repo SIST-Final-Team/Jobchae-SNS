@@ -359,12 +359,191 @@
     </div>
   </div>
 </div>
-<dialog id="companyUpdateDialog">
-  테스트
+
+<!-- 페이지 정보 수정을 위한 모달창 -->
+<dialog id="companyUpdateDialog" class="p-0 bg-white rounded-lg shadow-xl w-full max-w-2xl inset-0 m-auto h-fit overflow-hidden">
+  <!-- 모달 헤더 -->
+  <div class="flex justify-between items-center border-b p-4">
+    <h2 class="text-xl font-semibold text-gray-800">페이지 정보 수정</h2>
+    <button class="text-gray-500 hover:text-gray-700" onclick="document.getElementById('companyUpdateDialog').close()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- 폼 -->
+  <form id="companyUpdateForm" class="p-6 space-y-6" enctype="multipart/form-data">
+    <!-- 서버 전송용 히든 필드 -->
+    <input type="hidden" id="updateCompanyNo" name="companyNo" />
+    <input type="hidden" id="updateFkMemberId" name="fkMemberId" />
+    
+    <!-- 회사 이름 -->
+    <div>
+      <label for="updateCompanyName" class="block text-sm font-medium text-gray-700">단체 이름</label>
+      <input type="text" id="updateCompanyName" name="companyName" required placeholder="단체 이름을 입력하세요" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+    </div>
+
+    <!-- 웹사이트 -->
+    <div>
+      <label for="updateCompanyWebsite" class="block text-sm font-medium text-gray-700">웹사이트</label>
+      <input type="text" id="updateCompanyWebsite" name="companyWebsite" placeholder="https://www.example.com" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+    </div>
+
+    <!-- 업종 -->
+    <div>
+      <label for="updateIndustryName" class="block text-sm font-medium text-gray-700">업종</label>
+      <input list="industryOptions" id="updateIndustryName" name="industryName" placeholder="예: 소프트웨어" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+      <datalist id="industryOptions"></datalist>
+    </div>
+
+    <!-- 회사 규모 & 종류 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label for="updateCompanySize" class="block text-sm font-medium text-gray-700">회사 규모</label>
+        <select id="updateCompanySize" name="companySize" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+          <option value="1">규모 선택</option>
+          <option value="2">0-1명</option>
+          <option value="3">2-10명</option>
+          <option value="4">11-50명</option>
+          <option value="5">51-200명</option>
+          <option value="6">201-500명</option>
+          <option value="7">501-1000명</option>
+          <option value="8">1001-5000명</option>
+          <option value="9">5001-10000명</option>
+          <option value="10">10000명 이상</option>
+        </select>
+      </div>
+      <div>
+        <label for="updateCompanyType" class="block text-sm font-medium text-gray-700">회사 종류</label>
+        <select id="updateCompanyType" name="companyType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+          <option value="1">종류 선택</option>
+          <option value="2">비상장</option>
+          <option value="3">정부 기관</option>
+          <option value="4">비영리</option>
+          <option value="5">교육 기관</option>
+          <option value="6">자영업</option>
+          <option value="7">파트너십</option>
+          <option value="8">개인 기업</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 회사 설명 -->
+    <div>
+      <label for="updateCompanyExplain" class="block text-sm font-medium text-gray-700">회사 설명</label>
+      <textarea id="updateCompanyExplain" name="companyExplain" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+    </div>
+
+    <!-- 로고 업로드 -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700">로고</label>
+      <div class="mt-1 flex items-center">
+        <span class="inline-block h-12 w-12 rounded-lg overflow-hidden bg-gray-100">
+          <img id="logoPreview" src="<%= ctxPath%>/images/no_company_logo.JPG" alt="로고 미리보기" class="h-full w-full object-cover">
+        </span>
+        <input type="file" id="updateLogo" name="logo" class="ml-5 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+      </div>
+    </div>
+
+    <!-- 액션 버튼 -->
+    <div class="pt-5 border-t border-gray-200">
+      <div class="flex justify-end">
+        <button type="button" onclick="document.getElementById('companyUpdateDialog').close()" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+          취소
+        </button>
+        <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+          저장
+        </button>
+      </div>
+    </div>
+  </form>
 </dialog>
 <script>const contextPath = "<%= ctxPath%>";</script>
 <script src = "<%= ctxPath%>/js/company/companyHomeOnLoad.js"></script>
 <script src = "<%= ctxPath%>/js/company/companyHomePageLoad.js"></script>
 <script src = "<%= ctxPath%>/js/company/companyHomeRouter.js"></script>
+
+<!-- 회사 정보 수정 모달 관련 스크립트 -->
+<script>
+  // 산업 목록을 가져와 datalist를 채우는 함수
+  async function fetchIndustryList() {
+    const industryOptions = document.getElementById("industryOptions");
+    if (industryOptions.options.length > 0) return; // 이미 로드되었으면 중단
+
+    try {
+      const response = await fetch(`<%= ctxPath%>/api/industry/list`);
+      const jsonData = await response.json();
+      let html = "";
+      jsonData.forEach((item) => {
+        html += `<option value="\${item.industryName}"></option>`;
+      });
+      industryOptions.innerHTML = html;
+    } catch (error) {
+      console.error("산업 목록을 가져오는 중 오류 발생:", error);
+    }
+  }
+
+  // 모달을 열 때 회사 정보를 가져와 폼을 채우는 함수
+  async function fetchCompanyInfoForUpdate() {
+    const companyNo = window.location.pathname.split("/")[3];
+    try {
+      const response = await fetch(`<%= ctxPath%>/api/company/dashboard/\${companyNo}`);
+      const companyData = await response.json();
+
+      // 폼 필드에 데이터 채우기
+      document.getElementById("updateCompanyNo").value = companyData.companyNo;
+      document.getElementById("updateFkMemberId").value = companyData.fkMemberId;
+      document.getElementById("updateCompanyName").value = companyData.companyName;
+      document.getElementById("updateCompanyWebsite").value = companyData.companyWebsite || "";
+      document.getElementById("updateIndustryName").value = companyData.industry ? companyData.industry.industryName : "";
+      document.getElementById("updateCompanySize").value = companyData.companySize;
+      document.getElementById("updateCompanyType").value = companyData.companyType;
+      document.getElementById("updateCompanyExplain").value = companyData.companyExplain || "";
+      
+      // 로고 미리보기 업데이트
+      const logoPreview = document.getElementById("logoPreview");
+      if (companyData.companyLogo) {
+        logoPreview.src = `<%= ctxPath%>/resources/files/company/\${companyData.companyLogo}`;
+      } else {
+        logoPreview.src = `<%= ctxPath%>/images/no_company_logo.JPG`;
+      }
+
+    } catch (error) {
+      console.error("회사 정보를 가져오는 중 오류 발생:", error);
+      alert("페이지 정보를 불러오는데 실패했습니다.");
+    }
+  }
+
+  // 폼 제출(PUT)을 처리하는 이벤트 리스너
+  document.getElementById('companyUpdateForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // 폼의 기본 제출 동작 방지
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const companyNo = document.getElementById("updateCompanyNo").value;
+
+    try {
+      const response = await fetch(`<%= ctxPath%>/api/company/updateCompany`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert("페이지 정보가 성공적으로 수정되었습니다.");
+        document.getElementById('companyUpdateDialog').close();
+        location.reload(); // 변경사항을 반영하기 위해 페이지 새로고침
+      } else {
+        const errorText = await response.text();
+        alert("수정에 실패했습니다: " + errorText);
+      }
+    } catch (error) {
+      console.error("업데이트 요청 중 오류 발생:", error);
+      alert("요청 중 오류가 발생했습니다.");
+    }
+  });
+  
+
+  // 페이지 로드 시 산업 목록을 미리 가져옵니다.
+  document.addEventListener('DOMContentLoaded', fetchIndustryList);
+</script>
 </body>
 </html>

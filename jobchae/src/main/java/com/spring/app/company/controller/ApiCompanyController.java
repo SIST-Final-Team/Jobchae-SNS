@@ -150,6 +150,7 @@ public class ApiCompanyController {
     public ResponseEntity<CompanyVO> updateCompany(CompanyVO companyVO, @RequestParam String industryName) {
 
         CompanyVO updateCompany = companyService.updateCompany(companyVO, industryName);
+        System.out.println("회사 업데이트 => " + updateCompany.toString());
 
         return ResponseEntity.ok(updateCompany);
     }
