@@ -187,6 +187,25 @@ public class ApiCompanyController {
 
 
     }
+
+
+    //사용자의 회사 정보 조회
+
+    @GetMapping("/selectCompanyByMemberId")
+    public ResponseEntity<List<CompanyVO>>selectCompanyByMemberId(HttpServletRequest request){
+
+        //세션 정보 저장
+        HttpSession session = request.getSession();
+
+        //세션에서 멤버 정보 조회
+        MemberVO member = (MemberVO)session.getAttribute("loginuser");
+        ResponseEntity<List<CompanyVO>> response = null;
+
+        List<CompanyVO> companyList = companyService.selectCompanyByMemberId(member.getMember_id());
+
+        response = ResponseEntity.ok(companyList);
+        return response;
+    }
         
 
 

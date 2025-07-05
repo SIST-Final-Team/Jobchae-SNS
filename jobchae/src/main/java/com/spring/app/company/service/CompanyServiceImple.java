@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.logging.LoggersEndpoint;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CompanyServiceImple implements CompanyService{
 
@@ -95,6 +97,14 @@ public class CompanyServiceImple implements CompanyService{
         logger.info(companyVO.toString());
         CompanyVO company = companyDAO.save(companyVO);
         return company;
+    }
+
+    @Override
+    public List<CompanyVO> selectCompanyByMemberId(String memberId) {
+
+        List<CompanyVO> companyList = companyDAO.findByFkMemberId(memberId);
+
+        return companyList;
     }
 
 }

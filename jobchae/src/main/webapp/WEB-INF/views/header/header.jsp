@@ -259,11 +259,12 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                 <span class="font-semibold mb-2 block">관리</span>
                 <ul class="space-y-2 text-gray-500!">
                   <li>글&활동</li>
-                  <li>
+                  <div id="companyList"><li>
                     <a href="<%= ctxPath%>/company/1/admin/dashboard"
                       >회사:<span>회사이름</span></a
                     >
-                  </li>
+                  
+                  </div></li>
                   <li>채용공고 계정</li>
                 </ul>
               </li>
@@ -329,6 +330,27 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       }
       //connect() 호출하여 웹소켓 연결 시작
       connect();
+
+      //회사 종류 불러오기
+      async function getCompanyList() {
+        const response = await fetch("<%=ctxPath%>/api/company/selectCompanyByMemberId");
+        const json = await response.json();
+        const companyList = document.getElementById("companyList");
+        console.log(json);
+        if (json.length > 0) {
+          companyList.innerHTML = ``; // 기존 목록 초기화
+          json.forEach((company)=>{
+            const companyItem = document.createElement("li");
+            companyItem.innerHTML = `<a href="<%= ctxPath%>/company/\${company.companyNo}/admin/dashboard">회사: <span>\${company.companyName}</span></a>`;
+            companyList.appendChild(companyItem);
+          })
+
+        }
+        else {
+          companyList.innerHTML = ``;
+        }
+      }
+      getCompanyList();
     </script>
   </body>
 </html>

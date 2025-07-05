@@ -2,6 +2,8 @@ package com.spring.app.company.service;
 
 import com.spring.app.company.domain.CompanyVO;
 
+import java.util.List;
+
 public interface CompanyService {
 
     //회사 번호로 회사 정보 조회
@@ -17,6 +19,9 @@ public interface CompanyService {
     CompanyVO updateCompany(CompanyVO companyVO, String industryName);
 
     //회사 통계 조회
+
+    //멤버 아이디로 회사 정보 조회
+    List<CompanyVO> selectCompanyByMemberId(String memberId);
 
 
 }
