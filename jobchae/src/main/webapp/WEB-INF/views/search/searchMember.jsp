@@ -78,7 +78,7 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                     const $autocompleteList = $(".suggest>ul>li");
                     let found = false;
 
-                    console.log(searchWord);
+                    // console.log(searchWord);
                     // 입력한 값과 일치하는 결과가 있는지 확인, 결과가 있다면 일련번호 값을 자동으로 입력
                     for (let i = 0; i < $autocompleteList.length; i++) {
                         if ($autocompleteList.eq(i).text() == searchWord) {
@@ -202,6 +202,12 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
             $("#additionalFields").html(""); // 검색 옵션 초기화
             addSearchArr(); // 검색 조건 추가
             searchOptionForm.submit();
+        });
+
+        // 검색어 변경 버튼 클릭시
+        $(document).on("click", "#btnSearchFocus", function() {
+            $('input[name="searchWord"]').click();
+            $('input[name="searchWord"]').focus();
         });
     });
 
@@ -400,7 +406,7 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
             data: data,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -427,8 +433,12 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                 }
                 else {
                     if(start==1) { // 목록이 하나도 없다면
-                        let html = `<li class="text-center text-lg"><span class="block pb-2">조회된 회원이 없습니다.</span>
-                                </li>`;
+                        let html = `<li class="text-center">
+                                        <img src="${pageContext.request.contextPath}/images/no_recruit.svg" alt="" class="my-4 mx-auto w-50">
+                                        <div class="text-2xl font-bold mt-4">결과 없음</div>
+                                        <div class="text-lg text-gray-500">검색어를 간단히 하시거나 다른 검색어로 해보세요.</div>
+                                        <button type="button" id="btnSearchFocus" class="button-gray mt-4 mb-8">검색어 변경</button>
+                                    </li>`;
 
                         $("#memberList").html(html);
                     }

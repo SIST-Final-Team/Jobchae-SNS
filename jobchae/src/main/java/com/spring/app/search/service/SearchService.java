@@ -102,7 +102,8 @@ public interface SearchService {
 	 * arr_fk_company_no: 회사 일련번호 배열,
 	 * arr_fk_region_no: 지역 일련번호 배열,
 	 * arr_recruit_work_type: 근무유형 배열,
-	 * arr_recruit_job_type: 고용형태 배열
+	 * arr_recruit_job_type: 고용형태 배열,
+	 * start: 시작 번호, end: 끝 번호
 	 * @param params
 	 * @return
 	 */

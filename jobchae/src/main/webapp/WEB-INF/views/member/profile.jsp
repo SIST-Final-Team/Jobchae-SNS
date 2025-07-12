@@ -385,7 +385,8 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
             <!-- 모달 하단부 -->
             <div>
                 <hr class="border-gray-200 mb-4">
-                <div class="flex justify-end items-center px-4">
+                <div class="flex justify-between items-center px-8">
+                    <a href="${pageContext.request.contextPath}/member/memberDisable" class="text-gray-500 cursor-pointer btn-transparent">회원 탈퇴</a>
                     <button type="button" id="submitUpdateMember" class="button-selected" onclick="goUpdate()">저장</button>
                 </div>
             </div>
@@ -920,7 +921,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                                     <a href="#" class="flex flex-1">
                                         <div>
                                             <c:if test="${not empty item.company_logo}">
-                                                <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                                                <img src="${pageContext.request.contextPath}/resources/files/companyLogo/${item.company_logo}" class="aspect-square w-15 object-cover" />
                                             </c:if>
                                             <c:if test="${empty item.company_logo}">
                                                 <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>

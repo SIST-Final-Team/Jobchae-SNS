@@ -340,7 +340,7 @@ public class MemberService_imple implements MemberService {
 	public ModelAndView passwdUpdate(ModelAndView mav, HttpServletRequest request, Map<String, String> paraMap) {
 			
 		// 기존 비밀번호랑 새 비밀번호가 다른지 확인
-		// 비밀번호 암호화 해서 넣어주자 
+		// 비밀번호 암호화 해서 넣어주자
 		String new_member_passwd = Sha256.encrypt(paraMap.get("new_member_passwd"));
 		// 비밀번호 중복 확인
 		
@@ -714,10 +714,10 @@ public class MemberService_imple implements MemberService {
 			if(!"".equals(memberVO.getMember_passwd())){
 				memberVO.setMember_passwd(Sha256.encrypt(memberVO.getMember_passwd())); // 단방향
 			}
-			if(!"".equals(memberVO.getMember_passwd())){
+			if(!"".equals(memberVO.getMember_email())){
 				memberVO.setMember_email(aes.encrypt(memberVO.getMember_email())); 		// 양방향
 			}
-			if(!"".equals(memberVO.getMember_passwd())){
+			if(!"".equals(memberVO.getMember_tel())){
 				memberVO.setMember_tel(aes.encrypt(memberVO.getMember_tel())); 			// 양방향
 			}
 		} catch (UnsupportedEncodingException | GeneralSecurityException e) {

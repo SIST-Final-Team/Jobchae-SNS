@@ -31,9 +31,9 @@ String ctx_Path = request.getContextPath();
             location.href = "javascript:history.back()";
         } --%>
 
-        // 비밀번호 변경일자가 3개월을 넘기는 경우,
+        // 비밀번호 변경일자가 3개월을 넘기지않는 경우, (비밀번호가 3개월 지나지도 않았고, 로그인화면에서 비밀번호 찾기를 통해 들어오지 않은 경우)
         // 로그인하지 않고 비밀번호 찾기를 통해 변경하는 경우를 허용해야 한다. - 김규빈
-        if (${(sessionScope.loginuser).requirePasswdChange == 1 || requestScope.is_passwdFind != "is_passwdFind"}) { // 넣어준 값이 true 값이 아니면 후퇴
+        if (${!((sessionScope.loginuser).requirePasswdChange == true || requestScope.is_passwdFind == "is_passwdFind")}) { // 넣어준 값이 true 값이 아니면 후퇴
             alert("잘못된 접근입니다!");
             location.href = "javascript:history.back()";
         }
@@ -47,8 +47,6 @@ String ctx_Path = request.getContextPath();
     <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
 
 </head>
-<body>
-
 
 <body>
 

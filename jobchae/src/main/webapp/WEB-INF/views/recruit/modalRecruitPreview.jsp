@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%-- Quill 에디터 --%>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
@@ -38,7 +39,7 @@ $(document).ready(function () {
                 
                 <div>
                 <%-- <c:if test="${not empty item.company_logo}">
-                    <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                    <img src="${pageContext.request.contextPath}/resources/files/companyLogo/${item.company_logo}" class="aspect-square w-15 object-cover" />
                 </c:if>
                 <c:if test="${empty item.company_logo}"> --%>
                     <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>
@@ -47,7 +48,7 @@ $(document).ready(function () {
                 <div class="text-xl font-bold mt-4">직종</div>
                 <div class="flex space-x-2 text-gray-700">
                     <div>회사명</div>
-                    <div>|</div>
+                    <div>·</div>
                     <div>지역 (대면근무)</div>
                 </div>
 
@@ -56,12 +57,17 @@ $(document).ready(function () {
                 <button type="button" class="button-disabled mt-4 text-base! py-2! px-6!">원클릭 지원</button>
 
                 <div class="mt-4 block text-sm font-bold text-gray-700 mb-2">게시자:</div>
-                <div class="flex">
-                    <img class="w-15 aspect-square object-cover rounded-full mr-2"
+                <div class="flex items-center">
+                    <img class="w-15 h-15 object-cover rounded-full mr-2"
                         src="${pageContext.request.contextPath}/resources/files/profile/${sessionScope.loginuser.member_profile}" />
                     <div class="flex-1">
-                        <div class="font-bold text-[1.05rem]">이준영</div>
-                        <div>신한대학교 학생</div>
+                        <div class="font-bold text-[1.05rem]">${sessionScope.loginuser.member_name}</div>
+                        <c:if test="${not empty sessionScope.loginuser.school_name}">
+                            <div>${sessionScope.loginuser.school_name} 학생</div>
+                        </c:if>
+                        <c:if test="${not empty sessionScope.loginuser.member_career_company}">
+                            <div>${sessionScope.loginuser.member_career_company} 재직중</div>
+                        </c:if>
                     </div>
                 </div>
 

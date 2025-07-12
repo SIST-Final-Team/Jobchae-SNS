@@ -48,6 +48,7 @@ const observer = new IntersectionObserver((entries) => {
 
 // 알림을 가져오는 비동기 함수
 async function getAlarms(type) {
+  console.log("getAlarms 호출됨");
   currentType = type;
   let url = "";
   switch (type) {
@@ -77,178 +78,163 @@ async function getAlarms(type) {
 
 // 알림 추가 함수
 function addAlarms(alarmList) {
-  // console.log(alarmList);
-  let notificationIsRead = "";
-  let notificationIsDeleted = false;
-  const alarmLength = alarmList.length;
+  // console.log("addAlarms 호출됨", alarmList);
   const today = new Date();
 
-  // 알림이 없을 경우 observer 해제
-  if (loadAlarms == false) {
+  // 더 이상 불러올 알림이 없으면 observer 연결 해제
+  if (loadAlarms === false) {
     observer.disconnect();
   }
 
+  // 새로운 알림만 담을 임시 컨테이너 생성
+  const fragment = document.createDocumentFragment();
+
   alarmList.forEach((alarm, index) => {
-    // console.log(alarm);
+    let notificationIsRead = "";
+    let notificationIsDeleted = false;
+
     switch (alarm.notificationIsRead) {
       case -1:
         notificationIsDeleted = true;
         break;
       case 0:
-        notificationIsRead = "bg-blue-50";
-        break;
       case 1:
-        notificationIsRead = "bg-blue-50";
+        notificationIsRead = "bg-blue-50"; // 안 읽은 알림 배경색
         break;
       case 2:
-        notificationIsRead = "bg-white";
+        notificationIsRead = "bg-white"; // 읽은 알림 배경색
         break;
     }
 
+    if (notificationIsDeleted) {
+      return; // forEach에서 continue 대신 return 사용
+    }
+
+    // 알림 내용 및 로고 설정 (기존 로직과 동일)
     let notificationContent = "";
     let notificationLogo = "";
     let boardContent = "";
-    // 게시물 내용
     if (
       alarm.notificationType == "FOLLOWER_POST" ||
       alarm.notificationType == "COMMENT" ||
       alarm.notificationType == "LIKE"
     ) {
-      boardContent = alarm.alarmData.boardContent.replace(/<[^>]*>/g, "");
-      // console.log(boardContent);
-      // 게시물 내용이 25자 이상일 경우 ...으로 표시
-      if(boardContent != null){
+      if (alarm.alarmData.boardContent) {
+        boardContent = alarm.alarmData.boardContent.replace(/<[^>]*>/g, "");
         if (boardContent.length > 25) {
           boardContent = boardContent.substring(0, 25) + "...";
         }
       }
     }
-    // 댓글 내용
     let commentContent = "";
     if (alarm.notificationType == "COMMENT") {
-      commentContent = alarm.alarmData.commentContent;
-      // 댓글 내용이 25자 이상일 경우 ...으로 표시
-      if(commentContent != null){
+      if (alarm.alarmData.commentContent) {
+        commentContent = alarm.alarmData.commentContent;
         if (commentContent.length > 25) {
           commentContent = commentContent.substring(0, 25) + "...";
         }
       }
-
     }
-
-    // console.log(alarm);
     switch (alarm.notificationType) {
-      case "COMMENT": // 댓글
+      case "COMMENT":
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
         notificationContent = `${alarm.targetMember.member_name}님이 게시물에 댓글이 달았습니다.
-                <div class="bg-white border border-gray-400 rounded-lg"><p class="border-b border-gray-300 mt-2 mb-2">${boardContent}</p>
-                <p class="mt-2 mb-2">${commentContent}</p></div>
-                `;
+                <div class="bg-white border border-gray-400 rounded-lg p-2 mt-2"><p class="border-b border-gray-300 pb-1 mb-1">${boardContent}</p>
+                <p>${commentContent}</p></div>`;
         break;
-      case "FOLLOW": //팔로우 알림
+      case "FOLLOW":
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
-        notificationContent = `<a class ="targetLink" href="/${alarm.alarmData.targetURL}">${alarm.targetMember.member_name} 님이 팔로우 하기 시작했습니다.</a>`;
+        notificationContent = `<a class="targetLink" href="/jobchae${alarm.alarmData.targetURL}">${alarm.targetMember.member_name} 님이 팔로우 하기 시작했습니다.</a>`;
         break;
-      case "LIKE": //좋아요 알림
+      case "LIKE":
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
         notificationContent = `${alarm.targetMember.member_name}님이 게시물에 반응을 했습니다.`;
         break;
-      case "FOLLOWER_POST": //팔로워의 게시물 알림
+      case "FOLLOWER_POST":
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
-        notificationContent = `팔로우 하고 있는 ${alarm.targetMember.member_name}님이 게시물을 올렸습니다.${alarm.alarmData.boardContent}`;
+        notificationContent = `팔로우 하고 있는 ${alarm.targetMember.member_name}님이 게시물을 올렸습니다.${boardContent}`;
         break;
     }
-    // 알림 등록 날짜
-    const date = new Date(alarm.notificationRegisterDate);
+    const diffrentDate = getDiffrentTime(
+      new Date(alarm.notificationRegisterDate),
+      today
+    );
 
-    // 시간 계산
-    const diffrentDate = getDiffrentTime(date, today);
-
-    // console.log(alarm);
-
-    // if (date.get) console.log(date);
-    if (!notificationIsDeleted) {
-      notificationHtml += `
-            <div class="${notificationIsRead} rounded-lg shadow mb-4 alarmItem" data-alarm-id =${alarm.notificationNo} >
-              <div class="border-b border-gray-100 p-4 flex">
-                <div class="flex-shrink-0 mr-3">
-                  <div
-                    class="bg-blue-50 w-10 h-10 rounded flex items-center justify-center"
-                  >
-                    <img
-                      src="${notificationLogo}"
-                      alt="Profile"
-                      class="w-9 h-9 rounded-full">
-                  </div>
-                </div>
-                <div class="flex-grow">
-                  <p class="text-sm">
-                    ${notificationContent}
-                  </p>
-                  <p class="text-xs text-gray-500 mt-1">${diffrentDate}</p>
-                </div>
-                <div class="flex-shrink-0">
-                  <details
-                    class="text-gray-500 hover:text-gray-700 hover:bg-gray-100 w-7 h-7 rounded-full text-center items-center relative rounded"
-                  >
-                  <summary>
-                    <i class="fas fa-ellipsis-h"></i>
-                  </summary>
-                    <div class="w-62 absolute border border-gray-300 z-50 p-2 right-0 bg-white rounded-lg shadow alarmDropdown">
-                      <button class="p-2 w-full block text-left hover:bg-gray-100 alarmUpdateReadButton alarmDropdown"><i class="fa-regular fa-bell"></i>&nbsp;&nbsp;&nbsp;&nbsp;읽음 설정&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-greater-than"></i></button>
-                      <button class="p-2 w-full block text-left hover:bg-gray-100 alarmDeleteButton alarmDropdown"><i class="fa-solid fa-trash"></i>&nbsp;&nbsp;&nbsp;&nbsp;알림 삭제&nbsp;&nbsp;&nbsp;</button>
-                    </div>
-                  </details>
-                </div>
+    // HTML 문자열을 실제 DOM 요소로 변환
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = `
+      <div class="${notificationIsRead} rounded-lg shadow mb-4 alarmItem" data-alarm-id="${alarm.notificationNo}">
+        <div class="border-b border-gray-100 p-4 flex">
+          <div class="flex-shrink-0 mr-3">
+            <div class="bg-blue-50 w-10 h-10 rounded flex items-center justify-center">
+              <img src="${notificationLogo}" alt="Profile" class="w-9 h-9 rounded-full">
+            </div>
+          </div>
+          <div class="flex-grow">
+            <p class="text-sm">${notificationContent}</p>
+            <p class="text-xs text-gray-500 mt-1">${diffrentDate}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <details class="text-gray-500 hover:text-gray-700 hover:bg-gray-100 w-7 h-7 rounded-full text-center items-center relative rounded">
+              <summary><i class="fas fa-ellipsis-h"></i></summary>
+              <div class="w-62 absolute border border-gray-300 z-50 p-2 right-0 bg-white rounded-lg shadow alarmDropdown">
+                <button class="p-2 w-full block text-left hover:bg-gray-100 alarmUpdateReadButton alarmDropdown"><i class="fa-regular fa-bell"></i>&nbsp;&nbsp;&nbsp;&nbsp;읽음 설정&nbsp;&nbsp;&nbsp;<i class="fa-solid fa-greater-than"></i></button>
+                <button class="p-2 w-full block text-left hover:bg-gray-100 alarmDeleteButton alarmDropdown"><i class="fa-solid fa-trash"></i>&nbsp;&nbsp;&nbsp;&nbsp;알림 삭제&nbsp;&nbsp;&nbsp;</button>
               </div>
-            </div>`;
+            </details>
+          </div>
+        </div>
+      </div>`;
+
+    const newAlarmElement = tempDiv.firstElementChild;
+
+    // 새로 생성된 요소에 바로 이벤트 리스너 추가
+    newAlarmElement
+      .querySelector(".alarmDeleteButton")
+      .addEventListener("click", deleteAlarm);
+    newAlarmElement
+      .querySelector(".alarmUpdateReadButton")
+      .addEventListener("click", (e) => {
+        const notificationItem = e.target.closest(".alarmItem");
+        updateAlarmRead(notificationItem);
+      });
+    const targetLink = newAlarmElement.querySelector(".targetLink");
+    if (targetLink) {
+      targetLink.addEventListener("click", (e) => {
+        const notificationItem = e.target.closest(".alarmItem");
+        updateAlarmRead(notificationItem);
+      });
     }
-    if (alarmLength - 1 == index) {
+
+    // 임시 컨테이너에 요소 추가
+    fragment.appendChild(newAlarmElement);
+
+    // 마지막 아이템 추적
+    if (alarmList.length - 1 === index) {
       lastItem = alarm.notificationNo;
     }
   });
 
-  // console.log(notificationHtml);
-  // 알림 리스트 추가
-  alarmLists.innerHTML = notificationHtml;
+  // 생성된 요소들을 한 번에 추가
+  alarmLists.appendChild(fragment);
+
   // 페이지 넘버 증가
   pageNumber++;
-  const deleteButton = document.getElementsByClassName("alarmDeleteButton");
-  const updateReadButton = document.getElementsByClassName(
-    "alarmUpdateReadButton"
-  );
-
-  Array.from(deleteButton).forEach((item) => {
-    item.addEventListener("click", (e) => {
-      deleteAlarm(e);
-    });
-  });
-  Array.from(updateReadButton).forEach((item) => {
-    item.addEventListener("click", (e) => {
-      const notificationItem = e.target.closest(".alarmItem");
-      updateAlarmRead(notificationItem);
-    });
-  });
 
   // 알림 카운트 초기화
   const newAlarmCount = document.getElementById("newAlarmCount");
-  // console.log("알림데이터는 " + newAlarmCount);
   newAlarmCount.textContent = 0;
   if (!newAlarmCount.classList.contains("!hidden")) {
     newAlarmCount.classList.add("!hidden");
   }
 
-  // 알림 클릭시 읽음 처리
-  const targetLink = document.getElementsByClassName("targetLink");
-  Array.from(targetLink).forEach((item) => {
-    item.addEventListener("click", (e) => {
-      const notificationItem = e.target.closest(".alarmItem");
-      updateAlarmRead(notificationItem);
-    });
-  });
-
-  // observer 등록
-  observer.observe(document.querySelector(`[data-alarm-id="${lastItem}"]`));
+  // observer 등록 로직 수정
+  if (loadAlarms && lastItem) {
+    const lastElement = document.querySelector(`[data-alarm-id="${lastItem}"]`);
+    if (lastElement) {
+      observer.observe(lastElement);
+    }
+  }
 }
 
 //시간 계산 함수
@@ -347,38 +333,33 @@ function getAlarmListByFilter(filter) {}
 async function selectByFilter() {
   const alarmFilter = document.getElementsByClassName("filterButton");
   Array.from(alarmFilter).forEach((item) => {
-
     item.addEventListener("click", (e) => {
-
       pageNumber = 0;
       alarmLists.innerHTML = "";
       notificationHtml = "";
       // console.log(e.target.getAttribute("data-type"));
       getAlarms(e.target.getAttribute("data-type"));
 
-        // 필터링 버튼 스타일 변경
+      // 필터링 버튼 스타일 변경
       changeButtonStyle(e.target, Array.from(alarmFilter));
-
-
     });
   });
 }
 
-function changeButtonStyle(target, buttons){
+function changeButtonStyle(target, buttons) {
   // 모든 필터링 버튼 스타일 변경
   buttons.forEach((item) => {
     // 현재 선택되어 있는 필터링 버튼 스타일 변경
-    if(item.classList.contains("button-selected")){
+    if (item.classList.contains("button-selected")) {
       item.classList.remove("button-selected");
       item.classList.add("button-gray");
     }
   });
   // 눌린 필터링 버튼 스타일 변경")
-  if(target.classList.contains("button-gray")){
+  if (target.classList.contains("button-gray")) {
     target.classList.remove("button-gray");
     target.classList.add("button-selected");
   }
-
 }
 
 // 비동기 함수 초기화

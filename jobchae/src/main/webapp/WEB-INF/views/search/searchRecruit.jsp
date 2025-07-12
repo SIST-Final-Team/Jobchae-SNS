@@ -21,7 +21,7 @@
 
 let start = 1;
 let len = 16;
-let hasMore = true; // 글 목록이 더 존재하는지 확인하는 변수
+let hasMore = true; // 채용공고 목록이 더 존재하는지 확인하는 변수
 let requestLock = false;
 
 let inputTimeout;        // 입력 후 일정시간이 지난 후 자동완성 검색이 되도록 하는 타임아웃
@@ -29,6 +29,28 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
 
     $(document).ready(function() {
 
+        // 모달 애니메이션 추가
+        $("dialog.modal").addClass("animate-slideDown");
+        
+        // 모달 열기
+        $(document).on("click", ".btn-open-modal", function () {
+            openModal(this);
+        });
+
+        // 취소 버튼 또는 X 버튼으로 모달 닫기
+        $(".btn-close-modal").on("click", function (e) {
+            dialog = $(this).parent().parent().parent()[0];
+            $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
+            $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
+
+            // 애니메이션이 끝난 후 모달 닫기
+            setTimeout(() => {
+                dialog.close();
+                $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
+                $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
+            }, 300);
+        });
+        
         <%-- 자동완성 관련 시작 --%>
         // 검색어가 바뀔 때 0.5초 후 검색
         $(".input-search").on("input", function () {
@@ -81,7 +103,7 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                     const $autocompleteList = $(".suggest>ul>li");
                     let found = false;
 
-                    console.log(searchWord);
+                    // console.log(searchWord);
                     // 입력한 값과 일치하는 결과가 있는지 확인, 결과가 있다면 일련번호 값을 자동으로 입력
                     for (let i = 0; i < $autocompleteList.length; i++) {
                         if ($autocompleteList.eq(i).text() == searchWord) {
@@ -205,6 +227,12 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
             $("#additionalFields").html(""); // 검색 옵션 초기화
             addSearchArr(); // 검색 조건 추가
             searchOptionForm.submit();
+        });
+
+        // 검색어 변경 버튼 클릭시
+        $(document).on("click", "#btnSearchFocus", function() {
+            $('input[name="searchWord"]').click();
+            $('input[name="searchWord"]').focus();
         });
     });
 
@@ -454,7 +482,7 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
             data: data,
             dataType: "json",
             success: function (json) {
-                console.log(JSON.stringify(json));
+                // console.log(JSON.stringify(json));
 
                 if(json.length > 0) {
 
@@ -462,7 +490,7 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                     $.each(json, (index, item) => {
 
                         const companyLogoHtml = (item.company_logo != null)
-                            ?`<img src="\${ctxPath}/resources/files/\${item.company_logo}" class="aspect-square w-15 object-cover" />`
+                            ?`<img src="\${ctxPath}/resources/files/companyLogo/\${item.company_logo}" class="aspect-square w-15 object-cover" />`
                             :`<div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>`;
 
                         let recruit_work_type = ``;
@@ -478,6 +506,8 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                             break;
                         }
 
+                        const first_applicant = (item.apply_cnt == null)?`<span class="text-green-700 font-bold">초기 지원자가 되세요.</span>`:``;
+
                         html += `
                         <li>
                             <button type="button" data-recruit-no="\${item.recruit_no}" class="btn-recruit-info w-full text-left flex">
@@ -486,8 +516,8 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
                                 </div>
                                 <div class="border-b-1 border-gray-300 flex-1 p-2">
                                     <div class="font-bold text-orange-400 text-lg hover:underline">\${item.recruit_job_name}</div>
-                                    <div>\${item.recruit_company_name}</div>
-                                    <div class="text-gray-600">\${item.region_name} (\${recruit_work_type})</div>
+                                    <div>\${item.company_name}</div>
+                                    <div class="text-gray-600">\${item.region_name} (\${recruit_work_type}) \${first_applicant}</div>
                                 </div>
                             </button>
                         </li>`;
@@ -495,16 +525,17 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
 
                     $("#recruitList").append(html);
 
+                    $("#emptyContainer").addClass("hidden");
+                    $("#mainContainer").removeClass("hidden");
+
                     $("#resultCount").text($("#recruitList").children().length); // TODO: 무한스크롤에 포함되지 않은 총 개수가 나오도록 바꿔야 한다.
 
                     $("#recruitList").find(".btn-recruit-info").eq(0).click(); // 첫 번째 항목 선택
                 }
                 else {
                     if(start==1) { // 목록이 하나도 없다면
-                        let html = `<div class="text-center text-lg"><span class="block pb-2">일치하는 채용 공고가 없습니다.</span>
-                                </div>`;
-
-                        $("#recruitContainer").html(html);
+                        $("#mainContainer").addClass("hidden");
+                        $("#emptyContainer").removeClass("hidden");
                     }
 
                     hasMore = false; // 더이상 불러올 목록이 없음
@@ -533,21 +564,28 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
             url: "${pageContext.request.contextPath}/api/recruit/"+recruit_no,
             dataType: "json",
             success: function (item) {
-                console.log(JSON.stringify(item));
+                // console.log(JSON.stringify(item));
 
                 if(item != null) {
 
+                    initApplyForm(item); // 채용공고 지원 폼을 구성하기, modalAddApply에서 구현
+
                     const companyLogoHtml = (item.company_logo != null)
-                        ?`<img src="\${ctxPath}/resources/files/\${item.company_logo}" class="aspect-square w-10 object-cover" />`
+                        ?`<img src="\${ctxPath}/resources/files/companyLogo/\${item.company_logo}" class="aspect-square w-10 object-cover" />`
                         :`<div class="aspect-square w-10 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-xl text-gray-500"></i></div>`;
 
                     $("#recruit_company_logo").html(companyLogoHtml);
+                    $(".companyLink").attr("href", `\${ctxPath}/company/dashboard/\${item.fk_company_no}/`);
 
                     $("#recruit_job_name").text(item.recruit_job_name);
-                    $("#recruit_company_name").text(item.recruit_company_name);
+                    $(".recruitLink").attr("href", `\${ctxPath}/recruit/view/\${item.recruit_no}`);
+                    $("#company_name").text(item.company_name);
                     $("#recruit_region_name").text(item.region_name);
-                    $("#recruit_register_date").text(item.recruit_register_date);
+                    $("#recruit_register_date").text(item.time_ago);
                     $("#recruit_explain").html(item.recruit_explain);
+                    
+                    const apply_cnt = (item.apply_cnt == null)?`초기 지원자가 되세요.`:`지원자 \${item.apply_cnt}명`;
+                    $(".applyCnt").text(apply_cnt);
 
                     let recruit_work_type = ``;
                     switch(item.recruit_work_type) {
@@ -601,12 +639,30 @@ let suggestClearTimeout; // 자동완성 창을 닫기 위한 타임아웃
         });
 
     });
+
+// 채용공고 등록 모달 띄우기
+function openModal(btnEl) {
+    const btnId = $(btnEl).attr("id");
+    const targetModal = $(btnEl).data("target-modal");
+
+    // 폼 리셋
+    $("form").each(function (index, elmt) {
+        elmt.reset();
+    });
+
+    const modalId = "#modal" + targetModal;
+    const rect = btnEl.getBoundingClientRect();
+    $(modalId)[0].showModal();
+}
 </script>
 <style>
 dialog.option-dropdown::backdrop {
     background: transparent;
 }
 </style>
+
+    <!-- 채용공고 지원 Modal -->
+    <jsp:include page="/WEB-INF/views/recruit/modalAddApply.jsp" />
 
     <!-- 검색옵션 Form 시작 -->
     <form name="searchOptionForm">
@@ -830,8 +886,16 @@ dialog.option-dropdown::backdrop {
             </button>
         </div>
     </div>
+    
+    <%-- 필터 검색 결과가 없는 경우 --%>
+    <div id="emptyContainer" class="hidden m-auto xl:max-w-[1140px] text-center mt-24 p-4 border-rwd">
+        <img src="${pageContext.request.contextPath}/images/no_recruit.svg" alt="" class="my-4 mx-auto w-50">
+        <div class="text-2xl font-bold mt-4">결과 없음</div>
+        <div class="text-lg text-gray-500">검색어를 간단히 하시거나 다른 검색어로 해보세요.</div>
+        <button type="button" id="btnSearchFocus" class="button-gray mt-4 mb-8">검색어 변경</button>
+    </div>
 
-    <div class="container m-auto grid grid-cols-9 xl:max-w-[1140px] bg-white">
+    <div id="mainContainer" class="container m-auto grid grid-cols-9 xl:max-w-[1140px] bg-white">
 
         <%-- 왼쪽 영역 --%>
         <div class="col-span-4 border-1 border-gray-200 pt-16" style="height: calc(100vh - 4rem)">
@@ -852,23 +916,28 @@ dialog.option-dropdown::backdrop {
 
                 <div class="flex">
                     <div class="flex-1 flex items-center gap-2">
-                        <div id="recruit_company_logo">
-                            <div class="aspect-square w-10 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-xl text-gray-500"></i></div>
-                        </div>
-                        <div id="recruit_company_name" class="font-bold"></div>
+                        <a class="companyLink">
+                            <div id="recruit_company_logo">
+                                <div class="aspect-square w-10 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-xl text-gray-500"></i></div>
+                            </div>
+                        </a>
+                        <a class="companyLink">
+                            <div id="company_name" class="font-bold"></div>
+                        </a>
                     </div>
                     <button type="button" class="btn-transparent w-13 h-13 relative"><i class="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2 fa-solid fa-ellipsis text-xl"></i></button>
                 </div>
 
-                <h1 id="recruit_job_name" class="text-3xl font-bold"></h1>
+                <a class="recruitLink">
+                    <h1 id="recruit_job_name" class="text-3xl font-bold"></h1>
+                </a>
 
-                <div class="text-gray-500 my-2"><span id="recruit_region_name"></span> | <span id="recruit_register_date"></span> | <span class="text-green-700 font-bold">지원을 클릭한 사람 <span id="recruit_view_count">0</span>명</span></div>
+                <div class="text-gray-500 my-2"><span id="recruit_region_name"></span> · <span id="recruit_register_date"></span> · <span class="text-green-700 font-bold applyCnt"></div>
 
-                <div class="text-gray-700"><i class="fa-solid fa-briefcase text-gray-500"></i> <span id="recruit_work_type"></span> | <span id="recruit_job_type"></span></div>
+                <div class="text-gray-700"><i class="fa-solid fa-briefcase text-gray-500"></i> <span id="recruit_work_type"></span> · <span id="recruit_job_type"></span></div>
 
                 <div class="flex my-4 gap-2">
-                    <button type="button" class="button-selected py-1! px-5!">지원</button>
-                    <button type="button" class="button-orange py-1! px-5!">저장</button>
+                    <button type="button" id="btnAddApply" class="btn-open-modal button-selected py-1! px-5!" data-target-modal="AddApply">지원</button>
                 </div>
 
                 <div>

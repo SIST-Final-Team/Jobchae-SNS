@@ -41,6 +41,7 @@ public class ApiCompanyController {
     FileManager fileManager;
 
 
+    //회사의 정보를 조회
     @GetMapping("/dashboard/{company_no}")
     public ResponseEntity<CompanyVO> selectCompany(@PathVariable String company_no, HttpServletRequest request){
 
@@ -149,6 +150,7 @@ public class ApiCompanyController {
     public ResponseEntity<CompanyVO> updateCompany(CompanyVO companyVO, @RequestParam String industryName) {
 
         CompanyVO updateCompany = companyService.updateCompany(companyVO, industryName);
+        System.out.println("회사 업데이트 => " + updateCompany.toString());
 
         return ResponseEntity.ok(updateCompany);
     }
@@ -184,6 +186,25 @@ public class ApiCompanyController {
         return ResponseEntity.ok(companyVO);
 
 
+    }
+
+
+    //사용자의 회사 정보 조회
+
+    @GetMapping("/selectCompanyByMemberId")
+    public ResponseEntity<List<CompanyVO>>selectCompanyByMemberId(HttpServletRequest request){
+
+        //세션 정보 저장
+        HttpSession session = request.getSession();
+
+        //세션에서 멤버 정보 조회
+        MemberVO member = (MemberVO)session.getAttribute("loginuser");
+        ResponseEntity<List<CompanyVO>> response = null;
+
+        List<CompanyVO> companyList = companyService.selectCompanyByMemberId(member.getMember_id());
+
+        response = ResponseEntity.ok(companyList);
+        return response;
     }
         
 

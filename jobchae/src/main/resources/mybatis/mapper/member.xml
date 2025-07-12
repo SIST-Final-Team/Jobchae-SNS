@@ -258,7 +258,7 @@
 	<select id="getCompanyListForAutocomplete" parameterType="HashMap" resultMap="companyMap">
 		select company_no, company_name, company_logo
 		from tbl_company
-		where company_name like '%'|| #{company_name} || '%' and rownum &lt;= to_number(#{size})
+		where lower(company_name) like '%'|| lower(#{company_name}) || '%' and rownum &lt;= to_number(#{size})
 	</select>
 	
 	<!-- 자동완성을 위한 전공 목록 조회 및 검색 -->

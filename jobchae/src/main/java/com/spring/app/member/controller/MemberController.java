@@ -264,7 +264,21 @@ public class MemberController {
 	
 	// 비밀번호 찾기를 통해 비밀번호 변경으로 페이지 이동
 	@PostMapping("passwdFind")
-	public ModelAndView passwdFind(ModelAndView mav, @RequestParam Map<String, String> paraMap) {
+	public ModelAndView passwdFind(HttpServletRequest request, HttpServletResponse response,ModelAndView mav,
+								   @RequestParam Map<String, String> paraMap) {
+		
+		HttpSession session = request.getSession();
+		// 만약 로그인한 상태로 들어오는 것을 막아야한다!
+		if (session.getAttribute("loginuser") != null) { // 로그인한 상태면!
+			String message = "로그인한 상태로 들어갈 수 없습니다.";
+			String loc = "javascript:history.back()";
+			
+			mav.addObject("message", message);
+			mav.addObject("loc", loc);
+			
+			mav.setViewName("common/msg");
+			return mav;
+		}
 		
 		mav.addObject("member_id", paraMap.get("member_id"));
 		mav.addObject("member_email", paraMap.get("member_email"));

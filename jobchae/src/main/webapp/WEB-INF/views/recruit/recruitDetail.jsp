@@ -11,6 +11,28 @@
 <script type="text/javascript">
 $(document).ready(function() {
 
+    // 정렬기준 드롭다운 모달 열기
+    $(document).on("click", ".btn-open-dropdown", function() {
+        const btnId = $(this).attr("id");
+        const dropdownId = "#dropdown" + btnId.slice(3);
+        const rect = this.getBoundingClientRect();
+
+        $(dropdownId).css({"left":rect.left+"px","top":(rect.bottom)+"px"});
+        $(dropdownId)[0].showModal();
+    });
+
+    // 바깥 클릭하면 드롭다운 모달 닫기
+    $(document).on("click", ".option-dropdown", function(e) {
+        if (e.target === this) {
+            this.close();
+        }
+    });
+    
+    // 취소 버튼 또는 X 버튼으로 드롭다운 모달 닫기
+    $(document).on("click", ".btn-close-dropdown", function(e) {
+        $(".option-dropdown").click();
+    });
+
     // 필수 자격 질문이 없으면 숨기기
     if ($("#questionRequiredList").children().length == 0) {
         $("#questionRequiredDiv").hide();
@@ -113,11 +135,62 @@ $(document).ready(function() {
             });
         }
     });
+
+    // 채용공고 마감 버튼 클릭시
+    $("#recruitClose").on("click", function() {
+        if(confirm("채용공고를 마감하시겠습니까?")) {
+            $.ajax({
+                url: ctxPath + "/api/recruit/close/${requestScope.recruitVO.recruit_no}",
+                data: {"recruit_close": "1"},
+                type: "put",
+                dataType: "json",
+                success: function (json) {
+                    if(json.result == "1") {
+                        alert("채용공고가 마감되었습니다.");
+                        location.reload(true);
+                    }
+                    else {
+                        alert("오류가 발생하였습니다.");
+                    }
+                },
+                error: function (request, status, error) {
+                    if(request.status == 200) { // 로그인하지 않은 경우 html 내용을 페이지에 출력
+                        $(document).html(request.responseText);
+                    }
+                    else {
+                        alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                    }
+                    requestLock = false;
+                }
+            });
+        }
+    });
 });
 </script>
+<style>
+dialog.option-dropdown::backdrop {
+    background: transparent;
+}
+</style>
 
 <%-- TailWind 사용자 정의 CSS --%>
 <jsp:include page="/WEB-INF/views/member/profileTailwind.jsp" />
+
+    <%-- 채용공고 옵션 --%>
+    <dialog id="dropdownRecruitOption" class="option-dropdown border-normal pt-1 pb-1 drop-shadow-lg">
+        <div class="space-y-2">
+            <ul class="w-60 overflow-hidden font-bold text-gray-700">
+                <li><a href="${pageContext.request.contextPath}/recruit/view/${requestScope.recruitVO.recruit_no}"
+                        class="w-full hover:bg-gray-100 px-4 py-2 text-left transition-all duration-100 block cursor-pointer"><i class="fa-solid fa-eye"></i> 지원자 상태로 보기
+                    </a>
+                </li>
+                <li><a href="${pageContext.request.contextPath}/recruit/main/upload"
+                        class="w-full hover:bg-gray-100 px-4 py-2 text-left transition-all duration-100 block cursor-pointer"><i class="fa-solid fa-list"></i> 나의 채용공고 모두 보기
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </dialog>
 
     <!-- 상단 헤더 -->
     <div class="fixed left-0 pb-0 bg-white w-full z-99 drop-shadow-md">
@@ -126,28 +199,41 @@ $(document).ready(function() {
             <%-- 회사 정보 --%>
             <div class="flex space-x-2 xl:max-w-[1140px] m-auto py-4">
                 <div>
-                <%-- <c:if test="${not empty item.company_logo}">
-                    <img src="${pageContext.request.contextPath}/resources/files/${item.company_logo}" class="aspect-square w-15 object-cover" />
+                <c:if test="${not empty requestScope.recruitVO.company_logo}">
+                    <img src="${pageContext.request.contextPath}/resources/files/companyLogo/${requestScope.recruitVO.company_logo}" class="aspect-square w-15 object-cover" />
                 </c:if>
-                <c:if test="${empty item.company_logo}"> --%>
+                <c:if test="${empty requestScope.recruitVO.company_logo}">
                     <div class="aspect-square w-15 bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-building text-2xl text-gray-500"></i></div>
-                <%-- </c:if> --%>
+                </c:if>
                 </div>
                 <div class="flex-1 text-base/5">
                     <div class="font-bold">${requestScope.recruitVO.recruit_job_name}</div>
-                    <div>${requestScope.recruitVO.recruit_company_name} |  ${requestScope.recruitVO.region_name}<span>
+                    <div>${requestScope.recruitVO.company_name} · ${requestScope.recruitVO.region_name}<span>
                         <c:if test='${requestScope.recruitVO.recruit_work_type == "1"}'>(대면근무)</c:if>
                         <c:if test='${requestScope.recruitVO.recruit_work_type == "2"}'>(대면재택혼합근무)</c:if>
                         <c:if test='${requestScope.recruitVO.recruit_work_type == "3"}'>(재택근무)</c:if>
                         </span>
                     </div>
-                    <div class="text-gray-500">만든 날짜: ${requestScope.recruitVO.recruit_register_date}</div>
+                    
+                    <div>
+                        <c:if test='${requestScope.recruitVO.recruit_closed == "0"}'><span class="text-green-700 font-bold">진행중</span></c:if>
+                        <c:if test='${requestScope.recruitVO.recruit_closed == "1"}'><span class="text-red-500 font-bold">마감됨</span></c:if>
+                        ·
+                        <span class="text-gray-500">만든 날짜: ${requestScope.recruitVO.time_ago}</span>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <button type="button" class="button-orange">지원자 보기</button>
-                    <button type="button" class="button-orange">채용공고 재등록</button>
-                    <button type="button" class="btn-transparent w-10 h-10 relative"><i class="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2 fa-solid fa-ellipsis"></i></button>
+                    <a href="${pageContext.request.contextPath}/recruit/detail/${requestScope.recruitVO.recruit_no}/applicant" class="inline-block button-orange">지원자 보기</a>
+                    <c:if test='${requestScope.recruitVO.recruit_closed == "0"}'>
+                        <button type="button" class="button-orange" id="recruitClose">채용공고 마감</button>
+                    </c:if>
+                    <c:if test='${requestScope.recruitVO.recruit_closed == "1"}'>
+                        <button type="button" class="button-orange" onclick="location.href='${pageContext.request.contextPath}/recruit/add/step1'">채용공고 재등록</button>
+                    </c:if>
+                    <button type="button" id="btnRecruitOption" class="btn-open-dropdown btn-transparent w-10 h-10 relative">
+                        <i class="absolute left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-1/2 fa-solid fa-ellipsis"></i>
+                    </button>
                 </div>
             </div>
 

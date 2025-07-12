@@ -203,6 +203,8 @@
     $(document).ready(function() {
         getBoard(); // 글 불러오기
 
+        getComment("${requestScope.board_no}"); // 댓글 불러오기
+
         // 팔로우 버튼
         $(document).on("click", ".follow-button:not(.followed)", function() {
             follow(this, "post");
@@ -249,7 +251,6 @@
     // 글 읽어오기
     function getBoard() {
 
-        const data = $("form[name='boardForm']").serialize();
         $.ajax({
             url: "${pageContext.request.contextPath}/api/search/board/${requestScope.board_no}",
             dataType: "json",
@@ -442,6 +443,20 @@
                     alert("삭제되었거나 없는 글입니다.");
                     history.back();
                 }
+            },
+            error: function (request, status, error) {
+                alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            }
+        });
+    }
+
+    function getComment(board_no) {
+        $.ajax({
+            url: "${pageContext.request.contextPath}/api/search/comment/"+board_no,
+            dataType: "json",
+            success: function (json) {
+                console.log(JSON.stringify(json));
+
             },
             error: function (request, status, error) {
                 alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
