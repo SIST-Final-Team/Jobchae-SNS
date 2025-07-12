@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.app.common.FileManager;
 import com.spring.app.config.DefaultImageNames;
+import com.spring.app.follow.service.FollowService;
 import com.spring.app.history.domain.ProfileViewVO;
 import com.spring.app.history.domain.ViewCountVO;
 import com.spring.app.history.service.HistoryService;
@@ -54,6 +56,12 @@ public class MemberController {
 
 	@Autowired
 	SearchService searchService;
+	
+	@Autowired
+	FollowService followService;
+	
+	@Autowired
+	MemberService memberService;
 	
 	
 	// 회원가입 폼 페이지 요청
@@ -545,12 +553,34 @@ public class MemberController {
 		return mav;
 	}
 
-	@GetMapping("personalConnection")
-	public ModelAndView personalConee(ModelAndView mav) {
-	    mav.setViewName("member/personalConnection"); // view 단 페이지
-		return mav;
-	}
+	@GetMapping("/personalConnection")
+	public String personalConnection(Model model, HttpSession session) {
+	    MemberVO loginuser = (MemberVO) session.getAttribute("loginuser");
 
+	    if (loginuser == null) {
+	        model.addAttribute("message", "로그인이 필요한 서비스입니다.");
+	        model.addAttribute("loc", "/jobchae/member/login"); 
+	        return "common/msg";
+	    }
+
+	    String followerId = loginuser.getMember_id();  // 여기서 아이디 꺼내기
+
+	    // 세션 값 로그 출력
+	    System.out.println("session userid: " + followerId);
+
+	    // 로그인된 상태 → 추천 등록 및 조회
+	    followService.followRecommendedUsers(followerId);
+	    List<MemberVO> recommendedUsers = memberService.getRecommendedUsers(followerId);
+	    model.addAttribute("recommendedUsers", recommendedUsers);
+	    
+	    // 맞춤 추천 → 맞춤 추천 및 조회 
+	    List<MemberVO> personalizedUsers = memberService.getPersonalizedUsers(followerId);
+	    model.addAttribute("personalizedUsers", personalizedUsers);
+
+	    return "member/personalConnection"; // JSP로 이동
+	}
+	
+	
 	@GetMapping("personalConnection/{memberId}")
 	public ModelAndView profile(@PathVariable String memberId, ModelAndView mav) {
 		// 멤버 정보를 가져오기 위한 파라미터

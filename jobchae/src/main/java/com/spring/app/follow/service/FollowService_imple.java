@@ -1,9 +1,14 @@
 package com.spring.app.follow.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.app.follow.domain.FollowEntity;
 import com.spring.app.follow.repository.FollowRepository;
 
@@ -11,11 +16,16 @@ import com.spring.app.follow.repository.FollowRepository;
 public class FollowService_imple implements FollowService{
 
 	    private final FollowRepository followRepository;
+	    
+	    // RestTemplate 필드 추가
+	    private final RestTemplate restTemplate;
 
+	    // 생성자에 RestTemplate 초기화 추가
 	    public FollowService_imple(FollowRepository followRepository) {
 	        this.followRepository = followRepository;
+	        this.restTemplate = new RestTemplate();  
 	    }
-
+	    
 	    @Override
 	    public FollowEntity follow(String followerId, String followingId) {
 	        // 팔로우 로직
@@ -57,6 +67,38 @@ public class FollowService_imple implements FollowService{
 	            return true; // 팔로우 되었다고 반환
 	        }
 	    }
+	    
+	    /**
+	     * R 추천 시스템에서 추천받은 팔로우 대상자 리스트 받아
+	     * followerId 사용자가 해당 대상자를 모두 팔로우하도록 등록한다.
+	     */
+	 
+	    public void followRecommendedUsers(String followerId) {
+	        // 여기서 먼저 URL 정의
+	        String rServerUrl = "http://localhost:8000/recommendations?userId=" + followerId;
 
-	}
+	        try {
+	            String rawJson = restTemplate.getForObject(rServerUrl, String.class);
+	            
+	            ObjectMapper mapper = new ObjectMapper();
+	            JsonNode root = mapper.readTree(rawJson);
+
+	            if (root.has("error")) {
+	                String errorMessage = root.get("error").get(0).asText();
+	                throw new RuntimeException("R 서버 에러 발생: " + errorMessage);
+	            } else if (root.isArray()) {
+	                List<String> recommendedUserIds = mapper.convertValue(root, new TypeReference<List<String>>() {});
+	                for (String userId : recommendedUserIds) {
+	                    System.out.println("추천된 사용자 ID: " + userId);
+	                }
+	            } else {
+	                throw new RuntimeException("R 서버에서 예상치 못한 응답을 받음");
+	            }
+	        } catch (IOException e) {
+	            throw new RuntimeException("JSON 파싱 오류 발생: " + e.getMessage(), e);
+	        }
+	    }
+
+	   
+}
 

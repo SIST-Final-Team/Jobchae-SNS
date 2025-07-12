@@ -18,4 +18,6 @@ public interface FollowService {
 
     // 팔로우 토글 
 	boolean toggleFollow(String followerId, String followingId);
+	
+	void followRecommendedUsers(String followerId);
 }

@@ -7,16 +7,20 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.spring.app.alarm.controller.AlarmController;
@@ -25,6 +29,7 @@ import com.spring.app.common.AES256;
 import com.spring.app.common.FileManager;
 import com.spring.app.common.security.Sha256;
 import com.spring.app.config.AES256_Configuration;
+import com.spring.app.follow.repository.FollowRepository;
 import com.spring.app.common.mail.GoogleMail;
 import com.spring.app.common.security.RandomEmailCode;
 import com.spring.app.member.domain.MemberCareerVO;
@@ -59,7 +64,15 @@ public class MemberService_imple implements MemberService {
 	
 	@Autowired
     private ServletContext servletContext;
-
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+    @Autowired
+	private FollowRepository followRepository;
+    
+  
+    
 
     MemberService_imple(AES256_Configuration AES256_Configuration, AlarmController alarmController, AlarmDAO alarmDAO) {
         this.AES256_Configuration = AES256_Configuration;
@@ -752,6 +765,103 @@ public class MemberService_imple implements MemberService {
 	            return false;  // 신고 실패
 	        }
 	}
+
+
+
+   // 추천 알고리즘 메소드	
+	@Override
+	public List<MemberVO> getRecommendedUsers(String followerId) {
+	    // 1. R 서버에서 추천 사용자 아이디 리스트 받아오기
+	    String rServerUrl = "http://localhost:8000/recommendations?userId=" + followerId;
+	    String[] recommendedUserIds = null;
+	    try {
+	        recommendedUserIds = restTemplate.getForObject(rServerUrl, String[].class);
+	        System.out.println("추천 아이디 배열 길이: " + (recommendedUserIds == null ? "null" : recommendedUserIds.length));
+	        System.out.println("추천 아이디 배열 내용: " + Arrays.toString(recommendedUserIds));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    if (recommendedUserIds == null || recommendedUserIds.length == 0) {
+	        return new ArrayList<>(); // 추천 대상 없으면 빈 리스트 반환
+	    }
+
+	    // 2. 이미 팔로우한 사용자 아이디 리스트 받아오기 (DB 조회)
+	    List<String> followedUserIds = followRepository.findFollowingIdsByFollowerId(followerId);
+	    System.out.println("이미 팔로우한 아이디 리스트: " + followedUserIds);
+
+	    // 3. 팔로우하지 않은 사용자 아이디만 필터링
+	    List<String> filteredUserIds = Arrays.stream(recommendedUserIds)
+	        .filter(id -> !followedUserIds.contains(id))
+	        .collect(Collectors.toList());
+	    System.out.println("필터링 된 추천 아이디 리스트: " + filteredUserIds);
+
+	    if (filteredUserIds.isEmpty()) {
+	        return new ArrayList<>();
+	    }
+
+	    // 4. 필터링 된 사용자 아이디로 MemberVO 리스트 조회 (DB 조회)
+	    List<MemberVO> recommendedMembers = getMemberListByMemberId(filteredUserIds);
+	    System.out.println("추천 멤버 리스트: " + recommendedMembers);
+	    return recommendedMembers;
+	}
+
+
+
+	// 맞춤 추천 알고리즘 메소드
+	@Override
+	public List<MemberVO> getPersonalizedUsers(String followerId) {
+		 // 1. R 서버에서 추천 사용자 아이디 리스트 받아오기
+	    String rServerUrl = "http://localhost:8000/recommendations?userId=" + followerId;
+	    String[] recommendedUserIds = null;
+	    try {
+	        recommendedUserIds = restTemplate.getForObject(rServerUrl, String[].class);
+	        System.out.println("추천 아이디 배열 길이: " + (recommendedUserIds == null ? "null" : recommendedUserIds.length));
+	        System.out.println("추천 아이디 배열 내용: " + Arrays.toString(recommendedUserIds));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    if (recommendedUserIds == null || recommendedUserIds.length == 0) {
+	        return new ArrayList<>(); // 추천 대상 없으면 빈 리스트 반환
+	    }
+
+	    // 2. 이미 팔로우한 사용자 아이디 리스트 받아오기 (DB 조회)
+	    List<String> followedUserIds = followRepository.findFollowingIdsByFollowerId(followerId);
+	    System.out.println("이미 팔로우한 아이디 리스트: " + followedUserIds);
+
+	    // 3. 팔로우하지 않은 사용자 아이디만 필터링
+	    List<String> filteredUserIds = Arrays.stream(recommendedUserIds)
+	        .filter(id -> !followedUserIds.contains(id))
+	        .collect(Collectors.toList());
+	    System.out.println("필터링 된 추천 아이디 리스트: " + filteredUserIds);
+
+	    if (filteredUserIds.isEmpty()) {
+	        return new ArrayList<>();
+	    }
+
+	    // 4. 필터링 된 사용자 아이디로 MemberVO 리스트 조회 (DB 조회)
+	    List<MemberVO> recommendedMembers = getMemberListByMemberId(filteredUserIds);
+	    System.out.println("추천 멤버 리스트: " + recommendedMembers);
+	    return recommendedMembers;
+	}
+
+
+
+
+
+
+
+
+	// === 이진호 끝 === //
+
+
+
+
+
+
+
+
 
 }//end of class..
 

@@ -9,6 +9,7 @@
 <%
     String ctxPath = request.getContextPath();
 %>    
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Document</title>
@@ -18,8 +19,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
-
-
 
 <head>
 
@@ -65,6 +64,11 @@
   
 
 <script>
+
+
+// 로그인한 사용자 ID를 변수에 저장
+String loginUserId = loginuser.getUserid();
+
 window.addEventListener("DOMContentLoaded", function() {
   const profilesContainer = document.getElementById("profiles");
 
@@ -254,7 +258,7 @@ function removeProfileCard(button) {
         <div
           class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-            LinkedIn 탑스토리
+            JobChae 탑스토리
           </h3>
           <button type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -605,7 +609,7 @@ function removeProfileCard(button) {
      		 <!-- 탑스토리 -->
 			<div class="border-normal px-2 py-2">
 			  <div class="flex justify-between items-center">
-			    <h2 class="pl-2">LinkedIn 탑스토리</h2>
+			    <h2 class="pl-2">JobChae 탑스토리</h2>
 			    <button type="button" data-modal-target="default-modal" data-modal-toggle="default-modal"
 			      class="btn-bold px-2!">
 			      모두 표시
@@ -613,331 +617,91 @@ function removeProfileCard(button) {
 			  </div>
 			
 			  <!-- 프로필들을 담을 컨테이너 -->
-			  <div id="profiles" class="mx-auto px-2 grid grid-cols-3 gap-4 my-2">
-            <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
-      <i class="fa-solid fa-xmark text-white"></i>
-    </button>
-               <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
-                 <a href="http://localhost/jobchae/member/profile/codms1"><img src="<%= ctxPath%>/resources/files/profile/202503161203481125313654737599.webp" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">박채은</h2>
-                <p>쌍용교육센터</p>
-                <div class="card-actions justify-center">
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-                </div>
-              </div>
-            </div>
-     
-              <div class="card border-normal col-span-1">
-              <figure>
-                 <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
-      <i class="fa-solid fa-xmark text-white"></i>
-    </button>
-               <img src="<%= ctxPath%>/resources/files/profile/KartRiderService_imple.png" alt="배경이미지" class="h-16! w-full object-cover" />
-              </figure>
-              <div class="avatar">
-                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
-                 <a href="#"><img src="<%= ctxPath%>/resources/files/profile/KartRider.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">이진호짱123</h2>
-                <p>카트의 신</p>
-                <div class="card-actions justify-center">
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-                </div>
-              </div>
-            </div>
-            
-            
-            
-              <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
-                  <i class="fa-solid fa-xmark text-white"></i>
-                  </button>
-              <img src="<%= ctxPath%>/resources/files/profile/SquidwardHouse.png" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
-                 <a href="#"><img src="<%= ctxPath%>/resources/files/profile/Squidward.png" style="border-radius: 50%;" /></a>
-                </div>
-
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">이준영</h2>
-                <p>징징이</p>
-                <div class="card-actions justify-center">
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                 </button>
-                </div>
-              </div>
-            </div>
-              
- 
-              <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
-      <i class="fa-solid fa-xmark text-white"></i>
-    </button>
-              <img src="<%= ctxPath%>/resources/files/2025031115411213833956965000.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
-                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">김규빈</h2>
-                <p>백엔드 개발자</p>
-                <div class="card-actions justify-center">
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-                </div>
-              </div>
-            </div>
-            
-            
-            
-              <div class="card border-normal col-span-1">
-              <figure>
-               <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
-      <i class="fa-solid fa-xmark text-white"></i>
-    </button>
-                <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
-                  <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">연규영</h2>
-                <p>AI 전문가</p>
-                <div class="card-actions justify-center">
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-                </div>
-              </div>
-            </div>
-           
-              <div class="card border-normal col-span-1">
-              <figure>
-                <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
-      <i class="fa-solid fa-xmark text-white"></i>
-    </button>
-                 <img src="<%= ctxPath%>/resources/files/profile/스크린샷 2025-03-17 044624.png" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <div class="avatar">
-                <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
-                 <a href="#"><img src="<%= ctxPath%>/resources/files/profile/Urgot.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4!">
-                <h2 class="card-title">이진호</h2>
-                <p>우르곳의 신</p>
-                <div class="card-actions justify-center">
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+		<div id="profiles" class="mx-auto px-2 grid grid-cols-3 gap-4 my-2">
+		  <c:forEach var="user" items="${recommendedUsers}">
+		    <div class="card border-normal col-span-1">
+		      <figure>
+		        <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!" onclick="removeProfileCard(this)">
+		          <i class="fa-solid fa-xmark text-white"></i>
+		        </button>
+		        <img src="<%= ctxPath%>/resources/files/profile/${user.member_background_img}" class="h-16! w-full object-cover" />
+		      </figure>
+		      <div class="avatar">
+		        <div class="absolute w-18! h-18! rounded-full -mt-12 ml-4">
+		          <a href="<%= ctxPath%>/member/profile/${user.member_id}">
+		            <img src="<%= ctxPath%>/resources/files/profile/${user.member_profile}" style="border-radius: 50%;" />
+		          </a>
+		        </div>
+		      </div>
+		      <div class="card-body p-4!">
+		        <h2 class="card-title">${user.member_name}</h2>
+		        <p>${user.member_career_company}</p>
+		        <div class="card-actions justify-center">
+		          <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+		            <i class="fa-solid fa-plus"></i> 팔로우
+		          </button>
+		        </div>
+		      </div>
+		    </div>
+		  </c:forEach>
+		</div>
+       </div>
         <!-- 탑스토리 끝 -->
 
-        <!-- 맞춤 추천 -->
-        <div class="border-normal px-2 py-4">
+    
 
-          <div class="flex justify-between items-center">
-            <h2 class="pl-4">맞춤 추천</h2>
-          </div>
+   <!-- 맞춤 추천 -->
+  <div class="border-normal px-2 py-4">
 
+    <div class="flex justify-between items-center">
+      <h2 class="pl-4">맞춤 추천</h2>
+    </div>
 
-          <div class="mx-auto px-2 grid grid-cols-4 gap-2 mt-5">
-            <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+ <div class="mx-auto px-2 grid grid-cols-4 gap-2 mt-5">
+  <c:forEach var="user" items="${customRecommendations}">
+    <div class="card border-normal col-span-1 relative">
+      <figure>
+        <c:choose>
+          <c:when test="${user.member_background_img}">
+            <img src="<%= ctxPath%>/resources/files/profile/${user.member_background_img}" class="h-16! w-full object-cover" />
+          </c:when>
+          <c:otherwise>
+            <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" class="h-16! w-full object-cover" />
+          </c:otherwise>
+        </c:choose>
+      </figure>
 
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">김영희</h2>
-                <p>프로그래머</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-               <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
+      <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!">
+        <i class="fa-solid fa-xmark text-white"></i>
+      </button>
 
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="http://localhost/jobchae/member/profile/user001"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">박민수</h2>
-                <p>삼성전자</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-               <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">최지훈</h2>
-                <p>백엔드 개발자</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-               <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/eomjh.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">엄정화</h2>
-                <p>가수</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-              <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">김영희</h2>
-                <p>백엔드 개발자</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-              <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">김규빈</h2>
-                <p>LG전자</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-               <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">최지훈</h2>
-                <p>SW 개발자</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-            
-               <div class="card border-normal col-span-1 relative">
-              <figure>
-                  <img src="<%= ctxPath%>/resources/files/profile/default/background_img.jpg" alt="배경이미지" class="h-16! w-full object-cover" />
-
-              </figure>
-              <button type="button" class="absolute top-2 right-2 w-8 aspect-square rounded-full! bg-black/70!"><i class="fa-solid fa-xmark text-white"></i></button>
-              <div class="avatar relative w-full!">
-                <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
-                   <a href="#"><img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" /></a>
-                </div>
-              </div>
-              <div class="card-body p-4! text-center">
-                <h2 class="card-title justify-center">김철수</h2>
-                <p>백엔드 개발자</p>
-                 <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
-                    <i class="fa-solid fa-plus"></i> 팔로우
-                </button>
-              </div>
-            </div>
-        <!-- 맞춤 추천 끝 -->
-
+      <div class="avatar relative w-full!">
+        <div class="absolute left-1/2 transform -translate-x-1/2 w-[67px] rounded-full -mt-6">   
+          <a href="<%= ctxPath%>/member/profile/${user.member_id}">
+            <c:choose>
+              <c:when test="${user.member_profile}">
+                <img src="<%= ctxPath%>/resources/files/profile/${user.member_profile}" style="border-radius: 50%;" />
+              </c:when>
+              <c:otherwise>
+                <img src="<%= ctxPath%>/resources/files/profile/default/profile.png" style="border-radius: 50%;" />
+              </c:otherwise>
+            </c:choose>
+          </a>
+        </div>
       </div>
+
+      <div class="card-body p-4! text-center">
+        <h2 class="card-title justify-center">${user.member_name}</h2>
+        <p>${user.member_career_company}</p>
+        <button type="button" class="button-orange w-full" onclick="toggleFollow(this)">
+          <i class="fa-solid fa-plus"></i> 팔로우
+        </button>
+      </div>
+    </div>
+  </c:forEach>
+</div>
+
+  <!-- 맞춤추천 끝 -->
 
       <!-- 컨테이너 끝 -->
 

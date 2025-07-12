@@ -169,6 +169,13 @@ public interface MemberService {
 	
 	// 신고 기능 추가
 	boolean createReport(ReportVO report);
-	
+
+	// 알고리즘 추천 알고리즘
+	List<MemberVO> getRecommendedUsers(String followerId);
+
+	// 맞춤 추천 알고리즘
+	List<MemberVO> getPersonalizedUsers(String followerId);
+
+
 	// === 이진호 끝 === //
 }//end of interface...
