@@ -17,7 +17,6 @@ import java.util.List;
 @Service
 public class CompanyServiceImple implements CompanyService{
 
-    private final LoggersEndpoint loggersEndpoint;
     CompanyDAO companyDAO;
     IndustryService industryService;
     MemberDAO memberDAO;
@@ -25,10 +24,9 @@ public class CompanyServiceImple implements CompanyService{
     private static final Logger logger = LoggerFactory.getLogger(CompanyServiceImple.class);
 
     //생성자 주입
-    public CompanyServiceImple(CompanyDAO companyDAO, IndustryService industryService, LoggersEndpoint loggersEndpoint, MemberDAO memberDAO) {
+    public CompanyServiceImple(CompanyDAO companyDAO, IndustryService industryService, MemberDAO memberDAO) {
         this.companyDAO = companyDAO;
         this.industryService = industryService;
-        this.loggersEndpoint = loggersEndpoint;
         this.memberDAO = memberDAO;
     }
 
