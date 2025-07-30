@@ -253,6 +253,10 @@
 	.chat_date{
 		@apply bg-gray-200 rounded-full py-1 px-4 w-64 mx-auto justify-center flex justify-items-center text-xs
 	}
+
+    .selected_chatroom{
+        @apply relative before:inline-block before:absolute before:w-1 before:h-full before:bg-orange-400 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
+    }
 </style>
 
 <%--
@@ -392,10 +396,11 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                                     <div class="relative">
                                         <img src=" " class="w-12 h-12 rounded-full object-cover">
                                     </div>
-                                    <div>
+                                    <div class="flex-1 truncate">
 			                            <div class="font-medium">/${chatroom.latestChat.senderName}</div>
-                                        <div class="text-gray-500 text-sm">/${chatroom.latestChat.message}</div>
+                                        <div class="text-gray-500 text-sm truncate">/${chatroom.latestChat.message}</div>
 		                            </div>
+                                   	<div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일(마지막 보낸시각으로 수정할 것)</div>
                                 </div>
                             </li>`;
                     }
@@ -609,25 +614,56 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
         <div class="scroll-mt-22 border-board">
 
             <%-- 여기에 채팅화면을 뽑아내야한다. --%>
-            <div class="flex flex-col md:flex-row ">
+            <div class="flex flex-col md:flex-row py-0!">
                 
                 <%-- 채팅방 목록 --%>
-                <div class="w-full md:w-[calc(50%-50px)] p-2 border-r md:border-r-2 border-gray-200">
-                    <div class="h-[600px] overflow-y-auto">
+                <div class="w-full md:w-[calc(50%-50px)] py-4! px-0! border-r md:border-r-1 border-gray-200 mb-0!">
+                    <div class="overflow-y-auto">
+
+                        <div class="h1 px-4 pb-2 border-b border-gray-200">메시지</div>
+
                         <!-- Chat List -->
                         <ul id="chatting_list" class="divide-y divide-gray-200">
                         	
-                            <li class="p-4 hover:bg-gray-100 cursor-pointer">
+                            <li class="p-4 hover:bg-gray-100 cursor-pointer selected_chatroom border-b border-gray-200">
                                 <div class="flex items-center space-x-4">
 									<div class="relative">
-                                    	<img src="https://via.placeholder.com/48" alt="프로필" class="w-12 h-12 rounded-full object-cover">
+                                    	<img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
                                         <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
                                     </div>
-                                    <div>
-                                    	<div class="font-medium">이진호</div>
-                                        <div class="text-gray-500 text-sm">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
+                                    <div class="flex-1 truncate">
+                                    	<div class="font-medium">엄정화</div>
+                                        <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
                                     </div>
-                                   	<div class="ml-auto w-30 text-gray-500 text-sm text-right">1월 26일</div>
+                                   	<div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
+                                </div>
+                            </li>
+
+                            <li class="p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
+                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+                                    </div>
+                                    <div class="flex-1 truncate">
+                                        <div class="font-medium">이진호</div>
+                                        <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
+                                    </div>
+                                    <div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
+                                </div>
+                            </li>
+
+                            <li class="p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200">
+                                <div class="flex items-center space-x-4">
+                                    <div class="relative">
+                                        <img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
+                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+                                    </div>
+                                    <div class="flex-1 truncate">
+                                        <div class="font-medium">이준영</div>
+                                        <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
+                                    </div>
+                                    <div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
                                 </div>
                             </li>
                             
@@ -636,44 +672,36 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                 </div>
 
                 <%-- 채팅 내용 --%>
-                <div class="w-full md:w-[calc(50%+50px)] p-2">
+                <div class="w-full md:w-[calc(50%+50px)] py-4! px-0!">
                     <div id="chat_profile" class=""><%-- 채팅하는 사람의 프로필표시부분 --%>
-                    	채팅하는 사람의 프로필 표시부분
+                    	<div class="h1 px-4 pb-2 border-b border-gray-200">엄정화</div>
                     </div>
                         
                     <!-- Messages 표시 부분 -->
-                    <div id="chatting_view" class="h-[600px] overflow-y-auto space-y-4">
+                    <div id="chatting_view" class="h-[600px] overflow-y-auto space-y-4 px-4 pb-4">
                     	
                     </div>
                     <%-- 여기 끝 --%>
 
 
                     <!-- Input Area -->
-                    <div class="mt-4 border-t pt-4">
+                    <div class="border-t border-gray-200 pt-4 px-4">
                         <div class="relative">
             						<textarea
                                             id="message"
-                                            class="w-full py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-200 text-sm resize-none overflow-y-auto"
+                                            class="w-full py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-200 text-sm resize-none overflow-y-auto"
                                             rows="1"
                                             placeholder="메시지 쓰기"
                                             style="max-height: 14em;"
                                             onkeyup="adjustTextareaHeight(this)"></textarea>
-                            <button id="btn_send" class="absolute top-1/2 right-3 -translate-y-1/2 text-purple-500 hover:text-purple-700">
-                                <svg id="menu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.188A2.25 2.25 0 015.25 3h13.5A2.25 2.25 0 0118.731 3.188L16 12m-2-1.5V3m0 9a2.25 2.25 0 11-4.5 0m3-1.5V3" />
-                                </svg>
-                            </button>
                         </div>
-                        <div class="flex items-center justify-between mt-2">
-                            <div class="space-x-2">
-                                <button class="text-gray-500 hover:text-gray-700"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 1.5c-.857 0-1.713.115-2.559.345a6.75 6.75 0 00-4.918 1.927v.75a4.875 4.875 0 01-4.875 4.875H4.5a4.875 4.875 0 01-4.875-4.875v-.75A6.75 6.75 0 007.374 2.289c-.846-.23-1.702-.345-2.559-.345m15.975 0c.857 0 1.713.115 2.559.345a6.75 6.75 0 014.918 1.927v.75a4.875 4.875 0 004.875 4.875H19.5a4.875 4.875 0 00-4.875-4.875v-.75a6.75 6.75 0 01-4.918-1.927c.846-.23 1.702-.345 2.559-.345z" /></svg></button>
-                                <button class="text-gray-500 hover:text-gray-700"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 6.75a.75.75 0 01-1.14-.94l4.5-6.75a4.5 4.5 0 01-1.242-7.244L5.25 7.5a.75.75 0 011.14.94l4.5 6.75a4.5 4.5 0 011.242 7.244l-4.5 6.75a.75.75 0 01-1.14-.94l4.5-6.75a4.5 4.5 0 011.242-7.244L13.19 8.688z" /></svg></button>
-                                <button class="text-gray-500 hover:text-gray-700">GIF</button>
-                                <button class="text-gray-500 hover:text-gray-700"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 00-6.364 0m-6.364 6.364a3 3 0 104.243-4.242m11.421-8.483a3 3 0 104.243 4.242m-9.807 9.807l-1.102.367a2.25 2.25 0 01-2.808-2.808l.367-1.102m9.807-9.807l1.102-.367a2.25 2.25 0 012.808 2.808l-.367 1.102m-9.807 9.807-1.102.367a2.25 2.25 0 01-2.808-2.808l.367-1.102m9.807-9.807 1.102-.367a2.25 2.25 0 012.808 2.808l-.367 1.102" /></svg></button>
+                        <div class="flex items-center justify-between">
+                            <div class="space-x-3 ml-2">
+                                <button class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-image text-lg"></i></button>
+                                <button class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-file text-lg"></i></button>
                             </div>
                             <div>
-                                <button class="bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm font-medium">보내기</button>
-                                <button class="text-gray-500 hover:text-gray-700"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg></button>
+                                <button id="btn_send" class="bg-orange-400 hover:bg-orange-600 text-white mt-2 py-2 px-4 rounded-lg text-sm font-medium">보내기</button>
                             </div>
                         </div>
                     </div>

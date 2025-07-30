@@ -165,7 +165,7 @@ uri="http://java.sun.com/jsp/jstl/core" %>
           class="h-full! w-25! flex-none text-center opacity-50 hover:opacity-100"
         >
           <a
-            href="${pageContext.request.contextPath}/member/chatting/multichat"
+            href="${pageContext.request.contextPath}/chat/mainChat"
             class="text-sm"
             ><img
               src="${pageContext.request.contextPath}/images/comment-dots-solid.svg"
