@@ -35,7 +35,10 @@ uri="http://java.sun.com/jsp/jstl/core" %>
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     />
-
+    
+    <%-- 웹소켓 연결 관리 모듈 JS --%>
+    <script type="text/javascript" src="<%=ctxPath%>/js/chat/chat.js"></script>
+    
     <%-- 검색 --%>
 
     <script type="text/javascript">
