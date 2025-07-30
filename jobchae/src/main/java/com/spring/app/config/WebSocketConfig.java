@@ -48,13 +48,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         // /topic, /queue로 시작하는 주소로 메시지를 보내면 메시지 브로커가 처리하도록 설정
         // /topic은 구독자에게 메시지를 보내는 주소, /queue는 특정 사용자에게 메시지를 보내는 주소
-        registry.enableSimpleBroker("/topic", "/queue");
+        // /room는 해당 주소를 구독하고 있는 클라이언트들에게 메시지 전달(채팅설정)
+        registry.enableSimpleBroker("/topic", "/queue", "/room");
 
         // /app으로 시작하는 주소로 메시지를 보내면 컨트롤러가 처리하도록 설정
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.setApplicationDestinationPrefixes("/app", "/send");
 
         // /user로 시작하는 주소로 메시지를 보내면 특정 사용자에게 메시지를 보내도록 설정
-            registry.setUserDestinationPrefix("/user");
+        registry.setUserDestinationPrefix("/user");
     }
 
 

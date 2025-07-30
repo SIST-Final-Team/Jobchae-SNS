@@ -433,4 +433,65 @@
 		</plugins>
 	</build>
 
+	<!-- war 파일 배포를 위한 설정	-->
+	<profiles>
+		<profile>
+			<!-- 프로덕션(배포) 환경을 위한 프로필 -->
+			<id>prod</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>3.4.0</version> <!-- spring-boot-starter-parent 3.4.2가 관리하는 버전으로 업데이트 -->
+						<configuration>
+							<!-- 최종 WAR 파일에서 제외할 파일 목록 -->
+							<packagingExcludes>
+								<!--
+                                    ** : 모든 하위 디렉토리를 의미합니다.
+                                    *.js.map : .js.map으로 끝나는 모든 파일
+                                -->
+
+								<!-- 1. JavaScript 소스맵 파일 제외 -->
+								<exclude>WEB-INF/classes/static/**/*.js.map</exclude>
+
+								<!-- 2. 압축되지 않은 JavaScript 소스 파일 제외 -->
+								<exclude>WEB-INF/classes/static/**/*.src.js</exclude>
+
+								<!-- 3. CSS 소스맵 파일 제외 -->
+								<exclude>WEB-INF/classes/static/**/*.css.map</exclude>
+
+								<!-- 4. (선택사항) 기타 불필요한 파일/디렉토리 제외 -->
+								<exclude>**/*.log</exclude>
+								<exclude>WEB-INF/classes/static/Highcharts-*/code/es-modules/**</exclude>
+
+							</packagingExcludes>
+						</configuration>
+					</plugin>
+
+					<!--
+                        기존에 build 섹션 안에 있던 maven-compiler-plugin은
+                        프로필별로 다른 설정을 할 것이 아니라면 바깥의 공통 <build> 섹션에 두는 것이 좋습니다.
+                        하지만 Lombok 같은 경우는 모든 환경에서 필요하므로, 이 프로필 안에 따로 둘 필요는 없습니다.
+                        만약 'prod' 프로필에서만 다른 컴파일 옵션을 주고 싶을 때 여기에 추가합니다.
+                        지금은 공통 <build> 섹션이 없으므로 여기에 남겨두어도 동작은 합니다.
+                    -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+									<!-- 버전은 spring-boot-starter-parent에서 관리하므로 생략 가능 -->
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
