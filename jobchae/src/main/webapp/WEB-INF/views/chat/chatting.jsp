@@ -678,7 +678,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                     </div>
                         
                     <!-- Messages 표시 부분 -->
-                    <div id="chatting_view" class="h-[600px] overflow-y-auto space-y-4 px-4 pb-4">
+                    <div id="chatting_view" class="h-[600px] overflow-y-auto space-y-4 p-4">
                     	
                     </div>
                     <%-- 여기 끝 --%>
