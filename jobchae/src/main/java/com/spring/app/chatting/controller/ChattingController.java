@@ -1,12 +1,8 @@
 package com.spring.app.chatting.controller;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -23,12 +19,10 @@ import com.spring.app.chatting.domain.ChatMessage;
 import com.spring.app.chatting.domain.ChatRoom;
 import com.spring.app.chatting.domain.ChatRoomDTO;
 import com.spring.app.chatting.service.ChatService;
-import com.spring.app.chatting.service.ChatService_imple;
 import com.spring.app.member.domain.MemberVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.Session;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -67,14 +61,14 @@ public class ChattingController {
  	// 여러명 참여 가능한 채팅 채팅방 개설(일단 1대1 채팅방 개설을 만들고 여러명으로 수정해야함)
  	@PostMapping("createchatroom")
  	@ResponseBody                                                   // 로그인한 유저의 친구 아이디 리스트, 친구 이름 리스트
- 	public ModelAndView createChatRoom(HttpServletRequest request, @RequestParam(name="folow_id") List<String> folow_id_List,
-									   ModelAndView mav, @RequestParam(name = "folow_name") List<String> folow_name_List) {
+ 	public ModelAndView createChatRoom(HttpServletRequest request, @RequestParam(name= "follow_id_List") List<String> follow_id_List,
+									   ModelAndView mav, @RequestParam(name = "follow_name_List") List<String> follow_name_List) {
 		
  		HttpSession session = request.getSession();
  		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser"); // 현재 사용자 VO
 
  		// 채팅방 만들기 // 친구 아이디리스트, 이름리스트과 나의 정보를 넣어야한다.
- 		ChatRoom chat_room = chatservice.createChatRoom(loginuser, folow_id_List, folow_name_List);
+ 		ChatRoom chat_room = chatservice.createChatRoom(loginuser, follow_id_List, follow_name_List);
  		// 여기까지 했다!!
  		// 채팅방 개설 실패 시
 		if (chat_room == null) {

@@ -63,10 +63,10 @@ public class CustomChatRoomRepository {
 		            .and("_id").as("roomId")  // roomId 매핑
 		            .andInclude("message", "sendDate", "senderId", "senderName")  // 최신 메시지 정보
 		            .and("chatRoom").as("chatRoom") // 채팅방 정보
-		            .and("message").as("latestChat.message")
-		            .and("sendDate").as("latestChat.sendDate")
-		            .and("senderId").as("latestChat.senderId")
-		            .and("senderName").as("latestChat.senderName")
+		            .and("message").as("latestChat_message")
+		            .and("sendDate").as("latestChat_sendDate")
+		            .and("senderId").as("latestChat_senderId")
+		            .and("senderName").as("latestChat_senderName")
 		);
 		// Aggregation 실행
 		AggregationResults<ChatRoomDTO> result = mongo.aggregate(agg, "chat_messages", ChatRoomDTO.class);

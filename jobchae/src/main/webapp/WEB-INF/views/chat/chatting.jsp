@@ -337,8 +337,9 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
         // 웹소켓 연결 모듈을 통하여 연결 및 구독
         WebSocketManager.connect("${ctx_path}/ws", function () {
-//             const roomId = "${chat_room.room_id}";
-            const roomId = room_id; // 실험용 데이터
+<%--//             const roomId = "${chat_room.room_id}";--%>
+//             const roomId = room_id; // 실험용 데이터
+            const roomId = "${chat_room.roomId}" // 채팅방에 전송된 chatRoom 객체에서 가져옴
 
             if (roomId == "") {
             	alert("error", "채팅방 입장을 실패하였습니다");
@@ -383,12 +384,12 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             url: "${ctx_Path}/chat/loadChatRoom", //
             type: "post",
             async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
-            success: function (chatroomList) { //이거 json 객체이다.
+            success: function (chatRoomRespDTOList) { //이거 json 객체이다.
                 
-                if (chatroomList != null) {
+                if (chatRoomRespDTOList != null) {
                     let v_html = ``;
                     
-                    for (let chatroom of chatroomList) {
+                    for (let chatroomDTO of chatRoomRespDTOList) {
                         
                         v_html += `
                             <li class="p-4 hover:bg-gray-100 cursor-pointer">
@@ -397,12 +398,27 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                                         <img src=" " class="w-12 h-12 rounded-full object-cover">
                                     </div>
                                     <div class="flex-1 truncate">
-			                            <div class="font-medium">/${chatroom.latestChat.senderName}</div>
-                                        <div class="text-gray-500 text-sm truncate">/${chatroom.latestChat.message}</div>
+			                            <div class="font-medium">/${chatroomDTO.latestChat_senderName}</div>
+                                        <div class="text-gray-500 text-sm truncate">/${chatroomDTO.latestChat_message}</div>
 		                            </div>
                                    	<div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일(마지막 보낸시각으로 수정할 것)</div>
                                 </div>
                             </li>`;
+                        
+                                        // 이거로 바꿔야함
+                        // <li class="p-4 hover:bg-gray-100 cursor-pointer selected_chatroom border-b border-gray-200">
+                        //     <div class="flex items-center space-x-4">
+                        //         <div class="relative">
+                        //             <img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
+                        //                 <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+                        //         </div>
+                        //         <div class="flex-1 truncate">
+                        //             <div class="font-medium">엄정화</div>
+                        //             <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
+                        //         </div>
+                        //         <div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
+                        //     </div>
+                        // </li>
                     }
                     
                     

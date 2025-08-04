@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.Builder;
-import lombok.Data;
 
 @Document(collection = "chat_room")
 @Builder
@@ -18,7 +16,7 @@ public class ChatRoom {
 	@Id
 	private String roomId; // 채팅방 식별자
 	
-	private List<PartiMember> partiMember; // 채팅방 참여자 식별자
+	private List<PartiMember> partiMemberList; // 채팅방 참여자 식별자
 	
 	private String roomName;
 	
@@ -26,12 +24,12 @@ public class ChatRoom {
 	
 	
 	// 새로운 방의 아이디를 랜덤하게 부여한다.
-	public ChatRoom create_chatRoom(String room_name) {
-		ChatRoom chatRoom = new ChatRoom(roomId, partiMember, room_name, createdDate);
-		chatRoom.roomId = UUID.randomUUID().toString();
-		chatRoom.roomName = room_name;
-		chatRoom.createdDate = LocalDateTime.now(); // 생성 시간 기록
-		return chatRoom;
+	public static ChatRoom create_chatRoom(String room_name, List<PartiMember> partiMemberList) {
+		return ChatRoom.builder()
+				.partiMemberList(partiMemberList)
+				.roomName(room_name)
+				.createdDate(LocalDateTime.now())
+				.build();
 	}
 	
 	
