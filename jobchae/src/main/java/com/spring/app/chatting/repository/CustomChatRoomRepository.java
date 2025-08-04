@@ -56,17 +56,17 @@ public class CustomChatRoomRepository {
 		        Aggregation.unwind("chatRoom_arr"),
 
 		        // 사용자가 참여한 채팅방만 필터링
-		        Aggregation.match(Criteria.where("chatRoom_arr.participants").elemMatch(Criteria.where("member_id").is(member_id))),
+		        Aggregation.match(Criteria.where("chatRoom_arr.partiMemberList").elemMatch(Criteria.where("member_id").is(member_id))),
 
 		        // 필요한 필드만 유지하여 최종 반환 데이터 구조 정의
 		        Aggregation.project()
 		            .and("_id").as("roomId")  // roomId 매핑
 		            .andInclude("message", "sendDate", "senderId", "senderName")  // 최신 메시지 정보
-		            .and("chatRoom").as("chatRoom") // 채팅방 정보
-		            .and("message").as("latestChat_message")
-		            .and("sendDate").as("latestChat_sendDate")
-		            .and("senderId").as("latestChat_senderId")
-		            .and("senderName").as("latestChat_senderName")
+		            .and("chatRoom_arr").as("chatRoom") // 채팅방 정보
+		            .and("message").as("latestChat.message")
+		            .and("sendDate").as("latestChat.sendDate")
+		            .and("senderId").as("latestChat.senderId")
+		            .and("senderName").as("latestChat.senderName")
 		);
 		// Aggregation 실행
 		AggregationResults<ChatRoomDTO> result = mongo.aggregate(agg, "chat_messages", ChatRoomDTO.class);

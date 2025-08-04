@@ -370,8 +370,6 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 //             });
         });
         
-        
-        
     });//end of $(document).ready(function() {}...레디
 
 
@@ -381,7 +379,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     // 채팅페이지를 들어오면 바로 채팅방 목록을 보여줘야한다. 다 포스트 방식으로 해서 보안 강화하자
     function loadChatRoom() {
         $.ajax({
-            url: "${ctx_Path}/chat/loadChatRoom", //
+            url: "${ctx_path}/chat/loadChatRoom", //
             type: "post",
             async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
             success: function (chatRoomRespDTOList) { //이거 json 객체이다.
@@ -398,8 +396,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                                         <img src=" " class="w-12 h-12 rounded-full object-cover">
                                     </div>
                                     <div class="flex-1 truncate">
-			                            <div class="font-medium">/${chatroomDTO.latestChat_senderName}</div>
-                                        <div class="text-gray-500 text-sm truncate">/${chatroomDTO.latestChat_message}</div>
+			                            <div class="font-medium">/${chatroomDTO.latestChat.senderName}</div>
+                                        <div class="text-gray-500 text-sm truncate">/${chatroomDTO.latestChat.message}</div>
 		                            </div>
                                    	<div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일(마지막 보낸시각으로 수정할 것)</div>
                                 </div>
