@@ -26,50 +26,46 @@ public class CustomChatRoomRepository {
 
 	// 현재 로그인 사용자가 참여하고 있는 채팅방 목록, 최신 채팅내역 조회
 	public List<ChatRoomDTO> findAllWithLatestChatByMemberId(String member_id) {
-		
+
 		Aggregation agg = Aggregation.newAggregation(
-				// 최신 채팅으로 정렬하고
-				Aggregation.sort(Sort.by(Sort.Direction.DESC, "sendDate")),
-				
-				// 채팅 메시지를 roomId(String) 기준으로 그룹화하고, 최신 메시지 정보 추출
-		        Aggregation.group("roomId")
-		            .max("sendDate").as("sendDate")
-		            .first("message").as("message")
-		            .first("senderId").as("senderId")
-		            .first("senderName").as("senderName"),
-		            
-		        // 채팅방 식별자와 join을 위한 타입 맞추기 ( object id )
-			    Aggregation.addFields()
-			    	.addField("roomIdObj")
-			        .withValue(ConvertOperators.ToObjectId.toObjectId(
-			        		   ConvertOperators.ToString.toString("$_id")  // String 변환 후 ObjectId 변환 시도
-			        		)
-			    ).build(),
-			        
-			    // 채팅방 컬렉션과 조인
-			    Aggregation.lookup("chat_room", "roomIdObj", "_id", "chatRoom_arr"),
-			    
-			    // 조인 결과 필터링 (채팅방 정보가 존재하는 경우만)
-		        Aggregation.match(Criteria.where("chatRoom_arr").ne(null)),
+			// [시작 & 필터링] 'chat_room'에서 시작하여 사용자가 참여한 방만 필터링
+			Aggregation.match(Criteria.where("partiMemberList").elemMatch(Criteria.where("member_id").is(member_id))),
 
-		        // `chatRoom` 필드는 배열이므로 단일 문서로 변환
-		        Aggregation.unwind("chatRoom_arr"),
+			// [조인] chat_room의 _id와 chat_messages의 roomId를 기준으로 LEFT JOIN 수행
+			//    lookup을 위해 chat_room의 _id (ObjectId)를 String으로 변환한 필드 추가
+			Aggregation.addFields()
+					.addField("roomIdStr")
+					.withValue(ConvertOperators.ToString.toString("$_id")).build(),
+			Aggregation.lookup("chat_messages", "roomIdStr", "roomId", "all_messages"),
 
-		        // 사용자가 참여한 채팅방만 필터링
-		        Aggregation.match(Criteria.where("chatRoom_arr.partiMemberList").elemMatch(Criteria.where("member_id").is(member_id))),
+			// [배열 해체] 메시지 배열을 풀어냄. 메시지 없는 방도 유지 (핵심!)
+			Aggregation.unwind("all_messages", true), // preserveNullAndEmptyArrays: true
 
-		        // 필요한 필드만 유지하여 최종 반환 데이터 구조 정의
-		        Aggregation.project()
-		            .and("_id").as("roomId")  // roomId 매핑
-		            .andInclude("message", "sendDate", "senderId", "senderName")  // 최신 메시지 정보
-		            .and("chatRoom_arr").as("chatRoom") // 채팅방 정보
-		            .and("message").as("latestChat.message")
-		            .and("sendDate").as("latestChat.sendDate")
-		            .and("senderId").as("latestChat.senderId")
-		            .and("senderName").as("latestChat.senderName")
+			// [정렬] 메시지가 있는 경우 최신순으로 정렬. 없는 경우는 null 상태로 유지됨.
+			Aggregation.sort(Sort.by(Sort.Direction.DESC, "all_messages.sendDate")),
+
+			// [재그룹화] 다시 채팅방 ID 기준으로 그룹화하여 최신 메시지 1개만 남김
+			Aggregation.group("_id") // chat_room의 고유 ID로 그룹화
+					// 채팅방 정보는 그룹의 첫 번째 문서에서 가져옴
+					.first("$$ROOT").as("chatRoom")
+					// 최신 메시지 정보도 그룹의 첫 번째 문서에서 가져옴
+					.first("all_messages").as("latestChat"),
+
+			// [최종 정리] DTO에 매핑하기 좋은 구조로 필드 정리
+			Aggregation.project()
+					.and("chatRoom._id").as("roomId")
+					.and("chatRoom").as("chatRoom") // 채팅방 전체 정보
+					.and("latestChat.message").as("latestChat.message")
+					.and("latestChat.sendDate").as("latestChat.sendDate")
+					.and("latestChat.senderId").as("latestChat.senderId")
+					.and("latestChat.senderName").as("latestChat.senderName"),
+
+			// [정렬] 최종 채팅방 목록 전체를 최신 메시지 시간순으로 정렬
+			Aggregation.sort(Sort.by(Sort.Direction.DESC, "latestChat.sendDate"))
 		);
-		// Aggregation 실행
-		AggregationResults<ChatRoomDTO> result = mongo.aggregate(agg, "chat_messages", ChatRoomDTO.class);
+
+		// Aggregation 실행 (시작 컬렉션이 "chat_room"으로 변경됨)
+		AggregationResults<ChatRoomDTO> result = mongo.aggregate(agg, "chat_room", ChatRoomDTO.class);
 		
 		return result.getMappedResults();
 		

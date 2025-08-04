@@ -290,11 +290,38 @@
 
 <script type="text/javascript">
 
-const room_id = "1234"; // 실험용으로 하나 박아뒀다! 나중에 수정 요함
-
+let roomId = ""; // 채팅방 id
 let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
     $(document).ready(function() {
+
+        // === 모달 관련 자바스크립트 (김규빈) ===========================================================================
+
+        // 모달 애니메이션 추가 (애니메이션 선언은 modalCreateChatroom.jsp의 tailwindcss 참조)
+        $("dialog.modal").addClass("animate-slideDown");
+
+        // 모달 열기
+        $(document).on("click", ".btn-open-modal", function () {// 채팅방 생성 모달 띄우기
+            const targetModal = $(this).data("target-modal");
+            const modalId = "#modal" + targetModal;
+            $(modalId)[0].showModal();
+        });
+
+        // X 버튼으로 모달 닫기
+        $(".btn-close-modal").on("click", function (e) {
+            dialog = $(this).parent().parent().parent()[0];
+            $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
+            $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
+
+            // 애니메이션이 끝난 후 모달 닫기
+            setTimeout(() => {
+                dialog.close();
+                $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
+                $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
+            }, 300);
+        });
+
+        // ==========================================================================================================
 
         // 스크롤 위치에 따라 nav 선택 변경
         $(window).scroll(function() {
@@ -311,14 +338,13 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
         // ==========================================================================================================
 
-
         // 엔터키 입력시 채팅 전송 처리
         $("textarea#message").on('keydown', function(e) {
             if (e.keyCode == 13) {
             	if (!e.shiftKey) {
             		e.preventDefault();
             		if ($(e.target).val().trim() !== "") {
-                    	sendMessage();
+                    	sendMessage(roomId);
                 	}
             	}//
             }
@@ -327,22 +353,48 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
         // 보내기 버튼 클릭시 채팅 전송 처리
         $("button#btn_send").click(function (e) {
             if ($("textarea#message").val().trim() !== "") {
-                sendMessage();
+                sendMessage(roomId);
             }
         });//end of $("button#btn_send").click(function (e) {}...
 
+        loadChatRoom(); // 채팅방 목록 표시
+        $(".input-area").addClass("hidden"); // 처음에는 메시지 보내기 부분 숨기기
 
+        // 채팅방 선택시 입장
+        $(document).on("click", ".chatroom-list", function () {
+            roomId = $(this).data("room-id"); // 채팅방 id 설정
 
+            // 만약 채팅방에 이미 입장되어 있다면
+            if(WebSocketManager.isConnected) {
+                WebSocketManager.disconnect(); // 채팅방 퇴장
+            }
 
+            enterChatRoom(roomId); // 채팅방 입장
+
+            // 선택된 채팅방 주황색 표시해주기
+            $(".chatroom-list").removeClass("selected_chatroom");
+            $(this).addClass("selected_chatroom");
+
+            $(".input-area").removeClass("hidden"); // 메시지 입력창 표시
+            $(".chatroom-title").text($(this).find(".chatroom-member-names").text()); // 채팅방 타이틀 상단에 표시
+        });
+
+        // 채팅방 생성하기
+        $(".create-chatroom").on("click", function() {
+            // 채팅방 생성 모달 표시
+            alert("채팅방 생성 모달 표시");
+        });
+        
+    });//end of $(document).ready(function() {}...레디
+
+    // 채팅방 입장 함수
+    function enterChatRoom(roomId) {
 
         // 웹소켓 연결 모듈을 통하여 연결 및 구독
         WebSocketManager.connect("${ctx_path}/ws", function () {
-<%--//             const roomId = "${chat_room.room_id}";--%>
-//             const roomId = room_id; // 실험용 데이터
-            const roomId = "${chat_room.roomId}" // 채팅방에 전송된 chatRoom 객체에서 가져옴
 
-            if (roomId == "") {
-            	alert("error", "채팅방 입장을 실패하였습니다");
+            if (roomId === "") {
+                alert("error", "채팅방 입장을 실패하였습니다");
                 return;
             }
 
@@ -369,10 +421,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 //                 updateReadStatus(chatList);
 //             });
         });
-        
-    });//end of $(document).ready(function() {}...레디
-
-
+    }
 
 
 
@@ -388,38 +437,42 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                     let v_html = ``;
                     
                     for (let chatroomDTO of chatRoomRespDTOList) {
-                        
+                        let chatDate = "";
+                        if(chatroomDTO.latestChat.sendDate != null) {
+                            chatDate = chatroomDTO.latestChat.sendDate
+                                .substring(0, 10)
+                                .replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1-$2-$3');
+                        }
+
+                        // 채팅방 이름을 "김규빈, 이준영, 이진호" 와 같은 형식으로 표시
+                        let partiMemberList = chatroomDTO.chatRoom.partiMemberList; // 참여자 목록
+
+                        const memberNameArray = partiMemberList.map(member => member.member_name); // map으로 참여자 이름을 배열로 가져오기
+                        // ["김규빈","이준영","이진호"]
+
+                        const memberNames = memberNameArray.join(', ');
+                        // "김규빈, 이준영, 이진호"
+
                         v_html += `
-                            <li class="p-4 hover:bg-gray-100 cursor-pointer">
+                            <li class="chatroom-list p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200" data-room-id="\${chatroomDTO.chatRoom.roomId}">
                                 <div class="flex items-center space-x-4">
-                                    <div class="relative">
-                                        <img src=" " class="w-12 h-12 rounded-full object-cover">
+									<div class="relative">
+                                    	<img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
+<!--                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-orange-500 rounded-full border border-white"></span>-->
                                     </div>
                                     <div class="flex-1 truncate">
-			                            <div class="font-medium">/${chatroomDTO.latestChat.senderName}</div>
-                                        <div class="text-gray-500 text-sm truncate">/${chatroomDTO.latestChat.message}</div>
-		                            </div>
-                                   	<div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일(마지막 보낸시각으로 수정할 것)</div>
+                                    	<div class="font-medium flex">
+                                            <div class="truncate chatroom-member-names">\${memberNames}</div>
+                                            <div class="text-gray-500 ml-1">\${partiMemberList.length}</div>
+                                        </div>
+                                        <div class="text-gray-500 text-sm truncate">\${chatroomDTO.latestChat.message?chatroomDTO.latestChat.message:""}</div>
+                                    </div>
+                                   	<div class="ml-auto w-20 text-gray-500 text-sm text-right">\${chatDate}</div>
                                 </div>
                             </li>`;
-                        
-                                        // 이거로 바꿔야함
-                        // <li class="p-4 hover:bg-gray-100 cursor-pointer selected_chatroom border-b border-gray-200">
-                        //     <div class="flex items-center space-x-4">
-                        //         <div class="relative">
-                        //             <img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
-                        //                 <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
-                        //         </div>
-                        //         <div class="flex-1 truncate">
-                        //             <div class="font-medium">엄정화</div>
-                        //             <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
-                        //         </div>
-                        //         <div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
-                        //     </div>
-                        // </li>
                     }
                     
-                    
+                    $("#chatting_list").html(v_html);
                     
                 } else {// 채팅방이 아예 없으면 없다고 표시
                 
@@ -437,12 +490,12 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
 
     <%--// 기존에 참여하던 채팅방 입장(클릭하면 채팅방의 채팅 내용 출력)--%>
-    <%--function goChatRoom(room_id, sender_name) {--%>
+    <%--function goChatRoom(roomId, sender_name) {--%>
     <%--    $.ajax({--%>
     <%--        url: "${ctx_path}/chat/join",--%>
     <%--        type: "post",--%>
     <%--        data: {--%>
-    <%--        "room_id": room_id--%>
+    <%--        "roomId": roomId--%>
     <%--        },--%>
     <%--        success: function (html) {--%>
     <%--            openSideTab(html, sender_name);--%>
@@ -451,7 +504,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     <%--            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);--%>
     <%--        }--%>
     <%--    });--%>
-    <%--}//end of function goChatRoom(room_id, sender_name) {}...--%>
+    <%--}//end of function goChatRoom(roomId, sender_name) {}...--%>
     
     
     
@@ -464,14 +517,12 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     
     
     // 채팅 송신
-    function sendMessage() {
-// 		const roomId = "${chat_room.roomId}"; // 일단 잠궈놓음
-        const roomId = room_id; // 실험용 데이터
+    function sendMessage(roomId) {
         const login_member_id = "${login_member_id}";
         const login_member_name = "${login_member_name}";
 
         // 채팅방 및 사용자 식별자가 존재하지 않을 경우
-        if (roomId == "" || login_member_id == "") {
+        if (roomId === "" || login_member_id === "") {
             alert("채팅 전송을 실패했습니다.");
             return;
         }
@@ -555,6 +606,9 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
         	// 각 채팅의 송신날짜 년/월/일을 채팅 상단에 띄우기 위한 임시 저장값
             let current_date = "";
 
+            $("#chatting_view").html(""); // 처음 입장시 채팅 목록 비우기
+            $("textarea#message").text(""); // 입력한 텍스트 비우기
+
     		for (let chat of chatList) {
     			if (chat && chat.message) {
     				// 송신날짜를 시/분으로 저장
@@ -620,6 +674,9 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     }
 </style>
 
+<%-- 채팅방 생성 모달 --%>
+<jsp:include page="/WEB-INF/views/chat/modalCreateChatroom.jsp" />
+
 <!-- 본문 -->
 <div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]">
     
@@ -631,56 +688,17 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             <div class="flex flex-col md:flex-row py-0!">
                 
                 <%-- 채팅방 목록 --%>
-                <div class="w-full md:w-[calc(50%-50px)] py-4! px-0! border-r md:border-r-1 border-gray-200 mb-0!">
+                <div class="w-full md:w-[calc(50%-50px)] pb-4! px-0! border-r md:border-r-1 border-gray-200 mb-0!">
                     <div class="overflow-y-auto">
 
-                        <div class="h1 px-4 pb-2 border-b border-gray-200">메시지</div>
+                        <div class="h1 px-4 border-b border-gray-200 flex">
+                            <div class="flex-1 pt-4 pb-2">메시지</div>
+                            <div><button class="btn-open-modal cursor-pointer px-3 py-1 my-2 -mr-2 text-black/50 hover:text-black" data-target-modal="CreateChatroom"><i class="fa-solid fa-pen-to-square"></i></button></div>
+                        </div>
 
                         <!-- Chat List -->
                         <ul id="chatting_list" class="divide-y divide-gray-200">
-                        	
-                            <li class="p-4 hover:bg-gray-100 cursor-pointer selected_chatroom border-b border-gray-200">
-                                <div class="flex items-center space-x-4">
-									<div class="relative">
-                                    	<img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
-                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
-                                    </div>
-                                    <div class="flex-1 truncate">
-                                    	<div class="font-medium">엄정화</div>
-                                        <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
-                                    </div>
-                                   	<div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
-                                </div>
-                            </li>
-
-                            <li class="p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200">
-                                <div class="flex items-center space-x-4">
-                                    <div class="relative">
-                                        <img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
-                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
-                                    </div>
-                                    <div class="flex-1 truncate">
-                                        <div class="font-medium">이진호</div>
-                                        <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
-                                    </div>
-                                    <div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
-                                </div>
-                            </li>
-
-                            <li class="p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200">
-                                <div class="flex items-center space-x-4">
-                                    <div class="relative">
-                                        <img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
-                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
-                                    </div>
-                                    <div class="flex-1 truncate">
-                                        <div class="font-medium">이준영</div>
-                                        <div class="text-gray-500 text-sm truncate">GIF를 보냄asdfasdasdsafasdfasdfsaffasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasfdasf</div>
-                                    </div>
-                                    <div class="ml-auto w-15 text-gray-500 text-sm text-right">1월 26일</div>
-                                </div>
-                            </li>
-                            
+                            <%-- 채팅방 목록 표시 --%>
                         </ul>
                     </div>
                 </div>
@@ -688,7 +706,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                 <%-- 채팅 내용 --%>
                 <div class="w-full md:w-[calc(50%+50px)] py-4! px-0!">
                     <div id="chat_profile" class=""><%-- 채팅하는 사람의 프로필표시부분 --%>
-                    	<div class="h1 px-4 pb-2 border-b border-gray-200">엄정화</div>
+                    	<div class="chatroom-title h1 px-4 pb-2 border-b border-gray-200">&nbsp;</div>
                     </div>
                         
                     <!-- Messages 표시 부분 -->
@@ -699,7 +717,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
 
                     <!-- Input Area -->
-                    <div class="border-t border-gray-200 pt-4 px-4">
+                    <div class="border-t border-gray-200 pt-4 px-4 input-area">
                         <div class="relative">
             						<textarea
                                             id="message"

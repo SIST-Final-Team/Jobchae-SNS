@@ -34,13 +34,14 @@ public class ReportController {
             HttpSession session) {
 
         // 세션에서 로그인 사용자 정보 가져오기
-        MemberVO loginUser = (MemberVO) session.getAttribute("loginUser");
+        MemberVO loginUser = (MemberVO) session.getAttribute("loginuser");
 
         if (loginUser == null) {
+            // TODO : 로그인 화면으로 이동
             // 임시 로그인 처리 
             loginUser = new MemberVO();
             loginUser.setMember_id("user003"); // 임시 사용자 ID 설정
-            session.setAttribute("loginUser", loginUser); // 세션에 설정
+            session.setAttribute("loginuser", loginUser); // 세션에 설정
         } 
         
      // 임시 신고 대상 사용자 ID (테스트용)
