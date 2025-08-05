@@ -562,7 +562,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                     'senderId': login_member_id,
                     'senderName': login_member_name,
                     'message': $("#message").val(),
-                    'chatType': 0
+                    'chatType': "TALK"
                 });
             updateLastChat(roomId, $("#message").val()); // 마지막 채팅 업데이트
             $("#message").val('');
@@ -599,10 +599,11 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 			/////////////////////////////////////////////////////////////////////////////////
    
 			// 넘어온 메시지가 입장인지 퇴장인지 판별해주자
-			if (chat.chatType == "LEAVE") {
+			if (chat.chatType === "LEAVE") {
                 $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
-			
-            } else if (chat.chatType == "TALK") {
+            } else if(chat.chatType === "ENTER") {
+                // $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+            } else if (chat.chatType === "TALK") {
                 const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
                     // 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
                     .addClass("message_view") // 메세지 표시부분
@@ -615,13 +616,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                             $("<div class='chatting_time'>").text(sendDate)));
 
                 $("#chatting_view").append(chathtml);
-			
-            } else { // 입장 시
-            
-			}//
-			
-			
-            
+            }
 
             updateLastChat(roomId, chat.message); // 마지막 채팅 업데이트
 
@@ -666,12 +661,13 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                         $("#chatting_view").append($("<div class='chat_date'>").text(chatDate));
                         current_date = chat.sendDate.substring(0, 10);
                         last_chat_date = chat.sendDate.substring(0, 10); // 마지막 채팅 날짜 저장
-                    }//end of if (chat.sendDate.substring(0, 10) != current_date) {}... 
-    				
+                    }//end of if (chat.sendDate.substring(0, 10) != current_date) {}...
     			
-    				if (chat.chatType == "1") { // TODO 서버알림채팅인데 이거 규영씨랑 논의해보자
-    //                         	handleProductNoticeForm(chat);
-                	} else {
+    				if (chat.chatType === "LEAVE") {
+                        $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+                	} else if(chat.chatType === "ENTER") {
+                        // $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+                    } else if (chat.chatType === "TALK") {
                 		const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
                 			// 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
                         	.addClass("message_view") // 메세지 표시부분

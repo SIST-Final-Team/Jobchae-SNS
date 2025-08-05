@@ -21,6 +21,20 @@
 
 $(document).ready(function() {
 
+    // 채팅방 생성
+    $(".chat-button").on("click", function () {
+        const memberId = $(this).data("member-id");
+        const memberName = $(this).data("member-name");
+        const followIdList = [];
+        const followNameList = [];
+
+        // 참여자 아이디와 이름을 리스트에 저장
+        followIdList.push(memberId);
+        followNameList.push(memberName);
+
+        createChatroom(followIdList, followNameList); // 채팅방 만들기
+    });
+
     // 스크롤 위치에 따라 nav 선택 변경
     $(window).scroll(function() {
         for(let i=0; i<$(".center>*").length; i++) {
@@ -188,6 +202,34 @@ function follow(followButton, method) {
         },
         error: function (request, status, error) {
             console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+        }
+    });
+}
+
+// 채팅방 만들기
+function createChatroom(followIdList, followNameList) {
+    if(requestLock) {
+        return;
+    }
+    requestLock = true;
+    $.ajax({
+        url: ctxPath + "/chat/createchatroom",
+        data: {"follow_id_List": followIdList,
+            "follow_name_List": followNameList},
+        type: "post",
+        dataType : "json",
+        success: function (json) {
+            requestLock = false;
+            if(json.roomId != null) {
+                window.location = ctxPath + "/chat/mainChat/" + json.roomId;
+            }
+            else {
+                alert("오류로 인하여 채팅방 개설이 불가합니다. 나중에 다시 시도해주십시오.");
+            }
+        },
+        error: function (request, status, error) {
+            console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+            requestLock = false;
         }
     });
 }
@@ -602,6 +644,8 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                         </c:if>
                         
                         <c:if test="${not empty sessionScope.loginuser.member_id && sessionScope.loginuser.member_id != requestScope.memberVO.member_id && requestScope.memberVO.isFollow == '1'}">
+                            <button type="button" class="chat-button button-selected" data-member-id="${requestScope.memberVO.member_id}"
+                                    data-member-name="${requestScope.memberVO.member_name}"><i class="fa-solid fa-paper-plane"></i>&nbsp;메시지 보내기</button>
                             <button type="button" class="follow-button followed button-gray" data-following-id="${requestScope.memberVO.member_id}">팔로우 중</button>
                         </c:if>
 

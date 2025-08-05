@@ -65,6 +65,8 @@
           const targetModal = $(this).data("target-modal");
           const modalId = "#modal" + targetModal;
           $(modalId)[0].showModal();
+          let selectedMemberId = $(this).data("selected-member");
+
       });
 
       // X 버튼으로 모달 닫기
