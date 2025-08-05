@@ -314,30 +314,6 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             }
         });
 
-        // 모달 애니메이션 추가 (애니메이션 선언은 modalCreateChatroom.jsp의 tailwindcss 참조)
-        $("dialog.modal").addClass("animate-slideDown");
-
-        // 모달 열기
-        $(document).on("click", ".btn-open-modal", function () {// 채팅방 생성 모달 띄우기
-            const targetModal = $(this).data("target-modal");
-            const modalId = "#modal" + targetModal;
-            $(modalId)[0].showModal();
-        });
-
-        // X 버튼으로 모달 닫기
-        $(".btn-close-modal").on("click", function (e) {
-            dialog = $(this).parent().parent().parent()[0];
-            $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
-            $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
-
-            // 애니메이션이 끝난 후 모달 닫기
-            setTimeout(() => {
-                dialog.close();
-                $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
-                $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
-            }, 300);
-        });
-
         // ==========================================================================================================
 
         // 스크롤 위치에 따라 nav 선택 변경

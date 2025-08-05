@@ -54,6 +54,35 @@
 <script>
   requestLock = false;
   $(document).ready(function () {
+
+      // === 모달 관련 자바스크립트 ====================================================================================
+
+      // 모달 애니메이션 추가 (애니메이션 선언은 modalCreateChatroom.jsp의 tailwindcss 참조)
+      $("dialog.modal").addClass("animate-slideDown");
+
+      // 모달 열기
+      $(document).on("click", ".btn-open-modal", function () {// 채팅방 생성 모달 띄우기
+          const targetModal = $(this).data("target-modal");
+          const modalId = "#modal" + targetModal;
+          $(modalId)[0].showModal();
+      });
+
+      // X 버튼으로 모달 닫기
+      $(".btn-close-modal").on("click", function (e) {
+          dialog = $(this).parent().parent().parent()[0];
+          $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
+          $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
+
+          // 애니메이션이 끝난 후 모달 닫기
+          setTimeout(() => {
+              dialog.close();
+              $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
+              $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
+          }, 300);
+      });
+
+      // ==========================================================================================================
+
     // 친구(팔로우) 목록 가져오기
     getFollowers();
 
