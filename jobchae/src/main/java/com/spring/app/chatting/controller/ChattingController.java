@@ -1,8 +1,11 @@
 package com.spring.app.chatting.controller;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -37,11 +40,20 @@ public class ChattingController {
 	// 채팅 메인 페이지
 	@GetMapping("mainChat")
 	@ResponseBody
-	public ModelAndView showChatMainPage(ModelAndView mav) {
-		mav.setViewName("chat/chatting"); // 테스트용 jsp
-		System.out.println("확인용!!! 연결됨 => ");
+	public ModelAndView requiredLogin_showChatMainPage(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		mav.setViewName("chat/chatting");
+//		System.out.println("확인용!!! 연결됨 => ");
 		return mav;
-	}//end of public ModelAndView showChatMainPage(ModelAndView mav) {}...
+	}//end of public ModelAndView showChatMainPage(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {}...
+
+	// 채팅 메인 페이지 (채팅방 지정)
+	@GetMapping("mainChat/{roomId}")
+	@ResponseBody
+	public ModelAndView requiredLogin_showChatMainPage(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @PathVariable String roomId) {
+		mav.setViewName("chat/chatting");
+		mav.addObject("roomId", roomId);
+		return mav;
+	}//end of public ModelAndView showChatMainPage(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @PathVariable String roomId) {}...
 	
 	
 	// 채팅방 목록 불러오기 메소드
@@ -61,8 +73,8 @@ public class ChattingController {
  	// 여러명 참여 가능한 채팅 채팅방 개설(일단 1대1 채팅방 개설을 만들고 여러명으로 수정해야함)
  	@PostMapping("createchatroom")
  	@ResponseBody                                                   // 로그인한 유저의 친구 아이디 리스트, 친구 이름 리스트
- 	public ModelAndView createChatRoom(HttpServletRequest request, @RequestParam(name= "follow_id_List") List<String> follow_id_List,
-									   ModelAndView mav, @RequestParam(name = "follow_name_List") List<String> follow_name_List) {
+ 	public Map<String, String> createChatRoom(HttpServletRequest request, @RequestParam(name= "follow_id_List") List<String> follow_id_List,
+											  @RequestParam(name = "follow_name_List") List<String> follow_name_List) {
 		
  		HttpSession session = request.getSession();
  		MemberVO loginuser = (MemberVO) session.getAttribute("loginuser"); // 현재 사용자 VO
@@ -70,22 +82,9 @@ public class ChattingController {
  		// 채팅방 만들기 // 친구 아이디리스트, 이름리스트과 나의 정보를 넣어야한다.
  		ChatRoom chat_room = chatservice.createChatRoom(loginuser, follow_id_List, follow_name_List);
  		// 여기까지 했다!!
- 		// 채팅방 개설 실패 시
-		if (chat_room == null) {
-			// 다시 되돌아온다.
-			String message = "오류로 인하여 채팅방 개설이 불가합니다! 나중에 다시 시도해주십시오.";
-			String loc = "javascript:history.back()";
-			mav.addObject("message", message);
-			mav.addObject("loc", loc);
-			mav.setViewName("common/msg");
-			return mav;
-		}//
-
- 		// mav.addObject("loginuser", loginuser); // 로그인 회원 정보
- 		mav.addObject("chat_room", chat_room); // 채팅방 정보
-
- 		mav.setViewName("chat/chatting"); // 채팅방으로!
- 		return mav;
+		Map<String, String> map = new HashMap<>();
+		map.put("roomId", chat_room.getRoomId());
+ 		return map;
  	}//end of public ModelAndView createChatRoom(HttpServletRequest request, ModelAndView mav) {}...
 	
 	

@@ -290,12 +290,29 @@
 
 <script type="text/javascript">
 
-let roomId = ""; // 채팅방 id
+let roomId = "${not empty requestScope.roomId ? requestScope.roomId : ''}"; // 채팅방 id
 let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
     $(document).ready(function() {
 
         // === 모달 관련 자바스크립트 (김규빈) ===========================================================================
+
+        // 채팅방 나가기 드롭다운 모달 열기
+        $(document).on("click", ".btn-open-dropdown", function() {
+            const btnId = $(this).attr("id");
+            const dropdownId = "#dropdown" + btnId.slice(3);
+            const rect = this.getBoundingClientRect();
+
+            $(dropdownId).css({"left":rect.left+"px","top":(rect.bottom)+"px"});
+            $(dropdownId)[0].showModal();
+        });
+
+        // 바깥 클릭하면 드롭다운 모달 닫기
+        $(document).on("click", ".option-dropdown", function(e) {
+            if (e.target === this) {
+                this.close();
+            }
+        });
 
         // 모달 애니메이션 추가 (애니메이션 선언은 modalCreateChatroom.jsp의 tailwindcss 참조)
         $("dialog.modal").addClass("animate-slideDown");
@@ -360,23 +377,22 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
         loadChatRoom(); // 채팅방 목록 표시
         $(".input-area").addClass("hidden"); // 처음에는 메시지 보내기 부분 숨기기
 
+        // 만약 입장할 채팅방이 이미 정해져있다면 아래와 같은 주소로 접속했음
+        // chat/chatMain/{roomId}
+        if(roomId !== "") {
+            // 해당하는 채팅방이 존재하는지 확인
+            if($('.chatroom-list[data-room-id='+roomId+']').length > 0) {
+                enterChatRoom(roomId); // 채팅방 입장
+            }
+            else {
+                console.log("일치하는 채팅방 없음 : "+ roomId);
+            }
+        }
+
         // 채팅방 선택시 입장
         $(document).on("click", ".chatroom-list", function () {
             roomId = $(this).data("room-id"); // 채팅방 id 설정
-
-            // 만약 채팅방에 이미 입장되어 있다면
-            if(WebSocketManager.isConnected) {
-                WebSocketManager.disconnect(); // 채팅방 퇴장
-            }
-
             enterChatRoom(roomId); // 채팅방 입장
-
-            // 선택된 채팅방 주황색 표시해주기
-            $(".chatroom-list").removeClass("selected_chatroom");
-            $(this).addClass("selected_chatroom");
-
-            $(".input-area").removeClass("hidden"); // 메시지 입력창 표시
-            $(".chatroom-title").text($(this).find(".chatroom-member-names").text()); // 채팅방 타이틀 상단에 표시
         });
 
         // 채팅방 생성하기
@@ -389,6 +405,11 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
     // 채팅방 입장 함수
     function enterChatRoom(roomId) {
+
+        // 만약 채팅방에 이미 입장되어 있다면
+        if(WebSocketManager.isConnected) {
+            WebSocketManager.disconnect(); // 채팅방 퇴장
+        }
 
         // 웹소켓 연결 모듈을 통하여 연결 및 구독
         WebSocketManager.connect("${ctx_path}/ws", function () {
@@ -421,6 +442,36 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 //                 updateReadStatus(chatList);
 //             });
         });
+
+        // 선택된 채팅방 주황색 표시해주기
+        $(".chatroom-list").removeClass("selected_chatroom");
+        const $enteredChatroomEl = $('.chatroom-list[data-room-id='+roomId+']');
+        $enteredChatroomEl.addClass("selected_chatroom");
+
+        // 스크롤을 입장한 채팅방의 위치로 이동
+        $enteredChatroomEl[0].scrollIntoView({
+            behavior: 'smooth', // 스크롤을 부드럽게 처리
+            block: 'nearest'
+        });
+
+        $(".input-area").removeClass("hidden"); // 메시지 입력창 표시
+        $(".chatroom-title").text($(this).find(".chatroom-member-names").text()); // 채팅방 타이틀 상단에 표시
+
+        $("#btnExitChatroom").removeClass("hidden"); // 채팅방 나가기 버튼 표시
+    }
+
+    // 마지막 채팅을 방 목록에 표시해주기 위한 함수
+    function updateLastChat(roomId, message) {
+        const now = new Date();
+        const month = (now.getMonth()+1) < 10? '0' + (now.getMonth()+1) : (now.getMonth()+1);
+        const day = now.getDate() < 10? '0' + now.getDate() : now.getDate();
+
+        const $selectedChatroom = $('.chatroom-list[data-room-id='+roomId+']');
+        $selectedChatroom.find(".last-chat").text(message);
+        $selectedChatroom.find(".chat-date").text(`\${now.getFullYear()}-\${month}-\${day}`);
+
+        $selectedChatroom.prependTo($("#chatting_list")); // 채팅방을 맨 위로 이동시키기
+        $("#chatting_list").scrollTop(0);
     }
 
 
@@ -430,7 +481,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
         $.ajax({
             url: "${ctx_path}/chat/loadChatRoom", //
             type: "post",
-            async: true,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
+            async: false,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
             success: function (chatRoomRespDTOList) { //이거 json 객체이다.
                 
                 if (chatRoomRespDTOList != null) {
@@ -447,7 +498,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                         // 채팅방 이름을 "김규빈, 이준영, 이진호" 와 같은 형식으로 표시
                         let partiMemberList = chatroomDTO.chatRoom.partiMemberList; // 참여자 목록
 
-                        const memberNameArray = partiMemberList.map(member => member.member_name); // map으로 참여자 이름을 배열로 가져오기
+                        const memberNameArray = partiMemberList.map(member => member.member_name) // map으로 참여자 이름을 배열로 가져오기
+                            .filter(name => name !== '${sessionScope.loginuser.member_name}'); // 본인 이름 제외
                         // ["김규빈","이준영","이진호"]
 
                         const memberNames = memberNameArray.join(', ');
@@ -465,9 +517,9 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                                             <div class="truncate chatroom-member-names">\${memberNames}</div>
                                             <div class="text-gray-500 ml-1">\${partiMemberList.length}</div>
                                         </div>
-                                        <div class="text-gray-500 text-sm truncate">\${chatroomDTO.latestChat.message?chatroomDTO.latestChat.message:""}</div>
+                                        <div class="text-gray-500 text-sm truncate last-chat">\${chatroomDTO.latestChat.message?chatroomDTO.latestChat.message:""}</div>
                                     </div>
-                                   	<div class="ml-auto w-20 text-gray-500 text-sm text-right">\${chatDate}</div>
+                                   	<div class="ml-auto w-20 text-gray-500 text-sm text-right chat-date">\${chatDate}</div>
                                 </div>
                             </li>`;
                     }
@@ -536,6 +588,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                     'message': $("#message").val(),
                     'chatType': 0
                 });
+            updateLastChat(roomId, $("#message").val()); // 마지막 채팅 업데이트
             $("#message").val('');
         }//
     }//end of function sendMessage() {}...
@@ -581,6 +634,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                     		        						   $("<div class='chatting_time'>").text(sendDate)));
 
             $("#chatting_view").append(chathtml);
+
+            updateLastChat(roomId, chat.message); // 마지막 채팅 업데이트
 
             // 스크롤을 하단으로 내리기
             scrollToBottom();
@@ -669,7 +724,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
 </script>
 <style>
-    dialog.dropdown::backdrop {
+    dialog.option-dropdown::backdrop {
         background: transparent;
     }
 </style>
@@ -688,7 +743,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             <div class="flex flex-col md:flex-row py-0!">
                 
                 <%-- 채팅방 목록 --%>
-                <div class="w-full md:w-[calc(50%-50px)] pb-4! px-0! border-r md:border-r-1 border-gray-200 mb-0!">
+                <div class="w-full md:w-[calc(50%-50px)] px-0! border-r md:border-r-1 border-gray-200 mb-0!">
                     <div class="overflow-y-auto">
 
                         <div class="h1 px-4 border-b border-gray-200 flex">
@@ -697,20 +752,34 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                         </div>
 
                         <!-- Chat List -->
-                        <ul id="chatting_list" class="divide-y divide-gray-200">
+                        <ul id="chatting_list" class="divide-y divide-gray-200 max-h-[calc(100vh-12rem)] overflow-y-auto">
                             <%-- 채팅방 목록 표시 --%>
                         </ul>
                     </div>
                 </div>
 
                 <%-- 채팅 내용 --%>
-                <div class="w-full md:w-[calc(50%+50px)] py-4! px-0!">
+                <div class="w-full md:w-[calc(50%+50px)] pb-4! px-0!">
                     <div id="chat_profile" class=""><%-- 채팅하는 사람의 프로필표시부분 --%>
-                    	<div class="chatroom-title h1 px-4 pb-2 border-b border-gray-200">&nbsp;</div>
+
+                        <div class="h1 px-4 border-b border-gray-200 flex">
+                            <div class="chatroom-title flex-1 pt-4 pb-2">&nbsp;</div>
+                            <div><button class="btn-open-dropdown hidden cursor-pointer px-3 py-1 my-2 -mr-2 text-black/50 hover:text-black" id="btnExitChatroom"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>
+                        </div>
+                        <%-- 채팅방 나가기 드롭다운 --%>
+                        <dialog id="dropdownExitChatroom" class="option-dropdown border-normal drop-shadow-lg">
+                            <div class="space-y-2">
+                                <ul class="w-40 overflow-hidden font-bold text-gray-700">
+                                    <li>
+                                        <button class="w-full hover:bg-gray-200 cursor-pointer text-red-400 py-2">채팅방 나가기 <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </dialog>
                     </div>
                         
                     <!-- Messages 표시 부분 -->
-                    <div id="chatting_view" class="h-[600px] overflow-y-auto space-y-4 p-4">
+                    <div id="chatting_view" class="h-[calc(100vh-20rem)] overflow-y-auto space-y-4 p-4">
                     	
                     </div>
                     <%-- 여기 끝 --%>

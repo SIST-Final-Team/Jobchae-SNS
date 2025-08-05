@@ -743,6 +743,11 @@ public class MemberService_imple implements MemberService {
 		return dao.getMemberListByMemberId(memberIdList);
 	}
 
+	@Override
+	public List<MemberVO> getFollowingWithMemberInfo(String followerId) {
+		return dao.getFollowingWithMemberInfo(followerId);
+	}
+
 	// === 김규빈 끝 === //
 
 	
@@ -845,12 +850,6 @@ public class MemberService_imple implements MemberService {
 	    System.out.println("추천 멤버 리스트: " + recommendedMembers);
 	    return recommendedMembers;
 	}
-
-
-
-
-
-
 
 
 	// === 이진호 끝 === //

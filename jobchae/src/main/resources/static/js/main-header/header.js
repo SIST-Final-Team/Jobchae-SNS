@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
       dataType: "json",
       async:"false",
       success: function (json) {
-        console.log(JSON.stringify(json));
+        // console.log(JSON.stringify(json));
         if(json.length>0) {
           
           html_recentPage = `<ul>`; // 최근 방문 프로필 리스트

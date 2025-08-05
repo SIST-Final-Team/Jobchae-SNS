@@ -189,6 +189,9 @@ public interface MemberDAO {
 	 */
     List<MemberVO> getMemberListByMemberId(List<String> memberIdList);
 
+	// 내가 팔로우한 회원목록 가져오기
+	List<MemberVO> getFollowingWithMemberInfo(String followerId);
+
 	// === 김규빈 끝 === //
 
 	//연규영이 추가 아이디로 정보 가져오기
@@ -209,6 +212,6 @@ public interface MemberDAO {
 	
 	void banMember(String reportedMemberId);
 
-	// === 이진호 끝 === //
+    // === 이진호 끝 === //
 	
 }//end of interface...

@@ -161,6 +161,9 @@ public interface MemberService {
 	 * @return
 	 */
     List<MemberVO> getMemberListByMemberId(List<String> memberIdList);
+
+	// 내가 팔로우한 회원목록 가져오기
+	List<MemberVO> getFollowingWithMemberInfo(String followerId);
 	
 	// === 김규빈 끝 === //
 	

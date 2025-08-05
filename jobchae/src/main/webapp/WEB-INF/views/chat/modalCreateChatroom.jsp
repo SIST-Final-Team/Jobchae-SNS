@@ -55,31 +55,75 @@
   requestLock = false;
   $(document).ready(function () {
     // 친구(팔로우) 목록 가져오기
-    // getFollowers();
+    getFollowers();
 
     // 체크박스 체크되면 채팅방 만들기 버튼 활성화
+    $(document).on("input", ".member-checkbox", function() {
+        if($(".member-checkbox:checked").length > 0) {
+            const $createChatroom = $("#createChatroom");
+            $createChatroom.removeClass("button-disabled");
+            $createChatroom.addClass("button-selected");
+        }
+        else {
+            const $createChatroom = $("#createChatroom");
+            $createChatroom.removeClass("button-selected");
+            $createChatroom.addClass("button-disabled");
+        }
+    });
 
     // 채팅방 만들기 버튼 클릭시 폼 제출
+    $("#createChatroom").on("click", function () {
+        const $membersEl = $(".member-checkbox:checked"); // 참여자 <li> Elements
+        const followIdList = [];
+        const followNameList = [];
+
+        // 참여자 아이디 목록과 이름 목록을 리스트에 저장
+        for(let i=0; i<$membersEl.length; i++) {
+            followIdList.push($membersEl.eq(i).data("member-id"));
+            followNameList.push($membersEl.eq(i).data("member-name"));
+        }
+
+        // console.log(followIdList);
+        // console.log(followNameList);
+
+        createChatroom(followIdList, followNameList); // 채팅방 만들기
+    });
 
   });
 
+  // 친구(팔로우) 목록 가져오기
   function getFollowers() {
     if(requestLock) {
       return;
     }
     requestLock = true;
     $.ajax({
-      url: ctxPath + "/api/follow/followers",
-      data: {"followingId": "${sessionScope.loginuser.member_id}"},
+      url: ctxPath + "/api/follow/following-members",
+      data: {"followerId": "${sessionScope.loginuser.member_id}"},
       type: "get",
       dataType: "json",
       success: function (json) {
         if(json.length !== 0) {
+          // console.log(json);
+          let html = "";
           for(let i = 0; i < json.length ; i++) {
-            json[i].
+            html += `
+              <li class="flex">
+                <input type="checkbox" id="memberCheckbox\${i}" class="member-checkbox my-auto h-full accent-orange-600 opacity-70 mr-2"
+                  data-member-id="\${json[i].member_id}" data-member-name=\${json[i].member_name}>
+                <label for="memberCheckbox\${i}" class="border-b-1 border-gray-200 w-full text-left flex px-6 py-3">
+                  <img class="w-15 h-15 object-cover rounded-full mr-4"
+                       src="${pageContext.request.contextPath}/resources/files/profile/\${json[i].member_profile}"  alt="프로필 이미지"/>
+                  <div class="flex-1">
+                    <div class="font-bold text-[1.05rem]">\${json[i].member_name}</div>
+                    <div class="text-gray-500 text-sm">\${json[i].region_name}</div>
+                  </div>
+                </label>
+              </li>
+            `;
           }
+          $(".following-list").html(html);
         }
-        console.log(json);
         requestLock = false;
       },
       error: function (request, status, error) {
@@ -87,6 +131,34 @@
         requestLock = false;
       }
     });
+  }
+
+  // 채팅방 만들기
+  function createChatroom(followIdList, followNameList) {
+      if(requestLock) {
+          return;
+      }
+      requestLock = true;
+      $.ajax({
+          url: ctxPath + "/chat/createchatroom",
+          data: {"follow_id_List": followIdList,
+                 "follow_name_List": followNameList},
+          type: "post",
+          dataType : "json",
+          success: function (json) {
+              requestLock = false;
+              if(json.roomId != null) {
+                  window.location = ctxPath + "/chat/mainChat/" + json.roomId;
+              }
+              else {
+                  alert("오류로 인하여 채팅방 개설이 불가합니다. 나중에 다시 시도해주십시오.");
+              }
+          },
+          error: function (request, status, error) {
+              console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+              requestLock = false;
+          }
+      });
   }
 </script>
 
@@ -107,7 +179,7 @@
     <div class="space-y-4 overflow-auto">
       <div class="px-6">
         <div class="text-gray-500 pb-2">초대할 회원을 선택하세요.</div>
-        <ul class="follower-list">
+        <ul class="following-list">
           <li class="flex">
             <input type="checkbox" id="memberCheckbox1" class="member-checkbox my-auto h-full accent-orange-600 opacity-70 mr-2">
             <label for="memberCheckbox1" class="border-b-1 border-gray-200 w-full text-left flex px-6 py-3">
@@ -156,8 +228,8 @@
       <hr class="border-gray-200 mb-4">
       <div class="flex justify-end items-center px-6 pb-1">
         <div>
-<%--          <button type="button" id="createChatroom"  class="button-selected">채팅방 만들기</button>--%>
-          <button type="button" id="createChatroom"  class="button-disabled">채팅방 만들기</button>
+<%--          <button type="button" id="createChatroom" class="button-selected">채팅방 만들기</button>--%>
+          <button type="button" id="createChatroom" class="button-disabled">채팅방 만들기</button>
         </div>
       </div>
     </div>

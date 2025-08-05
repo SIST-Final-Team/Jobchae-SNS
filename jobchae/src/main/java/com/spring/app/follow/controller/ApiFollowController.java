@@ -8,6 +8,7 @@ import com.spring.app.alarm.domain.AlarmData;
 import com.spring.app.alarm.domain.AlarmVO;
 import com.spring.app.alarm.service.AlarmService;
 import com.spring.app.member.domain.MemberVO;
+import com.spring.app.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import com.spring.app.follow.service.FollowService;
 @RequestMapping("/api/follow") 
 public class ApiFollowController {
 
+    @Autowired
+    private MemberService memberService;
     @Autowired
     private FollowService followService;
     @Autowired
@@ -69,6 +72,12 @@ public class ApiFollowController {
     @GetMapping("/following")
     public List<FollowEntity> getFollowing(@RequestParam String followerId) {
         return followService.getFollowing(followerId);
+    }
+
+    // 팔로잉 목록 조회
+    @GetMapping("/following-members")
+    public List<MemberVO> getFollowingWithMemberInfo(@RequestParam String followerId) {
+        return memberService.getFollowingWithMemberInfo(followerId);
     }
     
     // 팔로우/언팔로우 상태 토글
