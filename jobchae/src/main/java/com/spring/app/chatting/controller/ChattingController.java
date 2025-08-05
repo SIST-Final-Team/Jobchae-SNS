@@ -147,11 +147,19 @@ public class ChattingController {
 	public List<ChatMessage> loadChatHistory(@PathVariable String roomId) {
 		return chatservice.loadChatHistory(roomId);
 	}//end of public List<ChatMessage> loadChatHistory(@PathVariable String roomId) {}...
-
-	
-	
-	
-	
+    
+    
+    
+    // 채팅방 나가기
+    @PostMapping("leaveChatRoom")
+    @ResponseBody
+    public void leaveChatRoom(HttpServletRequest request, @RequestParam("roomId") String roomId) {
+        
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser"); // 현재 사용자 VO
+        chatservice.leaveCahtRoom(roomId, loginuser.getMember_id(), loginuser.getMember_name());
+        
+    }//end of public void leaveChatRoom(@RequestParam("roomId") String roomId, @RequestParam("member_id") String member_id) {}...
 	
 	
 	

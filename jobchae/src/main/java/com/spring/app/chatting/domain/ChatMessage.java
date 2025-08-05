@@ -3,9 +3,10 @@ package com.spring.app.chatting.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,10 +39,12 @@ public class ChatMessage {
 
 	private LocalDateTime sendDate; // 작성일자
 
-	private int chatType; // 채팅 타입 0 : 일반 채팅, 1 : 서버 알림 채팅
+	@Enumerated(EnumType.STRING)
+	private ChatType chatType; 	// 채팅 타입
+								// ENTER: 입장 메시지
+								// TALK: 사용자 메시지
+								// LEAVE: 퇴장 메시지
 
-	
-	
 	// 채팅방 식별자 변경 메소드
 	public void updateRoomId(String roomId) {
 		this.roomId = roomId;
@@ -57,11 +60,22 @@ public class ChatMessage {
 		this.readMembers = List.of(member_id);
 	}
 
-	// 채팅 타입 설정 메소드
-	public void updateChatType(int chatType) {this.chatType = chatType;}
-
 	// 채팅 작성 시간 설정 메소드
 	public void updateSendDate(LocalDateTime now) {this.sendDate = now;}
+	
+	
+	// 퇴장하면 시스템이 보내주는 메시지
+	public static ChatMessage leaveMessage(String roomId ,String member_name) {
+		return ChatMessage.builder()
+				.senderId("system")
+				.senderName("System")
+				.roomId(roomId)
+				.message(member_name+" 님이 퇴장하셨습니다.")
+				.sendDate(LocalDateTime.now())
+				.chatType(ChatType.LEAVE)
+				.build();
+	}
+	
 	
 	
 	

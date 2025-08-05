@@ -20,4 +20,7 @@ public interface ChatService {
 	
 	// 채팅방 개설 메소드
 	ChatRoom createChatRoom(MemberVO loginuser, List<String> folow_id_List, List<String> folow_name_List);
+	
+	// 채팅방 나가기
+	void leaveCahtRoom(String roomId, String member_id, String member_name);
 }

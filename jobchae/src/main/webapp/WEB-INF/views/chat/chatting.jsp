@@ -597,19 +597,31 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                 last_chat_date = chat.sendDate.substring(0, 10);
             }//end of if (chat.sendDate.substring(0, 10) != current_date) {}...
 			/////////////////////////////////////////////////////////////////////////////////
-            
-            const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
-        	// 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
-        	.addClass("message_view") // 메세지 표시부분
-            .append(chat.senderId == login_member_id ? null : $("<div class='sender_name'>").text(chat.senderName))
-            .append($("<div>").addClass(chat.senderId == login_member_id ? 'chatting_own' : 'chatting')
-            		.append($("<pre>").text(chat.message))
-//             		.append(chat.senderId == login_member_id ? $("<span class='read_status'>").text(chat.unReadCount == 0 ? "" : chat.unReadCount) : null)
-			// 읽음은 나중에!
-            		.append(chat.senderId == login_member_id ? $("<div class='chatting_own_time'>").text(sendDate) : 
-                    		        						   $("<div class='chatting_time'>").text(sendDate)));
+   
+			// 넘어온 메시지가 입장인지 퇴장인지 판별해주자
+			if (chat.chatType == "LEAVE") {
+                $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+			
+            } else if (chat.chatType == "TALK") {
+                const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
+                    // 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
+                    .addClass("message_view") // 메세지 표시부분
+                    .append(chat.senderId == login_member_id ? null : $("<div class='sender_name'>").text(chat.senderName))
+                    .append($("<div>").addClass(chat.senderId == login_member_id ? 'chatting_own' : 'chatting')
+						.append($("<pre>").text(chat.message))
+                        //             		.append(chat.senderId == login_member_id ? $("<span class='read_status'>").text(chat.unReadCount == 0 ? "" : chat.unReadCount) : null)
+                        // 읽음은 나중에!
+                        .append(chat.senderId == login_member_id ? $("<div class='chatting_own_time'>").text(sendDate) :
+                            $("<div class='chatting_time'>").text(sendDate)));
 
-            $("#chatting_view").append(chathtml);
+                $("#chatting_view").append(chathtml);
+			
+            } else { // 입장 시
+            
+			}//
+			
+			
+            
 
             updateLastChat(roomId, chat.message); // 마지막 채팅 업데이트
 

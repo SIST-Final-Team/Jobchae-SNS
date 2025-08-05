@@ -6,6 +6,12 @@ import java.util.List;
 import com.spring.app.chatting.domain.PartiMember;
 import com.spring.app.member.domain.MemberVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.spring.app.chatting.domain.ChatMessage;
@@ -30,9 +36,18 @@ public class ChatService_imple implements ChatService{
 	@Autowired
 	private CustomChatRoomRepository customChatRoomRepository; // 채팅방 커스텀 레포지토리
 	
+	// 생성자 매개변수로 선언하는 것이 더 좋다.
+	private final MongoTemplate mongoTemplate;
+	private final SimpMessagingTemplate simpMessagingTemplate; // WebSocket으로 메시지를 보내기 위한 템플릿
+	public ChatService_imple(MongoTemplate mongoTemplate, SimpMessagingTemplate simpMessagingTemplate) {
+        this.mongoTemplate = mongoTemplate;
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
 	
 	
-	// 현재 로그인한 유저의 모든 채팅방 불러오기 메소드
+    
+    
+    // 현재 로그인한 유저의 모든 채팅방 불러오기 메소드
 	@Override
 	public List<ChatRoomDTO> getChatRoomList(String member_id) {
 		
@@ -84,6 +99,11 @@ public class ChatService_imple implements ChatService{
 	@Override
 	public ChatRoom createChatRoom(MemberVO loginuser, List<String> follow_id_List, List<String> follow_name_List) {
 		
+        // 기존에 같은 멤버로 존재하는 채팅방이 있는지 검색
+        
+        
+        
+        
 		// 받아온 리스트를 파티멤버타입으로 만들어준다.
 		List<PartiMember> partiMemberList = new ArrayList<>();
 		
@@ -101,6 +121,42 @@ public class ChatService_imple implements ChatService{
 		return chatRoomRepository.save(chatroom); // 채팅방 저장
 		
 	}//end of public ChatRoom createChatRoom(String loginuser_member_id, String loginuserFolowId) {}...
+	
+	
+	
+	// 채팅방 나가기
+	@Override
+	public void leaveCahtRoom(String roomId, String member_id, String member_name) {
+		
+		// 채팅방 아이디를 이용해서 쿼리문 작성
+		Query query = new Query(Criteria.where("_id").is(roomId));
+		
+		// 삭제할 조건 쿼리 작성(pull 은 삭제조건을 의미)
+		Update update = new Update().pull("partiMemberList", Query.query(Criteria.where("member_id").is(member_id)));
+		
+		// 업데이트된 문서를 반환하도록 설정
+		FindAndModifyOptions options = new FindAndModifyOptions().returnNew(true);
+		
+		// 검색을 먼저하고 처리된 결과값을 리턴한다.
+		ChatRoom updateChatRoom = mongoTemplate.findAndModify(query, update, options, ChatRoom.class);
+		
+		// 반환이 잘되어지면
+		if (updateChatRoom != null) {
+			// ChatMessage leaveMessage = new ChatMessage();
+			ChatMessage chatMessage = ChatMessage.leaveMessage(roomId, member_name);
+			// 채팅방 구독중인 모든 사용자에게 메세지 보내기
+			simpMessagingTemplate.convertAndSend("/room/"+roomId, chatMessage);
+			
+			// 저장
+			chatRepository.save(chatMessage);
+		}//
+		
+		
+		
+	}//end of
+	
+	
+	
 	
 	
 }//end of class...
