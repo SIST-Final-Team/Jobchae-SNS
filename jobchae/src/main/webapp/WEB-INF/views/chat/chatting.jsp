@@ -376,6 +376,40 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             // 채팅방 생성 모달 표시
             alert("채팅방 생성 모달 표시");
         });
+
+        // 채팅방 나가기 버튼 클릭시
+        $(".leave-chat").on("click", function() {
+            if(confirm("채팅방을 나가시겠습니까?")) {
+                // 만약 채팅방에 이미 입장되어 있다면
+                if(WebSocketManager.isConnected) {
+                    WebSocketManager.disconnect(); // 채팅방 퇴장
+                }
+
+                $.ajax({
+                    url: "${ctx_path}/chat/leaveChatRoom", //
+                    data: {"roomId": roomId},
+                    type: "post",
+                    async: true,
+                    success: function () {
+                        const $enteredChatroomEl = $('.chatroom-list[data-room-id='+roomId+']');
+                        $enteredChatroomEl.remove(); // 접속한 채팅방 <li> 제거
+
+                        $(".input-area").addClass("hidden"); // 메시지 입력창 표시
+                        $(".chatroom-title").html("&nbsp;"); // 채팅방 타이틀 상단에 표시
+                        $("#chatting_view").html(`
+                            <div class="h-full flex justify-center text-9xl">
+                                <i class="fa-solid fa-comment-dots mt-[calc(20vh)] text-gray-100 "></i>
+                            </div>`); // 채팅 내용 제거하고 회색 채팅 아이콘 표시
+
+                        $("#btnChatMenu").addClass("hidden"); // 채팅방 메뉴
+                        $(".option-dropdown").click(); // 드롭다운 메뉴 닫기
+                    },
+                    error: function (request, status, error) { // 코딩이 잘못되어지면 어디가 잘못되어졌는지 보여준다!
+                        alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
+                    }
+                });
+            }
+        });// end of $(".leave-chat").on("click", function() {})...
         
     });//end of $(document).ready(function() {}...레디
 
@@ -433,8 +467,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
         $(".input-area").removeClass("hidden"); // 메시지 입력창 표시
         $(".chatroom-title").text($(this).find(".chatroom-member-names").text()); // 채팅방 타이틀 상단에 표시
 
-        $("#btnExitChatroom").removeClass("hidden"); // 채팅방 나가기 버튼 표시
-    }
+        $("#btnChatMenu").removeClass("hidden"); // 채팅방 메뉴
+    }// end of function enterChatRoom(roomId) {}...
 
     // 마지막 채팅을 방 목록에 표시해주기 위한 함수
     function updateLastChat(roomId, message) {
@@ -448,7 +482,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
         $selectedChatroom.prependTo($("#chatting_list")); // 채팅방을 맨 위로 이동시키기
         $("#chatting_list").scrollTop(0);
-    }
+    }// end of function updateLastChat(roomId, message) {}...
 
 
 
@@ -748,14 +782,14 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
                         <div class="h1 px-4 border-b border-gray-200 flex">
                             <div class="chatroom-title flex-1 pt-4 pb-2">&nbsp;</div>
-                            <div><button class="btn-open-dropdown hidden cursor-pointer px-3 py-1 my-2 -mr-2 text-black/50 hover:text-black" id="btnExitChatroom"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>
+                            <div><button class="btn-open-dropdown hidden cursor-pointer px-3 py-1 my-2 -mr-2 text-black/50 hover:text-black" id="btnChatMenu"><i class="fa-solid fa-ellipsis-vertical"></i></button></div>
                         </div>
                         <%-- 채팅방 나가기 드롭다운 --%>
-                        <dialog id="dropdownExitChatroom" class="option-dropdown border-normal drop-shadow-lg">
+                        <dialog id="dropdownChatMenu" class="option-dropdown border-normal drop-shadow-lg">
                             <div class="space-y-2">
                                 <ul class="w-40 overflow-hidden font-bold text-gray-700">
                                     <li>
-                                        <button class="w-full hover:bg-gray-200 cursor-pointer text-red-400 py-2">채팅방 나가기 <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                                        <button class="leave-chat w-full hover:bg-gray-200 cursor-pointer text-red-400 py-2">채팅방 나가기 <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
                                     </li>
                                 </ul>
                             </div>
@@ -764,7 +798,9 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                         
                     <!-- Messages 표시 부분 -->
                     <div id="chatting_view" class="h-[calc(100vh-20rem)] overflow-y-auto space-y-4 p-4">
-                    	
+                        <div class="h-full flex justify-center text-9xl">
+                            <i class="fa-solid fa-comment-dots mt-[calc(20vh)] text-gray-100 "></i>
+                        </div>
                     </div>
                     <%-- 여기 끝 --%>
 
