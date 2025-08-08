@@ -70,6 +70,26 @@ public class ChatService_imple implements ChatService{
 			return chatRoomRespDTOList;
 		}
 
+		// 채팅방 프로필 목록 불러오기
+		for(ChatRoomDTO chatRoomDTO : chatRoomRespDTOList) {
+			// 참여자 아이디 목록을 최대 4개까지 추출
+			List<String> memberIdList = chatRoomDTO.getChatRoom().getPartiMemberList()
+					.stream()
+					.map(PartiMember::getMember_id)
+					.limit(4)
+					.toList();
+
+			// 참여자 아이디 목록으로 회원 정보 조회
+			List<MemberVO> memberVOList = dao.getMemberListByMemberId(memberIdList);
+
+			// 회원 프로필을 DTO에 저장
+			chatRoomDTO.setMemberProfileList(memberVOList
+					.stream()
+					.filter(memberVO -> !memberVO.getMember_id().equals(member_id))
+					.map(MemberVO::getMember_profile)
+					.toList());
+		}
+
 		return chatRoomRespDTOList;
 		
 	}//end of public List<ChatRoomRespDTO> getChatRoomList(String member_id) {}... 
