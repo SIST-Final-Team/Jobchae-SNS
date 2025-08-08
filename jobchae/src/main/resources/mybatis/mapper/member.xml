@@ -188,7 +188,7 @@
 
 
     <!--  초대하려는 회원의 이름을 검색  -->
-	<select id="isExistMemberNameByMemberId" parameterType="ArrayList" resultType="ArrayList">
+	<select id="isExistMemberNameByMemberId" parameterType="ArrayList" resultType="String">
         SELECT member_name
         FROM tbl_member
         WHERE member_id in
