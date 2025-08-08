@@ -158,12 +158,13 @@ public class ChatService_imple implements ChatService{
                 .collect(Collectors.toSet()); // Set 타입으로 변환
         
         // 초대하려는 사람이 이미 방에 있는 사람인지 검증(리스트가 나오면 한사람이라도 있는 것이다.)
+        // 검색이 안되면 빈 리스트를 반환! []
         List<String> isExistInvitedMemberIds = invitedMemberIdList.stream()
                 .filter(invitedMemberId -> partiMemberIdList.contains(invitedMemberId)) // 조건에 충족하면
-                .collect(Collectors.toList());
+                .toList();
         
         // 초대하려는 사람이 존재하고, 로그인한 유저도 채팅방에 있고, 채팅방에 아예 존재하지 않는 참여자면 실행
-        if (existAllMember && isExistLoginuser && isExistInvitedMemberIds == null) {
+        if (existAllMember && isExistLoginuser && isExistInvitedMemberIds.isEmpty()) {
             Query query = new Query(Criteria.where("_id").is(roomId));
             
             // 초대하려는 사람 이름 리스트(메시지 보낼 때도 필요)
