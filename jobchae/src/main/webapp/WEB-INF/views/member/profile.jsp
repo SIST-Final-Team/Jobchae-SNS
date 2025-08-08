@@ -1216,7 +1216,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
         </div>
 
         <!-- 우측 광고 -->
-        <div class="right-side lg:col-span-4 h-full relative hidden lg:block -z-1">
+        <div class="right-side lg:col-span-4 h-full relative lg:block">
             <div class="border-list sticky top-20 space-y-2 text-center relative">
                 <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
                     <span class="pl-1.5 font-bold">광고</span>

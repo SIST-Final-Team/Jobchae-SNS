@@ -515,13 +515,14 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                         const memberNames = memberNameArray.join(', ');
                         // "김규빈, 이준영, 이진호"
 
+                        let memberProfilesHtml =  getProfileImagesHtml(chatroomDTO.memberProfileList);
+
                         v_html += `
                             <li class="chatroom-list p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200" data-room-id="\${chatroomDTO.chatRoom.roomId}">
                                 <div class="flex items-center space-x-4">
-									<div class="relative">
-                                    	<img src="https://i.namu.wiki/i/BwXretoFfCKQCWSPGsfBPHj0gHKnJ3sEViYKhvbKUTWxETuUFJQa1Bl2-IuvO2Q6-oDP2wGZFm6lJAG7zdUSY0kWhmTLP81VxFtdQE1ctKuYNPWrolwanztcbdaMHOWsQhnD9FJbehPCoC-NxUJc0w.webp" alt="프로필" class="w-12 h-12 rounded-full object-cover">
+                                    	\${memberProfilesHtml}
 <!--                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-orange-500 rounded-full border border-white"></span>-->
-                                    </div>
+
                                     <div class="flex-1 truncate">
                                     	<div class="font-medium flex">
                                             <div class="truncate chatroom-member-names">\${memberNames}</div>
@@ -735,6 +736,54 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     }
 
 
+    // 채팅 프로필 개수에 따라 알맞는 모양의 HTML 코드를 반환
+    function getProfileImagesHtml(imageFileNames) {
+        const count = imageFileNames.length;
+        const baseUrl = '${pageContext.request.contextPath}/resources/files/profile/';
+
+        if (count === 1) {
+            const $img = $('<img>')
+                .attr('src', baseUrl + imageFileNames[0])
+                .addClass('w-full h-full object-cover rounded-full absolute');
+            return $('<div>')
+                .addClass('w-16 h-16 relative overflow-hidden')
+                .append($img)
+                .prop('outerHTML');
+
+        } else if (count === 2) {
+            const $container = $('<div>')
+                .addClass('w-16 h-16 relative overflow-hidden');
+
+            const $img1 = $('<img>')
+                .attr('src', baseUrl + imageFileNames[0])
+                .addClass('w-2/3 h-2/3 object-cover absolute top-0 left-0 rounded-full')
+                .css('z-index', 2);
+
+            const $img2 = $('<img>')
+                .attr('src', baseUrl + imageFileNames[1])
+                .addClass('w-2/3 h-2/3 object-cover absolute bottom-0 right-0 rounded-full')
+                .css('z-index', 1);
+
+            return $container.append($img1, $img2).prop('outerHTML');
+
+        } else {
+            const $grid = $('<div>')
+                .addClass('grid grid-cols-2 grid-rows-2 w-full h-full absolute');
+
+            imageFileNames.slice(0, 4).forEach((fileName) => {
+                const $img = $('<img>')
+                    .attr('src', baseUrl + fileName)
+                    .addClass('w-full h-full object-cover rounded-full');
+                $grid.append($img);
+            });
+
+            return $('<div>')
+                .addClass('w-16 h-16 relative overflow-hidden')
+                .append($grid)
+                .prop('outerHTML');
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -834,21 +883,23 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     </div>
 
     <!-- 우측 광고 -->
-    <div class="right-side lg:col-span-4 h-full relative hidden lg:block">
+    <div class="right-side lg:col-span-4 h-full relative lg:block">
         <div class="border-list sticky top-20 space-y-2 text-center relative">
             <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
                 <span class="pl-1.5 font-bold">광고</span>
                 <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
             </div>
             <div>
-                <img src="7.png"/>
+                <img src="${pageContext.request.contextPath}/images/ad.png"/>
             </div>
             <div class="px-4">
-                <p class="font-bold">준영님, Tridge의 관련 채용공고를 살펴보세요.</p>
-                <p>업계 최신 뉴스와 취업 정보를 받아보세요.</p>
+                <p class="font-bold">${sessionScope.loginuser.member_name}님, ANTICO에서 경매에 참여해보세요.</p>
+                <p>ANTICO에서 나에게 맞는 물건을 살펴보세요.</p>
             </div>
             <div class="px-4">
-                <button type="button" class="button-orange">팔로우</button>
+                <a href="http://antico.shop/antico/index">
+                    <button type="button" class="button-orange">방문하기</button>
+                </a>
             </div>
         </div>
     </div>
