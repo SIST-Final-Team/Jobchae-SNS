@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.spring.app.member.domain.MemberCareerVO;
@@ -71,7 +72,22 @@ public interface MemberDAO {
 	
 	// 탈퇴한 회원 파일명을 리스트로 가져오기 검색
 	List<Map<String, String>> disableFileList();
-	
+    
+    /**
+     * 회원 ID 목록의 모든 회원이 존재하는지 확인합니다.
+     * @param memberIdList 확인할 회원 ID 리스트
+     * @return 모든 회원이 존재하면 true, 한 명이라도 없으면 false
+     */
+    boolean existsAllMembersByIds(@Param("invitedMemberIdList") List<String> memberIdList);
+    
+    // 아이디로 회원이 존재하는지 확인
+    /**
+     * 회원 ID 목록으로 회원 이름 목록을 조회합니다.
+     * @param invitedMemberIdList 회원 ID 리스트
+     * @return partiMemberNameList 회원 이름 리스트
+     */
+    List<String> isExistMemberNameByMemberId(@Param("invitedMemberIdList") List<String> invitedMemberIdList);
+    
 	// === 이준영 끝 === //
 	
 	

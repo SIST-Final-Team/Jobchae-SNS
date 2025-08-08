@@ -22,5 +22,8 @@ public interface ChatService {
 	ChatRoom createChatRoom(MemberVO loginuser, List<String> folow_id_List, List<String> folow_name_List);
 	
 	// 채팅방 나가기
-	void leaveCahtRoom(String roomId, String member_id, String member_name);
+	void leaveChatRoom(String roomId, String member_id, String member_name);
+    
+    // 채팅방 들어가기
+    void enterChatRoom(String member_id ,String roomId, List<String> invitedMemberIdLsit);
 }

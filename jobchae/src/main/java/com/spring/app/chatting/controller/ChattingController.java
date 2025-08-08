@@ -70,7 +70,7 @@ public class ChattingController {
 	
 	
 	
- 	// 여러명 참여 가능한 채팅 채팅방 개설(일단 1대1 채팅방 개설을 만들고 여러명으로 수정해야함)
+ 	// 여러명 참여 가능한 채팅 채팅방 개설
  	@PostMapping("createchatroom")
  	@ResponseBody                                                   // 로그인한 유저의 친구 아이디 리스트, 친구 이름 리스트
  	public Map<String, String> createChatRoom(HttpServletRequest request, @RequestParam(name= "follow_id_List") List<String> follow_id_List,
@@ -150,15 +150,25 @@ public class ChattingController {
     
     
     
+    // 채팅방 초대 받으면 입장하고 메세지 보여주기 메소드
+    @PostMapping("enterChatRoom")
+    @ResponseBody
+    public void enterChatRoom(HttpServletRequest request,@RequestParam("roomId") String roomId,
+                              @RequestParam("invited_member_id_List") List<String> invitedMemberIdList) {
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser"); // 현재 사용자 VO
+        chatservice.enterChatRoom(loginuser.getMember_id(), roomId, invitedMemberIdList);
+    }//
+    
+    
+    
     // 채팅방 나가기
     @PostMapping("leaveChatRoom")
     @ResponseBody
     public void leaveChatRoom(HttpServletRequest request, @RequestParam("roomId") String roomId) {
-        
         HttpSession session = request.getSession();
         MemberVO loginuser = (MemberVO) session.getAttribute("loginuser"); // 현재 사용자 VO
-        chatservice.leaveCahtRoom(roomId, loginuser.getMember_id(), loginuser.getMember_name());
-        
+        chatservice.leaveChatRoom(roomId, loginuser.getMember_id(), loginuser.getMember_name());
     }//end of public void leaveChatRoom(@RequestParam("roomId") String roomId, @RequestParam("member_id") String member_id) {}...
 	
 	

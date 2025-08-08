@@ -171,10 +171,36 @@
 	
 	
 	<insert id="memberDisableDate">
-		INSERT tbl_member(member_disable_date)
+		INSERT INTO tbl_member(member_disable_date)
 		VALUES(SYSDATE)
 	</insert>
-	
+
+
+    <!--  초대하려는 아이디를 넣어서 회원이 존재하는지 확인  -->
+    <select id="existsAllMembersByIds" resultType="boolean">
+        SELECT CASE WHEN COUNT(member_id) = #{memberIdList.size} THEN 1 ELSE 0 END
+        FROM tbl_member
+        WHERE member_id IN
+        <foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
+            #{memberId}
+        </foreach>
+    </select>
+
+
+    <!--  초대하려는 회원의 이름을 검색  -->
+	<select id="isExistMemberNameByMemberId" parameterType="ArrayList" resultType="ArrayList">
+        SELECT member_name
+        FROM tbl_member
+        WHERE member_id in
+              <foreach collection="invitedMemberIdList" item="invitedMemberId" open="(" separator="," close=")">
+                #{invitedMemberId}
+              </foreach>
+        order by
+            <foreach collection="invitedMemberIdList" index="i" open="CASE member_id" close="END">
+                WHEN #{invitedMemberId} THEN #{i}
+            </foreach>
+    </select>
+
 	
 	<!-- 탈퇴한 회원 파일명을 리스트로 가져오기 검색 -->
 	<resultMap type="HashMap" id="disableFileList_map">
@@ -492,7 +518,7 @@
 			'${memberIdList[i]}'
 		</foreach>
 		and member_status = 1
-		order by DECODE(member_id, 
+		order by DECODE(member_id,
 		<foreach collection="memberIdList" index="i" open="" separator="," close=")">
 			'${memberIdList[i]}',${i}
 		</foreach>

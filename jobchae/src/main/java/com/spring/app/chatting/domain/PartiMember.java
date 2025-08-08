@@ -30,23 +30,23 @@ public class PartiMember {
 				.build();
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if(this == obj) {
-			return true;
-		} // 현재 객체와 주소값이 동일한 객체인지 확인
-		if(obj == null || getClass() != obj.getClass()) {
-			return false;
-		} // 현재 클래스와 다른 클래스인지 확인
-		
-		PartiMember partiMember = (PartiMember) obj;
-		return Objects.equals(member_id, partiMember.member_id); // 회원 번호를 기준으로 비교
-	}
-
-	@Override
-	public int hashCode() {
-		// eqauls 비교 구문에는 hashCode를 기준으로 비교하기에 회원번호를 기준으로 해시값 생성
-		return Objects.hash(member_id);
-	}
+	// @Override
+	// public boolean equals(Object obj) {
+	// 	if(this == obj) {
+	// 		return true;
+	// 	} // 현재 객체와 주소값이 동일한 객체인지 확인
+	// 	if(obj == null || getClass() != obj.getClass()) {
+	// 		return false;
+	// 	} // 현재 클래스와 다른 클래스인지 확인
+	//
+	// 	PartiMember partiMember = (PartiMember) obj;
+	// 	return Objects.equals(member_id, partiMember.member_id); // 회원 번호를 기준으로 비교
+	// }
+    //
+	// @Override
+	// public int hashCode() {
+	// 	// eqauls 비교 구문에는 hashCode를 기준으로 비교하기에 회원번호를 기준으로 해시값 생성
+	// 	return Objects.hash(member_id);
+	// }
 	
 }

@@ -62,7 +62,19 @@ public class ChatMessage {
 
 	// 채팅 작성 시간 설정 메소드
 	public void updateSendDate(LocalDateTime now) {this.sendDate = now;}
-	
+    
+    
+    // 초대 받아서 입장하면 시스템이 보내주는 메시지
+    public static ChatMessage enterMessage(String roomId, List<String> invitedMemberNameList) {
+        return ChatMessage.builder()
+                .senderId("system")
+                .senderName("System")
+                .roomId(roomId)
+                .message(String.join(",", invitedMemberNameList)+" 님이 입장하셨습니다.")
+                .sendDate(LocalDateTime.now())
+                .chatType(ChatType.ENTER)
+                .build();
+    }
 	
 	// 퇴장하면 시스템이 보내주는 메시지
 	public static ChatMessage leaveMessage(String roomId ,String member_name) {
