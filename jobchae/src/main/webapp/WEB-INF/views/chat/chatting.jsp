@@ -636,7 +636,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 			if (chat.chatType === "LEAVE") {
                 $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
             } else if(chat.chatType === "ENTER") {
-                // $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+                $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
             } else if (chat.chatType === "TALK") {
                 const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
                     // 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
@@ -700,7 +700,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     				if (chat.chatType === "LEAVE") {
                         $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
                 	} else if(chat.chatType === "ENTER") {
-                        // $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+                        $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
                     } else if (chat.chatType === "TALK") {
                 		const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
                 			// 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인

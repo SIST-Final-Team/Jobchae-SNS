@@ -62,6 +62,8 @@
           const modalId = "#modalAddChatMember";
           $(modalId)[0].showModal();
 
+          $(".option-dropdown").click(); // 드롭다운 메뉴 닫기
+
           // 팝업 다시 열면 초기화
           $(".invite-member-checkbox").prop("checked", false); // 체크박스 체크 해제
 
@@ -186,17 +188,12 @@
           data: {"roomId": roomId,
                  "invited_member_id_List": invitedMemberIdList},
           type: "post",
-          dataType : "json",
-          success: function (json) {
+          success: function () {
+              window.location = ctxPath + "/chat/mainChat/" + roomId;
               requestLock = false;
-              if(json.roomId != null) {
-                  window.location = ctxPath + "/chat/mainChat/" + json.roomId;
-              }
-              else {
-                  alert("오류로 인하여 채팅방 개설이 불가합니다. 나중에 다시 시도해주십시오.");
-              }
           },
           error: function (request, status, error) {
+              alert("초대 중 오류가 발생하셨습니다.");
               console.log("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);
               requestLock = false;
           }
