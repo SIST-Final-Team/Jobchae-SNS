@@ -11,7 +11,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <style>
-  input.member-checkbox {
+  input.invite-member-checkbox {
     zoom: 1.2;
   }
 </style>
@@ -57,79 +57,61 @@
 
       // === 모달 관련 자바스크립트 ====================================================================================
 
-      // 모달 애니메이션 추가 (애니메이션 선언은 modalCreateChatroom.jsp의 tailwindcss 참조)
-      $("dialog.modal").addClass("animate-slideDown");
-
       // 모달 열기
-      $(document).on("click", ".btn-open-modal", function () {// 채팅방 생성 모달 띄우기
-          const targetModal = $(this).data("target-modal");
-          const modalId = "#modal" + targetModal;
+      $(document).on("click", ".invite-chat", function () {// 채팅방 생성 모달 띄우기
+          const modalId = "#modalAddChatMember";
           $(modalId)[0].showModal();
 
           // 팝업 다시 열면 초기화
-          $(".member-checkbox").prop("checked", false); // 체크박스 체크 해제
+          $(".invite-member-checkbox").prop("checked", false); // 체크박스 체크 해제
 
           // 채팅방 만들기 버튼 비활성화
-          const $createChatroom = $("#createChatroom");
-          $createChatroom.removeClass("button-selected");
-          $createChatroom.addClass("button-disabled");
-      });
-
-      // X 버튼으로 모달 닫기
-      $(".btn-close-modal").on("click", function (e) {
-          dialog = $(this).parent().parent().parent()[0];
-          $(dialog).removeClass("animate-slideDown"); // 열리는 애니메이션 제거
-          $(dialog).addClass("animate-slideUp"); // 닫히는 애니메이션 추가
-
-          // 애니메이션이 끝난 후 모달 닫기
-          setTimeout(() => {
-              dialog.close();
-              $(dialog).removeClass("animate-slideUp"); // 닫히는 애니메이션 제거
-              $(dialog).addClass("animate-slideDown"); // 열리는 애니메이션 추가
-          }, 300);
+          const $addChatMember = $("#addChatMember");
+          $addChatMember.removeClass("button-selected");
+          $addChatMember.addClass("button-disabled");
       });
 
       // ==========================================================================================================
 
-    // 친구(팔로우) 목록 가져오기
-    getFollowers();
 
     // 체크박스 체크되면 채팅방 만들기 버튼 활성화
-    $(document).on("input", ".member-checkbox", function() {
-        if($(".member-checkbox:checked").length > 0) {
-            const $createChatroom = $("#createChatroom");
-            $createChatroom.removeClass("button-disabled");
-            $createChatroom.addClass("button-selected");
+    $(document).on("input", ".invite-member-checkbox", function() {
+        if($(".invite-member-checkbox:checked").length > 0) {
+            const $addChatMember = $("#addChatMember");
+            $addChatMember.removeClass("button-disabled");
+            $addChatMember.addClass("button-selected");
         }
         else {
-            const $createChatroom = $("#createChatroom");
-            $createChatroom.removeClass("button-selected");
-            $createChatroom.addClass("button-disabled");
+            const $addChatMember = $("#addChatMember");
+            $addChatMember.removeClass("button-selected");
+            $addChatMember.addClass("button-disabled");
         }
     });
 
     // 채팅방 만들기 버튼 클릭시 폼 제출
-    $("#createChatroom").on("click", function () {
-        const $membersEl = $(".member-checkbox:checked"); // 참여자 <li> Elements
-        const followIdList = [];
-        const followNameList = [];
+    $("#addChatMember").on("click", function () {
+        const $membersEl = $(".invite-member-checkbox:checked"); // 참여자 <li> Elements
+        const invitedMemberIdList = [];
 
         // 참여자 아이디 목록과 이름 목록을 리스트에 저장
         for(let i=0; i<$membersEl.length; i++) {
-            followIdList.push($membersEl.eq(i).data("member-id"));
-            followNameList.push($membersEl.eq(i).data("member-name"));
+            invitedMemberIdList.push($membersEl.eq(i).data("member-id"));
         }
 
-        // console.log(followIdList);
-        // console.log(followNameList);
+        // console.log("방번호:", roomId);
+        // console.log(invitedMemberIdList);
 
-        createChatroom(followIdList, followNameList); // 채팅방 만들기
+        addChatMember(roomId, invitedMemberIdList); // 채팅방 만들기
+    });
+
+    $(document).on("click", ".invited-member", function () {
+        $(this).prop("checked", true);
     });
 
   });
 
   // 친구(팔로우) 목록 가져오기
-  function getFollowers() {
+  function getFollowersForInvite() {
     if(requestLock) {
       return;
     }
@@ -143,23 +125,46 @@
         if(json.length !== 0) {
           // console.log(json);
           let html = "";
+          const memberIdList = chatRoomList
+            .find(room => room.chatRoom.roomId === roomId)
+            ?.chatRoom.partiMemberList
+            .map(member => member.member_id) || [];
+
           for(let i = 0; i < json.length ; i++) {
-            html += `
-              <li class="flex">
-                <input type="checkbox" id="memberCheckbox\${i}" class="member-checkbox my-auto h-full accent-orange-600 opacity-70 mr-2"
-                  data-member-id="\${json[i].member_id}" data-member-name=\${json[i].member_name}>
-                <label for="memberCheckbox\${i}" class="border-b-1 border-gray-200 w-full text-left flex px-6 py-3">
-                  <img class="w-15 h-15 object-cover rounded-full mr-4"
-                       src="${pageContext.request.contextPath}/resources/files/profile/\${json[i].member_profile}"  alt="프로필 이미지"/>
-                  <div class="flex-1">
-                    <div class="font-bold text-[1.05rem]">\${json[i].member_name}</div>
-                    <div class="text-gray-500 text-sm">\${json[i].region_name}</div>
-                  </div>
-                </label>
-              </li>
-            `;
+              if(memberIdList.includes(json[i].member_id)) {
+                  html += `
+                      <li class="flex">
+                        <input type="checkbox" id="inviteMemberCheckbox\${i}" class="invited-member my-auto h-full accent-orange-600 opacity-35 mr-2"
+                          data-member-id="\${json[i].member_id}" checked>
+                        <label for="inviteMemberCheckbox\${i}" class="border-b-1 border-gray-200 w-full text-left flex px-6 py-3">
+                          <img class="w-15 h-15 object-cover rounded-full mr-4"
+                               src="${pageContext.request.contextPath}/resources/files/profile/\${json[i].member_profile}"  alt="프로필 이미지"/>
+                          <div class="flex-1">
+                            <div class="font-bold text-[1.05rem]">\${json[i].member_name}</div>
+                            <div class="text-gray-500 text-sm">\${json[i].region_name}</div>
+                          </div>
+                        </label>
+                      </li>
+                    `;
+              }
+              else {
+                html += `
+                  <li class="flex">
+                    <input type="checkbox" id="inviteMemberCheckbox\${i}" class="invite-member-checkbox my-auto h-full accent-orange-600 opacity-70 mr-2"
+                      data-member-id="\${json[i].member_id}">
+                    <label for="inviteMemberCheckbox\${i}" class="border-b-1 border-gray-200 w-full text-left flex px-6 py-3">
+                      <img class="w-15 h-15 object-cover rounded-full mr-4"
+                           src="${pageContext.request.contextPath}/resources/files/profile/\${json[i].member_profile}"  alt="프로필 이미지"/>
+                      <div class="flex-1">
+                        <div class="font-bold text-[1.05rem]">\${json[i].member_name}</div>
+                        <div class="text-gray-500 text-sm">\${json[i].region_name}</div>
+                      </div>
+                    </label>
+                  </li>
+                `;
+              }
           }
-          $(".following-list").html(html);
+          $(".invite-following-list").html(html);
         }
         requestLock = false;
       },
@@ -171,15 +176,15 @@
   }
 
   // 채팅방 만들기
-  function createChatroom(followIdList, followNameList) {
+  function addChatMember(roomId, invitedMemberIdList) {
       if(requestLock) {
           return;
       }
       requestLock = true;
       $.ajax({
-          url: ctxPath + "/chat/createchatroom",
-          data: {"follow_id_List": followIdList,
-                 "follow_name_List": followNameList},
+          url: ctxPath + "/chat/enterChatRoom",
+          data: {"roomId": roomId,
+                 "invited_member_id_List": invitedMemberIdList},
           type: "post",
           dataType : "json",
           success: function (json) {
@@ -199,7 +204,7 @@
   }
 </script>
 
-<dialog id="modalCreateChatroom"
+<dialog id="modalAddChatMember"
         class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 modal rounded-lg pt-6 pb-4 drop-shadow-lg w-200">
   <div class="modal-box w-full flex flex-col max-h-[calc(100vh-80px)] space-y-4">
     <!-- 모달 상단부 -->
@@ -207,7 +212,7 @@
       <button type="button" class="btn-close-modal absolute aspect-square w-10 right-3 top-4">
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
-      <h1 class="h1 px-6">채팅방 만들기</h1>
+      <h1 class="h1 px-6">초대하기</h1>
 
       <hr class="border-gray-200 mt-4">
     </div>
@@ -216,7 +221,7 @@
     <div class="space-y-4 overflow-auto">
       <div class="px-6">
         <div class="text-gray-500 pb-2">초대할 회원을 선택하세요.</div>
-        <ul class="following-list">
+        <ul class="invite-following-list">
             <!-- 초대할 회원 목록 -->
         </ul>
       </div>
@@ -227,8 +232,7 @@
       <hr class="border-gray-200 mb-4">
       <div class="flex justify-end items-center px-6 pb-1">
         <div>
-<%--          <button type="button" id="createChatroom" class="button-selected">채팅방 만들기</button>--%>
-          <button type="button" id="createChatroom" class="button-disabled">채팅방 만들기</button>
+          <button type="button" id="addChatMember" class="button-disabled">초대하기</button>
         </div>
       </div>
     </div>

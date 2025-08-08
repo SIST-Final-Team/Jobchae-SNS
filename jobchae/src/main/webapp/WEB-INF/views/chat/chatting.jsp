@@ -371,12 +371,6 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             enterChatRoom(roomId); // 채팅방 입장
         });
 
-        // 채팅방 생성하기
-        $(".create-chatroom").on("click", function() {
-            // 채팅방 생성 모달 표시
-            alert("채팅방 생성 모달 표시");
-        });
-
         // 채팅방 나가기 버튼 클릭시
         $(".leave-chat").on("click", function() {
             if(confirm("채팅방을 나가시겠습니까?")) {
@@ -428,6 +422,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                 alert("error", "채팅방 입장을 실패하였습니다");
                 return;
             }
+
+            getFollowersForInvite(); // 초대할 멤버 목록을 초기화, modalAddChatMember.jsp에 있음
 
             // 이전 채팅 내역 불러오기
             $.ajax({
@@ -485,6 +481,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     }// end of function updateLastChat(roomId, message) {}...
 
 
+    let chatRoomList = []; // 채팅방 목록을 저장, 초대할 멤버 목록에서 현재 채팅방에 있는 사람을 제외하기 위해 modalAddChatMember.jsp에서 사용
 
     // 채팅페이지를 들어오면 바로 채팅방 목록을 보여줘야한다. 다 포스트 방식으로 해서 보안 강화하자
     function loadChatRoom() {
@@ -496,6 +493,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                 
                 if (chatRoomRespDTOList != null) {
                     let v_html = ``;
+
+                    chatRoomList = chatRoomRespDTOList;
                     
                     for (let chatroomDTO of chatRoomRespDTOList) {
                         let chatDate = "";
@@ -799,6 +798,9 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 <%-- 채팅방 생성 모달 --%>
 <jsp:include page="/WEB-INF/views/chat/modalCreateChatroom.jsp" />
 
+<%-- 채팅방 초대하기 모달 --%>
+<jsp:include page="/WEB-INF/views/chat/modalAddChatMember.jsp" />
+
 <!-- 본문 -->
 <div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]">
     
@@ -838,7 +840,10 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                             <div class="space-y-2">
                                 <ul class="w-40 overflow-hidden font-bold text-gray-700">
                                     <li>
-                                        <button class="leave-chat w-full hover:bg-gray-200 cursor-pointer text-red-400 py-2">채팅방 나가기 <i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+                                        <button class="invite-chat w-full hover:bg-gray-200 cursor-pointer pl-2 text-left! text-gray-500 py-2"><i class="fa-solid fa-user-plus mr-2"></i>초대하기</button>
+                                    </li>
+                                    <li>
+                                        <button class="leave-chat w-full hover:bg-gray-200 cursor-pointer pl-2 text-left! text-red-400 py-2"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>채팅방 나가기</button>
                                     </li>
                                 </ul>
                             </div>

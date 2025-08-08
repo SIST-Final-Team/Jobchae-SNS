@@ -78,7 +78,7 @@ public interface MemberDAO {
      * @param memberIdList 확인할 회원 ID 리스트
      * @return 모든 회원이 존재하면 true, 한 명이라도 없으면 false
      */
-    boolean existsAllMembersByIds(@Param("invitedMemberIdList") List<String> memberIdList);
+    boolean existsAllMembersByIds(@Param("invitedMemberIdList") List<String> memberIdList, @Param("listSize") int listSize);
     
     // 아이디로 회원이 존재하는지 확인
     /**

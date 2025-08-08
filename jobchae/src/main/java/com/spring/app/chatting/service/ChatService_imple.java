@@ -160,8 +160,8 @@ public class ChatService_imple implements ChatService{
     @Transactional
     public void enterChatRoom(String member_id ,String roomId, List<String> invitedMemberIdList) {
         
-        // 초대하려는 사람의 이름이 있는지 검색(프론트를 아주 믿으면 안됌)
-        boolean existAllMember = dao.existsAllMembersByIds(invitedMemberIdList);
+        // 초대하려는 사람의 이름이 있는지 검색(프론트를 아주 믿으면 안됨)
+        boolean existAllMember = dao.existsAllMembersByIds(invitedMemberIdList, invitedMemberIdList.size());
         
         // 들어온 채팅방이 있는지 확인
         ChatRoom chatroom = chatRoomRepository.findById(roomId)

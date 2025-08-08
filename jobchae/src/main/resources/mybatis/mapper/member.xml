@@ -178,7 +178,7 @@
 
     <!--  초대하려는 아이디를 넣어서 회원이 존재하는지 확인  -->
     <select id="existsAllMembersByIds" resultType="boolean">
-        SELECT CASE WHEN COUNT(member_id) = #{memberIdList.size} THEN 1 ELSE 0 END
+        SELECT CASE WHEN COUNT(member_id) = #{listSize} THEN 1 ELSE 0 END
         FROM tbl_member
         WHERE member_id IN
         <foreach collection="memberIdList" item="memberId" open="(" separator="," close=")">
@@ -196,7 +196,7 @@
                 #{invitedMemberId}
               </foreach>
         order by
-            <foreach collection="invitedMemberIdList" index="i" open="CASE member_id" close="END">
+            <foreach collection="invitedMemberIdList" item="invitedMemberId" index="i" open="CASE member_id" close="END">
                 WHEN #{invitedMemberId} THEN #{i}
             </foreach>
     </select>
