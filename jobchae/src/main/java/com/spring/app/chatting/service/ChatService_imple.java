@@ -128,28 +128,55 @@ public class ChatService_imple implements ChatService{
 	
 	// 채팅방 개설 메소드
 	@Override
+    @Transactional
 	public ChatRoom createChatRoom(MemberVO loginuser, List<String> follow_id_List, List<String> follow_name_List) {
-		
-        // 기존에 같은 멤버로 존재하는 채팅방이 있는지 검색
         
+        // 초대하려는 사람의 이름이 있는지 검색(프론트를 아주 믿으면 안됨)
+        boolean existAllMember = dao.existsAllMembersByIds(follow_id_List, follow_id_List.size());
         
+        // 채팅 참여자 목록(로그인유저까지)의 아이디 리스트로 지금 현재 저장되어 있는 채팅방 중 똑같은 참여자가 있는지 검색
+        List<String> joinMemberIdList = new ArrayList<>();
+        joinMemberIdList.add(loginuser.getMember_id()); // 로그인한 유져 아이디도 넣어줌
         
+        // 모든 채팅방에서 지금 들어온 채팅 참여자랑 똑같은 partiMemberList로 갖고 있는지 검색
+        // 조건을 두개 줘야지 all() 연산자는 특정 요소를 모두 포함만 하면 다 검색되니 갯수도 맞춰준 것
+        Query query = new Query(new Criteria().andOperator( // 크리터리아 API 객체를 바로 생성 후 작성
+                Criteria.where("partiMemberList").size(follow_id_List.size()), // 배열의 사이즈가 똑같아야함
+                Criteria.where("partiMemberList").all(joinMemberIdList)        // 배열이 all(배열)의 요소를 모두 가지는지
+        ));
+        // 검색(없으면 null)
+        ChatRoom selectChatRoom = mongoTemplate.findOne(query, ChatRoom.class);
         
-		// 받아온 리스트를 파티멤버타입으로 만들어준다.
-		List<PartiMember> partiMemberList = new ArrayList<>();
-		
-		for (int i = 0; i < follow_id_List.size(); i++) {
-			partiMemberList.add(PartiMember.createPartiMember(follow_id_List.get(i), follow_name_List.get(i)));
-		}
-		// 로그인 유저 정보도 넣어준다.
-		partiMemberList.add(PartiMember.createPartiMember(loginuser.getMember_id(), loginuser.getMember_name()));
-		
-		// 방의 기본이름은 유저의 이름과 나머지 참여자의 이름을 조합한다.
-		String room_name = String.join(",", follow_name_List); // 이름 리스트를 스트링으로 변환
-		
-		ChatRoom chatroom = ChatRoom.create_chatRoom(room_name ,partiMemberList);
-		
-		return chatRoomRepository.save(chatroom); // 채팅방 저장
+        ChatRoom resultChatRoom = null;
+        // 초대하려는 모든 사람이 존재하고 중복인원인 채팅방이 검색이 안된다면
+        if (existAllMember && selectChatRoom == null) {
+            // 받아온 리스트를 파티멤버타입으로 만들어준다.
+            List<PartiMember> partiMemberList = new ArrayList<>();
+            
+            for (int i = 0; i < follow_id_List.size(); i++) {
+                partiMemberList.add(PartiMember.createPartiMember(follow_id_List.get(i), follow_name_List.get(i)));
+            }
+            // 로그인 유저 정보도 넣어준다.
+            partiMemberList.add(PartiMember.createPartiMember(loginuser.getMember_id(), loginuser.getMember_name()));
+            
+            // 방의 기본이름은 빈 배열
+            String room_name = "";
+            
+            resultChatRoom = ChatRoom.create_chatRoom(room_name ,partiMemberList);
+            
+            chatRoomRepository.save(resultChatRoom); // 채팅방 저장
+            
+            // 모든 트렌젝션이 끝나고 실행되게 만들어준다. (이 부분은 사람에게 메시지를 보내도록 하고 구현해야함)
+            // TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            //     @Override
+            //     public void afterCommit() { // 모든 몽고디비 작업이 끝나고 실행되는 구분
+            //         // 채팅방 구독중인 모든 사용자에게 메세지 보내기
+            //         simpMessagingTemplate.convertAndSend("/room/"+roomId, chatMessage);
+            //     }
+            // });//end of TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {}...
+        }//end of if...
+        
+        return resultChatRoom;
 		
 	}//end of public ChatRoom createChatRoom(String loginuser_member_id, String loginuserFolowId) {}...
     
@@ -178,7 +205,8 @@ public class ChatService_imple implements ChatService{
                 .collect(Collectors.toSet()); // Set 타입으로 변환
         
         // 초대하려는 사람이 이미 방에 있는 사람인지 검증(리스트가 나오면 한사람이라도 있는 것이다.)
-        // 검색이 안되면 빈 리스트를 반환! []
+        // 검색이 안되면 toList() 라서 빈 리스트를 반환! []
+        // 처음 방만들기 때는 안되지만 나중에 초대된 사람이 들어왔을 때 지금 멤버에 일치하는 채팅방 중복을 허용했다.
         List<String> isExistInvitedMemberIds = invitedMemberIdList.stream()
                 .filter(invitedMemberId -> partiMemberIdList.contains(invitedMemberId)) // 조건에 충족하면
                 .toList();

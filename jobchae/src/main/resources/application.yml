@@ -5,7 +5,8 @@ spring: # 주의할 점은 내용작성시 들여쓰기 내어쓰기시 공백�
   datasource-jobchae:
     driver-class-name: oracle.jdbc.OracleDriver
 #    jdbcUrl: jdbc:oracle:thin:@dltnstls89.synology.me:1521:xe 원래 데이터베이스
-    jdbcUrl: jdbc:oracle:thin:@ec2-54-180-92-247.ap-northeast-2.compute.amazonaws.com:1521:xe
+#    jdbcUrl: jdbc:oracle:thin:@ec2-54-180-92-247.ap-northeast-2.compute.amazonaws.com:1521:xe #내 aws db
+    jdbcUrl: jdbc:oracle:thin:@1.11.76.67:1521:xe #규영씨 db
     username: final_orauser
     password: gclass
     type: com.zaxxer.hikari.HikariDataSource
