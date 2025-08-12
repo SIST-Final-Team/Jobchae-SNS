@@ -140,7 +140,7 @@
       type: "get",
       dataType: "json",
       success: function (json) {
-        if(json.length !== 0) {
+        if(json.length > 0) {
           // console.log(json);
           let html = "";
           for(let i = 0; i < json.length ; i++) {
@@ -160,6 +160,10 @@
             `;
           }
           $(".following-list").html(html);
+        }
+        else {
+          const html = `<div class="text-gray-500">팔로우한 회원이 없습니다.</div>`;
+          $(".following-div").html(html);
         }
         requestLock = false;
       },
@@ -214,7 +218,7 @@
 
     <!-- 모달 내용 -->
     <div class="space-y-4 overflow-auto">
-      <div class="px-6">
+      <div class="px-6 following-div">
         <div class="text-gray-500 pb-2">초대할 회원을 선택하세요.</div>
         <ul class="following-list">
             <!-- 초대할 회원 목록 -->

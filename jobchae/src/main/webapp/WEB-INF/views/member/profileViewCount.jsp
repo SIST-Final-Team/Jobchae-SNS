@@ -148,7 +148,7 @@ function getViewCount(name, resultContainerId, viewCountTargetType, viewCountTyp
                 });
             }
             else {
-                $("#"+resultContainerId).html(`<span class="block pb-2">조회된 정보가 없습니다.</span>`);
+                $("#"+resultContainerId).html(`<span class="block pb-2 text-gray-500">조회된 정보가 없습니다.</span>`);
             }
 
         },

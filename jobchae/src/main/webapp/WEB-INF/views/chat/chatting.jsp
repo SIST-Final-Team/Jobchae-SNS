@@ -491,7 +491,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
             async: false,       // async:true 가 비동기 방식을 말한다. async 을 생략하면 기본값이 비동기 방식인 async:true 이다.
             success: function (chatRoomRespDTOList) { //이거 json 객체이다.
                 
-                if (chatRoomRespDTOList != null) {
+                if (chatRoomRespDTOList.length > 0) {
                     let v_html = ``;
 
                     chatRoomList = chatRoomRespDTOList;
@@ -537,7 +537,8 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
                     $("#chatting_list").html(v_html);
                     
                 } else {// 채팅방이 아예 없으면 없다고 표시
-                
+                    const v_html = `<div class="text-center text-gray-500 mt-4">채팅 내역이 없습니다.</div>`;
+                    $("#chatting_list").html(v_html);
                 }
                 
             }
@@ -550,30 +551,6 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
     }//end of function loadChatRoom() {}...
 
 
-
-    <%--// 기존에 참여하던 채팅방 입장(클릭하면 채팅방의 채팅 내용 출력)--%>
-    <%--function goChatRoom(roomId, sender_name) {--%>
-    <%--    $.ajax({--%>
-    <%--        url: "${ctx_path}/chat/join",--%>
-    <%--        type: "post",--%>
-    <%--        data: {--%>
-    <%--        "roomId": roomId--%>
-    <%--        },--%>
-    <%--        success: function (html) {--%>
-    <%--            openSideTab(html, sender_name);--%>
-    <%--        },--%>
-    <%--        error: function (request, status, error) { // 코딩이 잘못되어지면 어디가 잘못되어졌는지 보여준다!--%>
-    <%--            alert("code: " + request.status + "\n" + "message: " + request.responseText + "\n" + "error: " + error);--%>
-    <%--        }--%>
-    <%--    });--%>
-    <%--}//end of function goChatRoom(roomId, sender_name) {}...--%>
-    
-    
-    
-    
-    
-    
-    
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // 채팅 부분
     
@@ -861,24 +838,36 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 
                     <!-- Input Area -->
                     <div class="border-t border-gray-200 pt-4 px-4 input-area">
-                        <div class="relative">
-            						<textarea
-                                            id="message"
-                                            class="w-full py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-200 text-sm resize-none overflow-y-auto"
-                                            rows="1"
-                                            placeholder="메시지 쓰기"
-                                            style="max-height: 14em;"
-                                            onkeyup="adjustTextareaHeight(this)"></textarea>
+                        <div class="relative flex gap-2">
+                            <textarea
+                                    id="message"
+                                    class="flex-1 w-full py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-200 text-sm resize-none overflow-y-auto"
+                                    rows="1"
+                                    placeholder="메시지 쓰기"
+                                    style="max-height: 14em;"
+                                    onkeyup="adjustTextareaHeight(this)"></textarea>
+                            <button id="btn_send" class="bg-orange-400 hover:bg-orange-600 text-white py-2 px-4 rounded-lg text-sm font-medium">보내기</button>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <div class="space-x-3 ml-2">
-                                <button class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-image text-lg"></i></button>
-                                <button class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-file text-lg"></i></button>
-                            </div>
-                            <div>
-                                <button id="btn_send" class="bg-orange-400 hover:bg-orange-600 text-white mt-2 py-2 px-4 rounded-lg text-sm font-medium">보내기</button>
-                            </div>
-                        </div>
+
+
+<%--                        <div class="relative">--%>
+<%--            						<textarea--%>
+<%--                                            id="message"--%>
+<%--                                            class="w-full py-2 px-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-200 text-sm resize-none overflow-y-auto"--%>
+<%--                                            rows="1"--%>
+<%--                                            placeholder="메시지 쓰기"--%>
+<%--                                            style="max-height: 14em;"--%>
+<%--                                            onkeyup="adjustTextareaHeight(this)"></textarea>--%>
+<%--                        </div>--%>
+<%--                        <div class="flex items-center justify-between">--%>
+<%--                            <div class="space-x-3 ml-2">--%>
+<%--                                <button class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-image text-lg"></i></button>--%>
+<%--                                <button class="text-gray-500 hover:text-gray-700"><i class="fa-solid fa-file text-lg"></i></button>--%>
+<%--                            </div>--%>
+<%--                            <div>--%>
+<%--                                <button id="btn_send" class="bg-orange-400 hover:bg-orange-600 text-white mt-2 py-2 px-4 rounded-lg text-sm font-medium">보내기</button>--%>
+<%--                            </div>--%>
+<%--                        </div>--%>
                     </div>
 
 

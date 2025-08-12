@@ -40,6 +40,7 @@ public class ChatMessage {
 	private LocalDateTime sendDate; // 작성일자
 
 	@Enumerated(EnumType.STRING)
+	@Builder.Default
 	private ChatType chatType = ChatType.TALK; 	// 채팅 타입
 								// ENTER: 입장 메시지
 								// TALK: 사용자 메시지
