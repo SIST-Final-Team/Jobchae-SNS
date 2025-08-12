@@ -3,6 +3,7 @@ package com.spring.app.follow.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,6 +15,9 @@ import com.spring.app.follow.repository.FollowRepository;
 
 @Service
 public class FollowService_imple implements FollowService{
+
+		@Value("${api.recommendation.url}")
+		private String recommendationApiUrl; // R 서버 URL
 
 	    private final FollowRepository followRepository;
 	    
@@ -75,7 +79,7 @@ public class FollowService_imple implements FollowService{
 	 
 	    public void followRecommendedUsers(String followerId) {
 	        // 여기서 먼저 URL 정의
-	        String rServerUrl = "http://localhost:8000/recommendations?userId=" + followerId;
+	        String rServerUrl = recommendationApiUrl + "?userId=" + followerId;
 
 	        try {
 	            String rawJson = restTemplate.getForObject(rServerUrl, String.class);

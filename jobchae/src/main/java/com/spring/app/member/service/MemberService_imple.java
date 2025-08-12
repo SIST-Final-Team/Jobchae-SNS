@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,6 +46,9 @@ import jakarta.servlet.http.HttpSession;
 
 @Service
 public class MemberService_imple implements MemberService {
+
+	@Value("${api.recommendation.url}")
+	private String recommendationApiUrl; // R 서버 URL
 
     private final AlarmDAO alarmDAO;
 
@@ -772,7 +776,7 @@ public class MemberService_imple implements MemberService {
 	@Override
 	public List<MemberVO> getRecommendedUsers(String followerId) {
 	    // 1. R 서버에서 추천 사용자 아이디 리스트 받아오기
-	    String rServerUrl = "http://localhost:8000/recommendations?userId=" + followerId;
+		String rServerUrl = recommendationApiUrl + "?userId=" + followerId;
 	    String[] recommendedUserIds = null;
 	    try {
 	        recommendedUserIds = restTemplate.getForObject(rServerUrl, String[].class);
@@ -812,7 +816,7 @@ public class MemberService_imple implements MemberService {
 	@Override
 	public List<MemberVO> getPersonalizedUsers(String followerId) {
 		 // 1. R 서버에서 추천 사용자 아이디 리스트 받아오기
-	    String rServerUrl = "http://localhost:8000/recommendations?userId=" + followerId;
+		String rServerUrl = recommendationApiUrl + "?userId=" + followerId;
 	    String[] recommendedUserIds = null;
 	    try {
 	        recommendedUserIds = restTemplate.getForObject(rServerUrl, String[].class);

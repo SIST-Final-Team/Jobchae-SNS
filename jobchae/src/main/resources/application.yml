@@ -83,3 +83,7 @@ springdoc:
     path: /api                  # Swagger UI 추가 접근 경로 => <http://localhost:8080/api>
     tags-sorter: alpha          # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
     operations-sorter: alpha    # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+
+api:
+  recommendation:
+    url: http://localhost:8000/recommendations  # r 서버 주소
