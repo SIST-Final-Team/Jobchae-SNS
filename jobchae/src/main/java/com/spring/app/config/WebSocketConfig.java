@@ -1,8 +1,11 @@
 package com.spring.app.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -49,7 +52,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // /topic, /queue로 시작하는 주소로 메시지를 보내면 메시지 브로커가 처리하도록 설정
         // /topic은 구독자에게 메시지를 보내는 주소, /queue는 특정 사용자에게 메시지를 보내는 주소
         // /room는 해당 주소를 구독하고 있는 클라이언트들에게 메시지 전달(채팅설정)
-        registry.enableSimpleBroker("/topic", "/queue", "/room");
+        registry.enableSimpleBroker("/topic", "/queue", "/room", "/user")
+                .setHeartbeatValue(new long[]{30000, 30000})
+                .setTaskScheduler(heartBeatScheduler());
 
         // /app으로 시작하는 주소로 메시지를 보내면 컨트롤러가 처리하도록 설정
         registry.setApplicationDestinationPrefixes("/app", "/send");
@@ -57,7 +62,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // /user로 시작하는 주소로 메시지를 보내면 특정 사용자에게 메시지를 보내도록 설정
         registry.setUserDestinationPrefix("/user");
     }
-
+    
+    // <<< 하트비트를 위한 TaskScheduler 빈 등록 >>>
+    @Bean
+    public TaskScheduler heartBeatScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        // 스케줄러의 스레드 이름을 지정합니다. (선택 사항)
+        scheduler.setThreadNamePrefix("websocket-heartbeat-scheduler-");
+        return scheduler;
+    }
 
     public static class StompPrincipal implements Principal {
         private final String name;

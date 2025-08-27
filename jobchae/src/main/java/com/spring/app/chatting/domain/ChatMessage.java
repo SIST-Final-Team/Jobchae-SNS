@@ -1,6 +1,7 @@
 package com.spring.app.chatting.domain;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import jakarta.persistence.EnumType;
@@ -38,6 +39,8 @@ public class ChatMessage {
 	private int unreadCount; // 채팅메시지 읽지 않은 인원 수
 
 	private LocalDateTime sendDate; // 작성일자
+    
+    // private Map<String, Date> membersLastReadTime; // 키 값은 로그인한 아이디, 벨류는 마지막으로 읽은 시간
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
@@ -88,6 +91,15 @@ public class ChatMessage {
 				.chatType(ChatType.LEAVE)
 				.build();
 	}
+    
+    // 로그아웃하면 시스템이 보내주는 메시지
+    public static ChatMessage logoutMessage(String member_id) {
+        return ChatMessage.builder()
+                .senderId("system")
+                .senderName("System")
+                .chatType(ChatType.LOGOUT) // 로그아웃 타입
+                .build();
+    }
 	
 	
 	
