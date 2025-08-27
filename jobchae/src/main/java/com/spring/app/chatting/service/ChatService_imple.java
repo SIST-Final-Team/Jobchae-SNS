@@ -176,7 +176,7 @@ public class ChatService_imple implements ChatService{
                 Criteria.where("partiMemberList").size(joinMemberIdList.size()),  // 배열의 사이즈가 똑같아야함
                 Criteria.where("partiMemberList.member_id").all(joinMemberIdList) // 배열이 all(배열)의 요소를 모두 가지는지
         ));
-        // 검색(없으면 null)
+        // 검색(없으면 null, 뽑아져 나온 채팅방은 )
         ChatRoom selectChatRoom = mongoTemplate.findOne(query, ChatRoom.class);
         
         ChatRoom resultChatRoom = null;
@@ -213,7 +213,11 @@ public class ChatService_imple implements ChatService{
                     }//end of for...
                 }
             });//end of TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {}...
-        }//end of if...
+            
+        } else if(existAllMember && selectChatRoom != null) {
+            // 정말 존재하는 사람이고 만약 방이 이미 존재하는 경우 기존의 채팅방으로 이동시켜야 한다.
+            resultChatRoom = selectChatRoom;
+        }// end of if...
         
         return resultChatRoom;
 		
