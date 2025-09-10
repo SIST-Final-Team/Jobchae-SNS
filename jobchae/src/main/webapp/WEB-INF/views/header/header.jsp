@@ -266,8 +266,8 @@ uri="http://java.sun.com/jsp/jstl/core" %>
                     <a href="<%= ctxPath%>/company/1/admin/dashboard"
                       >회사:<span>회사이름</span></a
                     >
-                  
-                  </div></li>
+				  </li>
+                  </div>
                   <li>채용공고 계정</li>
                 </ul>
               </li>

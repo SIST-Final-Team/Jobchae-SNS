@@ -1,7 +1,7 @@
 package com.spring.app.chatting.domain;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 import jakarta.persistence.EnumType;
@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.util.HtmlUtils;
 
 
 @Document(collection = "chat_messages")
@@ -38,7 +39,7 @@ public class ChatMessage {
 
 	private int unreadCount; // 채팅메시지 읽지 않은 인원 수
 
-	private LocalDateTime sendDate; // 작성일자
+	private Instant sendDate; // 작성일자
     
     // private Map<String, Date> membersLastReadTime; // 키 값은 로그인한 아이디, 벨류는 마지막으로 읽은 시간
 
@@ -65,7 +66,7 @@ public class ChatMessage {
 	}
 
 	// 채팅 작성 시간 설정 메소드
-	public void updateSendDate(LocalDateTime now) {this.sendDate = now;}
+	public void updateSendDate(Instant now) {this.sendDate = now;}
     
     
     // 초대 받아서 입장하면 시스템이 보내주는 메시지
@@ -75,7 +76,7 @@ public class ChatMessage {
                 .senderName("System")
                 .roomId(roomId)
                 .message(String.join(",", invitedMemberNameList)+" 님이 입장하셨습니다.")
-                .sendDate(LocalDateTime.now())
+                .sendDate(Instant.now())
                 .chatType(ChatType.ENTER)
                 .build();
     }
@@ -87,7 +88,7 @@ public class ChatMessage {
 				.senderName("System")
 				.roomId(roomId)
 				.message(member_name+" 님이 퇴장하셨습니다.")
-				.sendDate(LocalDateTime.now())
+				.sendDate(Instant.now())
 				.chatType(ChatType.LEAVE)
 				.build();
 	}
@@ -100,8 +101,25 @@ public class ChatMessage {
                 .chatType(ChatType.LOGOUT) // 로그아웃 타입
                 .build();
     }
-	
-	
-	
+    
+    // 스크립트 공격을 걸러준다음 채팅방에 보낼 때 사용하는 함수
+    public static ChatMessage safeMessage(ChatMessage chatMessage) {
+        return ChatMessage.builder()
+                .id(chatMessage.getId()) // 아이디를 반환하면 나중에 메세지를 지정해서 삭제하거나 수정할 수 있도록 확장가능
+                .senderId(chatMessage.getSenderId())
+                .senderName(chatMessage.getSenderName())
+                .roomId(chatMessage.getRoomId())
+                .message(HtmlUtils.htmlEscape(chatMessage.getMessage()))
+                .sendDate(chatMessage.getSendDate())
+                .chatType(chatMessage.getChatType())
+                // .unreadMessage(chatMessage.get) // 읽었는지 안읽었는지 확인하는 것도 넣어줘야함
+                .build();
+        // HtmlUtils.htmlEscape가 알아서 모든 위험한 문자를 안전한 HTML 엔티티로 변환
+        // <  ->  &lt;
+        // >  ->  &gt;
+        // &  ->  &amp;
+        // "  ->  &quot;
+        // '  ->  &#39;
+    }
 	
 }//end of class...

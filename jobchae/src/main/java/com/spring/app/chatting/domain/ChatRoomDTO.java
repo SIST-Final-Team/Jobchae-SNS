@@ -16,5 +16,7 @@ public class ChatRoomDTO { // 채팅방 목록을 불러올 때 편하게 불러
 	private ChatMessage latestChat; // 채팅방 마지막 메세지 정보
 
 	private List<String> memberProfileList; // 참여자 프로필 목록
+    
+    private boolean unReadChat; // 해당 채팅방에 안읽은 채팅 있으면 true, 없으면 false
 	
 }//end of class...

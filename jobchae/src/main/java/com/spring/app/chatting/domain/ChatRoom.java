@@ -1,5 +1,6 @@
 package com.spring.app.chatting.domain;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ChatRoom {
 	
 	private String roomName;
 	
-	private LocalDateTime createdDate; // 채팅방 생성일자 
+	private Instant createdDate; // 채팅방 생성일자
 	
 	
 	// 새로운 방의 아이디를 랜덤하게 부여한다.
@@ -32,7 +33,7 @@ public class ChatRoom {
 		return ChatRoom.builder()
 				.partiMemberList(partiMemberList)
 				.roomName(room_name)
-				.createdDate(LocalDateTime.now())
+				.createdDate(Instant.now())
 				.build();
 	}
     

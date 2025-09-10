@@ -1,5 +1,6 @@
 package com.spring.app.chatting.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import com.spring.app.chatting.domain.ChatMessage;
@@ -26,4 +27,8 @@ public interface ChatService {
     
     // 채팅방 들어가기
     void enterChatRoom(String member_id ,String roomId, List<String> invitedMemberIdLsit);
+    
+    // 지금 로그인한 사용자가 채팅방에 들어오거나, 새로운 채팅을 받거나, 채팅방을 떠날 때 마지막으로 읽은 채팅방 시간을 기록
+    void updateReadTimesChatRoom(String roomId, String memberId, Instant readTime);
+    
 }

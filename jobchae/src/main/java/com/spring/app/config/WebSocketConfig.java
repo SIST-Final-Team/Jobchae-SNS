@@ -1,5 +1,6 @@
 package com.spring.app.config;
 
+import com.spring.app.chatting.domain.HttpHandshakeInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -26,18 +27,26 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // /ws로 접속하면 SockJS를 통해 웹소켓을 사용하도록 설정
-        registry.addEndpoint("/ws").setHandshakeHandler(new DefaultHandshakeHandler(){
+        registry.addEndpoint("/ws")
+                .addInterceptors(new HttpHandshakeInterceptor()) // 인터셉터 추가
+                .setHandshakeHandler(new DefaultHandshakeHandler(){
             //TODO: 이 코드는 인증 관련 코드인데 원리에 대해 좀 더 공부해야 할 듯
             @Override
             protected Principal determineUser(ServerHttpRequest request
                                               , WebSocketHandler wsHandler
                                               , Map<String, Object> attributes) {
-                // URL 파라미터에서 user-id 가져오기
-                String userId = request.getURI().getQuery();
+                // // URL 파라미터에서 user-id 가져오기 (URL에서 직접 가져오는 것은 보안 상 안좋다고 한다.)
+                // String userId = request.getURI().getQuery();
+                // System.out.println("determineUser: " + userId);
+                // if(userId != null && userId.contains("user-id=")) {
+                //     userId = userId.split("user-id=")[1].split("&")[0];
+                //     System.out.println("determineUser: " + userId);
+                //     return new StompPrincipal(userId);
+                // }
+                // 이렇게 수정 요함
+                String userId = (String) attributes.get("member_id"); // HttpHandshakeInterceptor에서 저장한 member_id 가져오기
                 System.out.println("determineUser: " + userId);
-                if(userId != null && userId.contains("user-id=")) {
-                    userId = userId.split("user-id=")[1].split("&")[0];
-                    System.out.println("determineUser: " + userId);
+                if (userId != null) {
                     return new StompPrincipal(userId);
                 }
                 return null;

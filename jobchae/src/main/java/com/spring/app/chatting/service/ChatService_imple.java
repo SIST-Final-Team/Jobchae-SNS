@@ -1,18 +1,16 @@
 package com.spring.app.chatting.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import com.spring.app.chatting.domain.PartiMember;
+import com.spring.app.chatting.domain.*;
 import com.spring.app.chatting.repository.*;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.model.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,14 +19,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.spring.app.chatting.domain.ChatMessage;
-import com.spring.app.chatting.domain.ChatRoom;
-import com.spring.app.chatting.domain.ChatRoomDTO;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-
 
 
 @Service
@@ -49,22 +42,22 @@ public class ChatService_imple implements ChatService{
     private final MemberDAO dao;
     // private final RoomPartiMemberIdListRepository roomPartiMemberIdListRepository;
     private final CacheRepository cacheRepository;
-	public ChatService_imple(MongoTemplate mongoTemplate, SimpMessagingTemplate simpMessagingTemplate, MemberDAO dao, CacheRepository cacheRepository) {
+    private final ChatRoomReadStatusRepository chatRoomReadStatusRepository;
+	public ChatService_imple(MongoTemplate mongoTemplate, SimpMessagingTemplate simpMessagingTemplate, MemberDAO dao, CacheRepository cacheRepository, ChatRoomReadStatusRepository chatRoomReadStatusRepository) {
         this.mongoTemplate = mongoTemplate;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.dao = dao;
         this.cacheRepository = cacheRepository;
         // this.roomPartiMemberIdListRepository = roomPartiMemberIdListRepository;
+        this.chatRoomReadStatusRepository = chatRoomReadStatusRepository;
     }
     
     
     // 현재 로그인한 유저의 모든 채팅방 불러오기 메소드
 	@Override
+    @Transactional
 	public List<ChatRoomDTO> getChatRoomList(String member_id) {
 		
-        // 채팅방을 불러올 때 제일 최근의 메시지의 readMembers List에 로그인된 유저아이디가 없다면 false 보내자
-        
-        
 		// 현재 로그인 사용자가 참여하고 있는 채팅방 목록, 최신 채팅내역 조회
 		List<ChatRoomDTO> chatRoomRespDTOList = customChatRoomRepository.findAllWithLatestChatByMemberId(member_id);
 		
@@ -72,7 +65,7 @@ public class ChatService_imple implements ChatService{
 		if (chatRoomRespDTOList.isEmpty()) {
 			return chatRoomRespDTOList;
 		}
-
+        
 		// 채팅방 프로필 목록 불러오기
 		for(ChatRoomDTO chatRoomDTO : chatRoomRespDTOList) {
 			// 참여자 아이디 목록을 최대 4개까지 추출
@@ -104,22 +97,11 @@ public class ChatService_imple implements ChatService{
 	@Override
     @Transactional
 	public ChatMessage saveChat(ChatMessage chat) {
-		
-//		ChatRoom chatRoom = chatRoomRepository.findChatRoomByRoomId(chat.getRoomId());
-//		int readCount = chatRoom.getParticipants().size();
-//
-//		// 읽지 않은 인원 수가 정장적으로 나오지 않는경우 예외처리
-//		if (readCount < 1) {
-//			log.error("[ERROR] : readCount 값 오류 : {}", readCount);
-//			throw new BusinessException(ExceptionCode.CREATE_CHATROOM_FAILD);
-//		}
-//
-// 		chat.updateUnReadCount(readCount - 1);
         
-        List<String> memberIdList = cacheRepository.getCacheRoomMemberIds(chat.getRoomId());
-        for(String member_id : memberIdList) {
-            System.out.println("캐시에서 아이디 리스트 출력되는지 => "+ member_id);
-        }
+        // List<String> memberIdList = cacheRepository.getCacheRoomMemberIds(chat.getRoomId());
+        // for(String member_id : memberIdList) {
+        //     System.out.println("캐시에서 아이디 리스트 출력되는지 => "+ member_id);
+        // }
 		ChatMessage saveChatMessage = chatRepository.save(chat);
         
         // 채탱방의 모든 사람들에게 메시지 전송
@@ -151,10 +133,32 @@ public class ChatService_imple implements ChatService{
         // // 동시성을 주는 해시맵이라 멀티스레드에서 쓰기(write)에 유리하다. roomId 가 없으면 새로 검색해서 가져온다.
         // roomPartiMemberIdListRepository.getMemberIdList(roomId);
         
+        // 저장된 메세지의 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 로 출력하기
+        List<ChatMessage> afterChatMessageList = chatRepository.findChatByRoomId(roomId);
         
-        return chatRepository.findChatByRoomId(roomId);
-	}
- 
+        List<ChatMessage> beforeChatMessageList =
+                afterChatMessageList.stream()
+                        .map(chatMessage -> ChatMessage.safeMessage(chatMessage))
+                        .toList();
+        
+        return beforeChatMessageList;
+	}//end of public List<ChatMessage> loadChatHistory(String roomId) {}...
+    
+    
+    // // 지금 로그인한 사용자가 메세지를 읽었을 때 읽은 사람 목록에 추가(읽음 처리)
+    // @Override
+    // @Transactional
+    // public void messageReadChack(String roomId, String member_id) {
+    //     // 메세지들 중 readMembers 리스트에 나의 아이디가 없는 경우
+    //     Query query = new Query(Criteria.where("roomId").is(roomId)
+    //                                     .and("readMembers").nin(member_id)); // not in(들어있지 않다는 뜻)
+    //     // 중복방지해서 넣기
+    //     Update update = new Update().addToSet("readMembers", member_id);
+    //
+    //     // 여러문서를 한꺼번에 업데이트하자
+    //     mongoTemplate.updateMulti(query, update, ChatMessage.class);
+    // }//end of public void messageReadChack(String roomId, String memberId) {}...
+    
  
 	
 	// 채팅방 개설 메소드
@@ -206,7 +210,10 @@ public class ChatService_imple implements ChatService{
                     
                     // 개설된 채팅방의 roomId 를 가져오자(
                     String roomId = savedChatRoom.getRoomId();
-                    ChatMessage chatMessage = ChatMessage.enterMessage(roomId, joinMemberIdList);
+                    // 로그인한 사람과 채팅방에 속한 인원 이름 리스트
+                    follow_name_List.add(loginuser.getMember_name());
+                    ChatMessage chatMessage = ChatMessage.enterMessage(roomId, follow_name_List);
+                    chatRepository.save(chatMessage); // 메세지 저장
                     for (String joinMember_id  : joinMemberIdList) {
                         // 채팅방 구독중인 모든 사용자에게 메세지 보내기
                         simpMessagingTemplate.convertAndSendToUser(joinMember_id, "/message", chatMessage);
@@ -274,7 +281,6 @@ public class ChatService_imple implements ChatService{
                 ChatMessage chatMessage = ChatMessage.enterMessage(roomId, invitedMemberNameList);
                 // 저장
                 chatRepository.save(chatMessage);
-                // 서버램에 올라와 있는 채팅방 리스트에도 업데이트 해준다.
                 
                 // 모든 트렌젝션이 끝나고 실행되게 만들어준다.
                 TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -295,8 +301,7 @@ public class ChatService_imple implements ChatService{
     }//
     
     
-	
-	// 채팅방 나가기
+    // 채팅방 나가기
 	@Override
     @Transactional
 	public void leaveChatRoom(String roomId, String member_id, String member_name) {
@@ -336,6 +341,18 @@ public class ChatService_imple implements ChatService{
 	}//end of public void leaveChatRoom(String roomId, String member_id, String member_name) {}...
     
     
+    
+    // 지금 로그인한 사용자가 채팅방에 들어오거나, 새로운 채팅을 받거나, 채팅방을 떠날 때 마지막으로 읽은 채팅방 시간을 기록
+    @Override
+    public void updateReadTimesChatRoom(String roomId, String member_id, Instant readTime) {
+    
+        Query query = new Query(Criteria.where("userId").is(member_id).and("roomId").is(roomId));
+        
+        Update update = new Update().set("lastReadTimestamp", readTime);
+        // 클라이언트가 보낸 정확한 시간으로 업데이트
+        mongoTemplate.upsert(query, update, ChatRoomReadStatus.class);
+    
+    }//end of public void readTimesChatRoom(String roomId, String memberId, LocalDateTime readTime) {}...
     
  
     
