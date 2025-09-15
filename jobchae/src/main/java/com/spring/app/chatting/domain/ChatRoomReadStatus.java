@@ -3,6 +3,7 @@ package com.spring.app.chatting.domain;
 
 import jakarta.persistence.Id;
 import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -18,6 +19,7 @@ public class ChatRoomReadStatus {
     
     @Id
     private String id; // 아이디
+    // private ObjectId id; // 아이디
     
     private String roomId; // 방번호
     

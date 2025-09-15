@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,6 +21,7 @@ public class ChatRoom {
 	
 	@Id
 	private String roomId; // 채팅방 식별자
+    // private ObjectId roomId; // 채팅방 식별자
 	
 	private List<PartiMember> partiMemberList; // 채팅방 참여자 식별자
 	

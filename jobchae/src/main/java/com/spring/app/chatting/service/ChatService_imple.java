@@ -130,8 +130,9 @@ public class ChatService_imple implements ChatService{
         // 캐시에 데이터를 넣어주자
         cacheRepository.getCacheRoomMemberIds(roomId);
         
-        // // 동시성을 주는 해시맵이라 멀티스레드에서 쓰기(write)에 유리하다. roomId 가 없으면 새로 검색해서 가져온다.
-        // roomPartiMemberIdListRepository.getMemberIdList(roomId);
+        // 어그리제이션을 통해 안읽은 채팅방의 채팅은 안읽은 채팅 기준으로 위로 20개, 밑으로 전부 가져오고
+        // 모든 채팅을 읽은 채팅방의 채팅은 제일 최신 채팅부터 오래된 채팅 순으로 20개씩 가져온다.
+        
         
         // 저장된 메세지의 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 로 출력하기
         List<ChatMessage> afterChatMessageList = chatRepository.findChatByRoomId(roomId);

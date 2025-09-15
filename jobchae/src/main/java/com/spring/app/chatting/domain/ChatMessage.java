@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,6 +26,7 @@ public class ChatMessage {
 	
 	@Id
 	private String id; // 채팅 식별자
+    // private ObjectId id; // 채팅 식별자
 
 //	@Field("sender_id")
 	private String senderId; // 작성자 식별자	

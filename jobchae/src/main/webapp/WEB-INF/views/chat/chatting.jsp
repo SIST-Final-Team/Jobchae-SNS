@@ -300,6 +300,7 @@ let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
 let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용해야한다.
 
     $(document).ready(function() {
+        // reRoadPage(); // 새로고침 시 실행되는 함수
 
         // === 모달 관련 자바스크립트 (김규빈) ===========================================================================
 
@@ -336,9 +337,8 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
 
 
         // ==========================================================================================================
-        loadChatRoom(); // 채팅방 목록 표시(속도 때문에 전방배치, 먼저보여주기용도)
+
         $(".input-area").addClass("hidden"); // 처음에는 메시지 보내기 부분 숨기기
-		
 		
 		// 웹소켓 연결 모듈을 통하여 연결 및 구독
         WebSocketManager.connect("${ctx_path}/ws", function () {
@@ -360,6 +360,8 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
 				}//
 			});
 
+            loadChatRoom(); // 채팅방 목록 표시(속도 때문에 전방배치, 먼저보여주기용도)
+            
             // 만약 입장할 채팅방이 이미 정해져있다면 아래와 같은 주소로 접속했음
             // chat/chatMain/{roomId}
             if(roomId != "") {
@@ -384,6 +386,10 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
                 console.log("선택된 채팅방의 방번호 => "+ current_roomId);
             });
         });//end of WebSocketManager.connect("${ctx_path}/ws", function () {}...
+
+        
+        
+		
 		
         
         // 엔터키 입력시 채팅 전송 처리
@@ -575,12 +581,21 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
                     chatRoomList = chatRoomRespDTOList;
                     
                     for (let chatroomDTO of chatRoomRespDTOList) {
-                        let chatDate = "";
-                        if(chatroomDTO.latestChat.sendDate != null) {
-                            chatDate = chatroomDTO.latestChat.sendDate
-                                .substring(0, 10)
-                                .replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1-$2-$3');
-                        }
+                        // let chatDate = "";
+                        // if(chatroomDTO.latestChat.sendDate != null) { // TODO
+                        //     chatDate = chatroomDTO.latestChat.sendDate
+                        //         .substring(0, 10)
+                        //         .replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1-$2-$3');
+                        // }
+
+                        // 인스턴스 타입의 시간을 써야해서 바꾸는 시간출력
+                        const sendDateTime = new Date(chatroomDTO.latestChat.sendDate);
+
+                        // 출력 시 채팅 날짜에 따른 구분을 위한 시간
+                        const year = sendDateTime.getFullYear();
+                        const month = String(sendDateTime.getMonth() + 1).padStart(2, '0');
+                        const day = String(sendDateTime.getDate()).padStart(2, '0');
+                        const chatDate = `\${year}-\${month}-\${day}`; // 날짜 구분 시간
 
                         // 채팅방 이름을 "김규빈, 이준영, 이진호" 와 같은 형식으로 표시
                         let partiMemberList = chatroomDTO.chatRoom.partiMemberList; // 참여자 목록
@@ -676,6 +691,13 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
                 return;
             }//
             
+			// 로그인한 사용자가 어느 채팅방에 새로 초대된 경우 그 채팅방에서 보낸 채팅을 받으면 바로 채팅방을 갱신해줘야한다.
+            // const $selectedChatroom = $('.chatroom-list[data-room-id="' + chat.roomId + '"]');
+			if($('.chatroom-list[data-room-id='+chat.roomId+']').length === 0) { // 거짓으로 설정해보자
+                console.log("채팅의 방번호 => ",chat.roomId);
+                loadChatRoom(); // 채팅방 갱신
+			}``
+			
             /////////////////////////////////////////////////////////////////////////////////
          	// 각 채팅의 송신날짜 년/월/일을 채팅 상단에 띄우기 위한 임시 저장값
             
@@ -713,7 +735,7 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
 			
 			/////////////////////////////////////////////////////////////////////////////////
    
-			// 만약 선택한 채팅방의 채팅인지 아닌지 비교(TODO 선택한 채팅방의 메세지면 바로 읽음 처리해야함)
+			// 만약 선택한 채팅방의 채팅인지 아닌지 비교
 			if (current_roomId === chat.roomId) {
                 recordTimesInChatRoom(current_roomId); // 선택한 채팅방이면 메세지가 왔을 때 마지막 채팅 확인 시간을 기록
                 console.log("채팅방 만들자마자 여기가 실행되는지, 채팅방번호 => ", current_roomId);
@@ -901,12 +923,13 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
     function recordTimesInChatRoom(roomId) {
         
         updateReadTimes(roomId, new Date()); // 현재 시간으로 업데이트
-        console.log("커런트룸아이디 => ", current_roomId);
+        // console.log("커런트룸아이디 => ", current_roomId);
 	}//end of function enterChatRoomTime(roomId) {}...
  
 
 	// 방을 나가거나 변경 시 마지막 시간과 채팅방 아이디를 초기화
 	function resetTimesAndRoomId() {
+        roomId = "";
         current_roomId = "";
         lastReadTimestamp = "";
         // roomId = ""; // 전송된 룸아이디 초기화, 새로고침 후 초기화 되면 그 전 화면으로 돌려놓자
@@ -953,6 +976,19 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
 	}//
 
 
+	// // 새로고침 시 실행하는 함수, 활용도가 아직 없다.
+	// function reRoadPage() {
+    //     const navEntries = performance.getEntriesByType("navigation"); // 페이지네비게이션 정보, 배열이다.
+	// 	if (navEntries.length > 0) {
+    //         const navType = navEntries[0].type; // 타입
+	//
+	// 		console.log("페이지 타입 => ", navType);
+    //         if (navType === "reload") { // 오직 새로고침일 때만 실행
+    //             console.log("새로고침시에만 실행");
+    //             resetTimesAndRoomId(); // 초기화
+	// 		}
+	// 	}
+	// }//end of function reRoadPage() {}...
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 

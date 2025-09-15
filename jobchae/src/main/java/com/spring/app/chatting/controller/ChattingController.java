@@ -87,7 +87,7 @@ public class ChattingController {
  		ChatRoom chat_room = chatservice.createChatRoom(loginuser, follow_id_List, follow_name_List);
  		
 		Map<String, String> map = new HashMap<>();
-		map.put("roomId", chat_room.getRoomId());
+		map.put("roomId", chat_room.getRoomId()); // 이게 오브젝트아디티 타입을 16진수 스트링을 변환하는 공식 API
  		return map;
  	}//end of public ModelAndView createChatRoom(HttpServletRequest request, ModelAndView mav) {}...
 	
