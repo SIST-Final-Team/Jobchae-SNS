@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.spring.app.chatting.domain.ReadStatusUpdateRequest;
+import com.spring.app.chatting.domain.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -21,9 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.spring.app.chatting.domain.ChatMessage;
-import com.spring.app.chatting.domain.ChatRoom;
-import com.spring.app.chatting.domain.ChatRoomDTO;
 import com.spring.app.chatting.service.ChatService;
 import com.spring.app.member.domain.MemberVO;
 
@@ -110,8 +107,12 @@ public class ChattingController {
 	// 채팅방의 채팅 내역 조회
 	@PostMapping("load_chat_history/{roomId}")
 	@ResponseBody
-	public List<ChatMessage> loadChatHistory(@PathVariable String roomId) {
-        return chatservice.loadChatHistory(roomId);
+	public List<ChatMessageDTO> loadChatHistory(@PathVariable String roomId, StompHeaderAccessor accessor,
+                                                @RequestBody Map<String, String> loadChatStartMap) {
+        // 웹소캣 헤더에서 로그인한 사용자 아이디 가져오기(이게 더 안전하고 빠르다)
+        String member_id = (String) accessor.getSessionAttributes().get("member_id");
+        String loadChatStart = loadChatStartMap.get("loadChatCount"); // 불러올 채팅의 시작인덱스
+        return chatservice.loadChatHistory(roomId, member_id, loadChatStart);
 	}//end of public List<ChatMessage> loadChatHistory(@PathVariable String roomId) {}...
     
     

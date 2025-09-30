@@ -29,19 +29,88 @@ import static org.springframework.data.mongodb.core.aggregation.ArrayOperators.L
 import static org.springframework.data.mongodb.core.aggregation.ConditionalOperators.ifNull;
 import static org.springframework.data.mongodb.core.query.TypedCriteriaExtensionsKt.size;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor // 생성자 자동 주입
 @Repository
 public class CustomChatRoomRepository {
-
-	
-	@Autowired
-	MongoOperations mongo; // 몽고 디비를 직접 커스텀 하려한다.
-
+    
+    private final MongoOperations mongo; // 몽고 디비를 직접 커스텀 하려한다.
+    
 	// 현재 로그인 사용자가 참여하고 있는 채팅방 목록, 최신 채팅내역 조회
 	public List<ChatRoomDTO> findAllWithLatestChatByMemberId(String member_id) {
   
 		Aggregation agg = newAggregation(
-
+            
+            // [1단계: 필터링]
+            match(Criteria.where("partiMemberList").elemMatch(Criteria.where("member_id").is(member_id))),
+            
+            // [(필수!) ID -> String 변환]
+            // 모든 lookup을 위해, DB에 ObjectId로 저장된 _id 필드를 String으로 변환하여 임시 필드에 저장합니다.
+            // 당신의 ChatRoom 클래스에서 @Id 필드 이름이 'roomId'이므로, "$roomId"를 사용합니다.
+            Aggregation.addFields().addField("roomIdAsString")
+                    .withValue(ConvertOperators.ToString.toString("$_id")).build(),
+            // [2단계: 관련 데이터 조인]
+            Aggregation.lookup("chat_room_readStatus", "roomIdAsString", "roomId", "readStatus"),
+            
+            // 나의 읽음 상태만 필터링
+            Aggregation.addFields().addField("myReadStatus").withValue(
+                    ArrayOperators.Filter.filter("readStatus")
+                            .as("status")
+                            .by(ComparisonOperators.Eq.valueOf("$$status.userId").equalToValue(member_id))
+            ).build(),
+            
+            // [5단계: 모든 메시지 조인] (기존과 동일)
+            Aggregation.lookup("chat_messages", "roomIdAsString", "roomId", "all_messages"),
+            
+            // [6단계-A: 정렬된 메시지 배열 생성]
+            Aggregation.addFields().addField("sorted_messages")
+                    .withValue(// all_messages 배열을 정렬합니다.
+                            ArrayOperators.SortArray.sortArrayOf("all_messages")
+                                    // 정렬 기준: 'sendDate' 필드를 내림차순(DESC)으로
+                                    .by(Sort.by(Sort.Direction.DESC, "sendDate"))
+                    ).build(),
+             
+            // 최신 메시지(배열 마지막 요소 꺼내기)
+            Aggregation.addFields().addField("latestChat")
+                    .withValue(ArrayOperators.ArrayElemAt.arrayOf("sorted_messages")
+                            .elementAt(0))
+                    // 내림차순 정렬된 것의 첫번째
+                    .build(),
+            
+            // 안읽음 여부
+            Aggregation.addFields().addField("unReadChat").withValue(
+                    ComparisonOperators.Gt.valueOf(
+                            ArrayOperators.Size.lengthOfArray(
+                                    ArrayOperators.Filter.filter("all_messages")
+                                            .as("msg")
+                                            .by(ComparisonOperators.Gt.valueOf("$$msg.sendDate")
+                                                    .greaterThan(ConditionalOperators.ifNull(
+                                                            ArrayOperators.ArrayElemAt
+                                                                    .arrayOf("myReadStatus.lastReadTimestamp")
+                                                                    .elementAt(0) // 배열의 첫번째 요소 접근
+                                                    ).then(java.time.Instant.EPOCH))
+                                            )
+                            )
+                    ).greaterThanValue(0)
+            ).build(),
+            
+            
+            // 8. projection
+            Aggregation.project()
+                    .and(Aggregation.ROOT).as("chatRoom") // $$ROOT
+                    .and("latestChat").as("latestChat")
+                    .and("unReadChat").as("unReadChat"),
+                
+            Aggregation.sort(Sort.by(Sort.Direction.DESC, "latestChat.sendDate"))
+        );
+        
+        AggregationResults<ChatRoomDTO> result =
+                mongo.aggregate(agg, "chat_room", ChatRoomDTO.class);
+        
+        return result.getMappedResults();
+        
+        
+        
+        
 		// 	// [시작 & 필터링] 'chat_room'에서 시작하여 사용자가 참여한 방만 필터링
 		// 	Aggregation.match(Criteria.where("partiMemberList").elemMatch(Criteria.where("member_id").is(member_id))),
         //
@@ -112,109 +181,8 @@ public class CustomChatRoomRepository {
         //
         // return result.getMappedResults();
 
-            
-                
-            // [1단계: 필터링]
-            match(Criteria.where("partiMemberList").elemMatch(Criteria.where("member_id").is(member_id))),
-        
-            // [(필수!) ID -> String 변환]
-            // 모든 lookup을 위해, DB에 ObjectId로 저장된 _id 필드를 String으로 변환하여 임시 필드에 저장합니다.
-            // 당신의 ChatRoom 클래스에서 @Id 필드 이름이 'roomId'이므로, "$roomId"를 사용합니다.
-            Aggregation.addFields().addField("roomIdAsString")
-                    .withValue(ConvertOperators.ToString.toString("$_id")).build(),
-            // [2단계: 관련 데이터 조인]
-            Aggregation.lookup("chat_room_readStatus", "roomIdAsString", "roomId", "readStatus"),
-        
-            // 나의 읽음 상태만 필터링
-            Aggregation.addFields().addField("myReadStatus").withValue(
-                    ArrayOperators.Filter.filter("readStatus")
-                            .as("status")
-                            .by(ComparisonOperators.Eq.valueOf("$$status.userId").equalToValue(member_id))
-            ).build(),
-        
-            // [5단계: 모든 메시지 조인] (기존과 동일)
-            Aggregation.lookup("chat_messages", "roomIdAsString", "roomId", "all_messages"),
-            
-            // [6단계-A: 정렬된 메시지 배열 생성]
-            Aggregation.addFields().addField("sorted_messages")
-                    .withValue(// all_messages 배열을 정렬합니다.
-                            ArrayOperators.SortArray.sortArrayOf("all_messages")
-                            // 정렬 기준: 'sendDate' 필드를 내림차순(DESC)으로
-                                .by(Sort.by(Sort.Direction.DESC, "sendDate"))
-                    ).build(),
-            
-            // 최신 메시지(배열 마지막 요소 꺼내기)
-            Aggregation.addFields().addField("latestChat")
-                    .withValue(ArrayOperators.ArrayElemAt.arrayOf("sorted_messages")
-                        .elementAt(0))
-                        // 내림차순 정렬된 것의 첫번째
-                    .build(),
-        
-            // 안읽음 여부
-            Aggregation.addFields().addField("unReadChat").withValue(
-                    ComparisonOperators.Gt.valueOf(
-                            ArrayOperators.Size.lengthOfArray(
-                                    ArrayOperators.Filter.filter("all_messages")
-                                            .as("msg")
-                                            .by(ComparisonOperators.Gt.valueOf("$$msg.sendDate")
-                                                    .greaterThan(ConditionalOperators.ifNull(
-                                                            ArrayOperators.ArrayElemAt
-                                                                    .arrayOf("myReadStatus.lastReadTimestamp")
-                                                                    .elementAt(0) // 배열의 첫번째 요소 접근
-                                                            )
-                                                            .then(java.time.Instant.EPOCH))
-                                            )
-                            )
-                    ).greaterThanValue(0)
-            ).build(),
-            
-        
-            // 8. projection
-            Aggregation.project()
-                    .and(Aggregation.ROOT).as("chatRoom") // $$ROOT
-                    .and("latestChat").as("latestChat")
-                    .and("unReadChat").as("unReadChat"),
-                
-            Aggregation.sort(Sort.by(Sort.Direction.DESC, "latestChat.sendDate"))
-        );
-        
-        AggregationResults<ChatRoomDTO> result =
-                mongo.aggregate(agg, "chat_room", ChatRoomDTO.class);
-        
-        return result.getMappedResults();
-        
-        // // 나의 마지막 읽음 시간 추출
-        // Aggregation.addFields().addField("myLastReadTimestamp").withValue(
-        //         AggregationExpression.from((MongoExpression) new Document("$let", new Document("vars",
-        //                 new Document("myStatus",
-        //                         filter("readStatus")
-        //                                 .as("status")
-        //                                 .by(ComparisonOperators.Eq.valueOf("$$status.userId").equalToValue(member_id))
-        //                 )
-        //         )).append("in",
-        //                 // $$myStatus 배열의 첫 번째 요소의 lastReadTimestamp 필드가 null인지 확인
-        //                 ConditionalOperators.when(
-        //                         // 조건: 이 필드가 존재하는가? (또는 null이 아닌가?)
-        //                         // $$myStatus 배열이 비어있으면 이 필드 자체가 존재하지 않아 null로 평가됨
-        //                         ComparisonOperators.Ne.valueOf(
-        //                                 ArrayOperators.ArrayElemAt.arrayOf("$$myStatus.lastReadTimestamp").elementAt(0)
-        //                         ).notEqualToValue(null))
-        //                         .then(// 존재하면(null이 아니면) 그 값을 사용
-        //                               ArrayOperators.ArrayElemAt.arrayOf("$$myStatus.lastReadTimestamp").elementAt(0)
-        //                         )
-        //                         .otherwise(// 존재하지 않으면(null이면) EPOCH 사용
-        //                                 Instant.EPOCH)
-        // ))).build(),
-        
-        // // [5단계: 모든 메시지 조인] (기존과 동일)
-        // Aggregation.lookup("chat_messages", "roomIdAsString", "roomId", "all_messages"),
         
         
-        
-                
-                
-        
-       
         
         
         // // 기존의 어그리제이션, 혹시 몰라서 남겨두었다.

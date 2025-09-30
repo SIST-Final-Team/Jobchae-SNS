@@ -253,6 +253,9 @@
 	.chat_date{
 		@apply bg-gray-200 rounded-full py-1 px-4 w-64 mx-auto justify-center flex justify-items-center text-xs;
 	}
+    .chat_unReadChat{
+        @apply bg-yellow-200 rounded-full py-1 px-4 w-64 mx-auto justify-center flex justify-items-center text-xs;
+    }
 
     .selected_chatroom{
         @apply relative before:inline-block before:absolute before:w-1 before:h-full before:bg-orange-400 before:mr-2 before:left-0 before:top-1/2 before:-translate-y-1/2;
@@ -296,8 +299,10 @@
 
 
 let roomId = "${not empty requestScope.roomId ? requestScope.roomId : ''}"; // 지정된 채팅방인 경우 채팅방 id
-let last_chat_date = ""; // 마지막으로 불러온 채팅의 날짜 기록용
-let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용해야한다.
+let last_chat_date = ""; 	// 마지막으로 불러온 채팅의 날짜 기록용
+let current_roomId = "";	// 클릭한 채팅방의 번호를 수신 때 사용해야한다.
+let loadChatStart = 0; 		// 불러오는 채팅의 인덱스(시작은 0부터, 계속 불러올 때마다 20씩 추가한다.)
+let loadChatPlus = 20;	// 불러올 채팅의 개수(단위)크기
 
     $(document).ready(function() {
         // reRoadPage(); // 새로고침 시 실행되는 함수
@@ -463,15 +468,14 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
         }
         
 		getFollowersForInvite(); // 초대할 멤버 목록을 초기화, modalAddChatMember.jsp에 있음
-
-        read_LastNoReadChat(roomId); // 안읽었던 채팅들 읽기 표시
 		
-		recordTimesInChatRoom(roomId); // 채팅방의 채팅 마지막 확인 시간 기록
+		loadChatStart = 0; // 불러올 채팅메세지의 인덱스 초기화
 		
-        // 이전 채팅 내역 불러오기
+		// 이전 채팅 내역 불러오기
         $.ajax({
             url    : "${ctx_path}/chat/load_chat_history/" + roomId,
             type   : "post", // 개인정보니까 post 하자
+            data: {"loadChatStart": loadChatStart}, // 불러오는 채팅의 인덱스
             success: function (json) {
                 loadChat(json);
             },
@@ -696,7 +700,7 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
 			if($('.chatroom-list[data-room-id='+chat.roomId+']').length === 0) { // 거짓으로 설정해보자
                 console.log("채팅의 방번호 => ",chat.roomId);
                 loadChatRoom(); // 채팅방 갱신
-			}``
+			}
 			
             /////////////////////////////////////////////////////////////////////////////////
          	// 각 채팅의 송신날짜 년/월/일을 채팅 상단에 띄우기 위한 임시 저장값
@@ -778,83 +782,105 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
 
 
     // 전체 채팅 내역 불러오기
-    function loadChat(chatList) { // 이거 json 객체이다.
+    function loadChat(chatListDTO) { // 이거 json 객체이다.
     	const login_member_id = "${login_member_id}";
 
         if (login_member_id == "") {
         	alert("error", "채팅 내역을 불러오는데 실패했습니다.");
         	return;
       	}//
-
-        if (chatList != null) {
-            $("#chatting_view").html(""); // 처음 입장시 채팅 목록 비우기
-            $("textarea#message").text(""); // 입력한 텍스트 비우기
+		
+		// 만약 이미 선택한 채팅방을 또 누르면 다시 갱신하지 않도록 설정
+		if (chatListDTO.chatMessageList.length > 0 &&
+            current_roomId === chatListDTO.chatMessageList[0].roomId) {
+            return;
+		}
+		// 보내온 json 배열이 비어있지 않아야한다.
+        if (chatListDTO.chatMessageList.length > 0 &&
+            chatListDTO.chatMessageList[0].message != null) {
+            
+            // 첫번째 로드일 때만 채팅창을 비워줘야한다.
+            if (loadChatStart == 0) {
+                $("#chatting_view").html(""); // 처음 입장시 채팅 목록 비우기
+                $("textarea#message").text(""); // 입력한 텍스트 비우기
+			}
 			
+			// 불러온 chatListDTO의 안읽은 채팅이 있는지 여부(true 있음, false 없음)
+			const existUnreadChat = chatListDTO.existUnReadChat;
+            
             // 각 채팅의 송신날짜 년/월/일을 채팅 상단에 띄우기 위한 임시 저장값
             let dateString = "";
-    		for (let chat of chatList) {
-    			if (chat && chat.message) {// TODO 여기 메세지 20개씩 제일 최근의 메세지를 가져올 것이다. 내가 안읽은 부분이 있다면
-										   // TODO 그 채팅 위에 20개, 밑으로 모두 가져올 것이다.
-    				// // 송신날짜를 시/분으로 저장
-                    // const sendDate = chat.sendDate.substring(11, 16);
-    				//
-                    // // 각 채팅을 표시하기 전에 날짜가 바뀌면 상단에 날짜를 표시
-                    // if (chat.sendDate.substring(0, 10) != dateString) {
-                    //     const chatDate = chat.sendDate
-                    //         			 .substring(0, 10)
-                    //         			 .replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$1년 $2월 $3일');
-                    //
-                    //     $("#chatting_view").append($("<div class='chat_date'>").text(chatDate));
-                    //     dateString = chat.sendDate.substring(0, 10);
-                    //     last_chat_date = chat.sendDate.substring(0, 10); // 마지막 채팅 날짜 저장
-                    // }//end of if (chat.sendDate.substring(0, 10) != dateString) {}...
+            chatListDTO.chatMessageList.forEach((chat, index) => {
+                // 불러온 리스트의 5번째 인덱스는 최초의 안읽은 인덱스이다.
+				// 여기까지 읽었다는 알림칸을 추가 후 메세지 쌓기
+            	if (existUnreadChat === true && index == 5) {// TODO 안읽은 최초 메시지 인덱스부터 표시해야함 5아님
+                    $("#chatting_view").append($("<div class='chat_unReadChat'>").text("여기까지 읽으셨습니다."));
+				}//end of if (chatListDTO.existUnReadChat === true && index == 5) {}...
 
-                    // 인스턴스 타입의 시간을 써야해서 바꾸는 시간출력
-                    const sendDateTime = new Date(chat.sendDate);
+                // 인스턴스 타입의 시간을 써야해서 바꾸는 시간출력
+                const sendDateTime = new Date(chat.sendDate);
 
-                    const hours = String(sendDateTime.getHours()).padStart(2, '0'); // 2자리 숫자보다 작으면 0 붙인다!
-                    const minutes = String(sendDateTime.getMinutes()).padStart(2, '0');
-                    const sendDate = `\${hours}:\${minutes}`; // 메세지 표시 시간
+                const hours = String(sendDateTime.getHours()).padStart(2, '0'); // 2자리 숫자보다 작으면 0 붙인다!
+                const minutes = String(sendDateTime.getMinutes()).padStart(2, '0');
+                const sendDate = `\${hours}:\${minutes}`; // 메세지 표시 시간
 
-                    // 출력 시 채팅 날짜에 따른 구분을 위한 시간
-                    const year = sendDateTime.getFullYear();
-                    const month = String(sendDateTime.getMonth() + 1).padStart(2, '0');
-                    const day = String(sendDateTime.getDate()).padStart(2, '0');
-                    const chatDate = `\${year}-\${month}-\${day}`; // 날짜 구분 시간
+                // 출력 시 채팅 날짜에 따른 구분을 위한 시간
+                const year = sendDateTime.getFullYear();
+                const month = String(sendDateTime.getMonth() + 1).padStart(2, '0');
+                const day = String(sendDateTime.getDate()).padStart(2, '0');
+                const chatDate = `\${year}-\${month}-\${day}`; // 날짜 구분 시간
 
-                    if (chatDate !== dateString) { // 불러온 채팅이 기존에 불러온 채팅 날짜와 달라진다면
-                        const chatDateString = `\${year}년 \${month}월 \${day}일`;
-                        $("#chatting_view").append($("<div class='chat_date'>").text(chatDateString));
-                        last_chat_date = chatDate; // 마지막으로 채팅한 날짜를 설정해준다.(채팅 보낼 때 사용)
-                        dateString = chatDate; // 불러온 채팅 날짜를 새롭게 바꾸기
-                    }
-					/////////////////////////////////////////////////////////////////////////////////////////////
-					
-    				if (chat.chatType === "LEAVE") {
-                        $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
-                	} else if(chat.chatType === "ENTER") {
-                        $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
-                    } else if (chat.chatType === "TALK") {
-                		const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
-                			// 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
-                        	.addClass("message_view") // 메세지 표시부분
-                        	.append(chat.senderId == login_member_id ? null : $("<div class='sender_name'>").text(chat.senderName))
-                        	.append($("<div>").addClass(chat.senderId == login_member_id ? 'chatting_own' : 'chatting')
-                        			// .append($("<pre>").text(chat.message))
-                                .append($("<div>").addClass("whitespace-pre-wrap break-words").text(chat.message))
-                            .append(chat.senderId == login_member_id ? $("<div class='chatting_own_time'>").text(sendDate) : 
-                                    								   $("<div class='chatting_time'>").text(sendDate))
-                        	);
-                		$("#chatting_view").append(chathtml);
-                	}//end of if (chat.chatType == "1") {}...
+                if (chatDate !== dateString) { // 불러온 채팅이 기존에 불러온 채팅 날짜와 달라진다면
+                    const chatDateString = `\${year}년 \${month}월 \${day}일`;
+                    $("#chatting_view").append($("<div class='chat_date'>").text(chatDateString));
+                    last_chat_date = chatDate; // 마지막으로 채팅한 날짜를 설정해준다.(채팅 보낼 때 사용)
+                    dateString = chatDate; // 불러온 채팅 날짜를 새롭게 바꾸기
+                }
+                /////////////////////////////////////////////////////////////////////////////////////////////
+				
+				// TODO prepend 로 바꿔서 아래부터 쌓아나가는 형식으로 만들자. 들어오는 메세지배열은 내림차순을 가져와야한다.
+                if (chat.chatType === "LEAVE") {
+                    $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+                } else if(chat.chatType === "ENTER") {
+                    $("#chatting_view").append($("<div class='chat_date'>").text(chat.message));
+                } else if (chat.chatType === "TALK") {
+                    const chathtml = $(`<div data-chat_id = \${chat.id}>`) // data-chat_id 는 속성으로 선언가능
+                        // 자신이 보낸 메시지인지 상대가 보낸 메시지인지 확인
+                        .addClass("message_view") // 메세지 표시부분
+                        .append(chat.senderId == login_member_id ? null : $("<div class='sender_name'>").text(chat.senderName))
+                        .append($("<div>").addClass(chat.senderId == login_member_id ? 'chatting_own' : 'chatting')
+                            // .append($("<pre>").text(chat.message))
+                            .append($("<div>").addClass("whitespace-pre-wrap break-words").text(chat.message))
+                            .append(chat.senderId == login_member_id ? $("<div class='chatting_own_time'>").text(sendDate) :
+                                $("<div class='chatting_time'>").text(sendDate))
+                        );
+                    $("#chatting_view").append(chathtml);
+                }//end of if (chat.chatType === "TALK") {}...
+				
+				
+			});//end of chatListDTO.chatMessageList.forEach((chat, index) => {}...
 
-                	// 스크롤을 하단으로 내리기
-                	scrollToBottom();
-            	}//end of if (chat && chat.message) {}...
-    		}//end of for (let chat of chatList) {}...
-
-//                 sendReadStatus();
-        }//end of if (chatList != null) {}...
+            // 두번째 불러오는 채팅내역부턴 밑으로 내리면 안된다. 첫번째 불러오는 내역만 밑으로 불러오자
+			// TODO 안읽은 채팅을 불러온 경우, 제일 위쪽으로 붙여주자.(이미 읽은 채팅 5개 다음 여기까지 읽었습니다. 다음
+			// 안읽은 채팅 시작하고 최신 메세지들까지, 3번째 채팅 기준으로 스크롤 맞춰주기
+            if (loadChatStart == 0) {
+                scrollToBottom(); // 스크롤을 하단으로 내리기
+            }
+            // 불러올 채팅의 인덱스 쌓아주기(0+20 or 0+안읽은 채팅의 개수)
+			existUnreadChat == true ? loadChatStart = loadChatStart + loadChatPlus // 안읽은 채팅 없음
+									: loadChatStart = loadChatStart + chatListDTO.chatMessageList.length; // 안읽은 채팅 있음
+			
+			// 채팅방의 모든 채팅내역을 불러온 후 읽음 처리하였다.
+            read_LastNoReadChat(chatListDTO.chatMessageList[0].roomId); // 안읽었던 채팅들 읽기 표시
+            recordTimesInChatRoom(chatListDTO.chatMessageList[0].roomId); // 채팅방의 채팅 마지막 확인 시간 기록
+        
+        }else {// 만약 혹시 오류로 데이터를 불러오지 못한 경우 예외처리
+        
+        
+        
+        
+        
+		}//end of if else (chatList != null) {}...
     
     }//end of function loadChat(chatList) {}...
 
@@ -1058,7 +1084,7 @@ let current_roomId = ""; 	 // 클릭한 채팅방의 번호를 수신 때 사용
                         
                     <!-- Messages 표시 부분 -->
                     <div id="chatting_view" class="h-[calc(100vh-20rem)] overflow-y-auto space-y-4 p-4">
-                        <div class="h-full flex justify-center text-9xl">
+						<div class="h-full flex justify-center text-9xl">
                             <i class="fa-solid fa-comment-dots mt-[calc(20vh)] text-gray-100 "></i>
                         </div>
                     </div>

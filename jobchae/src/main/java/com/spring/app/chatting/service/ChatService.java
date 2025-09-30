@@ -17,7 +17,7 @@ public interface ChatService {
 	ChatMessage saveChat(ChatMessage chat);
 
 	// 채팅방의 채팅 내역 조회
-	List<ChatMessage> loadChatHistory(String roomId);
+	List<ChatMessage> loadChatHistory(String roomId, String member_id, String loadChatCount);
 	
 	// 채팅방 개설 메소드
 	ChatRoom createChatRoom(MemberVO loginuser, List<String> folow_id_List, List<String> folow_name_List);

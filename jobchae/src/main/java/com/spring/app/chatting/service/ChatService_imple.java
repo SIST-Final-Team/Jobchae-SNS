@@ -10,7 +10,6 @@ import com.spring.app.chatting.domain.*;
 import com.spring.app.chatting.repository.*;
 import com.spring.app.member.domain.MemberVO;
 import com.spring.app.member.model.MemberDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -26,15 +25,14 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Service
 public class ChatService_imple implements ChatService{
-
-	@Autowired
-	private ChatRepository chatRepository; // 채팅 레포지토리
-
-	@Autowired
-	private ChatRoomRepository chatRoomRepository; // 채팅방 레포지토리
-
-	@Autowired
-	private CustomChatRoomRepository customChatRoomRepository; // 채팅방 커스텀 레포지토리
+ 
+	private final ChatRepository chatRepository; // 채팅 레포지토리
+ 
+	private final ChatRoomRepository chatRoomRepository; // 채팅방 레포지토리
+ 
+	private final CustomChatRoomRepository customChatRoomRepository; // 채팅방 커스텀 레포지토리
+    
+    private final CustomChatMessageRepository customChatMessageRepository;
 	
 	// 생성자 매개변수로 선언하는 것이 더 좋다.
 	private final MongoTemplate mongoTemplate;
@@ -43,7 +41,13 @@ public class ChatService_imple implements ChatService{
     // private final RoomPartiMemberIdListRepository roomPartiMemberIdListRepository;
     private final CacheRepository cacheRepository;
     private final ChatRoomReadStatusRepository chatRoomReadStatusRepository;
-	public ChatService_imple(MongoTemplate mongoTemplate, SimpMessagingTemplate simpMessagingTemplate, MemberDAO dao, CacheRepository cacheRepository, ChatRoomReadStatusRepository chatRoomReadStatusRepository) {
+	public ChatService_imple(ChatRepository chatRepository, ChatRoomRepository chatRoomRepository, CustomChatRoomRepository customChatRoomRepository, CustomChatMessageRepository customChatMessageRepository,
+                             MongoTemplate mongoTemplate, SimpMessagingTemplate simpMessagingTemplate, MemberDAO dao, CacheRepository cacheRepository, ChatRoomReadStatusRepository chatRoomReadStatusRepository) {
+        this.chatRepository = chatRepository;
+        this.chatRoomRepository = chatRoomRepository;
+        this.customChatRoomRepository = customChatRoomRepository;
+        this.customChatMessageRepository = customChatMessageRepository;
+        // this.customChatMessageRepository = customChatMessageRepository;
         this.mongoTemplate = mongoTemplate;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.dao = dao;
@@ -125,7 +129,7 @@ public class ChatService_imple implements ChatService{
 	// 채팅방의 채팅 내역 조회
 	@Override
     @Transactional(readOnly = true) // 조회는 이게 효율적
-	public List<ChatMessage> loadChatHistory(String roomId) {
+    public List<ChatMessageDTO> loadChatHistory(String roomId, String member_id, String loadChatCount) {
 		
         // 캐시에 데이터를 넣어주자
         cacheRepository.getCacheRoomMemberIds(roomId);
@@ -133,34 +137,25 @@ public class ChatService_imple implements ChatService{
         // 어그리제이션을 통해 안읽은 채팅방의 채팅은 안읽은 채팅 기준으로 위로 20개, 밑으로 전부 가져오고
         // 모든 채팅을 읽은 채팅방의 채팅은 제일 최신 채팅부터 오래된 채팅 순으로 20개씩 가져온다.
         
-        
         // 저장된 메세지의 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 로 출력하기
-        List<ChatMessage> afterChatMessageList = chatRepository.findChatByRoomId(roomId);
+        // List<ChatMessage> afterChatMessageList = chatRepository.findChatByRoomId(roomId);
+        List<ChatMessageDTO> afterChatMessageDTOList = customChatMessageRepository.customFindChatByRoomId(roomId, member_id, loadChatCount);
         
-        List<ChatMessage> beforeChatMessageList =
-                afterChatMessageList.stream()
-                        .map(chatMessage -> ChatMessage.safeMessage(chatMessage))
+        // List<ChatMessage> beforeChatMessageList =
+        //         afterChatMessageList.stream()
+        //                 .map(chatMessage -> ChatMessage.safeMessage(chatMessage))
+        //                 .toList();
+        
+        // chatMessageDTO 타입으로 나온다.(고쳤다!)
+        List<ChatMessageDTO> beforeChatMessageDTOList =
+                afterChatMessageDTOList.stream()
+                        .map(chatMessageDTO -> ChatMessageDTO.safeChatMessageDTO(chatMessageDTO))
                         .toList();
         
-        return beforeChatMessageList;
+        return beforeChatMessageDTOList;
 	}//end of public List<ChatMessage> loadChatHistory(String roomId) {}...
-    
-    
-    // // 지금 로그인한 사용자가 메세지를 읽었을 때 읽은 사람 목록에 추가(읽음 처리)
-    // @Override
-    // @Transactional
-    // public void messageReadChack(String roomId, String member_id) {
-    //     // 메세지들 중 readMembers 리스트에 나의 아이디가 없는 경우
-    //     Query query = new Query(Criteria.where("roomId").is(roomId)
-    //                                     .and("readMembers").nin(member_id)); // not in(들어있지 않다는 뜻)
-    //     // 중복방지해서 넣기
-    //     Update update = new Update().addToSet("readMembers", member_id);
-    //
-    //     // 여러문서를 한꺼번에 업데이트하자
-    //     mongoTemplate.updateMulti(query, update, ChatMessage.class);
-    // }//end of public void messageReadChack(String roomId, String memberId) {}...
-    
  
+    
 	
 	// 채팅방 개설 메소드
 	@Override
