@@ -71,7 +71,7 @@ public class CustomChatMessageRepository {
                     .otherwise(endCount);
     
     // 어그리제이션 시작
-    public List<ChatMessageDTO> customFindChatByRoomId(String roomId, String member_id, String loadChatStart) {
+    public ChatMessageDTO customFindChatByRoomId(String roomId, String member_id, int loadChatStartToInt) {
 
         Aggregation agg = newAggregation(
             // 특정 채팅방 하나 선택 필터링
@@ -110,18 +110,23 @@ public class CustomChatMessageRepository {
                                           .itemCount(limitedItemCount))
                             .otherwise(// 안읽은 메세지가 없을 경우(false)
                                     ArrayOperators.Slice.sliceArrayOf("all_messages")
-                                            // 입력받은 loadChatStart는 시작인덱스다.
-                                            .offset(Integer.parseInt(loadChatStart))
+                                            // 입력받은 loadChatStartToInt 시작인덱스다.
+                                            .offset(loadChatStartToInt)
                                             .itemCount(MESSAGE_COUNT)
                             )
                     ).as("chatMessageList")
-                    .and(firstUnreadIndex).as("oldestUnreadMessageIndex") // 제일 오래된 안읽은 메세지 인덱스
+                    // 안 읽은 메시지가 없을 때 index가 -1이 될 수 있으므로, 조건부로 값을 할당
+                    .and(ConditionalOperators.when(hasUnreadCondition)
+                            .then(firstUnreadIndex)
+                            .otherwise(-1) // 혹은 null, 원하는 기본값
+                    ).as("oldestUnreadMessageIndex")
         );
 
         AggregationResults<ChatMessageDTO> result =
                 mongo.aggregate(agg, "chat_messages", ChatMessageDTO.class);
 
-        return result.getMappedResults();
+        return result.getUniqueMappedResult();
+        // match 단계에서 결과가 아무것도 검색이 되지않으면(채팅메세지가 없다면), null을 반환한다.
 
     }//end of public List<ChatMessageDTO> findChatByRoomId(String roomId) {}...
 

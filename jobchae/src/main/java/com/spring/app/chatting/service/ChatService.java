@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.spring.app.chatting.domain.ChatMessage;
+import com.spring.app.chatting.domain.ChatMessageDTO;
 import com.spring.app.chatting.domain.ChatRoom;
 import com.spring.app.chatting.domain.ChatRoomDTO;
 import com.spring.app.member.domain.MemberVO;
@@ -17,7 +18,7 @@ public interface ChatService {
 	ChatMessage saveChat(ChatMessage chat);
 
 	// 채팅방의 채팅 내역 조회
-	List<ChatMessage> loadChatHistory(String roomId, String member_id, String loadChatCount);
+	ChatMessageDTO loadChatHistory(String roomId, String member_id, String loadChatCount);
 	
 	// 채팅방 개설 메소드
 	ChatRoom createChatRoom(MemberVO loginuser, List<String> folow_id_List, List<String> folow_name_List);

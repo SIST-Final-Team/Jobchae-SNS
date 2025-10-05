@@ -107,7 +107,7 @@ public class ChattingController {
 	// 채팅방의 채팅 내역 조회
 	@PostMapping("load_chat_history/{roomId}")
 	@ResponseBody
-	public List<ChatMessageDTO> loadChatHistory(@PathVariable String roomId, StompHeaderAccessor accessor,
+	public ChatMessageDTO loadChatHistory(@PathVariable String roomId, StompHeaderAccessor accessor,
                                                 @RequestBody Map<String, String> loadChatStartMap) {
         // 웹소캣 헤더에서 로그인한 사용자 아이디 가져오기(이게 더 안전하고 빠르다)
         String member_id = (String) accessor.getSessionAttributes().get("member_id");

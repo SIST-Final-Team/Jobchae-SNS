@@ -52,4 +52,15 @@ public class ChatMessageDTO {
         // '  ->  &#39;
     }//end of public static ChatMessageDTO safeChatMessageDTO(ChatMessageDTO dto) {}...
     
+    
+    // ChatMessageDTO 타입의 객체를 만들어주는 빌더메소드
+    public static ChatMessageDTO createChatMessageDTO(List<ChatMessage> findMessageList) {
+        return ChatMessageDTO.builder()
+                .chatMessageList(findMessageList)
+                .existUnReadChat(false)
+                .oldestUnreadMessageIndex(-1) // 제일 안읽은 메세지가 없으니 인덱스는 -1로 설정해서 고유하게 만듬
+                .build();
+    }
+    
+    
 }//end of class...
