@@ -107,11 +107,14 @@ public class ChattingController {
 	// 채팅방의 채팅 내역 조회
 	@PostMapping("load_chat_history/{roomId}")
 	@ResponseBody
-	public ChatMessageDTO loadChatHistory(@PathVariable String roomId, StompHeaderAccessor accessor,
-                                                @RequestBody Map<String, String> loadChatStartMap) {
-        // 웹소캣 헤더에서 로그인한 사용자 아이디 가져오기(이게 더 안전하고 빠르다)
-        String member_id = (String) accessor.getSessionAttributes().get("member_id");
-        String loadChatStart = loadChatStartMap.get("loadChatCount"); // 불러올 채팅의 시작인덱스
+	public ChatMessageDTO loadChatHistory(HttpServletRequest request ,@PathVariable String roomId,
+                                          @RequestBody Map<String, String> loadChatStartMap) {
+        // 세션에서 아이디 가져오기
+        HttpSession session = request.getSession();
+        MemberVO loginuser = (MemberVO) session.getAttribute("loginuser"); // 현재 사용자 VO
+        String member_id = loginuser.getMember_id();
+        
+        String loadChatStart = loadChatStartMap.get("loadChatStart"); // 불러올 채팅의 시작인덱스
         return chatservice.loadChatHistory(roomId, member_id, loadChatStart);
 	}//end of public List<ChatMessage> loadChatHistory(@PathVariable String roomId) {}...
     

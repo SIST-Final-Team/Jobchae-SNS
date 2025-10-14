@@ -475,7 +475,8 @@ let loadChatPlus = 20;	// 불러올 채팅의 개수(단위)크기
         $.ajax({
             url    : "${ctx_path}/chat/load_chat_history/" + roomId,
             type   : "post", // 개인정보니까 post 하자
-            data: {"loadChatStart": loadChatStart}, // 불러오는 채팅의 인덱스
+            data: JSON.stringify({"loadChatStart": loadChatStart}), // 불러오는 채팅의 인덱스 제이선으로
+            contentType: "application/json; charset=utf-8",      	// Content-Type을 JSON으로 명시
             success: function (json) {
                 loadChat(json);
             },
