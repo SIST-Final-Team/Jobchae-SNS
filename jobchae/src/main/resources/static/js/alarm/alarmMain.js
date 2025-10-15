@@ -152,7 +152,7 @@ function addAlarms(alarmList) {
         break;
       case "FOLLOWER_POST":
         notificationLogo = `/jobchae/resources/files/profile/${alarm.targetMember.member_profile}`;
-        notificationContent = `팔로우 하고 있는 ${alarm.targetMember.member_name}님이 게시물을 올렸습니다.${boardContent}`;
+        notificationContent = `팔로우 하고 있는 ${alarm.targetMember.member_name}님이 게시물을 올렸습니다. "${boardContent}"`;
         break;
     }
     const diffrentDate = getDiffrentTime(
