@@ -1,6 +1,5 @@
 package com.spring.app.chatting.repository;
 
-import com.spring.app.chatting.domain.ChatMessage;
 import com.spring.app.chatting.domain.ChatMessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -9,9 +8,6 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.List;
-
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 // import static org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Max;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
@@ -19,7 +15,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 
 @RequiredArgsConstructor // 생성자 자동 주입
 @Repository
-public class CustomChatMessageRepository {
+public class CustomChatMessagesRepositoryOldVersion {
 
     private final MongoOperations mongo; // 몽고 디비를 직접 커스텀 하려한다.
 

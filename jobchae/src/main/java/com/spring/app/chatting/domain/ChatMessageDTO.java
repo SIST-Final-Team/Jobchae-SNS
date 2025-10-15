@@ -54,7 +54,7 @@ public class ChatMessageDTO {
     
     
     // ChatMessageDTO 타입의 객체를 만들어주는 빌더메소드
-    public static ChatMessageDTO createChatMessageDTO(List<ChatMessage> findMessageList) {
+    public static ChatMessageDTO allReadOfChatMessageDTO(List<ChatMessage> findMessageList) {
         return ChatMessageDTO.builder()
                 .chatMessageList(findMessageList)
                 .existUnReadChat(false)

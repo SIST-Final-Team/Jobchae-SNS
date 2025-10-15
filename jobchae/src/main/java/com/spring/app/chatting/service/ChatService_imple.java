@@ -32,7 +32,7 @@ public class ChatService_imple implements ChatService{
  
 	private final CustomChatRoomRepository customChatRoomRepository; // 채팅방 커스텀 레포지토리
     
-    private final CustomChatMessageRepository customChatMessageRepository;
+    private final CustomChatMessagesRepository customChatMessagesRepository;
 	
 	// 생성자 매개변수로 선언하는 것이 더 좋다.
 	private final MongoTemplate mongoTemplate;
@@ -41,12 +41,12 @@ public class ChatService_imple implements ChatService{
     // private final RoomPartiMemberIdListRepository roomPartiMemberIdListRepository;
     private final CacheRepository cacheRepository;
     private final ChatRoomReadStatusRepository chatRoomReadStatusRepository;
-	public ChatService_imple(ChatRepository chatRepository, ChatRoomRepository chatRoomRepository, CustomChatRoomRepository customChatRoomRepository, CustomChatMessageRepository customChatMessageRepository,
+	public ChatService_imple(ChatRepository chatRepository, ChatRoomRepository chatRoomRepository, CustomChatRoomRepository customChatRoomRepository, CustomChatMessagesRepository customChatMessagesRepository,
                              MongoTemplate mongoTemplate, SimpMessagingTemplate simpMessagingTemplate, MemberDAO dao, CacheRepository cacheRepository, ChatRoomReadStatusRepository chatRoomReadStatusRepository) {
         this.chatRepository = chatRepository;
         this.chatRoomRepository = chatRoomRepository;
         this.customChatRoomRepository = customChatRoomRepository;
-        this.customChatMessageRepository = customChatMessageRepository;
+        this.customChatMessagesRepository = customChatMessagesRepository;
         // this.customChatMessageRepository = customChatMessageRepository;
         this.mongoTemplate = mongoTemplate;
         this.simpMessagingTemplate = simpMessagingTemplate;
@@ -108,6 +108,9 @@ public class ChatService_imple implements ChatService{
         // }
 		ChatMessage saveChatMessage = chatRepository.save(chat);
         
+        // 크로스 사이트 스크립트 공격 방지 코드 추가
+        ChatMessage safeChatMessage = ChatMessage.safeMessage(saveChatMessage);
+        
         // 채탱방의 모든 사람들에게 메시지 전송
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -115,7 +118,7 @@ public class ChatService_imple implements ChatService{
                 List<String> roomPartiMemberIdList = cacheRepository.getCacheRoomMemberIds(chat.getRoomId());
                 for (String member_id : roomPartiMemberIdList) {
                     // 각 멤버의 개인 큐(/user/{memberId}/message/{roomId})로 메시지를 전송
-                    simpMessagingTemplate.convertAndSendToUser(member_id, "/message", saveChatMessage);
+                    simpMessagingTemplate.convertAndSendToUser(member_id, "/message", safeChatMessage);
                 }//end of for...
             }
         });//end of TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {}...
@@ -145,26 +148,21 @@ public class ChatService_imple implements ChatService{
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("loadChatStart가 숫자가 아님 : " + loadChatStart);
-        }
+        }//end of try catch...
         
         // 저장된 메세지의 크로스 사이트 스크립트 공격에 대응하는 안전한 코드(시큐어코드) 로 출력하기
         // List<ChatMessage> afterChatMessageList = chatRepository.findChatByRoomId(roomId);
-        ChatMessageDTO afterChatMessageDTO = customChatMessageRepository.customFindChatByRoomId(roomId, member_id, loadChatStartToInt);
-        
-        // List<ChatMessage> beforeChatMessageList =
-        //         afterChatMessageList.stream()
-        //                 .map(chatMessage -> ChatMessage.safeMessage(chatMessage))
-        //                 .toList();
+        ChatMessageDTO beforeChatMessageDTO = customChatMessagesRepository.customFindChatMessagesByRoomId(roomId, member_id, loadChatStartToInt);
         
         // 만약 검색이 되지 않는다면 null을 반환한다. null 처리 해주자
-        if (afterChatMessageDTO == null) {
+        if (beforeChatMessageDTO == null) {
             return new  ChatMessageDTO(); // 빈 ChatMessageDTO 반환
         }
         // chatMessageDTO 타입으로 나온다.(고쳤다!)
-        ChatMessageDTO beforeChatMessageDTO =
-                ChatMessageDTO.safeChatMessageDTO(afterChatMessageDTO);
+        ChatMessageDTO afterChatMessageDTO =
+                ChatMessageDTO.safeChatMessageDTO(beforeChatMessageDTO);
         
-        return beforeChatMessageDTO;
+        return afterChatMessageDTO;
 	}//end of public List<ChatMessage> loadChatHistory(String roomId) {}...
  
  

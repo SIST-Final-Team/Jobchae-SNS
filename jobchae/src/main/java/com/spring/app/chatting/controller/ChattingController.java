@@ -94,12 +94,12 @@ public class ChattingController {
     // @SendTo("/room/{roomId}") // 해당 url 요청은 구독자에게 전송 및 채팅 저장
     public ChatMessage chat(@DestinationVariable String roomId, ChatMessage chat) {
         // 채팅 메시지 저장 및 반환
-        System.out.println("만약 여기서 터지는 것이 맞다면???");
-        System.out.println("시작하자마자 방번호 => "+ roomId); // 시작하자마자 방번호 => readTimes 왜 이게 나오지
+        // System.out.println("만약 여기서 터지는 것이 맞다면???");
+        // System.out.println("시작하자마자 방번호 => "+ roomId); // 시작하자마자 방번호 => readTimes 왜 이게 나오지
         chat.updateRoomId(roomId);
         chat.updateReadMembers(chat.getSenderId()); // TODO 아무래도 입장메세지가 발송되고
         chat.updateSendDate(Instant.now());
-        System.out.println("확인용 채팅 들어오기"+chat.getMessage());
+        // System.out.println("확인용 채팅 들어오기"+chat.getMessage());
         return chatservice.saveChat(chat);
     }
     
@@ -128,12 +128,12 @@ public class ChattingController {
         String member_id = (String) accessor.getSessionAttributes().get("member_id");
         
         // System.out.println("웹소캣헤더에서 가져온 아이디 => "+ member_id);
-        System.out.println("들어온 시간이 안보여! => "+ readRequest.getLastReadTimestamp());
-        System.out.println("들어온 채팅방번호 => " + roomId);
+        // System.out.println("들어온 시간이 안보여! => "+ readRequest.getLastReadTimestamp());
+        // System.out.println("들어온 채팅방번호 => " + roomId);
         
         // Instant으로 변환
         Instant readTime = Instant.parse(readRequest.getLastReadTimestamp());
-        System.out.println("변환된 시간 => "+readTime);
+        // System.out.println("변환된 시간 => "+readTime);
         
         if (member_id != null) {
             chatservice.updateReadTimesChatRoom(roomId, member_id, readTime);
@@ -152,7 +152,7 @@ public class ChattingController {
             String member_id = loginuser.getMember_id();
             // LocalDateTime으로 변환
             Instant readTime = Instant.parse(lastReadTimesMap.get("timestamp"));
-            System.out.println("변환된 시간 => "+readTime);
+            // System.out.println("변환된 시간 => "+readTime);
             chatservice.updateReadTimesChatRoom(roomId, member_id, readTime);
         }
     }//end of public void readTimesChatRoomOnLeave(HttpServletRequest request, @RequestBody Map<String, String> lastReadTimesMap) {}...
