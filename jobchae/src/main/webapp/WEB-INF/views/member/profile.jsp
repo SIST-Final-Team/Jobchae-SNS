@@ -4,10 +4,63 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<jsp:include page="/WEB-INF/views/header/header.jsp" />
+<c:if test="${not empty (sessionScope.loginuser).member_id}">
+    <jsp:include page="/WEB-INF/views/header/header.jsp" />
+</c:if>
 
 <%-- TailWind 사용자 정의 CSS --%>
 <jsp:include page="/WEB-INF/views/member/profileTailwind.jsp" />
+
+<c:if test="${empty (sessionScope.loginuser).member_id}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tailwind.css" />
+            <%-- Optional JavaScript --%>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/jquery-3.7.1.min.js"
+        ></script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js"
+        ></script>
+
+        <script type="text/javascript">
+            const ctxPath = "${pageContext.request.contextPath}";
+        </script>
+
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/header.js"
+        ></script>
+
+        <!-- TailWind Script -->
+        <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
+
+        <!-- Font Awesome CSS -->
+        <link
+                rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        />
+
+            <%-- 웹소켓 연결 관리 모듈 JS --%>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/js/chat/chat.js"></script>
+
+            <%-- 검색 --%>
+
+        <script type="text/javascript">
+            let ctxPathForSearch = "${pageContext.request.contextPath}";
+        </script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/search.js"
+        ></script>
+    </head>
+    <body>
+    <jsp:include page="/WEB-INF/views/common/headerBeforeLogin.jsp" />
+    <div class="pt-15"></div>
+</c:if>
 
 <script type="text/javascript">
     const memberId = '${requestScope.memberId}'; // 조회 대상 회원 아이디
@@ -544,8 +597,8 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                     <li>
                         <div class="font-bold text-lg">JobChae 프로필</div>
                         <div>
-                            <a class="hover:underline text-orange-500 font-bold" href="http://www.jobchae.kro.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
-                                www.jobchae.kro.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
+                            <a class="hover:underline text-orange-500 font-bold" href="http://www.jobchae.o-r.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}">
+                                www.jobchae.o-r.kr${pageContext.request.contextPath}/member/profile/${requestScope.memberVO.member_id}
                             </a>
                         </div>
                     </li>
@@ -818,7 +871,9 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             </div>
                             <!-- 글 내용 -->
                             <div>
+                                <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
                                 ${item.board_content}
+                                </a>
                             </div>
                             <!-- 사진 또는 동영상 등 첨부파일 -->
                             <div class="px-0 flex-grow">
@@ -832,6 +887,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                                                             or fn:endsWith(fn:toLowerCase(file.file_name), '.png') 
                                                             or fn:endsWith(fn:toLowerCase(file.file_name), '.webp')}">
                                                 <%-- 파일이 이미지 확장자로 끝날 때 실행되는 코드 --%>
+                                            <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
                                                 <button type="button"><img src="${pageContext.request.contextPath}/resources/files/board/${file.file_name}"/>
                                                     <%-- <c:if test=""> 파일 개수가 4개 이상
                                                     <span class="flex items-center">
@@ -840,6 +896,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                                                     </span>
                                                     </c:if> --%>
                                                 </button>
+                                            </a>
                                             </c:when>
                                             <c:otherwise>
                                                 <%-- 파일이 이미지 확장자로 끝나지 않을 때 실행되는 코드 --%>
@@ -853,6 +910,7 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             <div>
                                 <ul class="flex gap-4 text-gray-600">
                                     <li class="flex-1">
+                                        <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
                                         <c:if test="${not empty item.reactionStatusList}">
                                             <button type="button" class="button-underline">
                                                 <div class="reaction-images">
@@ -880,18 +938,23 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                                                 <span id="reactionCount">${item.reactionCount}</span>
                                             </button>
                                         </c:if>
+                                        </a>
                                     </li>
                                     <li>
-                                        <button type="button" class="button-underline">
-                                            <span>댓글&nbsp;</span>
-                                            <span id="commentCount">${item.commentCount}</span>
-                                        </button>
+                                        <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
+                                            <button type="button" class="button-underline">
+                                                <span>댓글&nbsp;</span>
+                                                <span id="commentCount">${item.commentCount}</span>
+                                            </button>
+                                        </a>
                                     </li>
                                     <li>
-                                        <button type="button" class="button-underline">
-                                            <span>퍼감&nbsp;</span>
-                                            <span id="embedCount">${item.embedCount}</span>
-                                        </button>
+                                        <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
+                                            <button type="button" class="button-underline">
+                                                <span>퍼감&nbsp;</span>
+                                                <span id="embedCount">${item.embedCount}</span>
+                                            </button>
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
@@ -899,26 +962,20 @@ sessionStorage.setItem("contextpath", "${pageContext.request.contextPath}"); // 
                             <hr class="border-gray-300 mx-4">
                             <!-- 추천 댓글 퍼가기 등 버튼 -->
                             <div class="py-0 text-gray-800">
-                                <ul class="grid grid-cols-4 gap-4 text-center">
+                                <ul class="grid grid-cols-2 gap-4 text-center">
                                     <li>
-                                        <button type="button" class="button-board-action">
-                                            <i class="fa-regular fa-thumbs-up"></i>
-                                        </button>
+                                        <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
+                                            <button type="button" class="button-board-action">
+                                                <i class="fa-regular fa-thumbs-up"></i>
+                                            </button>
+                                        </a>
                                     </li>
                                     <li>
-                                        <button type="button" class="button-board-action">
-                                            <i class="fa-regular fa-comment"></i>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button type="button" class="button-board-action">
-                                            <i class="fa-solid fa-retweet"></i>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button type="button" class="button-board-action">
-                                            <i class="fa-regular fa-paper-plane"></i>
-                                        </button>
+                                        <a href="${pageContext.request.contextPath}/board/feed/${item.board_no}">
+                                            <button type="button" class="button-board-action">
+                                                <i class="fa-regular fa-comment"></i>
+                                            </button>
+                                        </a>
                                     </li>
                                 </ul>
                             </div>

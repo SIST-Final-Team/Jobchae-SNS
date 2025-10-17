@@ -1,7 +1,60 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
-<jsp:include page="/WEB-INF/views/header/header.jsp" />
+<c:if test="${not empty (sessionScope.loginuser).member_id}">
+    <jsp:include page="/WEB-INF/views/header/header.jsp" />
+</c:if>
+
+<c:if test="${empty (sessionScope.loginuser).member_id}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tailwind.css" />
+            <%-- Optional JavaScript --%>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/jquery-3.7.1.min.js"
+        ></script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js"
+        ></script>
+
+        <script type="text/javascript">
+            const ctxPath = "${pageContext.request.contextPath}";
+        </script>
+
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/header.js"
+        ></script>
+
+        <!-- TailWind Script -->
+        <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
+
+        <!-- Font Awesome CSS -->
+        <link
+                rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        />
+
+            <%-- 웹소켓 연결 관리 모듈 JS --%>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/js/chat/chat.js"></script>
+
+            <%-- 검색 --%>
+
+        <script type="text/javascript">
+            let ctxPathForSearch = "${pageContext.request.contextPath}";
+        </script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/search.js"
+        ></script>
+    </head>
+    <body>
+    <jsp:include page="/WEB-INF/views/common/headerBeforeLogin.jsp" />
+    <div class="pt-21"></div>
+</c:if>
 
 <%-- TailWind 사용자 정의 CSS --%>
 <jsp:include page="/WEB-INF/views/member/profileTailwind.jsp" />
@@ -166,7 +219,7 @@ function getViewCount(name, resultContainerId, viewCountTargetType, viewCountTyp
     <div class="container m-auto grid grid-cols-10 lg:grid-cols-14 gap-6 xl:max-w-[1140px]">
 
         <!-- 중앙 본문 -->
-        <div class="center col-span-14 md:col-span-10 space-y-2 my-5">
+        <div class="center col-span-14 md:col-span-10 space-y-2">
             <div class="scroll-mt-22 border-board">
 
                 <!-- 프로필 조회 -->

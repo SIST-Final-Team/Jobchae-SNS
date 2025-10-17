@@ -322,8 +322,8 @@ public class BoardController {
 	
 	
 	// 피드 하나만 띄우기
-	@GetMapping("/feed/{board_no}")
-	public ModelAndView boardOne(HttpServletRequest request, ModelAndView mav, @PathVariable String board_no) {
+	@GetMapping("feed/{board_no}")
+	public ModelAndView requiredLogin_boardOne(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @PathVariable String board_no) {
 		
 		BoardVO boardvo = service.boardOneSelect(board_no);
 		

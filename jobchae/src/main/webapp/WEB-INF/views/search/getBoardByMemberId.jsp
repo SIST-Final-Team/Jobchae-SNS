@@ -4,8 +4,110 @@
 <%-- === JSTL( Java Standard Tag Library) 사용하기 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<jsp:include page="/WEB-INF/views/header/header.jsp" />
+<c:if test="${not empty (sessionScope.loginuser).member_id}">
+    <jsp:include page="/WEB-INF/views/header/header.jsp" />
+</c:if>
 
+<c:if test="${empty (sessionScope.loginuser).member_id}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tailwind.css" />
+            <%-- Optional JavaScript --%>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/jquery-3.7.1.min.js"
+        ></script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js"
+        ></script>
+
+        <script type="text/javascript">
+            const ctxPath = "${pageContext.request.contextPath}";
+        </script>
+
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/header.js"
+        ></script>
+
+        <!-- TailWind Script -->
+        <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
+
+        <!-- Font Awesome CSS -->
+        <link
+                rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        />
+
+            <%-- 웹소켓 연결 관리 모듈 JS --%>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/js/chat/chat.js"></script>
+
+            <%-- 검색 --%>
+
+        <script type="text/javascript">
+            let ctxPathForSearch = "${pageContext.request.contextPath}";
+        </script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/search.js"
+        ></script>
+    </head>
+    <body>
+    <jsp:include page="/WEB-INF/views/common/headerBeforeLogin.jsp" />
+    <div class="pt-15"></div>
+</c:if>
+
+<c:if test="${empty (sessionScope.loginuser).member_id}">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tailwind.css" />
+            <%-- Optional JavaScript --%>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/jquery-3.7.1.min.js"
+        ></script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js"
+        ></script>
+
+        <script type="text/javascript">
+            const ctxPath = "${pageContext.request.contextPath}";
+        </script>
+
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/header.js"
+        ></script>
+
+        <!-- TailWind Script -->
+        <script src="${pageContext.request.contextPath}/js/tailwind.js"></script>
+
+        <!-- Font Awesome CSS -->
+        <link
+                rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        />
+
+            <%-- 웹소켓 연결 관리 모듈 JS --%>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/js/chat/chat.js"></script>
+
+            <%-- 검색 --%>
+
+        <script type="text/javascript">
+            let ctxPathForSearch = "${pageContext.request.contextPath}";
+        </script>
+        <script
+                type="text/javascript"
+                src="${pageContext.request.contextPath}/js/main-header/search.js"
+        ></script>
+    </head>
+    <body>
+    <jsp:include page="/WEB-INF/views/common/headerBeforeLogin.jsp" />
+</c:if>
     <style type="text/tailwindcss">
         html {
             font-size: 0.9rem;
@@ -295,15 +397,20 @@ let requestLock = false;
                                 for(let i=0; i<size; i++) {
                                     if(imageList.length > 4 && i == size - 1) {
                                         imageHtml += `
-                                            <button type="button" class="more-image"><img src="${pageContext.request.contextPath}/resources/files/board/\${imageList[i].file_name}"/>
-                                                <span class="flex items-center">
-                                                    <span><i class="fa-solid fa-plus"></i></span>
-                                                    <span class="text-4xl">\${imageList.length-size}</span>
-                                                </span>
-                                            </button>`;
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
+                                                <button type="button" class="more-image"><img src="${pageContext.request.contextPath}/resources/files/board/\${imageList[i].file_name}"/>
+                                                    <span class="flex items-center">
+                                                        <span><i class="fa-solid fa-plus"></i></span>
+                                                        <span class="text-4xl">\${imageList.length-size}</span>
+                                                    </span>
+                                                </button>
+                                            </a>`;
                                     }
                                     else {
-                                        imageHtml += `<button type="button"><img src="${pageContext.request.contextPath}/resources/files/board/\${imageList[i].file_name}"/></button>`;
+                                        imageHtml += `
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
+                                                <button type="button"><img src="${pageContext.request.contextPath}/resources/files/board/\${imageList[i].file_name}"/></button>
+                                            </a>`;
                                     }
                                 }
                                 imageHtml += `</div>`;
@@ -350,10 +457,13 @@ let requestLock = false;
                         
                         // 팔로우 버튼
                         let followButtonHtml = ``;
-                        if(item.isFollow == "0") {
+                        if(item.fk_member_id === "${sessionScope.loginuser.member_id}") { // 본인인 경우 팔로우 버튼 표시 안 함
+                            followButtonHtml = ``;
+                        }
+                        else if(item.isFollow === "0") {
                             followButtonHtml = `<button type="button" class="follow-button" data-following-id="\${item.fk_member_id}"><i class="fa-solid fa-plus"></i>&nbsp;팔로우</button>`;
                         }
-                        else if (item.isFollow == "1") {
+                        else if (item.isFollow === "1") {
                             followButtonHtml = `<button type="button" class="follow-button followed" data-following-id="\${item.fk_member_id}">팔로우 중</button>`;
                         }
 
@@ -372,12 +482,14 @@ let requestLock = false;
                                     </div>
                                     <div>
                                         \${followButtonHtml}
-                                        <button type="button"><i class="fa-solid fa-ellipsis"></i></button>
+                                        <!-- <button type="button"><i class="fa-solid fa-ellipsis"></i></button> -->
                                     </div>
                                 </div>
                                 <!-- 글 내용 -->
                                 <div>
+                                    <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
                                     \${item.board_content}
+                                    </a>
                                 </div>
                                 <!-- 사진 또는 동영상 등 첨부파일 -->
                                 <div class="px-0">
@@ -387,19 +499,25 @@ let requestLock = false;
                                 <div>
                                     <ul class="flex gap-4 text-gray-600">
                                         <li class="flex-1">
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
                                             \${reactionHtml}
+                                            </a>
                                         </li>
                                         <li>
-                                            <button type="button" class="button-underline">
-                                                <span>댓글&nbsp;</span>
-                                                <span id="commentCount">\${item.commentCount}</span>
-                                            </button>
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
+                                                <button type="button" class="button-underline">
+                                                    <span>댓글&nbsp;</span>
+                                                    <span id="commentCount">\${item.commentCount}</span>
+                                                </button>
+                                            </a>
                                         </li>
                                         <li>
-                                            <button type="button" class="button-underline">
-                                                <span>퍼감&nbsp;</span>
-                                                <span id="embedCount">\${item.embedCount}</span>
-                                            </button>
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
+                                                <button type="button" class="button-underline">
+                                                    <span>퍼감&nbsp;</span>
+                                                    <span id="embedCount">\${item.embedCount}</span>
+                                                </button>
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
@@ -407,30 +525,22 @@ let requestLock = false;
                                 <hr class="border-gray-300 mx-4">
                                 <!-- 추천 댓글 퍼가기 등 버튼 -->
                                 <div class="py-0">
-                                    <ul class="grid grid-cols-4 gap-4 text-center">
+                                    <ul class="grid grid-cols-2 gap-4 text-center">
                                         <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-thumbs-up"></i>
-                                                <span>추천</span>
-                                            </button>
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
+                                                <button type="button" class="button-board-action">
+                                                    <i class="fa-regular fa-thumbs-up"></i>
+                                                    <span>추천</span>
+                                                </button>
+                                            </a>
                                         </li>
                                         <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-comment"></i>
-                                                <span>댓글</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-solid fa-retweet"></i>
-                                                <span>퍼가기</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button type="button" class="button-board-action">
-                                                <i class="fa-regular fa-paper-plane"></i>
-                                                <span>보내기</span>
-                                            </button>
+                                            <a href="${pageContext.request.contextPath}/board/feed/\${item.board_no}">
+                                                <button type="button" class="button-board-action">
+                                                    <i class="fa-regular fa-comment"></i>
+                                                    <span>댓글</span>
+                                                </button>
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
@@ -584,7 +694,7 @@ dialog.option-dropdown::backdrop {
         </div>
 
         <div class="right-side col-span-4 h-full relative hidden lg:block">
-            <div class="border-list sticky top-19 space-y-2 text-center relative bg-white">
+            <div class="border-list sticky top-20.5 space-y-2 text-center relative bg-white">
                 <div class="absolute top-5 right-5 bg-white rounded-sm text-[0.9rem]">
                     <span class="pl-1.5 font-bold">광고</span>
                     <button type="button" class="font-bold hover:bg-gray-100 cursor-pointer px-1.5 py-1 rounded-r-sm"><i class="fa-solid fa-ellipsis"></i></button>
