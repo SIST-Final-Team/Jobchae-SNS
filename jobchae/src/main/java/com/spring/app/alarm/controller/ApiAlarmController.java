@@ -42,7 +42,6 @@ import java.util.stream.Collector;
 
 @RestController
 @RequestMapping(value="api/alarm/")
-@CrossOrigin(origins = "*")
 public class ApiAlarmController {
 
 	private final SimpMessagingTemplate messagingTemplate;
