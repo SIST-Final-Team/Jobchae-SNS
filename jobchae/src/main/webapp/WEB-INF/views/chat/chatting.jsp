@@ -497,7 +497,7 @@ let loadChatPlus = 20;	// 불러올 채팅의 개수(단위)크기
         
 		getFollowersForInvite(); // 초대할 멤버 목록을 초기화, modalAddChatMember.jsp에 있음
 		
-		loadChatStart = 0; // 불러올 채팅메세지의 인덱스 초기화
+		loadChatStart = 0; // 불러올 채팅메세지의 갯수 초기화
 		
 		// 이전 채팅 내역 불러오기
         $.ajax({
